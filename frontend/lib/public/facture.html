@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: serif;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-top: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .header {
+        width: 70%;
+        padding: 10px;
+        text-align: center;
+      }
+
+      .end {
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      .start {
+        display: flex;
+        justify-content: flex-start;
+        text-align: left;
+      }
+
+      .infos {
+        display: flex;
+        justify-content: space-between;
+        margin: 50px 0;
+      }
+
+      .infos .info {
+        flex: 1;
+      }
+
+      .info img {
+        width: 30%;
+        height: 50px;
+      }
+
+      .container .contain img {
+        width: 70%;
+        height: 150px;
+      }
+
+      .infos .info.restrinct-text {
+        flex: 1;
+        text-align: center;
+      }
+
+      .info img {
+        width: 200px;
+        height: 50px;
+      }
+
+      .infos .info.restrinct-text h2 {
+        font-size: 15px;
+        font-weight: 500;
+      }
+
+      .text-center {
+        text-align: center;
+      }
+
+      table {
+        width: 70%;
+        margin: 0px auto;
+        border-collapse: collapse;
+      }
+
+      thead,
+      tfoot {
+        height: 50px;
+        background-color: lightgray;
+      }
+
+      tbody tr td {
+        padding: 8px;
+      }
+
+      th,
+      td {
+        border: 1px solid #9e9e9e;
+        padding: 0px;
+        text-align: center;
+      }
+
+      .left {
+        text-align: left;
+      }
+
+      .right {
+        text-align: right;
+      }
+
+      .start-text {
+        text-align: left;
+      }
+
+      #letter_amount {
+        width: 70%;
+        margin: 20px auto;
+        text-align: justify;
+      }
+
+      .payInfo {
+        margin: 0px auto;
+        text-align: left;
+        width: 70%;
+      }
+
+      .container {
+        width: 70%;
+        display: flex;
+        justify-content: flex-end;
+        margin: 20px auto;
+      }
+
+      .contain {
+        width: 50%;
+        text-align: center;
+      }
+
+      h1 {
+        font-size: 24px;
+        margin-bottom: 20px;
+      }
+
+      .container img {
+        width: 100px;
+        margin-bottom: 10px;
+      }
+
+      #facture-label {
+        font-size: xx-large;
+        font-weight: bold;
+      }
+
+      #payement {
+        width: 100%;
+        margin: 0px auto;
+      }
+
+      #payement h3 {
+        text-align: center;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+        font-size: small;
+        font-style: oblique;
+        text-align: start;
+      }
+
+      ul li {
+        margin-bottom: 5px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="header">
+      <div class="infos">
+        <div class="info start">
+          <img src="./image/logo_entreprise.jpg" alt="Logo de l'entreprise" />
+        </div>
+        <div class="info end restrinct-text">
+          <p>
+            L'adresse de l'entreprise <br />
+            <strong>Lorem ipsum dolor sit amet</strong><br />
+            <strong>Lorem ipsum dolor</strong>
+          </p>
+        </div>
+      </div>
+      <div class="infos">
+        <div class="info start">
+          <div>
+            <div style="margin-bottom: 20px">
+              <p id="facture-label">Proforma</p>
+              <p><strong>N° 12455432</strong></p>
+            </div>
+            <p>Date d'édition</p>
+            <p>Durée de livraison</p>
+            <p>A payer avant le</p>
+          </div>
+        </div>
+
+        <div class="info end restrinct-text">
+          <div class="">
+            <img src="/images/3c08131e8b2c97fe96a7a0964a111b93.jpg" alt="" />
+            <h2>NOM DU CLIENT</h2>
+            <p>Adresse du client</p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <table>
+      <thead>
+        <tr>
+          <th class="left">Désignation</th>
+          <th>Taux Horaire</th>
+          <th>Qté</th>
+          <th>TOTAL</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="left">La désignation du service</td>
+          <td>le taux horaire</td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td colspan="3">TVA</td>
+
+          <td>Tva</td>
+        </tr>
+        <tr>
+          <td colspan="3">Frais divers</td>
+
+          <td>Frais</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <th colspan="3">TOTAL</th>
+
+          <th>Le montant total</th>
+        </tr>
+      </tfoot>
+    </table>
+    <div id="letter_amount">
+      <p>
+        Arrêtée la présente facture proforma à la somme totale de
+        <strong>
+          QUATRE CENT QUATRE VINGT DIX HUIT MILLE CINQ CENT SOIXANTE F. CFA
+        </strong>
+      </p>
+    </div>
+    <div id="payement">
+      <h3>Payements</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Numero</th>
+            <th>Montant</th>
+            <th>Moyen de payement</th>
+            <th>Date de paiement</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="right">1</td>
+            <td>23444</td>
+            <td>Espèce</td>
+            <td>12 septembre 2023</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <th colspan="3">MONTANT TOTAL PAYE</th>
+            <th>Montant</th>
+          </tr>
+          <tr>
+            <th colspan="3">MONTANT RESTANT</th>
+            <th>Montant</th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <div class="container">
+      <div class="contain">
+        <p>Le Directeur Général</p>
+        <img
+          src="./image/signature.jpg"
+          alt="Signature de Komla Dodji KOMLATSE"
+        />
+        <p><strong>Komla Dodji KOMLATSE</strong></p>
+      </div>
+    </div>
+    <div class="payInfo">
+      <ul>
+        <li>Payez à l'ordre de <strong>NOVA LEAD</strong> :</li>
+        <li>Numéro de compte ORABANK: <strong>08135600201</strong></li>
+        <li>
+          Code banque: <strong>TG116</strong> - Code guichet:
+          <strong>01008</strong> - Clé RIB: <strong>53</strong>
+        </li>
+        <li>Code BIC: <strong>ORBKTGTG</strong></li>
+        <li>Code IBAN: <strong>TG53TG116010080813560020153</strong></li>
+      </ul>
+    </div>
+  </body>
+</html>

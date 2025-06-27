@@ -1,0 +1,15 @@
+const ModuleAlias = {
+  facturation: "FACTURATION",
+  client: "CLIENT",
+  service: "SERVICE",
+  personnel: "PERSONNEL",
+  payement: "PAYEMENT",
+  fluxFinancier: "FLUX_FINANCIER",
+  creance: "CREANCE",
+  libelleFluxFinancier: "LIBELLE_FINANCIER",
+  banque: "BANQUE",
+  pays: "PAYS",
+  utilisateur: "UTILISATEUR",
+  habilitation: "HABILITATION",
+  entreprise: "ENTREPRISE",
+};
