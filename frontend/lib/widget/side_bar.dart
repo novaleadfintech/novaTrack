@@ -7,10 +7,12 @@ import '../style/app_style.dart';
 class SideBar extends StatelessWidget {
   final Function(int) getcurrentIndex;
   final int currentIndex;
+  final bool? isMobile;
   final List<(String, String, int)> menu;
 
   const SideBar({
     super.key,
+    this.isMobile = false,
     required this.getcurrentIndex,
     required this.currentIndex,
     required this.menu,
@@ -52,6 +54,7 @@ class SideBar extends StatelessWidget {
                 ),
               ),
               MenuTile(
+                isMobile: isMobile,
                 currentIndex: currentIndex,
                 menu: menu,
                 getcurrentIndex: getcurrentIndex,

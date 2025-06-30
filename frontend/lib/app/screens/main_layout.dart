@@ -47,6 +47,7 @@ class _MainLayoutState extends State<MainLayout> {
         appBar: isDesktop
             ? null
             : AppBar(
+                forceMaterialTransparency: false,
                 automaticallyImplyLeading: true,
                 title: Header(
                   title: menu[currentIndex].$1,
@@ -63,6 +64,7 @@ class _MainLayoutState extends State<MainLayout> {
                 // surfaceTintColor: Theme.of(context).colorScheme.error,
                 width: 260,
                 child: SideBar(
+                  isMobile: true,
                   currentIndex: currentIndex,
                   getcurrentIndex: (index) {
                     setState(() {

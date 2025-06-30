@@ -20,11 +20,67 @@ class PasswordTextField extends StatefulWidget {
 
 class _PasswordTextFieldState extends State<PasswordTextField> {
   bool _obscureText = true;
+  String _actualPassword = '';
+  late TextEditingController _displayController;
+  String obscureChar = "•";
+  @override
+  void initState() {
+    super.initState();
+    _displayController = TextEditingController();
+    _actualPassword = widget.controller.text;
+    _updateDisplayText();
+  }
+
+  @override
+  void dispose() {
+    _displayController.dispose();
+    super.dispose();
+  }
 
   void _toggleVisibility() {
     setState(() {
       _obscureText = !_obscureText;
+      _updateDisplayText();
     });
+  }
+
+  void _updateDisplayText() {
+    if (_obscureText) {
+      _displayController.text = obscureChar * _actualPassword.length;
+    } else {
+      _displayController.text = _actualPassword;
+    }
+  }
+
+  void _onTextChanged(String value) {
+    if (_obscureText) {
+      // Calculer les changements dans le mot de passe réel
+      if (value.length > _actualPassword.length) {
+        // Caractère ajouté
+        String newChar = value[value.length - 1];
+        if (newChar != obscureChar) {
+          _actualPassword = _actualPassword + newChar;
+        }
+      } else if (value.length < _actualPassword.length) {
+        // Caractère supprimé
+        _actualPassword = _actualPassword.substring(0, value.length);
+      }
+
+      // Mettre à jour le controller principal avec le vrai mot de passe
+      widget.controller.text = _actualPassword;
+
+      // Afficher les points
+      _displayController.text = obscureChar * _actualPassword.length;
+
+      // Repositionner le curseur à la fin
+      _displayController.selection = TextSelection.fromPosition(
+        TextPosition(offset: _displayController.text.length),
+      );
+    } else {
+      // Mode visible - synchroniser directement
+      _actualPassword = value;
+      widget.controller.text = _actualPassword;
+    }
   }
 
   @override
@@ -57,8 +113,11 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
           SizedBox(
             height: 40,
             child: TextField(
-              controller: widget.controller,
-              obscureText: _obscureText,
+              enableInteractiveSelection: true,
+              controller: _obscureText ? _displayController : widget.controller,
+              obscureText: false, // On gère l'obscurcissement manuellement
+              keyboardType: TextInputType.visiblePassword,
+              onChanged: _onTextChanged,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(4),

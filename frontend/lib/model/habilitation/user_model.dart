@@ -9,6 +9,7 @@ class UserModel {
   final PersonnelModel? personnel;
   final List<RoleModel>? roles;
   final bool? canLogin;
+  final bool? isTheFirstConnection; // Added field for first connection
   final String? token;
   final DateTime? dateEnregistrement;
 
@@ -17,6 +18,7 @@ class UserModel {
     this.login,
     this.password,
     this.personnel,
+    this.isTheFirstConnection,
     this.roles,
     this.canLogin,
     this.token,
@@ -37,6 +39,7 @@ class UserModel {
               .toList()
           : null,
       canLogin: json['canLogin'] ?? false,
+      isTheFirstConnection: json['isTheFirstConnection'] ?? false,
       token: json['_token'],
       dateEnregistrement: json['dateEnregistrement'] != null
           ? DateTime.fromMillisecondsSinceEpoch(json['dateEnregistrement'])

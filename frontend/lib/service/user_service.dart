@@ -81,8 +81,9 @@ class UserService {
                   name
                   alias
                 }
+             }
             }
-            }
+            isTheFirstConnection
             canLogin
             _token
             dateEnregistrement
@@ -202,6 +203,7 @@ class UserService {
             adresse
             sexe
             poste
+            isTheFirstConnection
             situationMatrimoniale
             commentaire
             etat

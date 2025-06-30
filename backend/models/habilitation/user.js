@@ -164,6 +164,7 @@ class User {
       login: personnel.email,
       password: hashedPassword,
       personnelId: personnelId,
+      isTheFirstConnection: true,
       dateEnregistrement: Date.now(),
       canLogin: true,
     };
@@ -278,9 +279,14 @@ class User {
       const hashed = await hashPassword({ password: password });
       updateFied.password = hashed;
     }
+
     isValidValue({ value: updateFied });
+
     try {
-      await userCollection.update(key, updateFied);
+      await userCollection.update(key, {
+        ...updateFied,
+        isTheFirstConnection: false,
+      });
       return "OK";
     } catch (err) {
       throw new Error(

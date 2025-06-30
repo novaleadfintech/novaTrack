@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/app/integration/popop_status.dart';
+import 'package:frontend/app/pages/app_dialog_box.dart';
 import '../../model/habilitation/role_model.dart';
 import 'package:gap/gap.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
@@ -10,6 +11,7 @@ import '../integration/request_frot_behavior.dart';
 import '../../style/app_style.dart';
 import '../../widget/password_textfield.dart';
 import '../../widget/simple_text_field.dart';
+import '../pages/utilisation/edit_login_parameter.dart';
 import 'main_layout.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -65,7 +67,16 @@ class _LoginScreenState extends State<LoginScreen> {
       AuthService().setToken(result.token!);
       final roles = result.roles ?? [];
       AuthService().setRoles(roles);
-
+      if (result.isTheFirstConnection == true) {
+        showResponsiveDialog(context,
+            content: EditLoginParametter(
+              refresh: () async {
+                
+              },
+            ),
+            title: "Modifier votre mot de passe");
+        return;
+      }
       _navigateToMainLayout(roles);
     } catch (e) {
       _dialog.hide();
@@ -145,15 +156,14 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           const Gap(12),
                           SizedBox(
-                              height: 40,
-                              width: double.infinity,
-                              child: ValidateButton(
+                            height: 40,
+                            width: double.infinity,
+                            child: ValidateButton(
                               onPressed: login,
-                                libelle: "Connexion",
+                              libelle: "Connexion",
                             ),
                           ),
-                        ]
-                        ),
+                        ]),
                       )
                     ],
                   ),

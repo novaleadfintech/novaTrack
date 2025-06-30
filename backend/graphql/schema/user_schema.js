@@ -7,6 +7,7 @@ const typeDef = `#graphql
         roles:[Role]!  
         canLogin:Boolean!
         _token:String
+        isTheFirstConnection:Boolean
         dateEnregistrement:Float!
     }
 `;
