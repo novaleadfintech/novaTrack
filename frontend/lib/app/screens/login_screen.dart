@@ -65,19 +65,13 @@ class _LoginScreenState extends State<LoginScreen> {
       _dialog.hide();
 
       AuthService().setToken(result.token!);
-      final roles = result.roles ?? [];
-      AuthService().setRoles(roles);
+      final role = result.roles!.last;
+      AuthService().setRoles(role);
       if (result.isTheFirstConnection == true) {
-        showResponsiveDialog(context,
-            content: EditLoginParametter(
-              refresh: () async {
-                
-              },
-            ),
-            title: "Modifier votre mot de passe");
+        openEditLoginParameter();
         return;
       }
-      _navigateToMainLayout(roles);
+      _navigateToMainLayout(role);
     } catch (e) {
       _dialog.hide();
       MutationRequestContextualBehavior.showPopup(
@@ -87,11 +81,21 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  void _navigateToMainLayout(List<RoleModel> roles) {
+  openEditLoginParameter() {
+    showResponsiveDialog(
+      context,
+      content: EditLoginParametter(
+        refresh: () async {},
+      ),
+      title: "Modifier votre mot de passe",
+    );
+  }
+
+  void _navigateToMainLayout(RoleModel role) {
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
-        builder: (context) => MainLayout(roles: roles),
+        builder: (context) => MainLayout(role: role),
       ),
       (route) => false,
     );

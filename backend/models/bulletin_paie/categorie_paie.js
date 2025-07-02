@@ -15,7 +15,7 @@ class CategoriePaie {
 
     const query = await db.query(
       aql`FOR categorie IN ${categoriePaieCollection} 
-          SORT categorie.timestamp DESC ${limit} 
+          SORT categorie.timeStamp DESC ${limit} 
           RETURN categorie`,
       { fullCount: true }
     );
@@ -64,7 +64,7 @@ class CategoriePaie {
     // Création de la catégorie
     const categorie = {
       categoriePaie,
-      timestamp: Date.now(),
+      timeStamp: Date.now(),
     };
 
     try {

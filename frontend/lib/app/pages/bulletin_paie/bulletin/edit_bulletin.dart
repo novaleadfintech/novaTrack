@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
- import 'package:frontend/app/integration/popop_status.dart';
+import 'package:frontend/app/integration/popop_status.dart';
 import 'package:frontend/app/integration/request_frot_behavior.dart';
+import 'package:frontend/helper/amout_formatter.dart';
 import 'package:frontend/model/bulletin_paie/bulletin_model.dart';
 import 'package:frontend/model/bulletin_paie/tranche_model.dart';
 import 'package:frontend/model/bulletin_paie/type_rubrique.dart';
@@ -71,7 +72,6 @@ class _AddBulletinState extends State<EditBulletinPage> {
     moyenPayement = widget.bulletinPaie.moyenPayement;
     banque = widget.bulletinPaie.banque;
     referenceFiledContoller.text = widget.bulletinPaie.referencePaie!;
-    
   }
 
   // hasChange() {
@@ -146,7 +146,7 @@ class _AddBulletinState extends State<EditBulletinPage> {
             .toList();
   }
 
-Future<List<MoyenPaiementModel>> fetchMoyenPaiementItems() async {
+  Future<List<MoyenPaiementModel>> fetchMoyenPaiementItems() async {
     return banque == null
         ? await MoyenPaiementService.getMoyenPaiements()
         : (await MoyenPaiementService.getMoyenPaiements())
@@ -193,9 +193,9 @@ Future<List<MoyenPaiementModel>> fetchMoyenPaiementItems() async {
             fetchItems: fetchMoyenPaiementItems,
             onChanged: (MoyenPaiementModel? value) {
               // if (value != null) {
-                setState(() {
-                  moyenPayement = value;
-                });
+              setState(() {
+                moyenPayement = value;
+              });
               // }
             },
             canClose: true,
@@ -208,9 +208,9 @@ Future<List<MoyenPaiementModel>> fetchMoyenPaiementItems() async {
             fetchItems: fetchBanqueItems,
             onChanged: (BanqueModel? value) {
               // if (value != null) {
-                setState(() {
-                  banque = value;
-                });
+              setState(() {
+                banque = value;
+              });
               // }
             },
             canClose: true,
@@ -227,8 +227,7 @@ Future<List<MoyenPaiementModel>> fetchMoyenPaiementItems() async {
             if (r.nature == NatureRubrique.constant) {
               // On gère les cas particuliers d'abord
               if (r.rubriqueIdentity == RubriqueIdentity.anciennete) {
-                rubrique.value =
-                    calculerAncienneteEnMs(
+                rubrique.value = calculerAncienneteEnMs(
                   dateDebutContrat:
                       widget.bulletinPaie.salarie.personnel.dateDebut!,
                   periodeEssai:
@@ -249,30 +248,29 @@ Future<List<MoyenPaiementModel>> fetchMoyenPaiementItems() async {
               }
 
               return SimpleTextField(
-                  label: r.rubrique,
-                  textController:
-                      valueControllers[r.id] ?? TextEditingController(),
-                  required: true,
-                  onChanged: (value) {
-                    final parsed =
-                        value.isEmpty ? null : double.tryParse(value);
-                    rubrique.value = parsed;
-                  },
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
-                  
+                label: r.rubrique,
+                textController:
+                    valueControllers[r.id] ?? TextEditingController(),
+                required: true,
+                onChanged: (value) {
+                   final parsed = value.isEmpty
+                      ? null
+                      : double.tryParse(Formatter.parseAmount(value));
+                   rubrique.value = parsed;
+                },
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
               );
             }
-             return const SizedBox();
+            return const SizedBox();
           }),
-        
           const Gap(16),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Align(
               alignment: Alignment.bottomRight,
               child: ValidateButton(
-                libelle: "Editer",
+                libelle: "Modifier",
                 onPressed: () async {
                   await _addBulletin();
                 },
@@ -297,6 +295,8 @@ Future<List<MoyenPaiementModel>> fetchMoyenPaiementItems() async {
     final List<RubriqueOnBulletinModel> constantesIndividuellesSansValeur =
         _rubriquesOnBulletin.where((rubriqueOnBulletin) {
       final rubrique = rubriqueOnBulletin.rubrique;
+      print(rubrique.rubrique);
+      print(rubriqueOnBulletin.value);
       return rubrique.nature == NatureRubrique.constant &&
           rubrique.rubriqueIdentity != RubriqueIdentity.avanceSurSalaire &&
           rubrique.portee == PorteeRubrique.individuel &&
@@ -304,7 +304,6 @@ Future<List<MoyenPaiementModel>> fetchMoyenPaiementItems() async {
     }).toList();
 
     if (constantesIndividuellesSansValeur.isNotEmpty) {
-
       MutationRequestContextualBehavior.showCustomInformationPopUp(
         message: "Veuillez remplir tous les champs obligatoires.",
       );

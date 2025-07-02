@@ -71,7 +71,8 @@ class _EditLibellePageState extends State<EditLibellePage> {
       MutationRequestContextualBehavior.closePopup();
       MutationRequestContextualBehavior.showPopup(
           status: PopupStatus.success,
-          customMessage: "Libellé modifié avec succès");
+        customMessage: "Libellé modifié avec succès",
+      );
       await widget.refresh();
     } else {
       MutationRequestContextualBehavior.showPopup(
@@ -84,6 +85,7 @@ class _EditLibellePageState extends State<EditLibellePage> {
   @override
   void initState() {
     _libelleFieldController.text = widget.libelleFlux.libelle;
+    type = widget.libelleFlux.type;
     _dialog = SimpleFontelicoProgressDialog(context: context);
     super.initState();
   }

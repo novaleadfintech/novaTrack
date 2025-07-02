@@ -29,7 +29,7 @@ class UnarchivedServicePage extends StatefulWidget {
 class _ServicePageState extends State<UnarchivedServicePage> {
   final TextEditingController _researchController = TextEditingController();
   late Future<void> _futureRoles;
-  late List<RoleModel> roles = [];
+  late RoleModel role;
 
   String searchQuery = "";
   String? selectedFilter;
@@ -50,12 +50,12 @@ class _ServicePageState extends State<UnarchivedServicePage> {
   void initState() {
     super.initState();
     _researchController.addListener(_onSearchChanged);
-    _futureRoles = getRoles();
+    _futureRoles = getRole();
     _loadServiceData();
   }
 
-  Future<void> getRoles() async {
-    roles = await AuthService().getRoles();
+  Future<void> getRole() async {
+    role = await AuthService().getRole();
   }
 
   void _onSearchChanged() {
@@ -141,7 +141,7 @@ class _ServicePageState extends State<UnarchivedServicePage> {
             } else {
              
               if (hasPermission(
-                  roles: roles,
+                  role: role,
                   permission: PermissionAlias.createService.label)) {
                 return Container(
                   width: double.infinity,

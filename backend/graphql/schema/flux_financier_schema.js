@@ -53,7 +53,7 @@ const typeDef = `#graphql
         user: User #userId
         client: Client
         bank:Banque!
-        # factureId: String #factureId
+        factureId: String #factureId
     }
 `;
 

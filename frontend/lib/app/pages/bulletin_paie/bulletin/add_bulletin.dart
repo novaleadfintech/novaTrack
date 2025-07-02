@@ -10,6 +10,7 @@ import 'package:frontend/model/request_response.dart';
 import 'package:frontend/service/bulletin_service.dart';
 import 'package:frontend/widget/simple_text_field.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
+import '../../../../helper/amout_formatter.dart';
 import '../../../../helper/date_helper.dart';
 import '../../../../helper/get_bulletin_period.dart';
 import '../../../../model/bulletin_paie/nature_rubrique.dart';
@@ -87,8 +88,8 @@ class _AddBulletinState extends State<AddBulletinPage> {
         _rubriquesOnBulletin = rubriquePaieResponse;
         dateFieldController.text =
             getStringDate(time: dateEdition ?? DateTime.now());
-        datedebutFieldController.text =
-            getStringDate(time: widget.debutPeriodePaie ?? DateTime.now());
+      // datedebutFieldController.text =
+      //     getStringDate(time: widget.debutPeriodePaie ?? DateTime.now());
         isLoading = false;
         hasError = false;
       });
@@ -241,7 +242,7 @@ Future<List<MoyenPaiementModel>> fetchMoyenPaiementItems() async {
                     dateDebutContrat: widget.salarie.personnel.dateDebut!,
                     periodeEssai: widget.salarie.personnel.dureeEssai!,
                   ).toDouble();
-                  return const SizedBox(); // On n'affiche rien
+                  return const SizedBox();
                 }
 
                 if (r.rubriqueIdentity ==
@@ -261,8 +262,9 @@ Future<List<MoyenPaiementModel>> fetchMoyenPaiementItems() async {
                       valueControllers[r.id] ?? TextEditingController(),
                   required: true,
                   onChanged: (value) {
-                    final parsed =
-                        value.isEmpty ? null : double.tryParse(value);
+                    final parsed = value.isEmpty
+                        ? null
+                        : double.tryParse(Formatter.parseAmount(value));
                     rubrique.value = parsed;
                   },
                   keyboardType:

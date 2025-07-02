@@ -601,7 +601,7 @@
 // //     return Row(children: toggles);
 // //   }
 
-// //   String timestamp() => DateTime.now().millisecondsSinceEpoch.toString();
+// //   String timeStamp() => DateTime.now().millisecondsSinceEpoch.toString();
 
 // //   void showInSnackBar(String message) {
 // //     ScaffoldMessenger.of(context)

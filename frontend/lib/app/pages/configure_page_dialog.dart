@@ -198,7 +198,7 @@ void showResponsiveConfigPageDialogBox(
   required Widget content,
   required String title,
   bool canClose = true,
-  double maxHeightFactor = 0.9,
+  double maxHeightFactor = 0.95,
 }) {
   showDialog(
     barrierDismissible: false,

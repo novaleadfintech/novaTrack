@@ -375,10 +375,57 @@ class FluxFinancier {
     }
   };
 
+  getFluxFiancierbyforFactureInformation = async ({ factureId }) => {
+    let precision = aql`SORT payement.dateEnregistrement DESC`;
+    if (factureId !== undefined) {
+      precision = aql`FILTER payement.factureId == ${factureId} SORT payement.dateEnregistrement ASC`;
+    }
+    const query = await db.query(
+      aql`FOR payement IN ${fluxFinancierCollection} ${precision}  RETURN payement`
+    );
+
+    if (query.hasNext) {
+      const payements = await query.all();
+      return Promise.all(
+        payements.map(async (payement) => {
+          let validate;
+          if (payement.validate == null) {
+            validate = payement.validate ?? [];
+            await Promise.all(
+              validate.map(async (valid) => {
+                valid.validater = await userModel.getUser({
+                  key: valid.validater,
+                });
+              })
+            );
+          }
+
+          return {
+            ...payement,
+            validate: validate,
+            user: await userModel.getUser({ key: payement.userId }),
+            client:
+              payement.clientId == null
+                ? null
+                : await clientModel.getClient({ key: payement.clientId }),
+            pieceJustificative:
+              payement.pieceJustificative !== null
+                ? process.env.FILE_PREFIX +
+                  `${locateFinanceFolder}/` +
+                  payement.pieceJustificative
+                : null,
+          };
+        })
+      );
+    } else {
+      return [];
+    }
+  };
+
   getFluxFiancierbyFacture = async ({ factureId }) => {
     let precision = aql`SORT payement.dateEnregistrement DESC`;
     if (factureId !== undefined) {
-      precision = aql`FILTER payement.factureId == ${factureId} AND ( payement.status != ${FluxFinancierStatus.reject}) SORT payement.dateEnregistrement ASC`;
+      precision = aql`FILTER payement.factureId == ${factureId} AND payement.status != ${FluxFinancierStatus.reject}  SORT payement.dateEnregistrement ASC`;
     }
     const query = await db.query(
       aql`FOR payement IN ${fluxFinancierCollection} ${precision}  RETURN payement`
@@ -467,7 +514,7 @@ class FluxFinancier {
       await clientModel.isExistClient({ key: clientId });
     }
     const query = await db.query(
-      aql`FOR flux IN ${fluxFinancierCollection} FILTER flux.referenceTransaction == ${referenceTransaction} LIMIT 1 RETURN flux`
+      aql`FOR flux IN ${fluxFinancierCollection} FILTER flux.status != ${FluxFinancierStatus.reject} AND flux.referenceTransaction == ${referenceTransaction} LIMIT 1 RETURN flux`
     );
 
     if (query.hasNext) {
@@ -572,7 +619,7 @@ class FluxFinancier {
     try {
       const flux = await this.getFluxFinancier({ key: key });
       if (!flux) throw new Error("Flux financier introuvable.");
-      if (flux.isFromSystem==true) {
+      if (flux.isFromSystem == true) {
         throw new Error("Ce flux financier n'est pas modifiable");
       }
       const ancienMontant = flux.montant;
@@ -646,8 +693,16 @@ class FluxFinancier {
         if (montant !== undefined) updateField.montant = montant;
         if (moyenPayement !== undefined)
           updateField.moyenPayement = moyenPayement;
-        if (referenceTransaction !== undefined)
+        if (referenceTransaction !== undefined) {
+          const query = await db.query(
+            aql`FOR flux IN ${fluxFinancierCollection} FILTER flux.status != ${FluxFinancierStatus.reject} AND flux.referenceTransaction == ${referenceTransaction} LIMIT 1 RETURN flux`
+          );
+
+          if (query.hasNext) {
+            throw new Error("Cette reférence est déjà existant");
+          }
           updateField.referenceTransaction = referenceTransaction;
+        }
         if (dateOperation) updateField.dateOperation = dateOperation;
         if (pieceJustificative?.file == null) {
           updateField.pieceJustificative = null;
@@ -719,7 +774,7 @@ class FluxFinancier {
         throw new Error("Flux financier introuvable.");
       }
 
-      if (flux.status === FluxFinancierStatus.valid) {
+      if (flux.status !== FluxFinancierStatus.wait) {
         throw new Error(
           "Impossible de supprimer un flux financier déjà validé."
         );

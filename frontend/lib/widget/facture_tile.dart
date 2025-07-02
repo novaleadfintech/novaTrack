@@ -62,12 +62,12 @@ class _FactureTileState extends State<FactureTile> {
   final TextEditingController _compterController = TextEditingController();
   DateTime? delaisPayement;
   TextEditingController delaisController = TextEditingController();
-  late List<RoleModel> roles = [];
+  late RoleModel role;
 
-  Future<void> getRoles() async {
-    List<RoleModel> roleData = await AuthService().getRoles();
+  Future<void> getRole() async {
+    RoleModel currentRole = await AuthService().getRole();
     setState(() {
-      roles = roleData;
+      role = currentRole;
     });
   }
 
@@ -122,7 +122,7 @@ class _FactureTileState extends State<FactureTile> {
                       showResponsiveDialog(
                         context,
                         content: EditFactureAccompte(
-                          roles: roles,
+                          role: role,
                           refresh: widget.refresh,
                           factureAcompte: acompte,
                           dateEtablissement: facture.dateEtablissementFacture!,
@@ -444,7 +444,7 @@ class _FactureTileState extends State<FactureTile> {
   @override
   void initState() {
     _dialog = SimpleFontelicoProgressDialog(context: context);
-    getRoles();
+    getRole();
     super.initState();
   }
 
@@ -532,7 +532,7 @@ class _FactureTileState extends State<FactureTile> {
                                         widget.facture.isDeletable ==
                                             true))) ...[
                                   if (hasPermission(
-                                    roles: roles,
+                                    role: role,
                                     permission:
                                         PermissionAlias.updateFacture.label,
                                   ))
@@ -569,7 +569,7 @@ class _FactureTileState extends State<FactureTile> {
                                               acompte.datePayementEcheante ==
                                               null)) ...[
                                     if (hasPermission(
-                                      roles: roles,
+                                      role: role,
                                       permission:
                                           PermissionAlias.deleteFacture.label,
                                     ))
@@ -702,7 +702,7 @@ class _FactureTileState extends State<FactureTile> {
                                             widget.facture.isDeletable ==
                                                 true)) ...[
                                       if (hasPermission(
-                                        roles: roles,
+                                        role: role,
                                         permission:
                                             PermissionAlias.updateFacture.label,
                                       ))
@@ -734,7 +734,7 @@ class _FactureTileState extends State<FactureTile> {
                                         !widget.facture
                                             .isConvertFromProforma!) ...[
                                       if (hasPermission(
-                                        roles: roles,
+                                        role: role,
                                         permission:
                                             PermissionAlias.deleteFacture.label,
                                       ))
@@ -807,7 +807,7 @@ class _FactureTileState extends State<FactureTile> {
               LigneFactureDetail(
                 facture: widget.facture,
                 refresh: widget.refresh,
-                roles: roles,
+                role: role,
               ),
               Table(
                 columnWidths: {
@@ -925,7 +925,7 @@ class _FactureTileState extends State<FactureTile> {
 
   void arrestService({required FactureModel facture}) async {
     if (!hasPermission(
-      roles: roles,
+      role: role,
       permission: PermissionAlias.stopFactureGeneration.label,
     )) {
       MutationRequestContextualBehavior.showPopup(
@@ -959,7 +959,7 @@ class _FactureTileState extends State<FactureTile> {
 
   void restartService({required FactureModel facture}) async {
     if (!hasPermission(
-      roles: roles,
+      role: role,
       permission: PermissionAlias.stopFactureGeneration.label,
     )) {
       MutationRequestContextualBehavior.showPopup(

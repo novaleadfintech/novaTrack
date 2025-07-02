@@ -343,9 +343,11 @@ class FluxFinancierService {
                       reference
                       referenceTransaction
                       status
+                      factureId
                       moyenPayement{
                       _id
                       libelle
+                      type
                       }
                       pieceJustificative
                       isFromSystem
@@ -389,6 +391,7 @@ class FluxFinancierService {
                       bank {
             _id
             name
+            type
             codeGuichet
                         codeBIC
             numCompte
@@ -448,6 +451,7 @@ class FluxFinancierService {
                       moyenPayement{
                       _id
                       libelle
+                      type
                       }
                       dateOperation
                       dateEnregistrement
@@ -480,6 +484,7 @@ class FluxFinancierService {
                       bank {
             _id
             name
+            type
             codeGuichet
             codeBanque
                         codeBIC
@@ -545,9 +550,11 @@ class FluxFinancierService {
                       status
                       type
                       montant
+                      factureId
                       moyenPayement{
                       _id
                       libelle
+                      type
                       }
                       dateOperation
                       dateEnregistrement
@@ -581,6 +588,7 @@ class FluxFinancierService {
             _id
             name
             codeGuichet
+            type
             codeBanque
                         codeBIC
             numCompte
@@ -659,6 +667,7 @@ class FluxFinancierService {
                       moyenPayement{
                       _id
                       libelle
+                      type
                       }
                       client {
                         _id
@@ -687,6 +696,7 @@ class FluxFinancierService {
                       bank {
             _id
             name
+            type
             codeGuichet
             codeBanque
                         codeBIC
@@ -772,6 +782,7 @@ class FluxFinancierService {
                       moyenPayement{
                       _id
                       libelle
+                      type
                       }
                       pieceJustificative
                       user {
@@ -789,6 +800,7 @@ class FluxFinancierService {
                       bank {
                         _id
                         name
+                        type
                                     codeBIC
             numCompte
                         codeGuichet
@@ -840,6 +852,7 @@ class FluxFinancierService {
                       _id
                       libelle
                       type
+                      factureId
                       montant
                       reference
                       isFromSystem
@@ -884,12 +897,14 @@ class FluxFinancierService {
                       moyenPayement{
                       _id
                       libelle
+                      type
                       }
                       pieceJustificative
                       dateOperation
                       bank {
             _id
             name
+            type
             codeGuichet
             codeBanque
                         codeBIC

@@ -47,7 +47,7 @@ class _OutputPageState extends State<OutputPage> {
   @override
   void initState() {
     super.initState();
-    getRoles();
+    getRole();
     _researchController.addListener(_onSearchChanged);
     _loadFluxFinancierData();
   }
@@ -114,10 +114,10 @@ class _OutputPageState extends State<OutputPage> {
     });
   }
 
-  List<RoleModel> roles = [];
+  late RoleModel role;
 
-  Future<void> getRoles() async {
-    roles = await AuthService().getRoles();
+  Future<void> getRole() async {
+    role = await AuthService().getRole();
   }
 
   void onClickAddFluxButton() {
@@ -140,7 +140,7 @@ class _OutputPageState extends State<OutputPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (hasPermission(
-              roles: roles,
+              role: role,
               permission: PermissionAlias.createFluxFinancier.label))
             Container(
               alignment: Alignment.centerRight,

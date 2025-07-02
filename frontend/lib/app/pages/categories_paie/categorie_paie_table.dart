@@ -37,18 +37,18 @@ class CategoriePaieTable extends StatefulWidget {
 
 class _InputTableState extends State<CategoriePaieTable> {
   late SimpleFontelicoProgressDialog _dialog;
-  late List<RoleModel> roles = [];
+  late RoleModel role;
   late Future<void> _futureRoles;
 
   @override
   void initState() {
     _dialog = SimpleFontelicoProgressDialog(context: context);
-    _futureRoles = getRoles();
+    _futureRoles = getRole();
     super.initState();
   }
 
-  Future<void> getRoles() async {
-    roles = await AuthService().getRoles();
+  Future<void> getRole() async {
+    role = await AuthService().getRole();
   }
 
   editCategoriePaie({
@@ -164,7 +164,7 @@ class _InputTableState extends State<CategoriePaieTable> {
                             color: null, // couleur null
                           ),
                           if (hasPermission(
-                            roles: roles,
+                            role: role,
                             permission: PermissionAlias
                                 .updateCategoriePaie.label,
                           ))
@@ -176,7 +176,7 @@ class _InputTableState extends State<CategoriePaieTable> {
                               color: null, // couleur null
                             ),
                           if (hasPermission(
-                            roles: roles,
+                            role: role,
                             permission: PermissionAlias
                                 .deleteCategoriePaie.label,
                           ))

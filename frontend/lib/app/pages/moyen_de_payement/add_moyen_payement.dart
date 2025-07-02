@@ -35,11 +35,6 @@ class _AddMoyenPayementState extends State<AddMoyenPayement> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SimpleTextField(
-          label: "Libellé",
-          textController: _libelleController,
-          keyboardType: TextInputType.text,
-        ),
         CustomDropDownField<CanauxPaiement>(
           items: CanauxPaiement.values.map((e) => e).toList(),
           onChanged: (value) {
@@ -53,6 +48,12 @@ class _AddMoyenPayementState extends State<AddMoyenPayement> {
           selectedItem: type,
           label: "Type",
         ),
+        SimpleTextField(
+          label: "Libellé",
+          textController: _libelleController,
+          keyboardType: TextInputType.text,
+        ),
+        
         const Gap(16),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),

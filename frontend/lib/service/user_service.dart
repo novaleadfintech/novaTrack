@@ -91,16 +91,14 @@ class UserService {
     }
   ''';
     try {
-      var response = await http
-          .post(
+      var response = await http.post(
         Uri.parse(serverUrl),
         body: json.encode({'query': body}),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "",
         },
-      )
-          .timeout(
+      ).timeout(
         const Duration(seconds: reqTimeout),
         onTimeout: () {
           throw RequestMessage.timeoutMessage;
@@ -108,14 +106,14 @@ class UserService {
       );
 
       if (response.statusCode == 200) {
-          var jsonData = jsonDecode(response.body);
+        var jsonData = jsonDecode(response.body);
         var data = jsonData['data']['seConnecter'];
         return UserModel.fromJson(data);
       } else {
-         throw jsonDecode(response.body)['errors'][0]['message'];
+        throw jsonDecode(response.body)['errors'][0]['message'];
       }
     } catch (error) {
-       throw error.toString();
+      throw error.toString();
     }
   }
 
@@ -194,6 +192,7 @@ class UserService {
             _id
             libelle
         }
+        isTheFirstConnection
         personnel {
             _id
             nom
@@ -203,7 +202,6 @@ class UserService {
             adresse
             sexe
             poste
-            isTheFirstConnection
             situationMatrimoniale
             commentaire
             etat

@@ -127,7 +127,7 @@ class Facture {
                   : null;
             });
           }
-          const payements = await fluxFinancierModel.getFluxFiancierbyFacture({
+          const payements = await fluxFinancierModel.getFluxFiancierbyforFactureInformation({
             factureId: factureCopy._id,
           });
 
@@ -273,7 +273,7 @@ class Facture {
           }
 
           // Récupérer les flux financiers associés à la facture
-          const payements = await fluxFinancierModel.getFluxFiancierbyFacture({
+          const payements = await fluxFinancierModel.getFluxFiancierbyforFactureInformation({
             factureId: factureCopy._id,
           });
 
@@ -307,17 +307,14 @@ class Facture {
     }
 
     const filtre = aql`
-    FILTER facture.status != ${StatusFacture.paid} 
-      AND facture.isDeletable != true 
-
+    FILTER facture.status != ${StatusFacture.paid} AND  
+    facture.isDeletable != true 
     LET accompteFiltre = (
         FOR acompte IN facture.facturesAcompte
-        FILTER acompte.isPaid == false 
-          AND acompte.datePayementEcheante != null
+        FILTER acompte.isPaid == false AND acompte.datePayementEcheante != null
         SORT acompte.datePayementEcheante ASC
         RETURN acompte
     )
-
     FILTER LENGTH(accompteFiltre) > 0
 
     SORT accompteFiltre[0].datePayementEcheante ASC
@@ -335,7 +332,7 @@ class Facture {
 
     if (query.hasNext) {
       const factures = await query.all();
-
+      console.log(factures);
       return Promise.all(
         factures.map(async (facture) => {
           let factureCopy = { ...facture };
@@ -370,7 +367,7 @@ class Facture {
           const payements = await fluxFinancierModel.getFluxFiancierbyFacture({
             factureId: factureCopy._id,
           });
-
+          console.log(payements);
           const montantTotal = utils.calculerMontantTotal({
             lignes: ligneFactures,
             reduction: factureCopy.reduction,
@@ -831,12 +828,12 @@ class Facture {
     //   );
     // }
     // Vérifie si l'une des factures d'acompte a une date de paiement définie
-    const acomptePaye = (facture.factureAcompte || []).some(
-      (f) => f.datePayementEcheante
-    );
-    if (acomptePaye) {
-      throw new Error("La facture ne peut pas être mise à jour.");
-    }
+    // const acomptePaye = (facture.factureAcompte || []).some(
+    //   (f) => f.datePayementEcheante
+    // );
+    // if (acomptePaye) {
+    //   throw new Error("La facture ne peut pas être mise à jour.");
+    // }
     if (datePayementEcheante !== undefined) {
       updateField.datePayementEcheante = datePayementEcheante;
     }
@@ -898,6 +895,9 @@ class Facture {
             ...(newItem.canPenalty !== undefined && {
               canPenalty: newItem.canPenalty,
             }),
+            ...(newItem.isPaid !== undefined && {
+              isPaid: newItem.isPaid,
+            }),
             ...(newItem.dateEnvoieFacture !== undefined && {
               dateEnvoieFacture: newItem.dateEnvoieFacture,
             }),
@@ -937,7 +937,7 @@ class Facture {
     }
 
     isValidValue({ value: updateField });
-
+    console.log(updateField);
     try {
       await factureCollection.update(key, updateField);
       return "OK";
@@ -957,7 +957,9 @@ class Facture {
   };
 
   calculerMontantPaye = ({ payements, montantactuelle = 0 }) => {
+    console.log(payements);
     return payements
+
       .map((payement) => payement.montant)
       .reduce((total, montant) => total + montant, montantactuelle);
   };
@@ -1169,7 +1171,7 @@ class Facture {
           }),
           type: type,
           montant: montant,
-          isFromSystem: true,
+          // isFromSystem: true,
           moyenPayement: moyenPayement,
           referenceTransaction: referenceTransaction,
           pieceJustificative: pieceJustificative,
@@ -1189,8 +1191,6 @@ class Facture {
         throw new Error("Aucun acompte correspondant trouvé.");
       }
 
-      acomptePaye.isPaid = true;
-
       if (facture.status != StatusFacture.blocked) {
         await this.applyPenalty({
           acomptePaye: acomptePaye,
@@ -1203,25 +1203,6 @@ class Facture {
             factureId: facture._id,
             secretekey: facture.secreteKey,
             dateRestart: dateOperation,
-          });
-        }
-      }
-
-      if (
-        this.isInvoicePaidTotaly({
-          facture: facture,
-          montantactuelle: montant,
-        })
-      ) {
-        await this.changeStatusFacture({
-          key: facture._id,
-          status: StatusFacture.paid,
-        });
-      } else {
-        if (facture.status !== StatusFacture.partialpaid) {
-          await this.changeStatusFacture({
-            key: facture._id,
-            status: StatusFacture.partialpaid,
           });
         }
       }
@@ -1241,7 +1222,7 @@ class Facture {
     try {
       isValidValue({ value: validate });
 
-      const flux = await fluxFinancierModel.getFluxFinancier({ key });
+      const flux = await fluxFinancierModel.getFluxFinancier({ key: key });
 
       await userModel.isExistUser({ key: validate.validater });
       const banque = await BanqueModel.getBanque({ key: flux.bank._id });
@@ -1253,12 +1234,33 @@ class Facture {
             key: banque._id,
             soldeReel: sommeBanquaire + flux.montant,
           });
+
+          // DÉPLACÉ ICI : Changement de statut de la facture lors de la validation
           if (flux.factureId || flux.factureId != null) {
             const facture = await this.getFacture({ key: flux.factureId });
+
+            const acomptesPayes = facture.facturesAcompte.filter(
+              (a) => a.isPaid === true
+            ).length;
+            console.log(acomptesPayes)
+            const prochainAcompte = facture.facturesAcompte.find(
+              (a) => a.rang === acomptesPayes + 1
+            );
+
+            if (prochainAcompte) {
+              console.log("je suis rentré dedans")
+              prochainAcompte.isPaid = true;
+              console.log(facture.facturesAcompte);
+               await this.updateFacture({
+                key: facture._id,
+                facturesAcompte: facture.facturesAcompte,
+               });
+            }
+
             if (
               this.isInvoicePaidTotaly({
                 facture: facture,
-                montantactuelle: flux.montant,
+                // montantactuelle: flux.montant,
               })
             ) {
               await this.changeStatusFacture({

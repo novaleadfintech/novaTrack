@@ -35,18 +35,18 @@ class _MoyenPaiementPageState extends State<MoyenPaiementPage> {
   String searchQuery = "";
   String? errorMessage;
   late Future<void> _futureRoles;
-  late List<RoleModel> roles = [];
+  late RoleModel role;
 
   @override
   void initState() {
     super.initState();
     _researchController.addListener(_onSearchChanged);
-    _futureRoles = getRoles();
+    _futureRoles = getRole();
     _loadMoyenPayement();
   }
 
-  Future<void> getRoles() async {
-    roles = await AuthService().getRoles();
+  Future<void> getRole() async {
+    role = await AuthService().getRole();
   }
 
   void _onSearchChanged() {
@@ -114,7 +114,7 @@ class _MoyenPaiementPageState extends State<MoyenPaiementPage> {
                 return const SizedBox();
               } else {
                 bool canCreate = hasPermission(
-                  roles: roles,
+                  role: role,
                   permission: PermissionAlias.createMoyenPaiement.label,
                 );
                 return Row(

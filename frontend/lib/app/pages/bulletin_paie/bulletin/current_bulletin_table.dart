@@ -39,7 +39,7 @@ class CurrentBulletinTable extends StatefulWidget {
 
 class _CurrentBulletinTableState extends State<CurrentBulletinTable> {
   late SimpleFontelicoProgressDialog _dialog;
-  late List<RoleModel> roles = [];
+  late RoleModel role;
 
   onShowDetail({required BulletinPaieModel bulletin}) {
     showDetailDialog(
@@ -51,8 +51,8 @@ class _CurrentBulletinTableState extends State<CurrentBulletinTable> {
     );
   }
 
-  Future<void> getRoles() async {
-    roles = await AuthService().getRoles();
+  Future<void> getRole() async {
+    role = await AuthService().getRole();
     setState(() {});
   }
 
@@ -195,7 +195,7 @@ class _CurrentBulletinTableState extends State<CurrentBulletinTable> {
   @override
   void initState() {
     _dialog = SimpleFontelicoProgressDialog(context: context);
-    getRoles();
+    getRole();
     super.initState();
   }
 
@@ -259,7 +259,7 @@ class _CurrentBulletinTableState extends State<CurrentBulletinTable> {
                                   color: null, // couleur null
                                 ),
                                 if (hasPermission(
-                                  roles: roles,
+                                  role: role,
                                   permission:
                                       PermissionAlias.validBulletin.label,
                                 ))
@@ -281,7 +281,7 @@ class _CurrentBulletinTableState extends State<CurrentBulletinTable> {
                                   color: null, // couleur null
                                 ),
                                 if (hasPermission(
-                                  roles: roles,
+                                  role: role,
                                   permission:
                                       PermissionAlias.updateBulletin.label,
                                 ))
@@ -356,7 +356,7 @@ class _CurrentBulletinTableState extends State<CurrentBulletinTable> {
                                       color: null, // couleur null
                                     ),
                                     if (hasPermission(
-                                      roles: roles,
+                                      role: role,
                                       permission:
                                           PermissionAlias.validBulletin.label,
                                     ))
@@ -378,7 +378,7 @@ class _CurrentBulletinTableState extends State<CurrentBulletinTable> {
                                       color: null, // couleur null
                                     ),
                                     if (hasPermission(
-                                      roles: roles,
+                                      role: role,
                                       permission:
                                           PermissionAlias.updateBulletin.label,
                                     ))

@@ -288,7 +288,7 @@ class _UpdateLigneFactureState extends State<UpdateLigneFacture> {
     return IntrinsicHeight(
       child: SingleChildScrollView(
         child: Form(
-          key: UniqueKey(),
+          // key: UniqueKey(),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [

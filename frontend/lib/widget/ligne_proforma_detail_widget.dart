@@ -34,11 +34,11 @@ import 'table_body_middle.dart';
 class LigneProformaDetail extends StatefulWidget {
   final ProformaModel proforma;
   final Future<void> Function() refresh;
-  final List<RoleModel> roles;
+  final RoleModel role;
 
   const LigneProformaDetail({
     super.key,
-    required this.roles,
+    required this.role,
     required this.refresh,
     required this.proforma,
   });
@@ -155,7 +155,7 @@ class _LigneProformaDetailState extends State<LigneProformaDetail> {
           hideButton:
               widget.proforma.status != StatusProforma.wait ||
                   !hasPermission(
-                      roles: widget.roles,
+                      role: widget.role,
                       permission: PermissionAlias.updateProforma.label)
               ? true
               : false,
@@ -173,7 +173,7 @@ class _LigneProformaDetailState extends State<LigneProformaDetail> {
                       items: [
                         if (widget.proforma.status == StatusProforma.wait) ...[
                           if (hasPermission(
-                              roles: widget.roles,
+                              role: widget.role,
                               permission: PermissionAlias.updateProforma.label))
                           (
                             label: Constant.edit,
@@ -195,7 +195,7 @@ class _LigneProformaDetailState extends State<LigneProformaDetail> {
                         ),
                         if (widget.proforma.status == StatusProforma.wait) ...[
                           if (hasPermission(
-                              roles: widget.roles,
+                              role: widget.role,
                               permission: PermissionAlias.updateProforma.label))
                           (
                             label: Constant.delete,
@@ -243,7 +243,7 @@ class _LigneProformaDetailState extends State<LigneProformaDetail> {
                       children: [
                         if (widget.proforma.status == StatusProforma.wait)
                           if (hasPermission(
-                              roles: widget.roles,
+                              role: widget.role,
                               permission:
                                   PermissionAlias.updateProforma.label)) ...[
                             IconButton(
@@ -268,7 +268,7 @@ class _LigneProformaDetailState extends State<LigneProformaDetail> {
                         ),
                         if (widget.proforma.status == StatusProforma.wait)
                           if (hasPermission(
-                              roles: widget.roles,
+                              role: widget.role,
                               permission:
                                   PermissionAlias.updateProforma.label)) ...[
                             IconButton(

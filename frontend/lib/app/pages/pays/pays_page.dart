@@ -26,7 +26,7 @@ class PaysPage extends StatefulWidget {
 
 class _ServicePageState extends State<PaysPage> {
   final TextEditingController _researchController = TextEditingController();
-  late List<RoleModel> roles = [];
+  late RoleModel role;
 
   String searchQuery = "";
   String? selectedFilter;
@@ -41,11 +41,11 @@ class _ServicePageState extends State<PaysPage> {
     super.initState();
     _researchController.addListener(_onSearchChanged);
     _loadPaysData();
-    getRoles();
+    getRole();
   }
 
-  Future<void> getRoles() async {
-    roles = await AuthService().getRoles();
+  Future<void> getRole() async {
+    role = await AuthService().getRole();
   }
 
   void _onSearchChanged() {
@@ -117,7 +117,7 @@ class _ServicePageState extends State<PaysPage> {
                 controller: _researchController,
               ),
               if (hasPermission(
-                roles: roles,
+                role: role,
                 permission: PermissionAlias.createPays.label,
               ))
               Container(

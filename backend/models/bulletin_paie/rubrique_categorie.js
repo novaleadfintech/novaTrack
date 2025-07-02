@@ -32,10 +32,10 @@ class RubriqueCategorie {
         })
       );
 
-      // Trier les résultats par timestamp croissant
+      // Trier les résultats par timeStamp croissant
       result.sort((a, b) => {
-        const tA = a.rubrique?.timestamp ?? 0;
-        const tB = b.rubrique?.timestamp ?? 0;
+        const tA = a.rubrique?.timeStamp ?? 0;
+        const tB = b.rubrique?.timeStamp ?? 0;
         return tA - tB;
       });
       console.log(result);
@@ -70,10 +70,10 @@ class RubriqueCategorie {
         };
       });
 
-      // Trier par timestamp croissant
+      // Trier par timeStamp croissant
       result.sort((a, b) => {
-        const tA = a.rubriqueCategorie.rubrique?.timestamp ?? 0;
-        const tB = b.rubriqueCategorie.rubrique?.timestamp ?? 0;
+        const tA = a.rubriqueCategorie.rubrique?.timeStamp ?? 0;
+        const tB = b.rubriqueCategorie.rubrique?.timeStamp ?? 0;
         return tA - tB;
       });
       return result;

@@ -34,18 +34,18 @@ class _RubriquePaiePageState extends State<RubriquePaiePage> {
   bool hasError = false;
   String searchQuery = "";
   late Future<void> _futureRoles;
-  late List<RoleModel> roles = [];
+  late RoleModel role;
   String? errorMessage;
   @override
   void initState() {
     super.initState();
     _researchController.addListener(_onSearchChanged);
-    _futureRoles = getRoles();
+    _futureRoles = getRole();
     _loadRubrique();
   }
 
-  Future<void> getRoles() async {
-    roles = await AuthService().getRoles();
+  Future<void> getRole() async {
+    role = await AuthService().getRole();
     setState(() {
     
   });
@@ -116,7 +116,7 @@ class _RubriquePaiePageState extends State<RubriquePaiePage> {
                 return const SizedBox();
               } else {
                 bool canCreate = hasPermission(
-                  roles: roles,
+                  role: role,
                   permission: PermissionAlias.createBulletinRubrique.label,
                 );
                 return Row(

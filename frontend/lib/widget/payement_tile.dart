@@ -104,7 +104,7 @@ class PayementDetail extends StatefulWidget {
 
 class _PayementDetailState extends State<PayementDetail> {
   UserModel? user;
-  List<RoleModel> roles = [];
+  late RoleModel role;
 
   Future<void> getCurrentUser() async {
     UserModel? currentUser = await AuthService().decodeToken();
@@ -113,8 +113,8 @@ class _PayementDetailState extends State<PayementDetail> {
     });
   }
 
-  Future<void> getRoles() async {
-    roles = await AuthService().getRoles();
+  Future<void> getRole() async {
+    role = await AuthService().getRole();
   }
 
   addPayement({required FactureModel facture}) {
@@ -168,7 +168,7 @@ class _PayementDetailState extends State<PayementDetail> {
   @override
   void initState() {
     getCurrentUser();
-    getRoles();
+    getRole();
     super.initState();
   }
 
@@ -207,9 +207,11 @@ class _PayementDetailState extends State<PayementDetail> {
                     TableBodyLast(
                       items: [
                         if (payement.user!.equalTo(user: user!) &&
-                            (payement.status != FluxFinancierStatus.valid) &&
+                            (payement.status != FluxFinancierStatus.valid &&
+                                payement.status !=
+                                    FluxFinancierStatus.reject) &&
                             hasPermission(
-                                roles: roles,
+                                role: role,
                                 permission:
                                     PermissionAlias.updateFluxFinancier.label))
                           (
@@ -217,14 +219,14 @@ class _PayementDetailState extends State<PayementDetail> {
                             onTap: () {
                               editPayement(payement: payement);
                             },
-                            color: null, // couleur null
+                            color: null, 
                           ),
                         (
                           label: Constant.detail,
                           onTap: () {
                             detailPayement(payement: payement);
                           },
-                          color: null, // couleur null
+                          color: null, 
                         ),
                       ],
                     ),
@@ -250,9 +252,11 @@ class _PayementDetailState extends State<PayementDetail> {
                     Row(
                       children: [
                         if (payement.user!.equalTo(user: user!) &&
-                            (payement.status != FluxFinancierStatus.valid) &&
+                            (payement.status != FluxFinancierStatus.valid &&
+                                payement.status !=
+                                    FluxFinancierStatus.reject) &&
                             hasPermission(
-                                roles: roles,
+                                role: role,
                                 permission:
                                     PermissionAlias.updateFluxFinancier.label))
                           IconButton(

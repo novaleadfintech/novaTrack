@@ -48,15 +48,23 @@ class Role {
 
   getRoleByUser = async ({ userId }) => {
     try {
-      const userRole = await userRoleCollection.edges(userId);
-      return Promise.all(
-        userRole.edges.map(
-          async (userRole) => await this.getRole({ key: userRole._to })
-        )
-      );
+      const query = await db.query(aql`
+        FOR userrole IN ${userRoleCollection}
+        FILTER userrole._from == ${userId} SORT userrole.timeStamp ASC
+        RETURN userrole
+      `);
+      if (query.hasNext) {
+        const userRoles = await query.all();
+        return Promise.all(
+          userRoles.map(
+            async (userRole) => await this.getRole({ key: userRole._to })
+          )
+        );
+      }
+      return [];
     } catch (err) {
       throw new Error(
-        "Une erreur s'est produite lors de la recupération des rôles"
+        "Une erreur s'est produite lors de la recupération des rôles"+ err
       );
     }
   };

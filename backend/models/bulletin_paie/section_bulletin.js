@@ -16,7 +16,7 @@ class SectionBulletin {
       const query = await db.query(
         aql`
           FOR sectionBulletin IN ${sectionBulletinCollection}
-          SORT sectionBulletin.timestamp DESC
+          SORT sectionBulletin.timeStamp DESC
         ${limit}
           RETURN sectionBulletin
         `
@@ -47,7 +47,7 @@ class SectionBulletin {
 
     const newSectionBulletin = {
       section: section,
-      timestamp: Date.now(),
+      timeStamp: Date.now(),
     };
     try {
       await sectionBulletinCollection.save(newSectionBulletin);

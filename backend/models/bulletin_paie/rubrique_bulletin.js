@@ -36,7 +36,7 @@ class RubriqueBulletin {
       const query = await db.query(
         aql`
           FOR rubriqueBulletin IN ${rubriqueBulletinCollection}
-          SORT rubriqueBulletin.timestamp ASC
+          SORT rubriqueBulletin.timeStamp ASC
         ${limit}
           RETURN rubriqueBulletin
         `
@@ -156,7 +156,7 @@ class RubriqueBulletin {
   getRubriqueBulletinByCode = async ({ code }) => {
     try {
       const query = await db.query(
-        aql`FOR rubrique IN ${rubriqueBulletinCollection} FILTER rubrique.code == ${code} SORT rubrique.timestamp ASC RETURN rubrique`
+        aql`FOR rubrique IN ${rubriqueBulletinCollection} FILTER rubrique.code == ${code} SORT rubrique.timeStamp ASC RETURN rubrique`
       );
       if (query.hasNext) {
         const rubrique = await query.next();
@@ -245,7 +245,7 @@ class RubriqueBulletin {
       sommeRubrique: sommeRubrique,
       bareme: bareme,
       rubriqueIdentity: rubriqueIdentity,
-      timestamp: Date.now(),
+      timeStamp: Date.now(),
     };
     try {
       await rubriqueBulletinCollection.save(newRubriqueBulletin);

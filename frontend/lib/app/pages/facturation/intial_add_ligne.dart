@@ -118,11 +118,7 @@ class _AddInitialLigneServiceState extends State<AddInitialLigne> {
             message: e.toString());
         return;
       }
-      _dialog.show(
-        message: "",
-        type: SimpleFontelicoProgressDialogType.phoenix,
-        backgroundColor: Colors.transparent,
-      );
+      
       compteur = int.tryParse(compterString);
       if ((compteur != null && unit == null) ||
           compteur == null && unit != null) {
@@ -141,6 +137,11 @@ class _AddInitialLigneServiceState extends State<AddInitialLigne> {
         );
         return;
       }
+      _dialog.show(
+        message: "",
+        type: SimpleFontelicoProgressDialogType.phoenix,
+        backgroundColor: Colors.transparent,
+      );
       widget.controllers.add(
         LigneDto(
           designation: designation,
@@ -170,6 +171,7 @@ class _AddInitialLigneServiceState extends State<AddInitialLigne> {
         status: PopupStatus.customError,
         customMessage: e.toString(),
       );
+     
     }
   }
 
@@ -200,7 +202,7 @@ class _AddInitialLigneServiceState extends State<AddInitialLigne> {
     return IntrinsicHeight(
       child: SingleChildScrollView(
         child: Form(
-          key: UniqueKey(),
+          // key: UniqueKey(),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [

@@ -82,7 +82,7 @@ final Map<String, List<String>> menuPermissions = {
 
 // Fonction de filtrage en fonction des rôles
 (List<(String, String, int)>, List<Widget>) getMenuAndPages(
-    List<RoleModel> roles) {
+    RoleModel role) {
   List<(String, String, int)> filteredMenu = [];
   List<Widget> filteredPages = [];
 
@@ -91,7 +91,7 @@ final Map<String, List<String>> menuPermissions = {
     final modules = menuPermissions[menuLabel];
 
     final hasAccess = modules == null ||
-        modules.any((m) => hasModule(roles: roles, module: m));
+        modules.any((m) => hasModule(role: role, module: m));
 
     if (hasAccess) {
       filteredMenu.add((menuLabel, allMenuItems[i].$2, filteredMenu.length));

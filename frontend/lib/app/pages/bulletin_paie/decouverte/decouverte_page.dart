@@ -36,7 +36,7 @@ class _DecouvertePageState extends State<DecouvertePage> {
   bool isLoading = true;
   bool hasError = false;
   String? errorMessage;
-  late List<RoleModel> roles = [];
+  late RoleModel role;
 
   List<String> selectedFilterOptions = [
     "Tout",
@@ -100,8 +100,8 @@ class _DecouvertePageState extends State<DecouvertePage> {
     });
   }
 
-  Future<void> getRoles() async {
-    roles = await AuthService().getRoles();
+  Future<void> getRole() async {
+    role = await AuthService().getRole();
     setState(() {});
   }
 
@@ -116,7 +116,7 @@ class _DecouvertePageState extends State<DecouvertePage> {
   @override
   void initState() {
     super.initState();
-    getRoles();
+    getRole();
     _researchController.addListener(_onSearchChanged);
     _loadDecouverteData();
   }
@@ -129,7 +129,7 @@ class _DecouvertePageState extends State<DecouvertePage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (hasPermission(
-          roles: roles,
+          role: role,
           permission: PermissionAlias.createAvance.label,
         ))
         Container(

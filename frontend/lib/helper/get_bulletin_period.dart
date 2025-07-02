@@ -27,57 +27,79 @@ List<DateTime>? getCurrentBulletinPeriod({required SalarieModel salarie}) {
 
   final bool isEndOfMonth = salarie.paieManner == PaieManner.finMois;
 
-  DateTime currentStart = finEssai;
-
   if (isEndOfMonth) {
-    while (true) {
-      final DateTime currentEnd = DateTime(
+    // Mode fin de mois : périodes du 1er au dernier jour du mois
+
+    // Première période : de la fin d'essai jusqu'à la fin du mois
+    DateTime premierePeriodeDebut = finEssai;
+    DateTime premierePeriodeFin = DateTime(finEssai.year, finEssai.month + 1, 1)
+        .subtract(const Duration(days: 1)); // Dernier jour du mois
+
+    // Si on est encore dans la première période
+    if (now.isAfter(premierePeriodeDebut.subtract(const Duration(days: 1))) &&
+        now.isBefore(premierePeriodeFin.add(const Duration(days: 1)))) {
+      return [
+        premierePeriodeDebut,
+        premierePeriodeFin.isAfter(dateFin) ? dateFin : premierePeriodeFin,
+      ];
+    }
+
+    // Périodes suivantes : du 1er au dernier jour de chaque mois
+    DateTime periodeDebut = DateTime(finEssai.year, finEssai.month + 1, 1);
+
+    while (periodeDebut.isBefore(dateFin) ||
+        periodeDebut.isAtSameMomentAs(dateFin)) {
+      DateTime periodeFin = DateTime(
+        periodeDebut.year,
+        periodeDebut.month + frequenceMois,
+        1,
+      ).subtract(const Duration(days: 1));
+
+      // Vérifier si on est dans cette période
+      if (now.isAfter(periodeDebut.subtract(const Duration(days: 1))) &&
+          now.isBefore(periodeFin.add(const Duration(days: 1)))) {
+        return [
+          periodeDebut,
+          periodeFin.isAfter(dateFin) ? dateFin : periodeFin,
+        ];
+      }
+
+      // Avancer à la période suivante
+      periodeDebut = DateTime(
+        periodeDebut.year,
+        periodeDebut.month + frequenceMois,
+        1,
+      );
+    }
+  } else if (salarie.paieManner == PaieManner.finPeriod) {
+    // Mode fin de période : même jour du mois que la date de début
+    final int jourDuMois = dateDebut.day;
+
+    DateTime currentStart = finEssai;
+
+    while (currentStart.isBefore(dateFin) ||
+        currentStart.isAtSameMomentAs(dateFin)) {
+      DateTime currentEnd = DateTime(
         currentStart.year,
         currentStart.month + frequenceMois,
-        1,
-      ).subtract(const Duration(days: 1)); // Fin de période
+        jourDuMois,
+      ).subtract(const Duration(days: 1));
 
-      if (now.isBefore(currentEnd) || now.isAtSameMomentAs(currentEnd)) {
+      // Vérifier si on est dans cette période
+      if (now.isAfter(currentStart.subtract(const Duration(days: 1))) &&
+          now.isBefore(currentEnd.add(const Duration(days: 1)))) {
         return [
           currentStart,
           currentEnd.isAfter(dateFin) ? dateFin : currentEnd,
         ];
       }
 
-      // Avancer de `frequenceMois` mois à partir de currentStart
+      // Avancer à la période suivante
       currentStart = DateTime(
         currentStart.year,
         currentStart.month + frequenceMois,
-        currentStart.day,
+        jourDuMois,
       );
-
-      if (currentStart.isAfter(dateFin)) break;
-    }
-
-  } else if (salarie.paieManner == PaieManner.finPeriod) {
-    final int jourDuMois = dateDebut.day;
-
-    DateTime currentEnd =
-        DateTime(currentStart.year, currentStart.month, jourDuMois);
-    if (currentEnd.isBefore(currentStart)) {
-      currentEnd = DateTime(currentEnd.year, currentEnd.month + 1, jourDuMois);
-    }
-
-    while (true) {
-      final DateTime adjustedEnd = currentEnd.subtract(const Duration(days: 1));
-
-      if (now.isBefore(adjustedEnd) || now.isAtSameMomentAs(adjustedEnd)) {
-        return [
-          currentStart,
-          adjustedEnd.isAfter(dateFin) ? dateFin : adjustedEnd,
-        ];
-      }
-
-      currentStart = currentEnd;
-      currentEnd = DateTime(
-          currentStart.year, currentStart.month + frequenceMois, jourDuMois);
-
-      if (currentStart.isAfter(dateFin)) break;
     }
   }
 
@@ -98,7 +120,7 @@ List<List<DateTime>> getBulletinPeriods({required SalarieModel salarie}) {
   final int frequenceMois =
       (frequenceMs / Duration(days: 30).inMilliseconds).round();
   if (frequenceMois <= 0) {
-    throw Exception('La fréquence de paie doit être supérieure à 0 mois.');
+    throw 'La fréquence de paie doit être supérieure à 0 mois.';
   }
 
   // Vérification du mode de paiement
@@ -509,6 +531,23 @@ int calculerAncienneteEnMs(
 double calculerAncienneteEnAnnees(int ancienneteEnMs) {
   const double msParAnnee = 365.25 * 24 * 60 * 60 * 1000;
   return ancienneteEnMs / msParAnnee;
+}
+
+// Fonction helper pour formater l'ancienneté
+String formatAnciennete(double? valueInMs) {
+  if (valueInMs == null) return "0 an";
+
+  final ancienneteEnAnnees = calculerAncienneteEnAnnees(valueInMs.toInt());
+  final ancienneteEntiere =
+      ancienneteEnAnnees.floor();
+
+  if (ancienneteEntiere == 0) {
+    return "< 1 an";
+  } else if (ancienneteEntiere == 1) {
+    return "1 an";
+  } else {
+    return "$ancienneteEntiere ans";
+  }
 }
 
 // Caluculer le montant de chaque rubrique.

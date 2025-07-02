@@ -28,7 +28,7 @@ class ProformaPage extends StatefulWidget {
 
 class _ProformaPageState extends State<ProformaPage> {
   final TextEditingController _researchController = TextEditingController();
-  List<RoleModel> roles = [];
+  late RoleModel role;
 
   String searchQuery = "";
   String? selectedFilter = StatusProforma.wait.label;
@@ -46,7 +46,7 @@ class _ProformaPageState extends State<ProformaPage> {
     super.initState();
     _researchController.addListener(_onSearchChanged);
     _loadProformaData();
-    getRoles();
+    getRole();
 
   }
 
@@ -57,8 +57,8 @@ class _ProformaPageState extends State<ProformaPage> {
   }
 
 
-  Future<void> getRoles() async {
-    roles = await AuthService().getRoles();
+  Future<void> getRole() async {
+    role = await AuthService().getRole();
   }
   
   Future<void> _loadProformaData() async {
@@ -132,7 +132,7 @@ class _ProformaPageState extends State<ProformaPage> {
       children: [
         if (
             hasPermission(
-          roles: roles,
+          role: role,
               permission: PermissionAlias.createProforma.label,
             ))
         Container(

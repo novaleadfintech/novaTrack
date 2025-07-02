@@ -50,12 +50,12 @@ class ProformaTile extends StatefulWidget {
 class _ProformaTileState extends State<ProformaTile> {
   late SimpleFontelicoProgressDialog _dialog;
   List<String> infoFacture = [];
-  List<RoleModel> roles = [];
+  late RoleModel role;
 
-  Future<void> getRoles() async {
-    final result = await AuthService().getRoles();
+  Future<void> getRole() async {
+    final result = await AuthService().getRole();
     setState(() {
-      roles = result;
+      role = result;
     });
   }
 
@@ -158,7 +158,7 @@ class _ProformaTileState extends State<ProformaTile> {
     required ProformaModel proforma,
   }) {
     if (!hasPermission(
-      roles: roles,
+      role: role,
       permission: PermissionAlias.updateFacture.label,
     )) {
       MutationRequestContextualBehavior.showPopup(
@@ -179,7 +179,7 @@ class _ProformaTileState extends State<ProformaTile> {
 
   @override
   void initState() {
-    getRoles();
+    getRole();
     _dialog = SimpleFontelicoProgressDialog(context: context);
     super.initState();
   }
@@ -231,7 +231,7 @@ class _ProformaTileState extends State<ProformaTile> {
                       items: [
                         if (widget.proforma.status == StatusProforma.wait) ...[
                           if (hasPermission(
-                            roles: roles,
+                            role: role,
                             permission: PermissionAlias.validProforma.label,
                           ))
                             (
@@ -258,7 +258,7 @@ class _ProformaTileState extends State<ProformaTile> {
                         ),
                         if (widget.proforma.status == StatusProforma.wait &&
                             (hasPermission(
-                              roles: roles,
+                              role: role,
                               permission: PermissionAlias.updateProforma.label,
                             )))
                           (
@@ -269,7 +269,7 @@ class _ProformaTileState extends State<ProformaTile> {
                             color: null,
                           ),
                         if (hasPermission(
-                          roles: roles,
+                              role: role,
                           permission: PermissionAlias.cancelProformat.label,
                             ) &&
                             widget.proforma.status == StatusProforma.wait)
@@ -387,7 +387,7 @@ class _ProformaTileState extends State<ProformaTile> {
                             if (widget.proforma.status ==
                                 StatusProforma.wait) ...[
                               if (hasPermission(
-                                roles: roles,
+                                role: role,
                                 permission:
                                     PermissionAlias.updateProforma.label,
                               ))
@@ -398,7 +398,7 @@ class _ProformaTileState extends State<ProformaTile> {
                                   color: null,
                                 ),
                               if (hasPermission(
-                                roles: roles,
+                                role: role,
                                 permission:
                                     PermissionAlias.cancelProformat.label,
                               ))
@@ -427,7 +427,7 @@ class _ProformaTileState extends State<ProformaTile> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           LigneProformaDetail(
-            roles: roles,
+            role: role,
             refresh: widget.refresh,
             proforma: widget.proforma,
           ),

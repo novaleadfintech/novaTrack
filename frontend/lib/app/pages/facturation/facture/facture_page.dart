@@ -29,7 +29,7 @@ class FacturePage extends StatefulWidget {
 
 class _FacturePageState extends State<FacturePage> {
   final TextEditingController _researchController = TextEditingController();
-  List<RoleModel> roles = [];
+  late RoleModel role;
 
   String searchQuery = "";
   String? selectedFilter;
@@ -98,7 +98,7 @@ class _FacturePageState extends State<FacturePage> {
     super.initState();
     _researchController.addListener(_onSearchChanged);
     _loadFactureData();
-    getRoles();
+    getRole();
   }
 
   void _onSearchChanged() {
@@ -107,8 +107,8 @@ class _FacturePageState extends State<FacturePage> {
     });
   }
 
-  Future<void> getRoles() async {
-    roles = await AuthService().getRoles();
+  Future<void> getRole() async {
+    role = await AuthService().getRole();
   }
 
   Future<void> _loadFactureData() async {
@@ -189,7 +189,7 @@ class _FacturePageState extends State<FacturePage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (hasPermission(
-          roles: roles,
+          role: role,
           permission: PermissionAlias.createFacture.label,
         ))
           Container(

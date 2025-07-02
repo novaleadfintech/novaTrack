@@ -88,7 +88,9 @@ class _MoreUserDetailState extends State<MoreUserDetail> {
                 isbold: true,
               ),
               TabledetailBodyMiddle(
-                valeur: widget.user.roles![0].libelle,
+                valeur: widget.user.roles!
+                    .map((role) => role.libelle)
+                    .join(" --> "),
               ),
             ],
           ),

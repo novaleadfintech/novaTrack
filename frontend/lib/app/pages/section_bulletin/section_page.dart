@@ -34,19 +34,19 @@ class _SectionPageState extends State<SectionPage> {
   bool hasError = false;
   String searchQuery = "";
   late Future<void> _futureRoles;
-  late List<RoleModel> roles = [];
+  late RoleModel role;
   String? errorMessage;
 
   @override
   void initState() {
     super.initState();
     _researchController.addListener(_onSearchChanged);
-    _futureRoles = getRoles();
+    _futureRoles = getRole();
     _loadSection();
   }
 
-  Future<void> getRoles() async {
-    roles = await AuthService().getRoles();
+  Future<void> getRole() async {
+    role = await AuthService().getRole();
   }
 
   void _onSearchChanged() {
@@ -115,7 +115,7 @@ class _SectionPageState extends State<SectionPage> {
                 return const SizedBox();
               } else {
                 var canCreate = hasPermission(
-                  roles: roles,
+                  role: role,
                   permission: PermissionAlias.createBulletinSection.label,
                 );
                 return Row(

@@ -22,7 +22,7 @@ class Salarie {
       const query = await db.query(
         aql`
           FOR salarie IN ${salarieCollection}
-          SORT salarie.timestamp DESC
+          SORT salarie.timeStamp DESC
           ${limit}
           RETURN salarie
         `
@@ -104,7 +104,7 @@ class Salarie {
       dateEnregistrement: Date.now(),
       paieManner: paieManner,
       periodPaie: periodPaie,
-      timestamp: Date.now(),
+      timeStamp: Date.now(),
     };
     try {
       await salarieCollection.save(newSalarie);

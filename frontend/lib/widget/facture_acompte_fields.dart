@@ -45,8 +45,8 @@ class _FactureAcompteFieldsState extends State<FactureAcompteFields> {
 
   void _removeField(int index) {
     setState(() {
-      widget.controllers[index]
-          .forEach((_, controller) => controller.dispose());
+      // widget.controllers[index]
+      //     .forEach((_, controller) => controller.clear());
       widget.controllers.removeAt(index);
       _recalculateRanks();
     });

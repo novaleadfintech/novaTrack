@@ -32,6 +32,9 @@ class _UserPageState extends State<UserPage> {
   String? selectedFilter;
   int currentPage = GlobalValue.currentPage;
 
+  RoleModel? role;
+  bool isRoleLoading = true; 
+
   List<String> selectedFilterOptions = [
     "Tout",
     Sexe.F.label,
@@ -41,7 +44,7 @@ class _UserPageState extends State<UserPage> {
   @override
   void initState() {
     super.initState();
-    getRoles();
+    getRole();
     _researchController.addListener(_onSearchChanged);
   }
 
@@ -89,17 +92,29 @@ class _UserPageState extends State<UserPage> {
     );
   }
 
-  late List<RoleModel> roles = [];
-
-  Future<void> getRoles() async {
-    List<RoleModel> result = await AuthService().getRoles();
-    setState(() {
-      roles = result;
-    });
+  Future<void> getRole() async {
+    try {
+      RoleModel? result = await AuthService().getRole();
+      setState(() {
+        role = result;
+        isRoleLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isRoleLoading = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Afficher un loader pendant le chargement du rôle
+    if (isRoleLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -113,9 +128,10 @@ class _UserPageState extends State<UserPage> {
                 hintText: "Rechercher par nom",
                 controller: _researchController,
               ),
-              if (hasPermission(
-                  roles: roles,
-                  permission: PermissionAlias.assignRolePersonnel.label))
+              if (role != null &&
+                  hasPermission(
+                      role: role!,
+                      permission: PermissionAlias.assignRolePersonnel.label))
                 Container(
                   alignment: Alignment.centerRight,
                   child: AddElementButton(

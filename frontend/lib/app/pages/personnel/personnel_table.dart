@@ -39,7 +39,7 @@ class PersonnelTable extends StatefulWidget {
 class _PersonnelTableState extends State<PersonnelTable> {
   late SimpleFontelicoProgressDialog _dialog;
   late Future<void> _futureRoles;
-  late List<RoleModel> roles = [];
+  late RoleModel role;
   UserModel? currentUser;
 
   onEdit({required PersonnelModel personnel}) {
@@ -106,13 +106,13 @@ class _PersonnelTableState extends State<PersonnelTable> {
   @override
   void initState() {
     _dialog = SimpleFontelicoProgressDialog(context: context);
-    _futureRoles = getRoles();
+    _futureRoles = getRole();
     getCurrentUser();
     super.initState();
   }
 
-  Future<void> getRoles() async {
-    roles = await AuthService().getRoles();
+  Future<void> getRole() async {
+    role = await AuthService().getRole();
   }
 
   Future<void> getCurrentUser() async {
@@ -188,7 +188,7 @@ class _PersonnelTableState extends State<PersonnelTable> {
                                   if (personnel.etat !=
                                           EtatPersonnel.archived &&
                                       hasPermission(
-                                          roles: roles,
+                                          role: role,
                                           permission: PermissionAlias
                                               .updatePersonnel.label)) ...[
                                     (
@@ -199,7 +199,7 @@ class _PersonnelTableState extends State<PersonnelTable> {
                                   ],
                                   if (!isCurrentUser &&
                                       hasPermission(
-                                          roles: roles,
+                                          role: role,
                                           permission: PermissionAlias
                                               .archivePersonnel.label)) ...[
                                     (
@@ -251,7 +251,7 @@ class _PersonnelTableState extends State<PersonnelTable> {
                                   if (personnel.etat !=
                                           EtatPersonnel.archived &&
                                       hasPermission(
-                                          roles: roles,
+                                          role: role,
                                           permission: PermissionAlias
                                               .updatePersonnel.label)) ...[
                                     (
@@ -262,7 +262,7 @@ class _PersonnelTableState extends State<PersonnelTable> {
                                   ],
                                   if (!isCurrentUser &&
                                       hasPermission(
-                                          roles: roles,
+                                          role: role,
                                           permission: PermissionAlias
                                               .archivePersonnel.label)) ...[
                                     (

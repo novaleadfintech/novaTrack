@@ -31,21 +31,21 @@ class _DashBoardPageState extends State<DashBoardPage> {
   Future<String>? _clientFuture;
   Future<String>? _factureUnpayeFuture;
   Future<String>? _proformaFuture;
-  late List<RoleModel> roles = [];
+  late RoleModel role;
   String? errMassage;
 
   @override
   void initState() {
     super.initState();
-    getRoles();
+    getRole();
     _creanceFuture = _loadCreance();
     _clientFuture = _loadClient();
     _factureUnpayeFuture = _loadFactureUnpaye();
     _proformaFuture = _loadProforma();
   }
 
-  Future<void> getRoles() async {
-    roles = await AuthService().getRoles();
+  Future<void> getRole() async {
+    role = await AuthService().getRole();
     setState(() {});
   }
 
@@ -114,28 +114,28 @@ class _DashBoardPageState extends State<DashBoardPage> {
   Widget build(BuildContext context) {
     List<Widget> items = [
       if (hasPermission(
-          roles: roles, permission: PermissionAlias.readCreance.label))
+          role: role, permission: PermissionAlias.readCreance.label))
         DashboardInfo(
           icon: AssetsIcons.claim,
           title: "Créances du jour",
           futureValue: _creanceFuture!,
         ),
       if (hasPermission(
-          roles: roles, permission: PermissionAlias.readClient.label))
+          role: role, permission: PermissionAlias.readClient.label))
         DashboardInfo(
           icon: AssetsIcons.client,
           title: "Clients",
           futureValue: _clientFuture!,
         ),
       if (hasPermission(
-          roles: roles, permission: PermissionAlias.readFacture.label))
+          role: role, permission: PermissionAlias.readFacture.label))
         DashboardInfo(
           icon: AssetsIcons.facture,
           title: "Factures impayés",
           futureValue: _factureUnpayeFuture!,
         ),
       if (hasPermission(
-          roles: roles, permission: PermissionAlias.readProforma.label))
+          role: role, permission: PermissionAlias.readProforma.label))
         DashboardInfo(
           icon: AssetsIcons.waitInvoice,
           title: "Proformats en attente",

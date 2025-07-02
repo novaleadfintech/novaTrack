@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/model/habilitation/user_model.dart';
+import 'package:frontend/widget/drop_down_text_field.dart';
 import '../../../auth/authentification_token.dart';
 import '../../../model/personnel/personnel_model.dart';
 import "../../../model/habilitation/role_model.dart";
@@ -16,18 +17,20 @@ import '../../../widget/validate_button.dart';
 import '../../integration/popop_status.dart';
 import '../../integration/request_frot_behavior.dart';
 
-class AddUserPage extends StatefulWidget {
+class EditUserPage extends StatefulWidget {
+  final UserModel user;
   final Future<void> Function() refresh;
-  const AddUserPage({
+  const EditUserPage({
     super.key,
     required this.refresh,
+    required this.user,
   });
 
   @override
-  State<AddUserPage> createState() => _AddUserPageState();
+  State<EditUserPage> createState() => _EditUserPageState();
 }
 
-class _AddUserPageState extends State<AddUserPage> {
+class _EditUserPageState extends State<EditUserPage> {
   late SimpleFontelicoProgressDialog _dialog;
   PersonnelModel? personnel;
   RoleModel? role;
@@ -36,6 +39,8 @@ class _AddUserPageState extends State<AddUserPage> {
   @override
   void initState() {
     super.initState();
+    personnel = widget.user.personnel;
+    role = widget.user.roles!.first;
     _dialog = SimpleFontelicoProgressDialog(context: context);
     _loadCurrentUser();
   }
@@ -106,6 +111,13 @@ class _AddUserPageState extends State<AddUserPage> {
 
   onvalidate() {
     if (personnel != null && role != null) {
+      if (role!.id == widget.user.roles!.first.id) {
+        MutationRequestContextualBehavior.showPopup(
+          status: PopupStatus.information,
+          customMessage: "Aucune modification n'a été faite.",
+        );
+        return;
+      }
       assignNewRoleToPersonnel(
         personnel: personnel!,
         role: role!,
@@ -113,7 +125,7 @@ class _AddUserPageState extends State<AddUserPage> {
     } else {
       MutationRequestContextualBehavior.showPopup(
         status: PopupStatus.information,
-        customMessage: "Veuillez sélectionner un rôle, SVP.",
+        customMessage: "Veuillez sélectionner un personnel et un rôle.",
       );
     }
   }
@@ -124,27 +136,28 @@ class _AddUserPageState extends State<AddUserPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          FutureCustomDropDownField<PersonnelModel>(
-            label: "Personnel",
-            selectedItem: personnel,
-            fetchItems: fetchPersonnelItems,
+          CustomDropDownField<PersonnelModel>(
+            items: [personnel!],
             onChanged: (PersonnelModel? value) {
               setState(() {
                 personnel = value;
               });
             },
-            itemsAsString: (p) => "${p.nom} ${p.prenom}",
+            label: "Personnel",
+            canClose: false,
+            selectedItem: personnel,
+            itemsAsString: (p0) => p0.toStringify(),
           ),
           FutureCustomDropDownField<RoleModel>(
             label: "Rôle",
             selectedItem: role,
             fetchItems: fetchRoleItems,
-            canClose: false,
             onChanged: (RoleModel? value) {
               setState(() {
                 role = value;
               });
             },
+            canClose: false,
             itemsAsString: (r) => r.libelle,
           ),
           const Gap(16),

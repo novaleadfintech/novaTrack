@@ -22,13 +22,13 @@ class SettingScreen extends StatefulWidget {
 
 class _SettingScreenState extends State<SettingScreen> {
   UserModel? user;
-  late List<RoleModel> roles = [];
+  late RoleModel role;
 
   PersonnelModel? personnel;
 
   Future<void> getUser() async {
     UserModel? utilisation = await AuthService().decodeToken();
-    roles = await AuthService().getRoles();
+    role = await AuthService().getRole();
     user = await UserService.getUser(key: utilisation!.id!);
     if (user != null && user!.personnel != null) {
       personnel = await PersonnelService.getPersonnel(key: user!.personnel!.id);
@@ -102,12 +102,12 @@ class _SettingScreenState extends State<SettingScreen> {
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       const Gap(4),
-                      ...roles.map((role) => Text(
-                            role.libelle,
+                      Text(
+                        role.libelle,
                             style: TextStyle(
                               color: AppColor.grayColor,
                             ),
-                          )),
+                      ),
                     ],
                   ),
                 ),
@@ -166,7 +166,10 @@ class _SettingScreenState extends State<SettingScreen> {
                           Gap(8),
                           TextButton(
                               onPressed: editLoginParametter,
-                              child: Text("Modifier"))
+                            child: Text(
+                              "Modifier",
+                            ),
+                          )
                         ]),
                       ),
                     ],

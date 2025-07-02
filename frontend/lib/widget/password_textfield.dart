@@ -23,6 +23,8 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
   String _actualPassword = '';
   late TextEditingController _displayController;
   String obscureChar = "•";
+  bool _isUpdating = false; // Flag pour éviter les boucles infinies
+
   @override
   void initState() {
     super.initState();
@@ -45,37 +47,86 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
   }
 
   void _updateDisplayText() {
+    if (_isUpdating) return;
+
+    _isUpdating = true;
+
     if (_obscureText) {
+      final cursorPosition = _displayController.selection.baseOffset;
       _displayController.text = obscureChar * _actualPassword.length;
+
+      // Repositionner le curseur de manière sécurisée
+      final newPosition =
+          cursorPosition.clamp(0, _displayController.text.length);
+      _displayController.selection = TextSelection.fromPosition(
+        TextPosition(offset: newPosition),
+      );
     } else {
       _displayController.text = _actualPassword;
+
+      // Conserver la position du curseur
+      final cursorPosition = _displayController.selection.baseOffset;
+      final newPosition = cursorPosition.clamp(0, _actualPassword.length);
+      _displayController.selection = TextSelection.fromPosition(
+        TextPosition(offset: newPosition),
+      );
     }
+
+    _isUpdating = false;
   }
 
   void _onTextChanged(String value) {
+    if (_isUpdating) return;
+
+    final currentCursorPosition = _displayController.selection.baseOffset;
+
     if (_obscureText) {
       // Calculer les changements dans le mot de passe réel
       if (value.length > _actualPassword.length) {
-        // Caractère ajouté
-        String newChar = value[value.length - 1];
-        if (newChar != obscureChar) {
-          _actualPassword = _actualPassword + newChar;
+        // Caractère ajouté - trouver la position d'insertion
+        int insertPosition = 0;
+        for (int i = 0; i < value.length && i < _actualPassword.length; i++) {
+          if (value[i] == obscureChar) {
+            insertPosition++;
+          } else {
+            break;
+          }
+        }
+
+        // Extraire le nouveau caractère
+        String newChar = '';
+        for (int i = 0; i < value.length; i++) {
+          if (value[i] != obscureChar) {
+            newChar = value[i];
+            insertPosition = i;
+            break;
+          }
+        }
+
+        if (newChar.isNotEmpty) {
+          _actualPassword = _actualPassword.substring(0, insertPosition) +
+              newChar +
+              _actualPassword.substring(insertPosition);
         }
       } else if (value.length < _actualPassword.length) {
         // Caractère supprimé
         _actualPassword = _actualPassword.substring(0, value.length);
       }
 
-      // Mettre à jour le controller principal avec le vrai mot de passe
+      // Mettre à jour le controller principal
       widget.controller.text = _actualPassword;
 
-      // Afficher les points
+      // Mettre à jour l'affichage
+      _isUpdating = true;
       _displayController.text = obscureChar * _actualPassword.length;
 
-      // Repositionner le curseur à la fin
+      // Repositionner le curseur
+      final newCursorPosition =
+          currentCursorPosition.clamp(0, _displayController.text.length);
       _displayController.selection = TextSelection.fromPosition(
-        TextPosition(offset: _displayController.text.length),
+        TextPosition(offset: newCursorPosition),
       );
+      _isUpdating = false;
     } else {
       // Mode visible - synchroniser directement
       _actualPassword = value;
@@ -115,9 +166,13 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
             child: TextField(
               enableInteractiveSelection: true,
               controller: _obscureText ? _displayController : widget.controller,
-              obscureText: false, // On gère l'obscurcissement manuellement
+              obscureText: false,
               keyboardType: TextInputType.visiblePassword,
               onChanged: _onTextChanged,
+              onTap: () {
+                // Empêcher la sélection automatique du texte complet
+                // Ne rien faire de spécial, laisser le comportement par défaut
+              },
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(4),

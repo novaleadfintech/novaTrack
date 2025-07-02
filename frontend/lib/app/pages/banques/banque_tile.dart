@@ -29,17 +29,17 @@ class BanqueTile extends StatefulWidget {
 
 class _BanqueTileState extends State<BanqueTile> {
   late Future<void> _futureRoles;
-  late List<RoleModel> roles = [];
+  late RoleModel role;
   
 
   @override
   void initState() {
     super.initState();
-    _futureRoles = getRoles();
+    _futureRoles = getRole();
   }
 
-  Future<void> getRoles() async {
-    roles = await AuthService().getRoles();
+  Future<void> getRole() async {
+    role = await AuthService().getRole();
   }
 
   @override
@@ -160,7 +160,7 @@ class _BanqueTileState extends State<BanqueTile> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             if (hasPermission(
-                                roles: roles,
+                                role: role,
                                 permission: PermissionAlias.updateBanque.label))
                               ElevatedButton(
                                 onPressed: () {
@@ -174,7 +174,7 @@ class _BanqueTileState extends State<BanqueTile> {
                             const Gap(4),
 
                             if (hasPermission(
-                                roles: roles,
+                                role: role,
                                 permission: PermissionAlias
                                     .exportBanqueTransaction.label))
                               Tooltip(

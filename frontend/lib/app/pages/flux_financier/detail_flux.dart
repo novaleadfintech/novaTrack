@@ -248,7 +248,7 @@ class DetailFluxPage extends StatelessWidget {
             ),
           ],
         ),
-        if (flux.validated != null) ...[
+        if (flux.validated != null && flux.validated!.isNotEmpty) ...[
           AppAccordion(
             header: Row(
               children: [

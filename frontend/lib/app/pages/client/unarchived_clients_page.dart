@@ -32,7 +32,7 @@ class UnarchivedClientPage extends StatefulWidget {
 class _UnarchivedClientPageState extends State<UnarchivedClientPage> {
   final TextEditingController _researchController = TextEditingController();
   late Future<void> _futureRoles;
-  late List<RoleModel> roles = [];
+  late RoleModel role;
 
   String searchQuery = "";
   String? selectedFilter;
@@ -51,12 +51,12 @@ class _UnarchivedClientPageState extends State<UnarchivedClientPage> {
   void initState() {
     super.initState();
     _researchController.addListener(_onSearchChanged);
-    _futureRoles = getRoles();
+    _futureRoles = getRole();
     _loadClientData();
   }
 
-  Future<void> getRoles() async {
-    roles = await AuthService().getRoles();
+  Future<void> getRole() async {
+    role = await AuthService().getRole();
   }
 
   Future<void> _loadClientData() async {
@@ -138,7 +138,7 @@ class _UnarchivedClientPageState extends State<UnarchivedClientPage> {
               return const SizedBox();
             } else {
               if (hasPermission(
-                  roles: roles,
+                  role: role,
                   permission: PermissionAlias.createClient.label)) {
                 return Container(
                   width: double.infinity,

@@ -41,7 +41,7 @@ class FinanceTable extends StatefulWidget {
 
 class _InputTableState extends State<FinanceTable> {
   UserModel? user;
-  List<RoleModel> roles = [];
+  late RoleModel role;
 
   late SimpleFontelicoProgressDialog _dialog;
 
@@ -52,8 +52,8 @@ class _InputTableState extends State<FinanceTable> {
     });
   }
 
-  Future<void> getRoles() async {
-    roles = await AuthService().getRoles();
+  Future<void> getRole() async {
+    role = await AuthService().getRole();
     setState(() {});
   }
 
@@ -118,7 +118,7 @@ class _InputTableState extends State<FinanceTable> {
   void initState() {
     _dialog = SimpleFontelicoProgressDialog(context: context);
     getCurrentUser();
-    getRoles();
+    getRole();
     super.initState();
   }
 
@@ -197,9 +197,10 @@ class _InputTableState extends State<FinanceTable> {
                                             .equalTo(user: user!) &&
                                         (fluxFinancier.status !=
                                             FluxFinancierStatus.valid) &&
-                                        !fluxFinancier.isFromSystem!) ...[
+                                        !fluxFinancier.isFromSystem! &&
+                                        fluxFinancier.factureId == null) ...[
                                       if (hasPermission(
-                                          roles: roles,
+                                          role: role,
                                           permission: PermissionAlias
                                               .updateFluxFinancier.label))
                                         (
@@ -210,10 +211,13 @@ class _InputTableState extends State<FinanceTable> {
                                           color: null, // couleur null
                                         ),
                                       if (hasPermission(
-                                          roles: roles,
+                                              role: role,
                                           permission: PermissionAlias
                                                   .deleteFluxFinancier.label) &&
-                                          !fluxFinancier.isFromSystem!)
+                                          !fluxFinancier.isFromSystem! &&
+                                          fluxFinancier.factureId == null &&
+                                          fluxFinancier.status !=
+                                              FluxFinancierStatus.wait)
                                         (
                                           label: Constant.delete,
                                           onTap: () {
@@ -281,10 +285,13 @@ class _InputTableState extends State<FinanceTable> {
                                     if (fluxFinancier.user!
                                             .equalTo(user: user!) &&
                                         (fluxFinancier.status !=
-                                            FluxFinancierStatus.valid) &&
-                                        !fluxFinancier.isFromSystem!) ...[
+                                                FluxFinancierStatus.valid &&
+                                            fluxFinancier.status !=
+                                                FluxFinancierStatus.reject) &&
+                                        !fluxFinancier.isFromSystem! &&
+                                        fluxFinancier.factureId == null) ...[
                                       if (hasPermission(
-                                          roles: roles,
+                                          role: role,
                                           permission: PermissionAlias
                                               .updateFluxFinancier.label))
                                         (
@@ -295,10 +302,13 @@ class _InputTableState extends State<FinanceTable> {
                                           color: null,
                                         ),
                                       if (hasPermission(
-                                          roles: roles,
+                                              role: role,
                                           permission: PermissionAlias
                                                   .deleteFluxFinancier.label) &&
-                                          !fluxFinancier.isFromSystem!)
+                                          !fluxFinancier.isFromSystem! &&
+                                          fluxFinancier.factureId == null &&
+                                          fluxFinancier.status !=
+                                              FluxFinancierStatus.wait)
                                         (
                                           label: Constant.delete,
                                           onTap: () {

@@ -34,12 +34,12 @@ import 'table_body_middle.dart';
 class LigneFactureDetail extends StatefulWidget {
   final FactureModel facture;
   final Future<void> Function() refresh;
-  final List<RoleModel> roles;
+  final RoleModel role;
   const LigneFactureDetail({
     super.key,
     required this.refresh,
     required this.facture,
-    required this.roles,
+    required this.role,
   });
 
   @override
@@ -155,7 +155,7 @@ class _LigneFactureDetailState extends State<LigneFactureDetail> {
                   widget.facture.facturesAcompte
                       .any((acompte) => acompte.datePayementEcheante != null) ||
                   !hasPermission(
-                      roles: widget.roles,
+                      role: widget.role,
                       permission: PermissionAlias.updateFacture.label)
               ? true
               : false,
@@ -176,7 +176,7 @@ class _LigneFactureDetailState extends State<LigneFactureDetail> {
                             widget.facture.facturesAcompte.every((acompte) =>
                                 acompte.datePayementEcheante == null)) ...[
                           if (hasPermission(
-                              roles: widget.roles,
+                              role: widget.role,
                               permission: PermissionAlias.updateFacture.label))
                           (
                             label: Constant.edit,
@@ -201,7 +201,7 @@ class _LigneFactureDetailState extends State<LigneFactureDetail> {
                             widget.facture.facturesAcompte.every((acompte) =>
                                 acompte.datePayementEcheante == null)) ...[
                           if (hasPermission(
-                              roles: widget.roles,
+                              role: widget.role,
                               permission: PermissionAlias.updateFacture.label))
                           (
                             label: Constant.delete,
@@ -252,7 +252,7 @@ class _LigneFactureDetailState extends State<LigneFactureDetail> {
                             widget.facture.facturesAcompte.every((acompte) =>
                                 acompte.datePayementEcheante == null))
                           if (hasPermission(
-                              roles: widget.roles,
+                              role: widget.role,
                               permission:
                                   PermissionAlias.updateFacture.label)) ...[
                             IconButton(
@@ -281,7 +281,7 @@ class _LigneFactureDetailState extends State<LigneFactureDetail> {
                             widget.facture.facturesAcompte.every((acompte) =>
                                 acompte.datePayementEcheante == null))
                           if (hasPermission(
-                              roles: widget.roles,
+                              role: widget.role,
                               permission:
                                   PermissionAlias.updateFacture.label)) ...[
                             IconButton(

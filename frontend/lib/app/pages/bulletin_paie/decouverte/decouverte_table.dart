@@ -40,7 +40,7 @@ class DecouverteTable extends StatefulWidget {
 
 class _DecouverteTableState extends State<DecouverteTable> {
   late SimpleFontelicoProgressDialog _dialog;
-  late List<RoleModel> roles = [];
+  late RoleModel role;
 
   _onShowDetail({required DecouverteModel decouverte}) {
     showDetailDialog(
@@ -89,15 +89,15 @@ class _DecouverteTableState extends State<DecouverteTable> {
     }
   }
 
-  Future<void> getRoles() async {
-    roles = await AuthService().getRoles();
+  Future<void> getRole() async {
+    role = await AuthService().getRole();
     setState(() {});
   }
 
   @override
   void initState() {
     _dialog = SimpleFontelicoProgressDialog(context: context);
-    getRoles();
+    getRole();
     super.initState();
   }
 
@@ -165,7 +165,7 @@ class _DecouverteTableState extends State<DecouverteTable> {
                                 if (decouverte.status ==
                                         DecouverteStatus.unpaid &&
                                     hasPermission(
-                                  roles: roles,
+                                      role: role,
                                   permission:
                                       PermissionAlias.updateAvance.label,
                                 ))
@@ -220,7 +220,7 @@ class _DecouverteTableState extends State<DecouverteTable> {
                                 if (decouverte.status ==
                                         DecouverteStatus.unpaid &&
                                     hasPermission(
-                                  roles: roles,
+                                      role: role,
                                   permission:
                                       PermissionAlias.updateAvance.label,
                                 ))

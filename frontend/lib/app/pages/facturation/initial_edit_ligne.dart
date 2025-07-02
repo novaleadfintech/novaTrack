@@ -147,7 +147,7 @@ class _AddInitialLigneServiceState extends State<EditInitialLigne> {
       MutationRequestContextualBehavior.closePopup();
       MutationRequestContextualBehavior.showPopup(
         status: PopupStatus.success,
-        customMessage: "Mise à jour effectué",
+        customMessage: "Mise à jour effectuée",
       );
       widget.refresh();
     } catch (e) {

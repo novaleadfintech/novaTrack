@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../helper/amout_formatter.dart';
 import '../../../helper/date_helper.dart';
+import '../../../helper/get_bulletin_period.dart';
 import '../../../helper/sign_switch_operation.dart';
 import '../../../model/bulletin_paie/bulletin_model.dart';
 import '../../../model/bulletin_paie/tranche_model.dart';
@@ -151,7 +152,9 @@ class DetailBulletinPage extends StatelessWidget {
                   TabledetailBodyMiddle(
                     valeur: rubrique.rubrique.rubriqueIdentity ==
                             RubriqueIdentity.anciennete
-                        ? "${rubrique.value?.toInt() == 0 ? "< 1" : rubrique.value?.toInt()}${(rubrique.value?.toInt() == 1 || rubrique.value?.toInt() == 0) ? " an" : " ans"}"
+                        
+                        ? formatAnciennete(rubrique.value)
+    
                         : rubrique.value.toString(),
                   )
                 ])
@@ -258,7 +261,7 @@ class DetailBulletinPage extends StatelessWidget {
                         TabledetailBodyMiddle(
                           valeur: rubrique.rubrique.rubriqueIdentity ==
                                   RubriqueIdentity.anciennete
-                              ? "${rubrique.value?.toInt() == 0 ? "< 1" : rubrique.value?.toInt()}${(rubrique.value?.toInt() == 1 || rubrique.value?.toInt() == 0) ? " an" : " ans"}"
+                              ? formatAnciennete(rubrique.value)
                               : rubrique.value.toString(),
                         ),
                       ],

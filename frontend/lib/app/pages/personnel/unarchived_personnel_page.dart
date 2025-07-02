@@ -29,7 +29,7 @@ class UnarchivedPersonnelPage extends StatefulWidget {
 class _PersonnelPageState extends State<UnarchivedPersonnelPage> {
   final TextEditingController _researchController = TextEditingController();
   late Future<void> _futureRoles;
-  late List<RoleModel> roles = [];
+  late RoleModel role;
 
   String searchQuery = "";
   String? selectedFilter;
@@ -49,12 +49,12 @@ class _PersonnelPageState extends State<UnarchivedPersonnelPage> {
   void initState() {
     super.initState();
     _researchController.addListener(_onSearchChanged);
-    _futureRoles = getRoles();
+    _futureRoles = getRole();
     _loadPersonnelData();
   }
 
-  Future<void> getRoles() async {
-    roles = await AuthService().getRoles();
+  Future<void> getRole() async {
+    role = await AuthService().getRole();
   }
 
   Future<void> _loadPersonnelData() async {
@@ -135,7 +135,7 @@ class _PersonnelPageState extends State<UnarchivedPersonnelPage> {
               return const SizedBox();
             } else {
               if (hasPermission(
-                  roles: roles,
+                  role: role,
                   permission: PermissionAlias.createPersonnel.label)) {
                 return Container(
                   width: double.infinity,

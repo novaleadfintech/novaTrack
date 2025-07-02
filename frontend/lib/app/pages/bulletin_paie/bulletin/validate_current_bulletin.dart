@@ -14,6 +14,7 @@ import '../../../../auth/authentification_token.dart';
 import '../../../../helper/date_helper.dart';
 import '../../../../model/bulletin_paie/etat_bulletin.dart';
 import '../../../../model/request_response.dart';
+import '../../../../widget/confirmation_dialog_box.dart';
 import '../../../../widget/date_text_field.dart';
 import '../../../../widget/enum_selector_radio.dart';
 import '../../../../widget/simple_text_field.dart';
@@ -147,6 +148,15 @@ class _ValidateCurrentBulletintPageState
         MutationRequestContextualBehavior.showCustomInformationPopUp(
           message: "Veuillez renseigner la date de paiement, SVP.",
         );
+        return;
+      }
+      bool confirmed = await handleOperationButtonPress(
+        context,
+        content:
+            "Voulez-vous vraiment ${etatBulletin == EtatBulletin.wait ? "mettre ${etatBulletin!.label.toLowerCase()}" : etatBulletin!.label.toLowerCase()} ce bulletin de paie?",
+      );
+
+      if (!confirmed) {
         return;
       }
       _dialog.show(

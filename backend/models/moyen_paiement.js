@@ -14,7 +14,7 @@ class MoyenPaiement {
 
     const query = await db.query(
       aql`FOR moyen IN ${moyenPaiementCollection} 
-          SORT moyen.timestamp DESC ${limit} 
+          SORT moyen.timeStamp DESC ${limit} 
           RETURN moyen`,
       { fullCount: true }
     );
@@ -64,7 +64,7 @@ class MoyenPaiement {
     const moyen = {
       libelle,
       type: type,
-      timestamp: Date.now(),
+      timeStamp: Date.now(),
     };
 
     try {

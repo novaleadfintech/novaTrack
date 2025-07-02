@@ -40,17 +40,17 @@ class ClientTable extends StatefulWidget {
 
 class _ClientTableState extends State<ClientTable> {
   late SimpleFontelicoProgressDialog _dialog;
-  late List<RoleModel> roles = [];
+  late RoleModel role;
   late Future<void> _futureRoles;
   @override
   void initState() {
     super.initState();
     _dialog = SimpleFontelicoProgressDialog(context: context);
-    _futureRoles = getRoles();
+    _futureRoles = getRole();
   }
 
-  Future<void> getRoles() async {
-    roles = await AuthService().getRoles();
+  Future<void> getRole() async {
+    role = await AuthService().getRole();
   }
 
   onEdit({
@@ -193,7 +193,7 @@ class _ClientTableState extends State<ClientTable> {
                                   color: null,
                                 ),
                                 if (hasPermission(
-                                    roles: roles,
+                                    role: role,
                                     permission:
                                         PermissionAlias.archiveClient.label))
                                         (
@@ -208,7 +208,7 @@ class _ClientTableState extends State<ClientTable> {
                                           color: null, // couleur null
                                         ),
                                 if (hasPermission(
-                                        roles: roles,
+                                        role: role,
                                         permission: PermissionAlias
                                             .updateClient.label) &&
                                     client.etat == EtatClient.unarchived)
@@ -240,7 +240,7 @@ class _ClientTableState extends State<ClientTable> {
                                   color: null,
                                 ),
                                 if (hasPermission(
-                                    roles: roles,
+                                    role: role,
                                     permission:
                                         PermissionAlias.archiveClient.label))
                                         (
@@ -255,7 +255,7 @@ class _ClientTableState extends State<ClientTable> {
                                     color: null, 
                                         ),
                                 if (hasPermission(
-                                        roles: roles,
+                                        role: role,
                                         permission: PermissionAlias
                                             .updateClient.label) &&
                                     client.etat == EtatClient.unarchived)

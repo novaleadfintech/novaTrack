@@ -28,19 +28,19 @@ class ProfilTable extends StatefulWidget {
 }
 
 class _ProfilTableState extends State<ProfilTable> {
-   late List<RoleModel> roles = [];
+  late RoleModel role;
   late Future<void> _futureRoles;
 
   @override
   void initState() {
-     _futureRoles = getRoles();
+    _futureRoles = getRole();
     super.initState();
   }
 
-  Future<void> getRoles() async {
-    List<RoleModel> roleData = await AuthService().getRoles();
+  Future<void> getRole() async {
+    RoleModel currentRole = await AuthService().getRole();
     setState(() {
-      roles = roleData;
+      role = currentRole;
     });
   }
 
@@ -145,7 +145,7 @@ class _ProfilTableState extends State<ProfilTable> {
                     decoration: tableDecoration(context),
                     children: [
                       TableBodyMiddle(
-                        valeur: profil.libelle,
+                        valeur: profil.libelle.toLowerCase(),
                       ),
                       TableBodyLast(
                         items: [
@@ -157,7 +157,7 @@ class _ProfilTableState extends State<ProfilTable> {
                             color: null,
                           ),
                           if (hasPermission(
-                            roles: roles,
+                            role: role,
                             permission: PermissionAlias.updateRole.label,
                           ))
                             (
@@ -168,7 +168,7 @@ class _ProfilTableState extends State<ProfilTable> {
                               color: null,
                             ),
                           // if (!hasPermission(
-                          //   roles: roles,
+                          //   role: role,
                           //   permission:
                           //       PermissionAlias.deleteRole.label,
                           // ))

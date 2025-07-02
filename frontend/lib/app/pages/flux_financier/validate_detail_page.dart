@@ -9,6 +9,7 @@ import '../../../auth/authentification_token.dart';
 import '../../../model/flux_financier/flux_financier_model.dart';
 import '../../../model/habilitation/user_model.dart';
 import '../../../model/request_response.dart';
+import '../../../widget/confirmation_dialog_box.dart';
 import '../../../widget/simple_text_field.dart';
 import '../../integration/popop_status.dart';
 import '../../integration/request_frot_behavior.dart';
@@ -72,7 +73,13 @@ class _ValidateDetailPageState extends State<ValidateDetailPage> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      ...FluxFinancierStatus.values.map(
+                      ...(widget.flux.isFromSystem!
+                              ? [
+                                  FluxFinancierStatus.wait,
+                                  FluxFinancierStatus.valid
+                                ]
+                              : FluxFinancierStatus.values)
+                          .map(
                         (status) => Row(
                           children: [
                             Radio<FluxFinancierStatus>(
@@ -131,6 +138,15 @@ class _ValidateDetailPageState extends State<ValidateDetailPage> {
       );
       return;
     }
+bool confirmed = await handleOperationButtonPress(
+        context,
+        content:
+            "Voulez-vous vraiment ${selectedValue == FluxFinancierStatus.wait ? "mettre ${selectedValue!.label.toLowerCase()}" : selectedValue!.label.toLowerCase()} ce flux financier?",
+      );
+
+      if (!confirmed) {
+        return;
+      }
     _dialog.show(
       message: "",
       type: SimpleFontelicoProgressDialogType.phoenix,

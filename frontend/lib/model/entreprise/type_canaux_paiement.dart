@@ -1,7 +1,8 @@
 enum CanauxPaiement {
   caisse('Caisse'),
-  operateurMobile ('Opérateur mobile'),
-  banque("Banque");
+  operateurMobile('Opérateur mobile'),
+  banque("Banque"),
+  bitCoins('Bitcoins');
 
   final String label;
   const CanauxPaiement(this.label);
@@ -12,5 +13,6 @@ String canauxPaiementToString(CanauxPaiement canauxPaiement) {
 }
 
 CanauxPaiement canauxPaiementFromString(String canauxPaiement) {
-  return CanauxPaiement.values.firstWhere((e) => e.toString().split('.').last == canauxPaiement);
+  return CanauxPaiement.values
+      .firstWhere((e) => e.toString().split('.').last == canauxPaiement);
 }

@@ -31,18 +31,18 @@ class PaysTable extends StatefulWidget {
 }
 
 class _ServiceTableState extends State<PaysTable> {
-  late List<RoleModel> roles = [];
+  late RoleModel role;
 
   @override
   void initState() {
     super.initState();
-    getRoles();
+    getRole();
   }
 
-  Future<void> getRoles() async {
-    List<RoleModel> roleData = await AuthService().getRoles();
+  Future<void> getRole() async {
+    RoleModel currentRole = await AuthService().getRole();
     setState(() {
-      roles = roleData;
+      role = currentRole;
     });
   }
 
@@ -119,7 +119,7 @@ class _ServiceTableState extends State<PaysTable> {
                                   color: null,
                                 ),
                                 if (hasPermission(
-                                  roles: roles,
+                                  role: role,
                                   permission: PermissionAlias.updatePays.label,
                                 ))
                                   (
@@ -155,7 +155,7 @@ class _ServiceTableState extends State<PaysTable> {
                                   color: null,
                                 ),
                                 if (hasPermission(
-                                  roles: roles,
+                                  role: role,
                                   permission: PermissionAlias.updatePays.label,
                                 ))
                                   (

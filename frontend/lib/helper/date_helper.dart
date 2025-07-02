@@ -5,6 +5,7 @@ String getStringDate({required DateTime time}) {
 
 
 String getShortStringDate({required DateTime time}) {
+  final day = time.day == 1 ? '1er' : '${time.day}';
   const List<String> months = [
     "jan",
     "fév",
@@ -19,7 +20,7 @@ String getShortStringDate({required DateTime time}) {
     "nov",
     "déc",
   ];
-  return '${time.day} ${months[time.month - 1]} ${time.year}';
+  return '$day ${months[time.month - 1]} ${time.year}';
 }
 
 String duration({required DateTime date}) {
@@ -208,16 +209,19 @@ const List<String> months = [
 ];
 
 DateTime convertToDateTime(String dateString) {
-  // Séparer la chaîne en jour, mois et année
-  final parts = dateString.split(' ');
+   final parts = dateString.split(' ');
 
   if (parts.length != 3) {
     throw FormatException("La date n'est pas dans le format attendu.");
   }
 
-  final day = int.parse(parts[0]);
-  final month = months.indexOf(parts[1].toLowerCase()) +
-      1; // Trouver le mois correspondant
+   String dayString = parts[0];
+  if (dayString == "1er") {
+    dayString = "1";
+  }
+
+  final day = int.parse(dayString);
+  final month = months.indexOf(parts[1].toLowerCase()) + 1;
   final year = int.parse(parts[2]);
 
   return DateTime(year, month, day);

@@ -6,10 +6,10 @@ import '../../widget/header.dart';
 import '../../widget/side_bar.dart';
 
 class MainLayout extends StatefulWidget {
-  final List<RoleModel> roles;
+  final RoleModel role;
   const MainLayout({
     super.key,
-    required this.roles,
+    required this.role,
   });
 
   @override
@@ -26,7 +26,7 @@ class _MainLayoutState extends State<MainLayout> {
   @override
   void initState() {
     super.initState();
-    final (filteredMenu, filteredPages) = getMenuAndPages(widget.roles);
+    final (filteredMenu, filteredPages) = getMenuAndPages(widget.role);
     menu = filteredMenu;
     pages = filteredPages;
   }
@@ -60,7 +60,7 @@ class _MainLayoutState extends State<MainLayout> {
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.zero,
                 ),
-                backgroundColor: Theme.of(context).colorScheme.primary,
+                // backgroundColor: Theme.of(context).colorScheme.primary,
                 // surfaceTintColor: Theme.of(context).colorScheme.error,
                 width: 260,
                 child: SideBar(

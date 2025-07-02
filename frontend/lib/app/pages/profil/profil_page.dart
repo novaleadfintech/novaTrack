@@ -33,19 +33,19 @@ class _ProfilPageState extends State<ProfilPage> {
   bool hasError = false;
   String searchQuery = "";
   late Future<void> _futureRoles;
-  late List<RoleModel> roles = [];
+  late RoleModel role;
   String? errorMessage;
 
   @override
   void initState() {
     super.initState();
     _researchController.addListener(_onSearchChanged);
-    _futureRoles = getRoles();
+    _futureRoles = getRole();
     _loadProfil();
   }
 
-  Future<void> getRoles() async {
-    roles = await AuthService().getRoles();
+  Future<void> getRole() async {
+    role = await AuthService().getRole();
   }
 
   void _onSearchChanged() {
@@ -56,7 +56,7 @@ class _ProfilPageState extends State<ProfilPage> {
 
   Future<void> _loadProfil() async {
     try {
-      profilData = await RoleService.getRoles();
+      profilData = await RoleService.getRole();
     } catch (error) {
       setState(() {
         errorMessage = error.toString();
@@ -114,7 +114,7 @@ class _ProfilPageState extends State<ProfilPage> {
                 return const SizedBox();
               } else {
                 var canCreate = hasPermission(
-                  roles: roles,
+                  role: role,
                   permission: PermissionAlias.createRole.label,
                 );
                 return Row(

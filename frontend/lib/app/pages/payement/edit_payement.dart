@@ -128,10 +128,10 @@ class _EditFluxPageState extends State<EditPayement> {
     dateOperationController.text = getStringDate(
       time: widget.payement.dateOperation!,
     );
+    _selectedBank = widget.payement.bank!;
+
     _dialog = SimpleFontelicoProgressDialog(context: context);
-    setState(() {
-      moyenPayement = widget.payement.moyenPayement;
-    });
+    moyenPayement = widget.payement.moyenPayement;
     super.initState();
   }
 

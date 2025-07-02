@@ -37,12 +37,12 @@ class _InputPageState extends State<InputPage> {
   String errMessage = "";
   String searchQuery = "";
   String? selectedFilter;
-  List<RoleModel> roles = [];
+  late RoleModel role;
 
   @override
   void initState() {
     super.initState();
-    getRoles();
+    getRole();
 
     _researchController.addListener(_onSearchChanged);
     _loadFluxFinancierData();
@@ -133,8 +133,8 @@ bool matchesFilter =
     );
   }
 
-  Future<void> getRoles() async {
-    roles = await AuthService().getRoles();
+  Future<void> getRole() async {
+    role = await AuthService().getRole();
   }
   @override
   Widget build(BuildContext context) {
@@ -146,7 +146,7 @@ bool matchesFilter =
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (hasPermission(
-              roles: roles,
+              role: role,
                   permission: PermissionAlias.createFluxFinancier.label))
           Container(
             alignment: Alignment.centerRight,

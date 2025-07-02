@@ -4,6 +4,7 @@ import 'package:frontend/app/pages/error_page.dart';
 import 'package:frontend/global/constant/permission_alias.dart';
 import 'package:frontend/helper/user_helper.dart';
 import 'package:frontend/style/app_color.dart';
+import 'package:gap/gap.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 import '../../../auth/authentification_token.dart';
 import '../../../helper/telephone_number_helper.dart';
@@ -44,7 +45,7 @@ class _EntreprisePageState extends State<EntreprisePage> {
   PlatformFile? tamponFile;
   PaysModel? _selectedCountry;
   Entreprise? entreprise;
-  late List<RoleModel> roles = [];
+  late RoleModel role;
 
   @override
   void initState() {
@@ -56,7 +57,7 @@ class _EntreprisePageState extends State<EntreprisePage> {
     nomDGController = TextEditingController();
     villeController = TextEditingController();
     _dialog = SimpleFontelicoProgressDialog(context: context);
-    getRoles();
+    getRole();
     _loadEntreprise();
   }
 
@@ -74,8 +75,8 @@ class _EntreprisePageState extends State<EntreprisePage> {
     }
   }
 
-  Future<void> getRoles() async {
-    roles = await AuthService().getRoles();
+  Future<void> getRole() async {
+    role = await AuthService().getRole();
   }
 
   Future<List<PaysModel>> fetchCountryItems() async {
@@ -119,7 +120,7 @@ class _EntreprisePageState extends State<EntreprisePage> {
   @override
   Widget build(BuildContext context) {
     isEditable = hasPermission(
-        roles: roles, permission: PermissionAlias.manageEntreprise.label);
+        role: role, permission: PermissionAlias.manageEntreprise.label);
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -160,6 +161,7 @@ class _EntreprisePageState extends State<EntreprisePage> {
                                         });
                                       },
                                     ),
+                                    Gap(8),
                                     FileField(
                                       canTakePhoto: false,
                                       label: "Tampon et signature",

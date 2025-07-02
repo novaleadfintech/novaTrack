@@ -26,7 +26,7 @@ class AuthService {
     _token = null;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.remove('token');
-    await prefs.remove('roles');
+    await prefs.remove('role');
   }
 
   Future<UserModel?> decodeToken() async {
@@ -39,19 +39,19 @@ class AuthService {
     return null;
   }
 
-  Future<void> setRoles(List<RoleModel> roles) async {
+  Future<void> setRoles(RoleModel role) async {
     final prefs = await SharedPreferences.getInstance();
-    final rolesJson = jsonEncode(roles.map((role) => role.toJson()).toList());
-    await prefs.setString("roles", rolesJson);
+    final rolesJson = jsonEncode(role.toJson());
+    await prefs.setString("role", rolesJson);
   }
 
-  Future<List<RoleModel>> getRoles() async {
+  Future<RoleModel> getRole() async {
     final prefs = await SharedPreferences.getInstance();
-    final rolesJson = prefs.getString("roles");
+    final roleJson = prefs.getString("role");
 
-    if (rolesJson == null) return [];
+    if (roleJson == null) throw "Aucun rôle trouvé";
 
-    final List<dynamic> decoded = jsonDecode(rolesJson);
-    return decoded.map((json) => RoleModel.fromJson(json)).toList();
+    final Map<String, dynamic> decoded = jsonDecode(roleJson);
+    return RoleModel.fromJson(decoded);
   }
 }

@@ -16,7 +16,6 @@ import '../model/facturation/facture_model.dart';
 import 'request_header.dart';
 
 class FactureService {
-
   static Future<List<FactureModel>> getUnPaidFactures() async {
     var body = '''
     query UnpaidFacture {
@@ -731,6 +730,7 @@ status
                       moyenPayement{
                       _id
                       libelle
+                      type
                       }
                       validate {
                           validateStatus
@@ -759,6 +759,7 @@ status
                       dateOperation
                       bank {
                           _id
+                          type
                           name
                           codeGuichet
                           codeBanque
@@ -801,11 +802,12 @@ status
         for (var facture in data) {
           factures.add(FactureModel.fromJson(facture));
         }
-        return factures.where((facture) {
-          return facture.facturesAcompte.any((acompte) {
-            return acompte.datePayementEcheante != null && !acompte.isPaid!;
-          });
-        }).toList();
+        return factures;
+        // .where((facture) {
+        //   return facture.facturesAcompte.any((acompte) {
+        //     return acompte.datePayementEcheante != null && !acompte.isPaid!;
+        //   });
+        // }).toList();
       } else {
         FactureModel.factureErr = RequestMessage.failgettingDataMessage;
       }
@@ -1319,6 +1321,7 @@ status
       );
     }
   }
+
   static Future<RequestResponse> startregeneration({
     required FactureModel facture,
   }) async {
@@ -1368,5 +1371,4 @@ status
       );
     }
   }
-
 }

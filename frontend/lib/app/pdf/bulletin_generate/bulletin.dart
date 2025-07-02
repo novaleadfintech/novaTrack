@@ -400,7 +400,7 @@ class BulletinPdfGenerator {
         r.rubrique.rubriqueIdentity == RubriqueIdentity.anciennete;
     final label = r.rubrique.rubriqueIdentity?.label ?? r.rubrique.rubrique;
     final valueText = isAnciennete
-        ? "${r.value?.toInt() == 0 ? "< 1" : r.value?.toInt()}${(r.value?.toInt() == 1 || r.value?.toInt() == 0) ? " an" : " ans"}"
+     ? formatAnciennete(r.value)
         : "${r.value ?? 0}";
 
     return pw.Padding(

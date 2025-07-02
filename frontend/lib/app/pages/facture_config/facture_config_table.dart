@@ -26,17 +26,17 @@ class FactureConfigTable extends StatefulWidget {
 }
 
 class _InputTableState extends State<FactureConfigTable> {
-  late List<RoleModel> roles = [];
+  late RoleModel role;
   late Future<void> _futureRoles;
 
   @override
   void initState() {
-    _futureRoles = getRoles();
+    _futureRoles = getRole();
     super.initState();
   }
 
-  Future<void> getRoles() async {
-    roles = await AuthService().getRoles();
+  Future<void> getRole() async {
+    role = await AuthService().getRole();
   }
 
   // detailCategorieRubrique({required ClientFactureGlobaLValueModel clientFactureGlobaLValue}) {
@@ -89,7 +89,7 @@ class _InputTableState extends State<FactureConfigTable> {
                         child: IconButton(
                           onPressed: () {
                             if (hasPermission(
-                              roles: roles,
+                              role: role,
                               permission: PermissionAlias
                                   .canSetFactureGlobalValues.label,
                             )) {

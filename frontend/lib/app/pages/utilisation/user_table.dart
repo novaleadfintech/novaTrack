@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/app/pages/app_dialog_box.dart';
 import 'package:frontend/app/pages/error_page.dart';
+import 'package:frontend/app/pages/utilisation/edit_user_page.dart';
 import 'package:frontend/app/pages/utilisation/more_user_detail.dart';
 import 'package:frontend/global/constant/constant.dart';
 import 'package:frontend/model/personnel/enum_personnel.dart';
@@ -39,7 +41,7 @@ class UserTable extends StatefulWidget {
 
 class _UserTableState extends State<UserTable> {
   late SimpleFontelicoProgressDialog _dialog;
-  List<RoleModel> roles = [];
+  late RoleModel role;
   late UserModel? user;
 
   late Future<UserModel?> _futureRoles;
@@ -74,6 +76,15 @@ class _UserTableState extends State<UserTable> {
       }
     }
   }
+
+editRole({required UserModel user}) {
+    showResponsiveDialog(
+      context,
+      content: EditUserPage(refresh: widget.refresh, user: user),
+      title: "Modifier le role d'un utilisateur",
+    );
+  }
+
 
   autorise({required UserModel user}) async {
     bool confirmed = await handleOperationButtonPress(
@@ -179,8 +190,8 @@ class _UserTableState extends State<UserTable> {
     }
   }
 
-  Future<void> getRoles() async {
-    roles = await AuthService().getRoles();
+  Future<void> getRole() async {
+    role = await AuthService().getRole();
   }
 Future<UserModel?> getcurrentUser() async {
     return await AuthService().decodeToken();
@@ -192,7 +203,7 @@ Future<UserModel?> getcurrentUser() async {
 void initState() {
     _dialog = SimpleFontelicoProgressDialog(context: context);
     _futureRoles = getcurrentUser();
-    getRoles();
+    getRole();
     super.initState();
   }
 
@@ -261,7 +272,7 @@ Widget build(BuildContext context) {
                                       valeur: capitalizeFirstLetter(
                                     word: (use.roles != null &&
                                             use.roles!.isNotEmpty)
-                                        ? use.roles!.first.libelle
+                                        ? use.roles!.last.libelle
                                         : "Aucun rôle",
                                   )),
                                   TableBodyLast(
@@ -271,7 +282,7 @@ Widget build(BuildContext context) {
                                           use.personnel!.etat !=
                                               EtatPersonnel.archived &&
                                           hasPermission(
-                                            roles: roles,
+                                            role: role,
                                             permission: PermissionAlias
                                                 .assignRolePersonnel.label,
                                           )) ...[
@@ -283,6 +294,14 @@ Widget build(BuildContext context) {
                                           },
                                           color: null, 
                                         ),
+                                        
+                                        (
+                                          label: Constant.edit,
+                                          onTap: () {
+                                            editRole(user: use);
+                                          },
+                                          color: null,
+                                        ),
                                         (
                                           label: Constant.forbide,
                                           onTap: () {
@@ -293,7 +312,7 @@ Widget build(BuildContext context) {
                                       ],
                                       if (!use.canLogin! &&
                                           hasPermission(
-                                            roles: user!.roles!,
+                                            role: user!.roles!.last,
                                             permission: PermissionAlias
                                                 .assignRolePersonnel.label,
                                           )) ...[
@@ -334,7 +353,7 @@ Widget build(BuildContext context) {
                                       valeur: capitalizeFirstLetter(
                                     word: (use.roles != null &&
                                             use.roles!.isNotEmpty)
-                                        ? use.roles!.first.libelle
+                                        ? use.roles!.last.libelle
                                         : "Aucun rôle",
                                   )),
                                   TableBodyLast(
@@ -344,7 +363,7 @@ Widget build(BuildContext context) {
                                           use.personnel!.etat !=
                                               EtatPersonnel.archived &&
                                           hasPermission(
-                                            roles: roles,
+                                            role: role,
                                             permission: PermissionAlias
                                                 .assignRolePersonnel.label,
                                           )) ...[
@@ -357,6 +376,13 @@ Widget build(BuildContext context) {
                                           color: null, // couleur null
                                         ),
                                         (
+                                          label: Constant.edit,
+                                          onTap: () {
+                                            editRole(user: use);
+                                          },
+                                          color: null,
+                                        ),
+                                        (
                                           label: Constant.forbide,
                                           onTap: () {
                                             forbide(user: use);
@@ -366,7 +392,7 @@ Widget build(BuildContext context) {
                                       ],
                                       if (!use.canLogin! &&
                                           hasPermission(
-                                            roles: user!.roles!,
+                                            role: user!.roles!.last,
                                             permission: PermissionAlias
                                                 .assignRolePersonnel.label,
                                           )) ...[

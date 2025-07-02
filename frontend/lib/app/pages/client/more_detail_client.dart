@@ -30,7 +30,7 @@ class _MoreDatailClientPageState extends State<MoreDatailClientPage> {
     super.initState();
   }
 
-  Future<List<RoleModel>> getRoles() async {
+  Future<List<RoleModel>> getRole() async {
     UserModel? user = await AuthService().decodeToken();
     return user?.roles ?? [];
   }

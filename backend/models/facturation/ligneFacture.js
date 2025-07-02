@@ -61,7 +61,7 @@ class LigneFacture {
     
     return await Promise.all(
       ligneFactures.edges
-        .sort((a, b) => a.timeStamp - b.timeStamp) // Trie les lignes par timestamp
+        .sort((a, b) => a.timeStamp - b.timeStamp) // Trie les lignes par timeStamp
         .map(async (ligneFactureEdge) => {
           if (!ligneFactureEdge || !ligneFactureEdge.service) {
             throw new Error("Ligne de facture invalide ou service manquant.");
@@ -94,8 +94,8 @@ class LigneFacture {
           });
 
           return {
-            ...ligneFactureEdge, 
-            montant: montantLigneFacture, 
+            ...ligneFactureEdge,
+            montant: montantLigneFacture,
             fraisDivers,
           };
         })

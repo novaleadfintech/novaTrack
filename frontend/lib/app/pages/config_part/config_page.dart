@@ -26,9 +26,9 @@ class ConfigPage extends StatefulWidget {
 }
 
 class _ConfigPageState extends State<ConfigPage> {
-  List<RoleModel> roles = [];
-  Future<void> getRoles() async {
-    roles = await AuthService().getRoles();
+  late RoleModel role;
+  Future<void> getRole() async {
+    role = await AuthService().getRole();
     setState(() {
       
     });
@@ -36,7 +36,7 @@ class _ConfigPageState extends State<ConfigPage> {
 
   @override
   void initState() {
-    getRoles();
+    getRole();
     super.initState();
   }
 
@@ -60,39 +60,39 @@ class _ConfigPageState extends State<ConfigPage> {
                   InkWell(
                     onTap: () {
                       showResponsiveConfigPageDialogBox(context,
-                          title: "Libellé financier",
+                          title: "Libellés financier",
                           content: LibelleFluxFinancierPage());
                     },
                     child: ResponsiveCard(
-                      label: "Libellé financier",
+                      label: "Libellés financier",
                     ),
                   ),
                   InkWell(
                     onTap: () {
                       showResponsiveConfigPageDialogBox(
                         context,
-                        title: "Moyen de payement",
+                        title: "Moyens de payement",
                         content: MoyenPaiementPage(),
                       );
                     },
-                    child: ResponsiveCard(label: "Moyen de payement"),
+                    child: ResponsiveCard(label: "Moyens de payement"),
                   ),
                   InkWell(
-                    child: ResponsiveCard(label: "Catégorie de partenaire"),
+                    child: ResponsiveCard(label: "Catégories de partenaire"),
                     onTap: () {
                       showResponsiveConfigPageDialogBox(
                         context,
-                        title: "Catégorie de partenaire",
+                        title: "Catégories de partenaire",
                         content: CategorieClientPage(),
                       );
                     },
                   ),
                   InkWell(
-                    child: ResponsiveCard(label: "Catégorie de paie"),
+                    child: ResponsiveCard(label: "Catégories de paie"),
                     onTap: () {
                       showResponsiveConfigPageDialogBox(
                         context,
-                        title: "Catégorie de paie",
+                        title: "Catégories de paie",
                         content: CategoriePaiePage(),
                       );
                     },
@@ -108,38 +108,38 @@ class _ConfigPageState extends State<ConfigPage> {
                     },
                   ),
                   InkWell(
-                    child: ResponsiveCard(label: "Rubrique de bulletin"),
+                    child: ResponsiveCard(label: "Rubriques de bulletin"),
                     onTap: () {
                       showResponsiveConfigPageDialogBox(
                         context,
-                        title: "Rubrique de bulletin",
+                        title: "Rubriques de bulletin",
                         content: RubriquePaiePage(),
                       );
                     },
                   ),
                   InkWell(
-                    child: ResponsiveCard(label: "Section de bulletin"),
+                    child: ResponsiveCard(label: "Sections de bulletin"),
                     onTap: () {
                       showResponsiveConfigPageDialogBox(
                         context,
-                        title: "Section de bulletin",
+                        title: "Sections de bulletin",
                         content: SectionPage(),
                       );
                     },
                   ),
                   InkWell(
                     child:
-                        ResponsiveCard(label: "Rubrique - Catégorie de paie"),
+                        ResponsiveCard(label: "Rubriques - Catégorie de paie"),
                     onTap: () {
                       showResponsiveConfigPageDialogBox(
                         context,
-                        title: "Rubrique - Catégorie de paie",
+                        title: "Rubriques - Catégorie de paie",
                         content: RubriqueCategoriePaie(),
                       );
                     },
                   ),
                   InkWell(
-                    child: ResponsiveCard(label: "Profil utilisateur"),
+                    child: ResponsiveCard(label: "Profils utilisateur"),
                     onTap: () {
                       showResponsiveConfigPageDialogBox(
                         context,
@@ -149,24 +149,24 @@ class _ConfigPageState extends State<ConfigPage> {
                     },
                   ),
                   if (hasPermission(
-                      roles: roles,
+                      role: role,
                       permission: PermissionAlias.assignPermissionRole.label))
                     InkWell(
-                      child: ResponsiveCard(label: "Habilitation"),
+                      child: ResponsiveCard(label: "Habilitations"),
                       onTap: () {
                         showResponsiveConfigPageDialogBox(
                           context,
-                          title: "Habilitation",
+                          title: "Habilitations",
                           content: PermissionPage(),
                         );
                       },
                     ),
                   InkWell(
-                    child: ResponsiveCard(label: "Facturation"),
+                    child: ResponsiveCard(label: "Facturations"),
                     onTap: () {
                       showResponsiveConfigPageDialogBox(
                         context,
-                        title: "facturation",
+                        title: "facturations",
                         content: FactureConfigPage(),
                       );
                     },

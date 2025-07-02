@@ -43,7 +43,7 @@ class _PermissionPageState extends State<PermissionPage> {
   // }
 
   Future<List<RoleModel>> fetchRoleItems() async {
-    return await RoleService.getRoles();
+    return await RoleService.getRole();
   }
 
   Future<void> fetchPermissionsByRole({required RoleModel profil}) async {
@@ -71,203 +71,188 @@ class _PermissionPageState extends State<PermissionPage> {
       padding: const EdgeInsets.all(8),
       child: Container(
         color: Theme.of(context).colorScheme.surface,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              // En-tête avec sélection de profil et bouton d'ajout
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Expanded(
-                    child: FutureCustomDropDownField<RoleModel>(
-                      label: "Veuillez selectionner un rôle",
-                      showSearchBox: false,
-                      selectedItem: profil,
-                      required: false,
-                      fetchItems: fetchRoleItems,
-                      onChanged: (RoleModel? value) async {
-                        if (value != null) {
-                          if (value != profil) {
-                            setState(() => profil = value);
-                            await fetchPermissionsByRole(profil: profil!);
-                          }
+        child: Column(
+          children: [
+            // En-tête avec sélection de profil et bouton d'ajout - FIXE
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: FutureCustomDropDownField<RoleModel>(
+                    label: "Veuillez selectionner un rôle",
+                    showSearchBox: false,
+                    selectedItem: profil,
+                    required: false,
+                    fetchItems: fetchRoleItems,
+                    onChanged: (RoleModel? value) async {
+                      if (value != null) {
+                        if (value != profil) {
+                          setState(() => profil = value);
+                          await fetchPermissionsByRole(profil: profil!);
                         }
-                      },
-                      canClose: false,
-                      itemsAsString: (s) => s.libelle,
-                    ),
+                      }
+                    },
+                    canClose: false,
+                    itemsAsString: (s) => s.libelle,
                   ),
-                  // Padding(
-                  //   padding: const EdgeInsets.only(bottom: 8.0),
-                  //   child: AddElementButton(
-                  //     addElement: onClickAddProfilButton,
-                  //     icon: Icons.add_outlined,
-                  //     label: "Ajouter un rôle",
-                  //   ),
-                  // ),
-                ],
-              ),
-              const Gap(16),
-              Container(
-                constraints: BoxConstraints(
-                  minHeight: MediaQuery.of(context).size.height - 200,
                 ),
-                child: Center(
-                  child: isLoading
-                      ? const CircularProgressIndicator()
-                      : errMessage != null
-                          ? Text(errMessage!)
-                          : permissions.isEmpty && profil != null
+              ],
+            ),
+            const Gap(8),
+            Expanded(
+              child: isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : errMessage != null
+                      ? Center(child: Text(errMessage!))
+                      : permissions.isEmpty && profil != null
+                          ? const NoDataPage(
+                              data: [],
+                              message: "Aucune permission trouvée",
+                            )
+                          : profil == null
                               ? const NoDataPage(
                                   data: [],
-                                  message: "Aucune permission trouvée",
+                                  message:
+                                      "Cliquez dans le champs en haut pour selectionner un profil afin de le configuer",
                                 )
-                              : profil == null
-                                  ? const NoDataPage(
-                                      data: [],
-                                      message:
-                                          "Cliquez dans le champs en haut pour selectionner un profil afin de le configuer",
-                                    )
-                                  : Column(
-                                      children: permissions.map((moduleper) {
-                                        ModulePermissionModel modulePermission =
-                                            moduleper;
-                                        return Container(
-                                          margin: EdgeInsets.all(2),
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                              color: AppColor.popGrey,
-                                            ),
+                              : SingleChildScrollView(
+                                  child: Column(
+                                    children: permissions.map((moduleper) {
+                                      ModulePermissionModel modulePermission =
+                                          moduleper;
+                                      return Container(
+                                        margin: EdgeInsets.all(2),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: AppColor.popGrey,
                                           ),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Container(
-                                                    padding:
-                                                        const EdgeInsets.all(8),
-                                                    child: Text(
-                                                      modulePermission
-                                                          .module.name,
-                                                      style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Container(
+                                                  padding:
+                                                      const EdgeInsets.all(8),
+                                                  child: Text(
+                                                    modulePermission
+                                                        .module.name,
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                     ),
                                                   ),
-                                                ],
-                                              ),
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  modulePermission.permissions
-                                                          .isNotEmpty
-                                                      ? Column(
-                                                          children: [
-                                                            Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .all(8.0),
-                                                              child: Table(
-                                                                border: TableBorder
-                                                                    .all(
-                                                                        width:
-                                                                            0.2),
-                                                                columnWidths: const {
-                                                                  1: IntrinsicColumnWidth()
-                                                                },
-                                                                children:
-                                                                    modulePermission
-                                                                        .permissions
-                                                                        .map(
-                                                                          (permission) =>
-                                                                              TableRow(
-                                                                            decoration: permission!.isChecked!
-                                                                                ? checkPermissionTableDecoration(context)
-                                                                                : checkNotPermissionTableDecoration(context),
-                                                                            children: [
-                                                                              TableBodyMiddle(
-                                                                                valeur: permission.libelle,
-                                                                              ),
-                                                                              TableCell(
-                                                                                child: Padding(
-                                                                                  padding: const EdgeInsets.symmetric(vertical: 8),
-                                                                                  child: Checkbox(
-                                                                                      value: permission.isChecked,
-                                                                                      onChanged: (value) {
-                                                                                        if (value != null) {
-                                                                                          setState(() {
-                                                                                            // Trouver l'index de l'élément dans la liste
-                                                                                            int index = modulePermission.permissions.indexWhere((p) => p!.id == permission.id);
+                                                ),
+                                              ],
+                                            ),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                modulePermission
+                                                        .permissions.isNotEmpty
+                                                    ? Column(
+                                                        children: [
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(8.0),
+                                                            child: Table(
+                                                              border: TableBorder
+                                                                  .all(
+                                                                      width:
+                                                                          0.2),
+                                                              columnWidths: const {
+                                                                1: IntrinsicColumnWidth()
+                                                              },
+                                                              children:
+                                                                  modulePermission
+                                                                      .permissions
+                                                                      .map(
+                                                                        (permission) =>
+                                                                            TableRow(
+                                                                          decoration: permission!.isChecked!
+                                                                              ? checkPermissionTableDecoration(context)
+                                                                              : checkNotPermissionTableDecoration(context),
+                                                                          children: [
+                                                                            TableBodyMiddle(
+                                                                              valeur: permission.libelle,
+                                                                            ),
+                                                                            TableCell(
+                                                                              child: Padding(
+                                                                                padding: const EdgeInsets.symmetric(vertical: 8),
+                                                                                child: Checkbox(
+                                                                                    value: permission.isChecked,
+                                                                                    onChanged: (value) {
+                                                                                      if (value != null) {
+                                                                                        setState(() {
+                                                                                          // Trouver l'index de l'élément dans la liste
+                                                                                          int index = modulePermission.permissions.indexWhere((p) => p!.id == permission.id);
 
-                                                                                            if (index != -1) {
-                                                                                              // Remplacer l'objet par une nouvelle instance modifiée
-                                                                                              modulePermission.permissions[index] = PermissionModel(
-                                                                                                id: permission.id,
-                                                                                                libelle: permission.libelle,
-                                                                                                alias: permission.alias,
-                                                                                                isChecked: value, // Nouvelle valeur
-                                                                                              );
-                                                                                            }
-                                                                                          });
-                                                                                        }
-                                                                                      }),
-                                                                                ),
+                                                                                          if (index != -1) {
+                                                                                            // Remplacer l'objet par une nouvelle instance modifiée
+                                                                                            modulePermission.permissions[index] = PermissionModel(
+                                                                                              id: permission.id,
+                                                                                              libelle: permission.libelle,
+                                                                                              alias: permission.alias,
+                                                                                              isChecked: value, // Nouvelle valeur
+                                                                                            );
+                                                                                          }
+                                                                                        });
+                                                                                      }
+                                                                                    }),
                                                                               ),
-                                                                            ],
-                                                                          ),
-                                                                        )
-                                                                        .toList(),
-                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      )
+                                                                      .toList(),
                                                             ),
-                                                            Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .symmetric(
-                                                                      horizontal:
-                                                                          8.0),
-                                                              child: Align(
-                                                                alignment: Alignment
-                                                                    .bottomRight,
-                                                                child:
-                                                                    IconButton(
-                                                                  icon: Icon(
-                                                                    Icons.save,
-                                                                    color: Theme.of(
-                                                                            context)
-                                                                        .colorScheme
-                                                                        .primary,
-                                                                  ),
-                                                                  onPressed: () =>
-                                                                      validateModulePermissions(
-                                                                    modulePermission,
-                                                                  ),
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        8.0),
+                                                            child: Align(
+                                                              alignment: Alignment
+                                                                  .bottomRight,
+                                                              child: IconButton(
+                                                                icon: Icon(
+                                                                  Icons.save,
+                                                                  color: Theme.of(
+                                                                          context)
+                                                                      .colorScheme
+                                                                      .primary,
+                                                                ),
+                                                                onPressed: () =>
+                                                                    validateModulePermissions(
+                                                                  modulePermission,
                                                                 ),
                                                               ),
                                                             ),
-                                                          ],
-                                                        )
-                                                      : Center(
-                                                          child: Text(
-                                                            "Aucune permission",
                                                           ),
+                                                        ],
+                                                      )
+                                                    : Center(
+                                                        child: Text(
+                                                          "Aucune permission",
                                                         ),
-                                                  // Bouton de validation
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      }).toList(),
-                                    ),
-                ),
-              ),
-            ],
-          ),
+                                                      ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
+            ),
+          ],
         ),
       ),
     );

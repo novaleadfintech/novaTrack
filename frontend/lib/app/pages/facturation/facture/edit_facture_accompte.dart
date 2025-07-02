@@ -22,13 +22,13 @@ class EditFactureAccompte extends StatefulWidget {
   final FactureAcompteModel factureAcompte;
   final DateTime dateEtablissement;
   final String factureId;
-  final List<RoleModel> roles;  
+  final RoleModel role;  
   final VoidCallback refresh;
   const EditFactureAccompte({
     super.key,
     required this.factureId,
     required this.refresh,
-    required this.roles,
+    required this.role,
     required this.dateEtablissement,
     required this.factureAcompte,
   });
@@ -158,7 +158,7 @@ class _EditFactureAccompteState extends State<EditFactureAccompte> {
               lastDate: dateEnvoieFacture,
               firstDate: dateEnvoieFacture),
               if (hasPermission(
-            roles: widget.roles,
+            role: widget.role,
             permission: PermissionAlias.exonorerFacturePenalty.label,
           ))
           CustomRadioGroup(

@@ -22,7 +22,7 @@ class LibelleFlux {
         aql`
           FOR libelleFlux IN ${libelleFluxCollection}
           ${filter}
-          SORT libelleFlux.timestamp DESC
+          SORT libelleFlux.timeStamp DESC
          ${limit}
           RETURN libelleFlux
         `
@@ -54,7 +54,7 @@ class LibelleFlux {
     const newLibelleFlux = {
       libelle: libelle,
       type: type,
-      timestamp: Date.now(),
+      timeStamp: Date.now(),
     };
     try {
       await libelleFluxCollection.save(newLibelleFlux);

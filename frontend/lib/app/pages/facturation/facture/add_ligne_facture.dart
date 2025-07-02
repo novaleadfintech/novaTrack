@@ -191,7 +191,7 @@ class _AddLigneFactureState extends State<AddLigneFacture> {
     return IntrinsicHeight(
       child: SingleChildScrollView(
         child: Form(
-          key: UniqueKey(),
+          // key: UniqueKey(),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -258,6 +258,7 @@ class _AddLigneFactureState extends State<AddLigneFacture> {
                     child: SimpleTextField(
                       label: "Quantité",
                       textController: _quantiteController,
+                      keyboardType: TextInputType.number,
                     ),
                   ),
                   if (!Responsive.isMobile(context))

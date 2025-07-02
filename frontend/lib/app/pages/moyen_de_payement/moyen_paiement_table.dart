@@ -38,18 +38,18 @@ class MoyenPayementTable extends StatefulWidget {
 
 class _MoyenPaiementTableState extends State<MoyenPayementTable> {
   late SimpleFontelicoProgressDialog _dialog;
-  late List<RoleModel> roles = [];
+  late RoleModel role;
   late Future<void> _futureRoles;
 
   @override
   void initState() {
     _dialog = SimpleFontelicoProgressDialog(context: context);
-    _futureRoles = getRoles();
+    _futureRoles = getRole();
     super.initState();
   }
 
-  Future<void> getRoles() async {
-    roles = await AuthService().getRoles();
+  Future<void> getRole() async {
+    role = await AuthService().getRole();
   }
 
   editLibelle({
@@ -166,7 +166,7 @@ class _MoyenPaiementTableState extends State<MoyenPayementTable> {
                             color: null, // couleur null
                           ),
                           if (hasPermission(
-                            roles: roles,
+                            role: role,
                             permission: PermissionAlias
                                 .updateMoyenPaiement.label,
                           ))
@@ -178,7 +178,7 @@ class _MoyenPaiementTableState extends State<MoyenPayementTable> {
                               color: null, // couleur null
                             ),
                           if (hasPermission(
-                            roles: roles,
+                            role: role,
                             permission: PermissionAlias
                                 .deleteMoyenPaiement.label,
                           ))

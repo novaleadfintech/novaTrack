@@ -40,7 +40,7 @@ class SalarieTable extends StatefulWidget {
 
 class _SalarieTableState extends State<SalarieTable> {
   late Future<void> _futureRoles;
-  late List<RoleModel> roles = [];
+  late RoleModel role;
   UserModel? currentUser;
 
   onEdit({required SalarieModel salarie}) {
@@ -67,12 +67,12 @@ class _SalarieTableState extends State<SalarieTable> {
 
   @override
   void initState() {
-    _futureRoles = getRoles();
+    _futureRoles = getRole();
     super.initState();
   }
 
-  Future<void> getRoles() async {
-    roles = await AuthService().getRoles();
+  Future<void> getRole() async {
+    role = await AuthService().getRole();
     setState(() {});
   }
 
@@ -141,7 +141,7 @@ class _SalarieTableState extends State<SalarieTable> {
                                   if (personnel.etat !=
                                           EtatPersonnel.archived &&
                                       hasPermission(
-                                        roles: roles,
+                                        role: role,
                                         permission: PermissionAlias
                                             .createBulletin.label,
                                       ))
@@ -155,7 +155,7 @@ class _SalarieTableState extends State<SalarieTable> {
                                   if (personnel.etat != EtatPersonnel.archived
                                            &&
                                       hasPermission(
-                                          roles: roles,
+                                          role: role,
                                           permission: PermissionAlias
                                               .updateSalarie.label) 
                                       ) ...[
@@ -168,7 +168,7 @@ class _SalarieTableState extends State<SalarieTable> {
 
                                   // if (!isCurrentUser &&
                                   //     hasPermission(
-                                  //         roles: roles,
+                                  //         role: role,
                                   //         permission: PermissionAlias
                                   //             .archivePersonnel.label)) ...[
                                   //   (
@@ -215,7 +215,7 @@ class _SalarieTableState extends State<SalarieTable> {
                                   if (personnel.etat !=
                                           EtatPersonnel.archived &&
                                       hasPermission(
-                                        roles: roles,
+                                        role: role,
                                         permission: PermissionAlias
                                             .createBulletin.label,
                                       ))
@@ -262,7 +262,7 @@ class _SalarieTableState extends State<SalarieTable> {
                                       if (personnel.etat !=
                                               EtatPersonnel.archived &&
                                           hasPermission(
-                                              roles: roles,
+                                              role: role,
                                               permission: PermissionAlias
                                                   .updateSalarie.label)) ...[
                                         (
@@ -273,7 +273,7 @@ class _SalarieTableState extends State<SalarieTable> {
                                       ],
                                       // if (!isCurrentUser &&
                                       //     hasPermission(
-                                      //         roles: roles,
+                                      //         role: role,
                                       //         permission: PermissionAlias
                                       //             .archivePersonnel.label)) ...[
                                       //   (
@@ -315,7 +315,7 @@ class _SalarieTableState extends State<SalarieTable> {
         );
       } else {
         List<DateTime>? periode = getCurrentBulletinPeriod(salarie: salarie);
-
+        
         final String titre = periode == null
             ? "Edition du bulletin de paie - ${salarie.personnel.toStringify()}"
             : "Edition du bulletin de paie - ${salarie.personnel.toStringify()} - du ${getStringDate(time: periode.first)} au ${getStringDate(time: periode.last)}";

@@ -46,9 +46,9 @@ class _ValidationPageState extends State<ValidationPage> {
     });
   }
 
-  List<RoleModel> roles = [];
-  Future<void> getRoles() async {
-    roles = await AuthService().getRoles();
+  late RoleModel role;
+  Future<void> getRole() async {
+    role = await AuthService().getRole();
     setState(() {});
   }
 
@@ -66,7 +66,7 @@ class _ValidationPageState extends State<ValidationPage> {
 
   Future<void> _initializeData() async {
     await getCurrentUser();
-    await getRoles();
+    await getRole();
     await _loadFluxFinancierData();
   }
 
@@ -82,7 +82,7 @@ class _ValidationPageState extends State<ValidationPage> {
     });
     try {
       if (hasPermission(
-          roles: roles,
+          role: role,
               permission: PermissionAlias.validFluxFinancier.label)) {
         fluxFinancierData = await FluxFinancierService.getUnValidatedFlux();
       } else {

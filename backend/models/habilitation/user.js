@@ -12,6 +12,7 @@ import {
   sendRoleAssignmentEmail,
   sendresetLoginEmail,
 } from "../../utils/send_email.js";
+import { timeStamp } from "console";
 
 const personnelModel = new Personnel();
 const roleModel = new Role();
@@ -143,23 +144,52 @@ class User {
 
   attribuerRolePersonnel = async ({ personnelId, roleId }) => {
     let personnel, role, newUser;
-
+    console.log(1);
     // Vérifications préalables
     await personnelModel.isExistPersonnel({ key: personnelId });
     await roleModel.isExistRole({ key: roleId });
+    console.log(2);
 
-    const userDoublon = await db.query(
+    const userDoublonpersonnel = await db.query(
       aql`FOR user IN ${userCollection} FILTER user.personnelId == ${personnelId} RETURN user`
     );
+    console.log(3);
 
-    if (userDoublon.hasNext) {
-      throw new Error("Ce personnel a déjà un rôle");
+    if (userDoublonpersonnel.hasNext) {
+      const userDoublon = await db.query(
+        aql`FOR user IN ${userCollection} FILTER user.personnelId == ${personnelId} AND user.roleId == ${roleId} RETURN user`
+      );
+      console.log(4);
+
+      if (userDoublon.hasNext) {
+        throw new Error("Ce personnel a déjà ce rôle");
+      }
+      console.log(5);
+
+      try {
+        const user = await userDoublonpersonnel.next();
+        userRoleCollection.save({
+          _from: user._id,
+          _to: roleId,
+          timeStamp: Date.now(),
+        });
+        console.log(6);
+
+        return "OK";
+      } catch (e) {
+        throw new Error(e);
+      }
     }
+    console.log();
 
     personnel = await personnelModel.getPersonnel({ key: personnelId });
     role = await roleModel.getRole({ key: roleId });
+    console.log(7);
+
     const password = generatePassword();
     const hashedPassword = await hashPassword({ password: password });
+    console.log(8);
+
     const user = {
       login: personnel.email,
       password: hashedPassword,
@@ -168,10 +198,12 @@ class User {
       dateEnregistrement: Date.now(),
       canLogin: true,
     };
+    console.log(9);
 
     const trx = await db.beginTransaction({
       write: [userCollection, userRoleCollection],
     });
+    console.log(10);
 
     try {
       const userQuery = await trx.step(() =>
@@ -179,8 +211,14 @@ class User {
       );
       newUser = userQuery.new;
       await trx.step(() =>
-        userRoleCollection.save({ _from: newUser._id, _to: roleId })
+        userRoleCollection.save({
+          _from: newUser._id,
+          _to: roleId,
+          timeStamp: Date.now(),
+        })
       );
+      console.log(11);
+
       let info = await sendRoleAssignmentEmail({
         password: password,
         personnel: personnel,
@@ -189,8 +227,11 @@ class User {
       }).catch((error) => {
         throw new Error(error);
       });
+      console.log(12);
 
       await trx.commit();
+      console.log(13);
+
       return "OK";
     } catch (error) {
       await trx.abort();

@@ -131,7 +131,7 @@ if (selectNatureValue == NatureRubrique.constant && _rubriqueRole == null) {
   @override
   Widget build(BuildContext context) {
     return Form(
-      key: UniqueKey(),
+      // key: UniqueKey(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

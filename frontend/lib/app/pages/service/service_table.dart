@@ -41,17 +41,17 @@ class ServiceTable extends StatefulWidget {
 class _ServiceTableState extends State<ServiceTable> {
   late SimpleFontelicoProgressDialog _dialog;
   late Future<void> _futureRoles;
-  late List<RoleModel> roles = [];
+  late RoleModel role;
 
   @override
   void initState() {
     super.initState();
     _dialog = SimpleFontelicoProgressDialog(context: context);
-    _futureRoles = getRoles();
+    _futureRoles = getRole();
   }
 
-  Future<void> getRoles() async {
-    roles = await AuthService().getRoles();
+  Future<void> getRole() async {
+    role = await AuthService().getRole();
   }
 
   void onEdit({
@@ -198,7 +198,7 @@ class _ServiceTableState extends State<ServiceTable> {
                                   color: null, // couleur null
                                 ),
                                 if (hasPermission(
-                                    roles: roles,
+                                    role: role,
                                     permission:
                                         PermissionAlias.archiveService.label))
                                         (
@@ -216,7 +216,7 @@ class _ServiceTableState extends State<ServiceTable> {
                                         if (service.etat !=
                                             EtatService.archived &&
                                     hasPermission(
-                                        roles: roles,
+                                        role: role,
                                         permission: PermissionAlias
                                             .updateService.label)) ...[
                                           (
@@ -262,7 +262,7 @@ class _ServiceTableState extends State<ServiceTable> {
                                 ),
                                 
                                 if (hasPermission(
-                                    roles: roles,
+                                    role: role,
                                     permission:
                                         PermissionAlias.archiveService.label))
                                         (
@@ -280,7 +280,7 @@ class _ServiceTableState extends State<ServiceTable> {
                                         if (service.etat !=
                                                 EtatService.archived &&
                                     hasPermission(
-                                        roles: roles,
+                                        role: role,
                                         permission: PermissionAlias
                                             .updateService.label)) ...[
                                           (
