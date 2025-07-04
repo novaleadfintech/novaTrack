@@ -22,7 +22,11 @@ import '../../integration/popop_status.dart';
 import '../../integration/request_frot_behavior.dart';
 
 class EntreprisePage extends StatefulWidget {
-  const EntreprisePage({super.key});
+  final RoleModel role;
+  const EntreprisePage({
+    super.key,
+    required this.role,
+  });
 
   @override
   State<EntreprisePage> createState() => _EntreprisePageState();
@@ -49,7 +53,6 @@ class _EntreprisePageState extends State<EntreprisePage> {
 
   @override
   void initState() {
-    super.initState();
     nameController = TextEditingController();
     adresseController = TextEditingController();
     emailController = TextEditingController();
@@ -57,8 +60,9 @@ class _EntreprisePageState extends State<EntreprisePage> {
     nomDGController = TextEditingController();
     villeController = TextEditingController();
     _dialog = SimpleFontelicoProgressDialog(context: context);
-    getRole();
+    role = widget.role;
     _loadEntreprise();
+    super.initState();
   }
 
   Future<void> _loadEntreprise() async {

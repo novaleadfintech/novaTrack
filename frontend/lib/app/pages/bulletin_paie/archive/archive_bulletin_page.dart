@@ -4,6 +4,8 @@ import 'package:frontend/app/pages/bulletin_paie/archive/archive_bulletin_table.
 import 'package:frontend/app/pages/bulletin_paie/decouverte/decouverte_table.dart';
 import 'package:frontend/app/pages/bulletin_paie/salarie/salaire_table.dart';
 import 'package:frontend/app/responsitvity/responsivity.dart';
+import 'package:frontend/global/constant/permission_alias.dart';
+import 'package:frontend/helper/user_helper.dart';
 import 'package:frontend/model/bulletin_paie/decouverte_model.dart';
 import 'package:frontend/model/bulletin_paie/etat_bulletin.dart';
 import 'package:frontend/model/bulletin_paie/salarie_model.dart';
@@ -16,6 +18,7 @@ import 'package:gap/gap.dart';
 import '../../../../global/global_value.dart';
 import '../../../../helper/paginate_data.dart';
 import '../../../../model/bulletin_paie/bulletin_model.dart';
+import '../../../../model/habilitation/role_model.dart';
 import '../../../../widget/filter_bar.dart';
 import '../../../../widget/pagination.dart';
 import '../../../../widget/research_bar.dart';
@@ -24,7 +27,11 @@ import '../../no_data_page.dart';
 import 'get_multiple_bulletin.dart';
 
 class ArchiveBulletinPage extends StatefulWidget {
-  const ArchiveBulletinPage({super.key});
+  final RoleModel role;
+  const ArchiveBulletinPage({
+    super.key,
+    required this.role,
+  });
 
   @override
   State<ArchiveBulletinPage> createState() => _ArchiveBulletinState();
@@ -157,7 +164,10 @@ class _ArchiveBulletinState extends State<ArchiveBulletinPage> {
               Row(
                 children: [
                   if (selectedFilter == "Bulletin" &&
-                      Responsive.isDesktop(context)) ...[
+                      Responsive.isDesktop(context) &&
+                      hasPermission(
+                          role: widget.role,
+                          permission: PermissionAlias.readBulletin.label)) ...[
                     Align(
                       alignment: Alignment.bottomRight,
                       child: Container(
@@ -283,6 +293,7 @@ class _ArchiveBulletinState extends State<ArchiveBulletinPage> {
                                               .colorScheme
                                               .surfaceBright,
                                           child: DecouverteTable(
+                                            role: widget.role,
                                             paginatedDecouverteData:
                                                 getPaginatedData(
                                               data: filteredDecouverte,
@@ -304,7 +315,11 @@ class _ArchiveBulletinState extends State<ArchiveBulletinPage> {
           ),
         ],
       ),
-      if (selectedFilter == "Bulletin" && !Responsive.isDesktop(context))
+      if (selectedFilter == "Bulletin" &&
+          !Responsive.isDesktop(context) &&
+          hasPermission(
+              role: widget.role,
+              permission: PermissionAlias.readBulletin.label))
         Padding(
           padding: const EdgeInsets.only(bottom: 60, right: 8),
           child: Align(

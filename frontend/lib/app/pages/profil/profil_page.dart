@@ -56,7 +56,7 @@ class _ProfilPageState extends State<ProfilPage> {
 
   Future<void> _loadProfil() async {
     try {
-      profilData = await RoleService.getRole();
+      profilData = await RoleService.getRoles();
     } catch (error) {
       setState(() {
         errorMessage = error.toString();

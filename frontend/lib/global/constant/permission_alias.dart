@@ -49,6 +49,7 @@ enum PermissionAlias {
   autoriseAccess("AUTORISE_ACCESS"),
   assignRolePersonnel("ASSIGN_ROLE_PERSONNEL"),
   assignPermissionRole("ASSIGN_PERMISSION_ROLE"),
+  handelRoleAutorization("HANDLE_ROLE_EDITING"),
   readUser("READ_USER"),
   createRole("CREATE_PROFIL"),
   updateRole("EDIT_PROFIL"),

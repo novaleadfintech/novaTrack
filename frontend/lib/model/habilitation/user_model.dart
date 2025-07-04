@@ -1,13 +1,13 @@
 
 import '../personnel/personnel_model.dart';
-import 'role_model.dart';
+import 'user_role_model.dart';
 
 class UserModel {
   final String? id;
   final String? login;
   final String? password;
   final PersonnelModel? personnel;
-  final List<RoleModel>? roles;
+  final List<UserRoleModel>? roles;
   final bool? canLogin;
   final bool? isTheFirstConnection; // Added field for first connection
   final String? token;
@@ -35,7 +35,7 @@ class UserModel {
           : null,
       roles: json['roles'] != null
           ? (json['roles'] as List)
-              .map((role) => RoleModel.fromJson(role))
+              .map((role) => UserRoleModel.fromJson(role))
               .toList()
           : null,
       canLogin: json['canLogin'] ?? false,

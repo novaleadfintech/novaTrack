@@ -45,6 +45,7 @@ const PermissionAlias = {
   resetLoginPassword: "RESET_LOGIN_PASSWORD",
   autoriseAccess: "AUTORISE_ACCESS",
   assignRolePersonnel: "ASSIGN_ROLE_PERSONNEL",
+  handleRoleEditing: "HANDLE_ROLE_EDITING",
   readUser: "READ_USER",
   assignPermissionRole: "ASSIGN_PERMISSION_ROLE",
   createRole: "CREATE_PROFIL",

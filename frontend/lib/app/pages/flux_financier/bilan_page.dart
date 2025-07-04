@@ -25,6 +25,7 @@ import '../../../widget/research_bar.dart';
  import 'bilan_table.dart';
 
 class BilanPage extends StatefulWidget {
+  
   const BilanPage({super.key});
 
   @override

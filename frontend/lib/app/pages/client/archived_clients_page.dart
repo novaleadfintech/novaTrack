@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../model/habilitation/role_model.dart';
 import '../error_page.dart';
 import '../no_data_page.dart';
 import '../../../global/global_value.dart';
@@ -13,10 +14,15 @@ import 'client_table.dart';
 import '../../../model/client/enum_client.dart';
 
 class ArchivedClientPage extends StatefulWidget {
+  final RoleModel role;
+
   final Function(ClientModel) onDetailClients;
   const ArchivedClientPage({
     super.key,
+    required this.role,
+
     required this.onDetailClients,
+
   });
 
   @override
@@ -48,13 +54,17 @@ class _ArchivedClientPageState extends State<ArchivedClientPage> {
   Future<void> _loadClientData() async {
     try {
       clientData = await ClientService.getArchivedClientsAndProspect();
+      
     } catch (error) {
       setState(() {
         errorMessage = error.toString();
+      });
+    } finally {
+      setState(() {
         isLoading = false;
-        hasError = true;
-              });
-    } 
+        hasError = errorMessage != null;
+      });
+    }
   }
 
   List<ClientModel> filterClientData() {
@@ -141,6 +151,7 @@ class _ArchivedClientPageState extends State<ArchivedClientPage> {
                               child: Container(
                                 color: Theme.of(context).colorScheme.surface,
                                 child: ClientTable(
+                                  role: widget.role,
                                   paginatedClientData: getPaginatedData(
                                     data: filteredData,
                                     currentPage: currentPage,

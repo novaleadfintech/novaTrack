@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:frontend/global/constant/permission_alias.dart';
+ import 'package:frontend/global/constant/permission_alias.dart';
 import 'package:frontend/helper/user_helper.dart';
 import '../../../auth/authentification_token.dart';
 import '../../../model/habilitation/role_model.dart';
@@ -31,22 +30,39 @@ class _DashBoardPageState extends State<DashBoardPage> {
   Future<String>? _clientFuture;
   Future<String>? _factureUnpayeFuture;
   Future<String>? _proformaFuture;
-  late RoleModel role;
-  String? errMassage;
+  RoleModel? role; // Changé en nullable
+  String? errMessage;
+  bool _isLoading = true; // Ajouté pour gérer le chargement
 
   @override
   void initState() {
     super.initState();
-    getRole();
+    _initializeData();
+  }
+
+  Future<void> _initializeData() async {
+    await getRole();
     _creanceFuture = _loadCreance();
     _clientFuture = _loadClient();
     _factureUnpayeFuture = _loadFactureUnpaye();
     _proformaFuture = _loadProforma();
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   Future<void> getRole() async {
-    role = await AuthService().getRole();
-    setState(() {});
+    try {
+      RoleModel roleprime = await AuthService().getRole();
+      setState(() {
+        role = roleprime;
+      });
+    } catch (e) {
+      setState(() {
+        errMessage = 'Erreur lors du chargement du rôle';
+      });
+    }
   }
 
   Future<String> _loadCreance() async {
@@ -65,7 +81,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
       ));
     } catch (err) {
       setState(() {
-        errMassage = err.toString();
+        errMessage = err.toString();
       });
       return "0";
     }
@@ -78,7 +94,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
       return Formatter.formatAmount(clientData.length.toDouble());
     } catch (err) {
       setState(() {
-        errMassage = err.toString();
+        errMessage = err.toString();
       });
       return "0";
     }
@@ -91,7 +107,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
       return Formatter.formatAmount(factureData.length.toDouble());
     } catch (err) {
       setState(() {
-        errMassage = err.toString();
+        errMessage = err.toString();
       });
       return "0";
     }
@@ -104,7 +120,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
       return Formatter.formatAmount(factureData.length.toDouble());
     } catch (err) {
       setState(() {
-        errMassage = err.toString();
+        errMessage = err.toString();
       });
       return "0";
     }
@@ -112,30 +128,37 @@ class _DashBoardPageState extends State<DashBoardPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    if (_isLoading || role == null) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
     List<Widget> items = [
       if (hasPermission(
-          role: role, permission: PermissionAlias.readCreance.label))
+          role: role!, permission: PermissionAlias.readCreance.label))
         DashboardInfo(
           icon: AssetsIcons.claim,
           title: "Créances du jour",
           futureValue: _creanceFuture!,
         ),
       if (hasPermission(
-          role: role, permission: PermissionAlias.readClient.label))
+          role: role!, permission: PermissionAlias.readClient.label))
         DashboardInfo(
           icon: AssetsIcons.client,
           title: "Clients",
           futureValue: _clientFuture!,
         ),
       if (hasPermission(
-          role: role, permission: PermissionAlias.readFacture.label))
+          role: role!, permission: PermissionAlias.readFacture.label))
         DashboardInfo(
           icon: AssetsIcons.facture,
           title: "Factures impayés",
           futureValue: _factureUnpayeFuture!,
         ),
       if (hasPermission(
-          role: role, permission: PermissionAlias.readProforma.label))
+          role: role!, permission: PermissionAlias.readProforma.label))
         DashboardInfo(
           icon: AssetsIcons.waitInvoice,
           title: "Proformats en attente",

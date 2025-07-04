@@ -1,9 +1,25 @@
 const typeDef = `#graphql
+
+enum RoleAuthorization {
+    accepted
+    wait
+    refused
+}
 #Definition du type role
     type Role{
         _id: ID!
         libelle: String!
         permissions: [Permission]!
+    }
+
+    type UserRole{
+        _id: ID!
+        roleAuthorization: RoleAuthorization
+        role: Role!
+        authorizer: User
+        authorizeTime: Float
+        createBy: User
+        timeStamp: Float
     }
 `;
 

@@ -4,6 +4,7 @@ import '../app/pages/app_dialog_box.dart';
 import '../app/screens/login_screen.dart';
 import '../app/screens/setting_screen.dart';
 import '../auth/authentification_token.dart';
+import '../model/habilitation/role_enum.dart';
 import '../model/habilitation/user_model.dart';
 import '../style/app_color.dart';
 import 'app_menu_popup.dart';
@@ -183,7 +184,10 @@ class _HeaderState extends State<Header> {
                               ),
                         if (!isLoading && user != null)
                           Text(
-                            "(${capitalizeFirstLetter(word: user!.roles![0].libelle)})",
+                            "(${capitalizeFirstLetter(word: user!.roles!.firstWhere((userRole) {
+                                  return userRole.roleAuthorization ==
+                                      RoleAuthorization.accepted;
+                                }).role.libelle)})",
                             style: DestopAppStyle.normalText.copyWith(
                               color: Theme.of(context).colorScheme.onSecondary,
                               fontSize: 10,

@@ -32,6 +32,7 @@ class _AddUserPageState extends State<AddUserPage> {
   PersonnelModel? personnel;
   RoleModel? role;
   String? currentPersonnelId;
+  String? currentUserId;
 
   @override
   void initState() {
@@ -44,6 +45,7 @@ class _AddUserPageState extends State<AddUserPage> {
     UserModel? user = await AuthService().decodeToken();
     setState(() {
       currentPersonnelId = user!.personnel!.id;
+      currentUserId = user.id;
     });
   }
 
@@ -68,6 +70,7 @@ class _AddUserPageState extends State<AddUserPage> {
       RequestResponse result = await UserService.assignRoleToPersonnel(
         personnelId: personnel.id,
         roleId: role.id!,
+        createBy: currentUserId!,
       );
       _dialog.hide();
 
@@ -89,7 +92,7 @@ class _AddUserPageState extends State<AddUserPage> {
   }
 
   Future<List<RoleModel>> fetchRoleItems() async {
-    return await RoleService.getRole();
+    return await RoleService.getRoles();
   }
 
   Future<List<PersonnelModel>> fetchPersonnelItems() async {

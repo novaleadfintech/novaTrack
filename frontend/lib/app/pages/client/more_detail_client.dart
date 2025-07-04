@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../helper/string_helper.dart';
 import '../../../model/client/client_moral_model.dart';
-import '../../../auth/authentification_token.dart';
 import '../../../model/client/client_model.dart';
-import '../../../model/habilitation/role_model.dart';
-import '../../../model/habilitation/user_model.dart';
 import '../../../widget/detail_client.dart';
 import 'package:gap/gap.dart';
 import '../../../widget/detail_table_row.dart';
@@ -28,11 +25,6 @@ class _MoreDatailClientPageState extends State<MoreDatailClientPage> {
   @override
   void initState() {
     super.initState();
-  }
-
-  Future<List<RoleModel>> getRole() async {
-    UserModel? user = await AuthService().decodeToken();
-    return user?.roles ?? [];
   }
 
   @override

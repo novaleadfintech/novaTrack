@@ -12,6 +12,7 @@ import 'package:frontend/widget/reponsive_conf_card.dart';
 import '../../../auth/authentification_token.dart';
 import '../../../model/habilitation/role_model.dart';
 import '../categories/categorie_page.dart';
+import '../error_page.dart';
 import '../facture_config/facture_config_page.dart';
 import '../libelle_flux_financier/flux_libelle_page.dart';
 import '../permission/habilitation.dart';
@@ -27,11 +28,28 @@ class ConfigPage extends StatefulWidget {
 
 class _ConfigPageState extends State<ConfigPage> {
   late RoleModel role;
+  bool isLoading = true;
+  bool hasError = false;
+  String? errMessage;
   Future<void> getRole() async {
-    role = await AuthService().getRole();
-    setState(() {
-      
-    });
+    try {
+      setState(() {
+        isLoading = true;
+      });
+      role = await AuthService().getRole();
+    } catch (error) {
+      setState(() {
+        errMessage = error.toString();
+        hasError = true;
+      });
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+    // setState(() {
+    //   role = roleprime;
+    // });
   }
 
   @override
@@ -42,7 +60,26 @@ class _ConfigPageState extends State<ConfigPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return (isLoading)
+        ? const Expanded(
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          )
+        : (hasError)
+            ? Expanded(
+                child: ErrorPage(
+                  message: errMessage ?? "Une erreur s'est produite",
+                  onPressed: () async {
+                    setState(() {
+                      isLoading = true;
+                      hasError = false;
+                    });
+                    await getRole();
+                  },
+                ),
+              )
+            : Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 16),
@@ -55,8 +92,7 @@ class _ConfigPageState extends State<ConfigPage> {
                 runAlignment: WrapAlignment.start,
                 alignment: WrapAlignment.start,
                 crossAxisAlignment: WrapCrossAlignment.start,
-                children: [
-                 
+                          children: [
                   InkWell(
                     onTap: () {
                       showResponsiveConfigPageDialogBox(context,
@@ -103,7 +139,7 @@ class _ConfigPageState extends State<ConfigPage> {
                       showResponsiveConfigPageDialogBox(
                         context,
                         title: "Pays",
-                        content: PaysPage(),
+                                  content: PaysPage(role: role),
                       );
                     },
                   ),
@@ -177,7 +213,7 @@ class _ConfigPageState extends State<ConfigPage> {
                       showResponsiveConfigPageDialogBox(
                         context,
                         title: "Entreprise",
-                        content: EntreprisePage(),
+                                  content: EntreprisePage(role: role),
                       );
                     },
                   ),

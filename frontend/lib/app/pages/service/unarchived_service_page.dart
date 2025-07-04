@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../auth/authentification_token.dart';
 import '../../../global/constant/permission_alias.dart';
 import '../../../helper/user_helper.dart';
 import '../../../model/habilitation/role_model.dart';
@@ -20,7 +19,12 @@ import '../no_data_page.dart';
 import 'service_table.dart';
 
 class UnarchivedServicePage extends StatefulWidget {
-  const UnarchivedServicePage({super.key});
+  final RoleModel role;
+
+  const UnarchivedServicePage({
+    super.key,
+    required this.role,
+  });
 
   @override
   State<UnarchivedServicePage> createState() => _ServicePageState();
@@ -28,7 +32,7 @@ class UnarchivedServicePage extends StatefulWidget {
 
 class _ServicePageState extends State<UnarchivedServicePage> {
   final TextEditingController _researchController = TextEditingController();
-  late Future<void> _futureRoles;
+  // late Future<void> _futureRoles;
   late RoleModel role;
 
   String searchQuery = "";
@@ -50,12 +54,10 @@ class _ServicePageState extends State<UnarchivedServicePage> {
   void initState() {
     super.initState();
     _researchController.addListener(_onSearchChanged);
-    _futureRoles = getRole();
+    role = widget.role;
     _loadServiceData();
-  }
-
-  Future<void> getRole() async {
-    role = await AuthService().getRole();
+    // _futureRoles = getRole();
+    
   }
 
   void _onSearchChanged() {
@@ -63,6 +65,7 @@ class _ServicePageState extends State<UnarchivedServicePage> {
       searchQuery = _researchController.text;
     });
   }
+
 
   Future<void> _loadServiceData() async {
     try {
@@ -128,36 +131,19 @@ class _ServicePageState extends State<UnarchivedServicePage> {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        FutureBuilder<void>(
-          future: _futureRoles,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            } else if (snapshot.hasError) {
-              return const SizedBox();
-            } else {
-             
+      children: [           
               if (hasPermission(
                   role: role,
-                  permission: PermissionAlias.createService.label)) {
-                return Container(
+                  permission: PermissionAlias.createService.label))
+          Container(
                   width: double.infinity,
                   alignment: Alignment.centerRight,
                   child: AddElementButton(
                     addElement: onClickAddServiceButton,
                     icon: Icons.add_outlined,
                     label: "Ajouter un service",
-                  ),
-                );
-              } else {
-                return const SizedBox();
-              }
-            }
-          },
-        ),
+            ),
+          ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -206,6 +192,7 @@ class _ServicePageState extends State<UnarchivedServicePage> {
                         child: Container(
                           color: Theme.of(context).colorScheme.surface,
                           child: ServiceTable(
+                            role: role,
                             paginatedServiceData: getPaginatedData(
                               data: filteredData,
                               currentPage: currentPage,

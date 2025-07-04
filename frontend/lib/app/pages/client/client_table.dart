@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:frontend/global/constant/permission_alias.dart';
 import 'package:frontend/helper/user_helper.dart';
 import '../app_dialog_box.dart';
-import '../../../auth/authentification_token.dart';
 import '../../../model/habilitation/role_model.dart';
- 
+
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 
 import '../../../global/constant/constant.dart';
@@ -24,11 +23,14 @@ import '../utils/client_util.dart';
 import 'edit_client_page.dart';
 
 class ClientTable extends StatefulWidget {
+  final RoleModel role;
+
   final List<ClientModel> paginatedClientData;
   final Function(ClientModel) onDetailClients;
   final Future<void> Function() refresh;
   const ClientTable({
     super.key,
+    required this.role,
     required this.paginatedClientData,
     required this.onDetailClients,
     required this.refresh,
@@ -41,17 +43,17 @@ class ClientTable extends StatefulWidget {
 class _ClientTableState extends State<ClientTable> {
   late SimpleFontelicoProgressDialog _dialog;
   late RoleModel role;
-  late Future<void> _futureRoles;
+  // late Future<void> _futureRoles;
   @override
   void initState() {
     super.initState();
+    role = widget.role;
     _dialog = SimpleFontelicoProgressDialog(context: context);
-    _futureRoles = getRole();
   }
 
-  Future<void> getRole() async {
-    role = await AuthService().getRole();
-  }
+  // Future<void> getRole() async {
+  //   role = await AuthService().getRole();
+  // }
 
   onEdit({
     required ClientModel client,
@@ -88,7 +90,7 @@ class _ClientTableState extends State<ClientTable> {
         type: SimpleFontelicoProgressDialogType.phoenix,
         backgroundColor: Colors.transparent,
       );
-     
+
       var result = client.etat == EtatClient.unarchived
           ? await ClientService.archiveClient(
               clientId: client.id,
@@ -116,21 +118,6 @@ class _ClientTableState extends State<ClientTable> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _futureRoles,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Erreur de chargement des rôles'));
-        } else {
-          return buildContent(context);
-        }
-      },
-    );
-  }
-
-  Widget buildContent(BuildContext context) {
     return Column(
       children: [
         Table(
@@ -143,7 +130,6 @@ class _ClientTableState extends State<ClientTable> {
                 ? const FixedColumnWidth(150)
                 : const FlexColumnWidth(),
             3: FixedColumnWidth(100),
-
             0: const FlexColumnWidth(),
           },
           children: [
@@ -196,17 +182,16 @@ class _ClientTableState extends State<ClientTable> {
                                     role: role,
                                     permission:
                                         PermissionAlias.archiveClient.label))
-                                        (
-                                          label:
-                                              client.etat == EtatClient.archived
-                                                  ? Constant.unarchived
-                                                  : Constant.archived,
-                                          onTap: () {
-                                            archivedorDesarchivedClient(
-                                                client: client);
-                                          },
-                                          color: null, // couleur null
-                                        ),
+                                  (
+                                    label: client.etat == EtatClient.archived
+                                        ? Constant.unarchived
+                                        : Constant.archived,
+                                    onTap: () {
+                                      archivedorDesarchivedClient(
+                                          client: client);
+                                    },
+                                    color: null, // couleur null
+                                  ),
                                 if (hasPermission(
                                         role: role,
                                         permission: PermissionAlias
@@ -219,11 +204,8 @@ class _ClientTableState extends State<ClientTable> {
                                     },
                                     color: null,
                                   ),
-                                  
-                                     
                               ],
                             )
-
                           ]
                         : [
                             TableBodyFirst(client: client),
@@ -243,33 +225,30 @@ class _ClientTableState extends State<ClientTable> {
                                     role: role,
                                     permission:
                                         PermissionAlias.archiveClient.label))
-                                        (
-                                          label:
-                                              client.etat == EtatClient.archived
-                                                  ? Constant.unarchived
-                                                  : Constant.archived,
-                                          onTap: () {
-                                            archivedorDesarchivedClient(
-                                                client: client);
-                                          },
-                                    color: null, 
-                                        ),
+                                  (
+                                    label: client.etat == EtatClient.archived
+                                        ? Constant.unarchived
+                                        : Constant.archived,
+                                    onTap: () {
+                                      archivedorDesarchivedClient(
+                                          client: client);
+                                    },
+                                    color: null,
+                                  ),
                                 if (hasPermission(
                                         role: role,
                                         permission: PermissionAlias
                                             .updateClient.label) &&
                                     client.etat == EtatClient.unarchived)
-                                        (
-                                          label: Constant.edit,
-                                          onTap: () {
-                                            onEdit(client: client);
-                                          },
-                                    color: null, 
-                                        ),
-                                   
+                                  (
+                                    label: Constant.edit,
+                                    onTap: () {
+                                      onEdit(client: client);
+                                    },
+                                    color: null,
+                                  ),
                               ],
                             )
-
                           ],
                   ),
                 )

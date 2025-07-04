@@ -2,6 +2,8 @@ class Constant {
   static const String archived = "Archiver";
   static const String edit = "Modifier";
   static const String detail = "Détail";
+  static const String verifyRoleAuthorization =
+      "Donner son avis sur le changement de profil";
   static const String unarchived = "Désarchiver";
   static const String delete = "Supprimer";
   static const String validate = "Valider";

@@ -7,6 +7,7 @@ import '../../../../global/global_value.dart';
 import '../../../../helper/paginate_data.dart';
 import '../../../../model/facturation/facture_model.dart';
 import '../../../../model/facturation/proforma_model.dart';
+import '../../../../model/habilitation/role_model.dart';
 import '../../../../service/facture_service.dart';
 import '../../../../widget/filter_bar.dart';
 import '../../../../widget/pagination.dart';
@@ -17,7 +18,11 @@ import '../facture/facture_table.dart';
 import '../proforma/proformat_table.dart';
 
 class ArchiveFacturePage extends StatefulWidget {
-  const ArchiveFacturePage({super.key});
+  final RoleModel role;
+  const ArchiveFacturePage({
+    super.key,
+    required this.role,
+  });
 
   @override
   State<ArchiveFacturePage> createState() => _ArchiveFacturePageState();
@@ -178,6 +183,7 @@ class _ArchiveFacturePageState extends State<ArchiveFacturePage> {
                               color:
                                   Theme.of(context).colorScheme.surfaceBright,
                               child: ProformaTable(
+                                role: widget.role,
                                 paginatedProformatData: getPaginatedData(
                                   data: filteredProformas,
                                   currentPage: currentPage,
@@ -207,6 +213,7 @@ class _ArchiveFacturePageState extends State<ArchiveFacturePage> {
                               color:
                                   Theme.of(context).colorScheme.surfaceBright,
                               child: FactureTable(
+                                role: widget.role,
                                 paginatedFactureData: getPaginatedData(
                                   data: filteredFactures,
                                   currentPage: currentPage,

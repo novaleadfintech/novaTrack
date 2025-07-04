@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/model/bulletin_paie/etat_bulletin.dart';
-import '../../../../auth/authentification_token.dart';
-import '../../../../global/constant/permission_alias.dart';
+ import '../../../../global/constant/permission_alias.dart';
 import '../../../../helper/user_helper.dart';
 import '../../../../model/habilitation/role_model.dart';
 import '../../app_dialog_box.dart';
@@ -25,11 +24,13 @@ import 'detail_decouvert.dart';
 import '../../../pdf/bulletin_generate/situation_de_decouverte.dart';
 
 class DecouverteTable extends StatefulWidget {
+  final RoleModel role;
   final List<DecouverteModel> paginatedDecouverteData;
   final VoidCallback refresh;
 
   const DecouverteTable({
     super.key,
+    required this.role,
     required this.paginatedDecouverteData,
     required this.refresh,
   });
@@ -89,15 +90,16 @@ class _DecouverteTableState extends State<DecouverteTable> {
     }
   }
 
-  Future<void> getRole() async {
-    role = await AuthService().getRole();
-    setState(() {});
-  }
+  // Future<void> getRole() async {
+  //   role = await AuthService().getRole();
+  //   setState(() {});
+  // }
 
   @override
   void initState() {
+    role = widget.role;
     _dialog = SimpleFontelicoProgressDialog(context: context);
-    getRole();
+    // getRole();
     super.initState();
   }
 
@@ -166,16 +168,16 @@ class _DecouverteTableState extends State<DecouverteTable> {
                                         DecouverteStatus.unpaid &&
                                     hasPermission(
                                       role: role,
-                                  permission:
-                                      PermissionAlias.updateAvance.label,
-                                ))
-                                (
-                                  label: Constant.edit,
-                                  onTap: () {
-                                    _onEdit(decouverte: decouverte);
-                                  },
-                                  color: null, // couleur null
-                                ),
+                                      permission:
+                                          PermissionAlias.updateAvance.label,
+                                    ))
+                                  (
+                                    label: Constant.edit,
+                                    onTap: () {
+                                      _onEdit(decouverte: decouverte);
+                                    },
+                                    color: null, // couleur null
+                                  ),
                                 (
                                   label: Constant.download,
                                   onTap: () {
@@ -221,16 +223,16 @@ class _DecouverteTableState extends State<DecouverteTable> {
                                         DecouverteStatus.unpaid &&
                                     hasPermission(
                                       role: role,
-                                  permission:
-                                      PermissionAlias.updateAvance.label,
-                                ))
-                                (
-                                  label: Constant.edit,
-                                  onTap: () {
-                                    _onEdit(decouverte: decouverte);
-                                  },
-                                  color: null, // couleur null
-                                ),
+                                      permission:
+                                          PermissionAlias.updateAvance.label,
+                                    ))
+                                  (
+                                    label: Constant.edit,
+                                    onTap: () {
+                                      _onEdit(decouverte: decouverte);
+                                    },
+                                    color: null, // couleur null
+                                  ),
                                 (
                                   label: Constant.download,
                                   onTap: () {

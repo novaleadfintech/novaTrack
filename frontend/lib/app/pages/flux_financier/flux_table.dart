@@ -27,10 +27,13 @@ import 'detail_flux.dart';
 import 'edit_flux_page.dart';
 
 class FinanceTable extends StatefulWidget {
+  final RoleModel role;
+
   final List<FluxFinancierModel> fluxFinanciers;
   final Future<void> Function() refresh;
   const FinanceTable({
     super.key,
+    required this.role,
     required this.fluxFinanciers,
     required this.refresh,
   });
@@ -50,11 +53,6 @@ class _InputTableState extends State<FinanceTable> {
     setState(() {
       user = currentUser;
     });
-  }
-
-  Future<void> getRole() async {
-    role = await AuthService().getRole();
-    setState(() {});
   }
 
   editFlux({required FluxFinancierModel flux}) {
@@ -118,7 +116,8 @@ class _InputTableState extends State<FinanceTable> {
   void initState() {
     _dialog = SimpleFontelicoProgressDialog(context: context);
     getCurrentUser();
-    getRole();
+    role = widget.role;
+    // getRole();
     super.initState();
   }
 
@@ -191,7 +190,7 @@ class _InputTableState extends State<FinanceTable> {
                                       onTap: () {
                                         detailFlux(flux: fluxFinancier);
                                       },
-                                      color: null, 
+                                      color: null,
                                     ),
                                     if (fluxFinancier.user!
                                             .equalTo(user: user!) &&
@@ -212,7 +211,7 @@ class _InputTableState extends State<FinanceTable> {
                                         ),
                                       if (hasPermission(
                                               role: role,
-                                          permission: PermissionAlias
+                                              permission: PermissionAlias
                                                   .deleteFluxFinancier.label) &&
                                           !fluxFinancier.isFromSystem! &&
                                           fluxFinancier.factureId == null &&
@@ -303,7 +302,7 @@ class _InputTableState extends State<FinanceTable> {
                                         ),
                                       if (hasPermission(
                                               role: role,
-                                          permission: PermissionAlias
+                                              permission: PermissionAlias
                                                   .deleteFluxFinancier.label) &&
                                           !fluxFinancier.isFromSystem! &&
                                           fluxFinancier.factureId == null &&

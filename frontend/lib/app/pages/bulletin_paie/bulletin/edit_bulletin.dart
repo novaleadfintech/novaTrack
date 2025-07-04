@@ -295,9 +295,7 @@ class _AddBulletinState extends State<EditBulletinPage> {
     final List<RubriqueOnBulletinModel> constantesIndividuellesSansValeur =
         _rubriquesOnBulletin.where((rubriqueOnBulletin) {
       final rubrique = rubriqueOnBulletin.rubrique;
-      print(rubrique.rubrique);
-      print(rubriqueOnBulletin.value);
-      return rubrique.nature == NatureRubrique.constant &&
+       return rubrique.nature == NatureRubrique.constant &&
           rubrique.rubriqueIdentity != RubriqueIdentity.avanceSurSalaire &&
           rubrique.portee == PorteeRubrique.individuel &&
           rubriqueOnBulletin.value == null;

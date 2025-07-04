@@ -8,7 +8,7 @@ import '../model/request_response.dart';
 import 'request_header.dart';
 
 class RoleService {
-  static Future<List<RoleModel>> getRole() async {
+  static Future<List<RoleModel>> getRoles() async {
     try {
       var body = '''
       query Roles {

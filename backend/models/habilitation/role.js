@@ -5,12 +5,12 @@ import { isValidValue } from "../../utils/util.js";
 
 const roleCollection = db.collection("roles");
 const rolePermissionEdges = db.collection("rolePermissions");
-const userRoleCollection = db.collection("userRoles");
 const permissionModel = new Permission();
 
 class Role {
   //recuperer tous les roles
   getAllRoles = async () => {
+    console.log("-èèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèè");
     const query = await db.query(
       aql`FOR role IN ${roleCollection} RETURN role`
     );
@@ -18,6 +18,7 @@ class Role {
       const roles = await query.all();
       return await Promise.all(
         roles.map(async (role) => {
+          console.log(role._id);
           return {
             ...role,
             permissions: await permissionModel.getPermissionByRole({
@@ -31,7 +32,6 @@ class Role {
     }
   };
 
-  //recuperer un role
   getRole = async ({ key }) => {
     try {
       const role = await roleCollection.document(key);
@@ -46,28 +46,6 @@ class Role {
     }
   };
 
-  getRoleByUser = async ({ userId }) => {
-    try {
-      const query = await db.query(aql`
-        FOR userrole IN ${userRoleCollection}
-        FILTER userrole._from == ${userId} SORT userrole.timeStamp ASC
-        RETURN userrole
-      `);
-      if (query.hasNext) {
-        const userRoles = await query.all();
-        return Promise.all(
-          userRoles.map(
-            async (userRole) => await this.getRole({ key: userRole._to })
-          )
-        );
-      }
-      return [];
-    } catch (err) {
-      throw new Error(
-        "Une erreur s'est produite lors de la recupération des rôles"+ err
-      );
-    }
-  };
   //creer un nouveau role
   createRole = async ({ libelle }) => {
     isValidValue({ value: libelle });

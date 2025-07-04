@@ -176,6 +176,7 @@ class _UserPageState extends State<UserPage> {
                           : Container(
                               color: Theme.of(context).colorScheme.surface,
                               child: UserTable(
+                                role: role!,
                                 paginatedUserData: getPaginatedData(
                                   data: filteredData,
                                   currentPage: currentPage,

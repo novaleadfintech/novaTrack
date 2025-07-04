@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../model/habilitation/role_model.dart';
 import '../facture/facture_table.dart';
 import '../../no_data_page.dart';
 import '../../../../global/global_value.dart';
@@ -12,7 +13,12 @@ import '../../../../widget/research_bar.dart';
 import '../../error_page.dart';
 
 class FactureRecurrentePage extends StatefulWidget {
-  const FactureRecurrentePage({super.key});
+  final RoleModel role;
+
+  const FactureRecurrentePage({
+    super.key,
+    required this.role,
+  });
 
   @override
   State<FactureRecurrentePage> createState() => _FactureRecurrentePageState();
@@ -180,6 +186,7 @@ class _FactureRecurrentePageState extends State<FactureRecurrentePage> {
                         child: Container(
                           color: Theme.of(context).colorScheme.surfaceBright,
                           child: FactureTable(
+                            role: widget.role,
                             paginatedFactureData: getPaginatedData(
                               data: filteredData,
                               currentPage: currentPage,

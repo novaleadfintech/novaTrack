@@ -6,6 +6,7 @@ import '../../../model/habilitation/user_model.dart';
 import '../../../model/personnel/enum_personnel.dart';
 import '../app_dialog_box.dart';
 import '../detail_pop.dart';
+import '../error_page.dart';
 import 'edit_personnel_page.dart';
 import 'more_detail_personnel.dart';
 import '../utils/personnel_util.dart';
@@ -24,10 +25,13 @@ import '../../integration/popop_status.dart';
 import '../../integration/request_frot_behavior.dart';
 
 class PersonnelTable extends StatefulWidget {
+  final RoleModel role;
+
   final List<PersonnelModel> paginatedPersonnelData;
   final Future<void> Function() refresh;
   const PersonnelTable({
     super.key,
+    required this.role,
     required this.paginatedPersonnelData,
     required this.refresh,
   });
@@ -38,7 +42,10 @@ class PersonnelTable extends StatefulWidget {
 
 class _PersonnelTableState extends State<PersonnelTable> {
   late SimpleFontelicoProgressDialog _dialog;
-  late Future<void> _futureRoles;
+  // late Future<void> _futureRoles;
+  bool isLoading = false;
+  bool hasError = false;
+  String? errorMessage;
   late RoleModel role;
   UserModel? currentUser;
 
@@ -106,187 +113,190 @@ class _PersonnelTableState extends State<PersonnelTable> {
   @override
   void initState() {
     _dialog = SimpleFontelicoProgressDialog(context: context);
-    _futureRoles = getRole();
+    role = widget.role;
+    // _futureRoles = getRole();
     getCurrentUser();
     super.initState();
   }
 
-  Future<void> getRole() async {
-    role = await AuthService().getRole();
-  }
+  // Future<void> getRole() async {
+  //   role = await AuthService().getRole();
+  // }
 
   Future<void> getCurrentUser() async {
-    UserModel? curUser = await AuthService().decodeToken();
-    setState(() {
-      currentUser = curUser;
-    });
+    try {
+      setState(() {
+        isLoading = true;
+      });
+      UserModel? curUser = await AuthService().decodeToken();
+      setState(() {
+        currentUser = curUser;
+      });
+    } catch (e) {
+      errorMessage = e.toString();
+    } finally {
+      setState(() {
+        isLoading = false;
+        hasError = errorMessage != null;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     bool isMobile = Responsive.isMobile(context);
-    return FutureBuilder<void>(
-      future: _futureRoles,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError) {
-          return Center(
-            child: Text(
-              'Erreur lors du chargement des rôles',
-              style: TextStyle(color: Colors.red),
-            ),
-          );
-        }
-
-        return Column(
+    if (isLoading) {
+      return Center(child: CircularProgressIndicator());
+    }
+    if (hasError) {
+      return ErrorPage(
+        message: errorMessage ?? "Une erreur s'est produite",
+        onPressed: () async {
+          setState(() {
+            isLoading = true;
+            hasError = false;
+          });
+          await getCurrentUser();
+        },
+      );
+    }
+    return Column(
+      children: [
+        Table(
+          columnWidths: {
+            4: const FixedColumnWidth(50),
+            2: Responsive.isMobile(context)
+                ? const FixedColumnWidth(50)
+                : const FlexColumnWidth(),
+          },
           children: [
-            Table(
-              columnWidths: {
-                4: const FixedColumnWidth(50),
-                2: Responsive.isMobile(context)
-                    ? const FixedColumnWidth(50)
-                    : const FlexColumnWidth(),
-              },
-              children: [
-                tableHeader(
-                  tablesTitles: Responsive.isMobile(context)
-                      ? personnelTableTitlesSmall
-                      : personnelTableTitles,
-                  context,
-                ),
-              ],
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                child: isMobile
-                    ? Table(
-                        columnWidths: {
-                          4: const FixedColumnWidth(50),
-                          2: Responsive.isMobile(context)
-                              ? const FixedColumnWidth(50)
-                              : const FlexColumnWidth(),
-                        },
-                        children:
-                            widget.paginatedPersonnelData.map((personnel) {
-                          bool isCurrentUser =
-                              personnel.id == currentUser!.personnel!.id;
-                          return TableRow(
-                            decoration: tableDecoration(context),
-                            children: [
-                              TableBodyMiddle(valeur: personnel.nom),
-                              TableBodyMiddle(valeur: personnel.poste!),
-                              TableBodyLast(
-                                items: [
-                                  (
-                                    label: Constant.detail,
-                                    onTap: () =>
-                                        onShowDetail(personnel: personnel),
-                                    color: null,
-                                  ),
-                                  if (personnel.etat !=
-                                          EtatPersonnel.archived &&
-                                      hasPermission(
-                                          role: role,
-                                          permission: PermissionAlias
-                                              .updatePersonnel.label)) ...[
-                                    (
-                                      label: Constant.edit,
-                                      onTap: () => onEdit(personnel: personnel),
-                                      color: null,
-                                    ),
-                                  ],
-                                  if (!isCurrentUser &&
-                                      hasPermission(
-                                          role: role,
-                                          permission: PermissionAlias
-                                              .archivePersonnel.label)) ...[
-                                    (
-                                      label: personnel.etat ==
-                                              EtatPersonnel.archived
-                                          ? Constant.unarchived
-                                          : Constant.archived,
-                                      onTap: () =>
-                                          archivedOrDesarchivedPersonnel(
-                                              personnel: personnel),
-                                      color: null,
-                                    ),
-                                  ],
-                                ],
-                              ),
-                            ],
-                          );
-                        }).toList(),
-                      )
-                    : Table(
-                        columnWidths: {
-                          4: const FixedColumnWidth(50),
-                          2: Responsive.isMobile(context)
-                              ? const FixedColumnWidth(50)
-                              : const FlexColumnWidth(),
-                        },
-                        children:
-                            widget.paginatedPersonnelData.map((personnel) {
-                          bool isCurrentUser =
-                              personnel.id == currentUser!.personnel!.id;
-                          return TableRow(
-                            decoration: tableDecoration(context),
-                            children: [
-                              TableBodyMiddle(valeur: personnel.nom),
-                              TableBodyMiddle(valeur: personnel.prenom),
-                              TableBodyMiddle(valeur: personnel.poste!),
-                              TableBodyMiddle(
-                                valeur:
-                                    "+${personnel.pays!.code} ${personnel.telephone}",
-                              ),
-                              TableBodyLast(
-                                items: [
-                                  (
-                                    label: Constant.detail,
-                                    onTap: () =>
-                                        onShowDetail(personnel: personnel),
-                                    color: null,
-                                  ),
-                                  if (personnel.etat !=
-                                          EtatPersonnel.archived &&
-                                      hasPermission(
-                                          role: role,
-                                          permission: PermissionAlias
-                                              .updatePersonnel.label)) ...[
-                                    (
-                                      label: Constant.edit,
-                                      onTap: () => onEdit(personnel: personnel),
-                                      color: null,
-                                    ),
-                                  ],
-                                  if (!isCurrentUser &&
-                                      hasPermission(
-                                          role: role,
-                                          permission: PermissionAlias
-                                              .archivePersonnel.label)) ...[
-                                    (
-                                      label: personnel.etat ==
-                                              EtatPersonnel.archived
-                                          ? Constant.unarchived
-                                          : Constant.archived,
-                                      onTap: () =>
-                                          archivedOrDesarchivedPersonnel(
-                                              personnel: personnel),
-                                      color: null,
-                                    ),
-                                  ],
-                                ],
-                              ),
-                            ],
-                          );
-                        }).toList(),
-                      ),
-              ),
+            tableHeader(
+              tablesTitles: Responsive.isMobile(context)
+                  ? personnelTableTitlesSmall
+                  : personnelTableTitles,
+              context,
             ),
           ],
-        );
-      },
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            child: isMobile
+                ? Table(
+                    columnWidths: {
+                      4: const FixedColumnWidth(50),
+                      2: Responsive.isMobile(context)
+                          ? const FixedColumnWidth(50)
+                          : const FlexColumnWidth(),
+                    },
+                    children: widget.paginatedPersonnelData.map((personnel) {
+                      bool isCurrentUser =
+                          personnel.id == currentUser!.personnel!.id;
+                      return TableRow(
+                        decoration: tableDecoration(context),
+                        children: [
+                          TableBodyMiddle(valeur: personnel.nom),
+                          TableBodyMiddle(valeur: personnel.poste!),
+                          TableBodyLast(
+                            items: [
+                              (
+                                label: Constant.detail,
+                                onTap: () => onShowDetail(personnel: personnel),
+                                color: null,
+                              ),
+                              if (personnel.etat != EtatPersonnel.archived &&
+                                  hasPermission(
+                                      role: role,
+                                      permission: PermissionAlias
+                                          .updatePersonnel.label)) ...[
+                                (
+                                  label: Constant.edit,
+                                  onTap: () => onEdit(personnel: personnel),
+                                  color: null,
+                                ),
+                              ],
+                              if (!isCurrentUser &&
+                                  hasPermission(
+                                      role: role,
+                                      permission: PermissionAlias
+                                          .archivePersonnel.label)) ...[
+                                (
+                                  label:
+                                      personnel.etat == EtatPersonnel.archived
+                                          ? Constant.unarchived
+                                          : Constant.archived,
+                                  onTap: () => archivedOrDesarchivedPersonnel(
+                                      personnel: personnel),
+                                  color: null,
+                                ),
+                              ],
+                            ],
+                          ),
+                        ],
+                      );
+                    }).toList(),
+                  )
+                : Table(
+                    columnWidths: {
+                      4: const FixedColumnWidth(50),
+                      2: Responsive.isMobile(context)
+                          ? const FixedColumnWidth(50)
+                          : const FlexColumnWidth(),
+                    },
+                    children: widget.paginatedPersonnelData.map((personnel) {
+                      bool isCurrentUser =
+                          personnel.id == currentUser!.personnel!.id;
+                      return TableRow(
+                        decoration: tableDecoration(context),
+                        children: [
+                          TableBodyMiddle(valeur: personnel.nom),
+                          TableBodyMiddle(valeur: personnel.prenom),
+                          TableBodyMiddle(valeur: personnel.poste!),
+                          TableBodyMiddle(
+                            valeur:
+                                "+${personnel.pays!.code} ${personnel.telephone}",
+                          ),
+                          TableBodyLast(
+                            items: [
+                              (
+                                label: Constant.detail,
+                                onTap: () => onShowDetail(personnel: personnel),
+                                color: null,
+                              ),
+                              if (personnel.etat != EtatPersonnel.archived &&
+                                  hasPermission(
+                                      role: role,
+                                      permission: PermissionAlias
+                                          .updatePersonnel.label)) ...[
+                                (
+                                  label: Constant.edit,
+                                  onTap: () => onEdit(personnel: personnel),
+                                  color: null,
+                                ),
+                              ],
+                              if (!isCurrentUser &&
+                                  hasPermission(
+                                      role: role,
+                                      permission: PermissionAlias
+                                          .archivePersonnel.label)) ...[
+                                (
+                                  label:
+                                      personnel.etat == EtatPersonnel.archived
+                                          ? Constant.unarchived
+                                          : Constant.archived,
+                                  onTap: () => archivedOrDesarchivedPersonnel(
+                                      personnel: personnel),
+                                  color: null,
+                                ),
+                              ],
+                            ],
+                          ),
+                        ],
+                      );
+                    }).toList(),
+                  ),
+          ),
+        ),
+      ],
     );
   }
 }

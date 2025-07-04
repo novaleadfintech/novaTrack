@@ -6,8 +6,7 @@ import '../../../global/constant/constant.dart';
 import '../../../global/constant/permission_alias.dart';
 import '../../../helper/user_helper.dart';
 import '../../../model/habilitation/role_model.dart';
-import '../../../auth/authentification_token.dart';
-import '../../../style/app_style.dart';
+ import '../../../style/app_style.dart';
 import '../../../widget/table_body_last.dart';
 import '../../../widget/table_body_middle.dart';
 import '../../../widget/table_header.dart';
@@ -18,10 +17,13 @@ import 'detail_pays.dart';
 import 'edit_pays_page.dart';
 
 class PaysTable extends StatefulWidget {
+  final RoleModel role;
   final List<PaysModel> paginatedServiceData;
+
   final Future<void> Function() refresh;
   const PaysTable({
     super.key,
+    required this.role,
     required this.paginatedServiceData,
     required this.refresh,
   });
@@ -35,16 +37,17 @@ class _ServiceTableState extends State<PaysTable> {
 
   @override
   void initState() {
+    role = widget.role;
     super.initState();
-    getRole();
+    // getRole();
   }
 
-  Future<void> getRole() async {
-    RoleModel currentRole = await AuthService().getRole();
-    setState(() {
-      role = currentRole;
-    });
-  }
+  // Future<void> getRole() async {
+  //   RoleModel currentRole = await AuthService().getRole();
+  //   setState(() {
+  //     role = currentRole;
+  //   });
+  // }
 
   void onEdit({
     required PaysModel pays,

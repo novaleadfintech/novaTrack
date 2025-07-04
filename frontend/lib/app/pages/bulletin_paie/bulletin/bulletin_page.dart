@@ -26,7 +26,7 @@ class _ArchiveBulletinState extends State<BulletinPage> {
     try {
       return (await BulletinService.getCurrentBulletins());
     } catch (error) {
-      throw "Erreur lors du chargement des données ${error.toString()}";
+      throw error.toString();
     }
   }
 

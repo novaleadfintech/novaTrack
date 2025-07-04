@@ -21,7 +21,11 @@ import 'add_decouverte.dart';
 import 'decouverte_table.dart';
 
 class DecouvertePage extends StatefulWidget {
-  const DecouvertePage({super.key});
+  final RoleModel role;
+  const DecouvertePage({
+    super.key,
+    required this.role,
+  });
 
   @override
   State<DecouvertePage> createState() => _DecouvertePageState();
@@ -116,7 +120,8 @@ class _DecouvertePageState extends State<DecouvertePage> {
   @override
   void initState() {
     super.initState();
-    getRole();
+    role = widget.role;
+    // getRole();
     _researchController.addListener(_onSearchChanged);
     _loadDecouverteData();
   }
@@ -132,15 +137,15 @@ class _DecouvertePageState extends State<DecouvertePage> {
           role: role,
           permission: PermissionAlias.createAvance.label,
         ))
-        Container(
-          width: double.infinity,
-          alignment: Alignment.centerRight,
-          child: AddElementButton(
-            addElement: onClickAddDecouverteButton,
-            icon: Icons.add_outlined,
-            label: "Ajouter un découvert",
+          Container(
+            width: double.infinity,
+            alignment: Alignment.centerRight,
+            child: AddElementButton(
+              addElement: onClickAddDecouverteButton,
+              icon: Icons.add_outlined,
+              label: "Ajouter un découvert",
+            ),
           ),
-        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -190,6 +195,7 @@ class _DecouvertePageState extends State<DecouvertePage> {
                         child: Container(
                           color: Theme.of(context).colorScheme.surface,
                           child: DecouverteTable(
+                            role: widget.role,
                             paginatedDecouverteData: getPaginatedData(
                               data: filteredData,
                               currentPage: currentPage,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../model/habilitation/role_model.dart';
 import 'personnel_table.dart';
 import '../no_data_page.dart';
 import '../../../global/global_value.dart';
@@ -13,7 +14,10 @@ import '../../../widget/filter_bar.dart';
 import '../error_page.dart';
 
 class ArchivedPersonnelPage extends StatefulWidget {
-  const ArchivedPersonnelPage({super.key});
+    final RoleModel role;
+
+  const ArchivedPersonnelPage({super.key,     required this.role,
+  });
 
   @override
   State<ArchivedPersonnelPage> createState() => _PersonnelPageState();
@@ -145,6 +149,7 @@ class _PersonnelPageState extends State<ArchivedPersonnelPage> {
                 : Container(
                     color: Theme.of(context).colorScheme.surface,
                     child: PersonnelTable(
+                      role: widget.role,
                       paginatedPersonnelData: getPaginatedData(
                         data: filteredData,
                         currentPage: currentPage,

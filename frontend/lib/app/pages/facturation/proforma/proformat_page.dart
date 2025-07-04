@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../auth/authentification_token.dart';
 import '../../../../global/constant/permission_alias.dart';
 import '../../../../helper/user_helper.dart';
 import '../../../../model/habilitation/role_model.dart';
@@ -20,7 +19,9 @@ import 'package:gap/gap.dart';
 import '../../../../widget/research_bar.dart';
 
 class ProformaPage extends StatefulWidget {
-  const ProformaPage({super.key});
+  // Ajout de la propriété role pour passer le rôle à la page
+  final RoleModel role; // Changé en nullable
+  const ProformaPage({super.key, required this.role});
 
   @override
   State<ProformaPage> createState() => _ProformaPageState();
@@ -28,7 +29,7 @@ class ProformaPage extends StatefulWidget {
 
 class _ProformaPageState extends State<ProformaPage> {
   final TextEditingController _researchController = TextEditingController();
-  late RoleModel role;
+  late RoleModel role; // Changé en nullable
 
   String searchQuery = "";
   String? selectedFilter = StatusProforma.wait.label;
@@ -37,17 +38,24 @@ class _ProformaPageState extends State<ProformaPage> {
   bool isLoading = true;
   bool hasError = false;
   String errorMessage = "";
+  bool _isInitialized = false; // Ajouté pour gérer l'initialisation
   List<String> selectedFilterOption = [
     StatusProforma.wait.label,
   ];
 
   @override
   void initState() {
-    super.initState();
+    role = widget.role;
     _researchController.addListener(_onSearchChanged);
-    _loadProformaData();
-    getRole();
+    _initializeData();
+    super.initState();
+  }
 
+  Future<void> _initializeData() async {
+    await _loadProformaData();
+    setState(() {
+      _isInitialized = true;
+    });
   }
 
   void _onSearchChanged() {
@@ -56,11 +64,6 @@ class _ProformaPageState extends State<ProformaPage> {
     });
   }
 
-
-  Future<void> getRole() async {
-    role = await AuthService().getRole();
-  }
-  
   Future<void> _loadProformaData() async {
     try {
       setState(() {
@@ -125,25 +128,31 @@ class _ProformaPageState extends State<ProformaPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Afficher un indicateur de chargement si pas encore initialisé
+    if (!_isInitialized) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
     List<ProformaModel> filteredData = filterProformaData();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (
-            hasPermission(
+        if (hasPermission(
           role: role,
-              permission: PermissionAlias.createProforma.label,
-            ))
-        Container(
-          width: double.infinity,
-          alignment: Alignment.centerRight,
-          child: AddElementButton(
-            addElement: onClickAddProformaButton,
-            icon: Icons.add_outlined,
-            label: "Ajouter un proforma",
+          permission: PermissionAlias.createProforma.label,
+        ))
+          Container(
+            width: double.infinity,
+            alignment: Alignment.centerRight,
+            child: AddElementButton(
+              addElement: onClickAddProformaButton,
+              icon: Icons.add_outlined,
+              label: "Ajouter un proforma",
+            ),
           ),
-        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -191,6 +200,7 @@ class _ProformaPageState extends State<ProformaPage> {
                 : Container(
                     color: Theme.of(context).colorScheme.surfaceBright,
                     child: ProformaTable(
+                       role: role,
                       refresh: _loadProformaData,
                       paginatedProformatData: getPaginatedData(
                         data: filteredData,
@@ -207,5 +217,11 @@ class _ProformaPageState extends State<ProformaPage> {
           ),
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    _researchController.dispose();
+    super.dispose();
   }
 }

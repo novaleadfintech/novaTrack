@@ -48,7 +48,7 @@ class AuthService {
   Future<RoleModel> getRole() async {
     final prefs = await SharedPreferences.getInstance();
     final roleJson = prefs.getString("role");
-
+     
     if (roleJson == null) throw "Aucun rôle trouvé";
 
     final Map<String, dynamic> decoded = jsonDecode(roleJson);

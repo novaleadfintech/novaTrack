@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/widget/calendar_filter.dart';
-import '../../../../auth/authentification_token.dart';
-import '../../../../global/constant/permission_alias.dart';
+ import '../../../../global/constant/permission_alias.dart';
 import '../../../../helper/user_helper.dart';
 import '../../../../model/habilitation/role_model.dart';
 import '../../app_dialog_box.dart';
@@ -21,7 +20,12 @@ import '../../../../widget/research_bar.dart';
 import '../../error_page.dart';
 
 class FacturePage extends StatefulWidget {
-  const FacturePage({super.key});
+  final RoleModel role;
+
+  const FacturePage({
+    super.key,
+    required this.role,
+  });
 
   @override
   State<FacturePage> createState() => _FacturePageState();
@@ -96,9 +100,10 @@ class _FacturePageState extends State<FacturePage> {
   @override
   void initState() {
     super.initState();
+    role = widget.role;
     _researchController.addListener(_onSearchChanged);
     _loadFactureData();
-    getRole();
+    // getRole();
   }
 
   void _onSearchChanged() {
@@ -107,9 +112,9 @@ class _FacturePageState extends State<FacturePage> {
     });
   }
 
-  Future<void> getRole() async {
-    role = await AuthService().getRole();
-  }
+  // Future<void> getRole() async {
+  //   role = await AuthService().getRole();
+  // }
 
   Future<void> _loadFactureData() async {
     try {
@@ -263,6 +268,7 @@ class _FacturePageState extends State<FacturePage> {
                         child: Container(
                           color: Theme.of(context).colorScheme.surfaceBright,
                           child: FactureTable(
+                            role: role,
                             paginatedFactureData: getPaginatedData(
                               data: filteredData,
                               currentPage: currentPage,

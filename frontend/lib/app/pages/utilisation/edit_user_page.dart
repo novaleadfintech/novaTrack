@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/model/habilitation/user_model.dart';
 import 'package:frontend/widget/drop_down_text_field.dart';
 import '../../../auth/authentification_token.dart';
+import '../../../model/habilitation/role_enum.dart';
 import '../../../model/personnel/personnel_model.dart';
 import "../../../model/habilitation/role_model.dart";
 import '../../../service/personnel_service.dart';
@@ -40,7 +41,9 @@ class _EditUserPageState extends State<EditUserPage> {
   void initState() {
     super.initState();
     personnel = widget.user.personnel;
-    role = widget.user.roles!.first;
+    role = widget.user.roles!.firstWhere((userRole) {
+      return userRole.roleAuthorization == RoleAuthorization.accepted;
+    }).role;
     _dialog = SimpleFontelicoProgressDialog(context: context);
     _loadCurrentUser();
   }
@@ -73,6 +76,7 @@ class _EditUserPageState extends State<EditUserPage> {
       RequestResponse result = await UserService.assignRoleToPersonnel(
         personnelId: personnel.id,
         roleId: role.id!,
+        createBy: currentPersonnelId!,
       );
       _dialog.hide();
 
@@ -94,7 +98,7 @@ class _EditUserPageState extends State<EditUserPage> {
   }
 
   Future<List<RoleModel>> fetchRoleItems() async {
-    return await RoleService.getRole();
+    return await RoleService.getRoles();
   }
 
   Future<List<PersonnelModel>> fetchPersonnelItems() async {

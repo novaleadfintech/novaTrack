@@ -20,8 +20,11 @@ import '../app_dialog_box.dart';
 import '../error_page.dart';
 
 class ValidationPage extends StatefulWidget {
+  final RoleModel role;
+
   const ValidationPage({
     super.key,
+    required this.role,
   });
 
   @override
@@ -36,6 +39,7 @@ class _ValidationPageState extends State<ValidationPage> {
   bool hasError = false;
   String searchQuery = "";
   String selectedFilter = "Autre";
+  late RoleModel role;
 
   String? errorMessage;
   UserModel? user;
@@ -46,11 +50,6 @@ class _ValidationPageState extends State<ValidationPage> {
     });
   }
 
-  late RoleModel role;
-  Future<void> getRole() async {
-    role = await AuthService().getRole();
-    setState(() {});
-  }
 
   List<String> selectedFilterOptions = [
     "Autre",
@@ -59,14 +58,16 @@ class _ValidationPageState extends State<ValidationPage> {
 
   @override
   void initState() {
-    super.initState();
+    role = widget.role; // getRole();
     _researchController.addListener(_onSearchChanged);
     _initializeData();
+    super.initState();
+    
   }
 
   Future<void> _initializeData() async {
     await getCurrentUser();
-    await getRole();
+    // await getRole();
     await _loadFluxFinancierData();
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:frontend/model/habilitation/role_model.dart';
 
 import '../../../../model/facturation/proforma_model.dart';
 import '../../../../widget/proforma_tile.dart';
@@ -12,10 +13,13 @@ import '../../utils/facture_util.dart';
 class ProformaTable extends StatefulWidget {
   final List<ProformaModel> paginatedProformatData;
   final Future<void> Function() refresh;
+  final RoleModel role;
 
   const ProformaTable({
     super.key,
     required this.refresh,
+    required this.role,
+    
     required this.paginatedProformatData,
   });
 
@@ -58,6 +62,7 @@ class _FactureTableState extends State<ProformaTable> {
                     (proforma) => ProformaTile(
                       refresh: widget.refresh,
                       proforma: proforma,
+                      role: widget.role,
                     ),
                   )
                   .toList(),

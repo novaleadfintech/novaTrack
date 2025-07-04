@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/helper/paginate_data.dart';
-import '../../../auth/authentification_token.dart';
 import '../../../global/constant/permission_alias.dart';
 import '../../../helper/user_helper.dart';
 import '../../../model/habilitation/role_model.dart';
@@ -20,8 +19,10 @@ import '../error_page.dart';
 import 'flux_table.dart';
 
 class OutputPage extends StatefulWidget {
+  final RoleModel role;
   const OutputPage({
     super.key,
+    required this.role,
   });
 
   @override
@@ -38,6 +39,8 @@ class _OutputPageState extends State<OutputPage> {
   bool hasError = false;
   String searchQuery = "";
   String? selectedFilter;
+  late RoleModel role;
+
   List<String> selectedFilterOptions = [
     "Tout",
     FluxFinancierStatus.wait.label,
@@ -47,7 +50,7 @@ class _OutputPageState extends State<OutputPage> {
   @override
   void initState() {
     super.initState();
-    getRole();
+    role = widget.role; // getRole();
     _researchController.addListener(_onSearchChanged);
     _loadFluxFinancierData();
   }
@@ -114,11 +117,10 @@ class _OutputPageState extends State<OutputPage> {
     });
   }
 
-  late RoleModel role;
 
-  Future<void> getRole() async {
-    role = await AuthService().getRole();
-  }
+  // Future<void> getRole() async {
+  //   role = await AuthService().getRole();
+  // }
 
   void onClickAddFluxButton() {
     showResponsiveDialog(
@@ -201,6 +203,7 @@ class _OutputPageState extends State<OutputPage> {
                           child: Container(
                             color: Theme.of(context).colorScheme.surface,
                             child: FinanceTable(
+                              role: role, 
                               fluxFinanciers: getPaginatedData(
                                 data: filteredData,
                                 currentPage: currentPage,

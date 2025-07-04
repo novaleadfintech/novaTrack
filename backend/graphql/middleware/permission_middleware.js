@@ -15,9 +15,10 @@ export const hasPermission = (permissionAlias) =>
     // Récupère toutes les permissions de tous les rôles
     const allPermissions = [];
 
-    for (const role of roles) {
+    for (const userRole of roles) {
+      console.log("userRole", userRole);
       const permissions = await PermissionModel.getAllPermissionsByRoleForUser({
-        roleId: role._id,
+        roleId: userRole.role._id,
       });
       const aliases = permissions.map((p) => p.alias);
       allPermissions.push(...aliases);
@@ -185,6 +186,7 @@ const permissions = shield(
       attribuerRolePersonnel: hasPermission(
         PermissionAlias.assignRolePersonnel
       ),
+      handleRoleEditing: hasPermission(PermissionAlias.handleRoleEditing),
       attribuerRoleUser: hasPermission(PermissionAlias.assignRolePersonnel),
       retirerRoleUser: hasPermission(PermissionAlias.assignRolePersonnel),
       updateLoginData: isSelf,

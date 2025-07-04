@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../model/habilitation/role_model.dart';
 import '../../utils/facture_util.dart';
 import '../../../responsitvity/responsivity.dart';
 import '../../../../model/facturation/facture_model.dart';
@@ -6,11 +7,15 @@ import '../../../../widget/facture_tile.dart';
 import '../../../../widget/table_header.dart';
 
 class FactureTable extends StatefulWidget {
+  final RoleModel role;
+
   final List<FactureModel> paginatedFactureData;
   final Future<void> Function() refresh;
 
   const FactureTable({
     super.key,
+    required this.role,
+
     required this.paginatedFactureData,
     required this.refresh,
   });
@@ -52,6 +57,7 @@ class _FactureTableState extends State<FactureTable> {
             itemBuilder: (context, index) {
               final facture = widget.paginatedFactureData[index];
               return FactureTile(
+                role: widget.role,
                 facture: facture,
                 refresh: widget.refresh,
               );

@@ -20,7 +20,12 @@ import '../error_page.dart';
 import 'add_personnel_page.dart';
 
 class UnarchivedPersonnelPage extends StatefulWidget {
-  const UnarchivedPersonnelPage({super.key});
+  final RoleModel role;
+
+  const UnarchivedPersonnelPage({
+    super.key,
+    required this.role,
+  });
 
   @override
   State<UnarchivedPersonnelPage> createState() => _PersonnelPageState();
@@ -198,6 +203,7 @@ class _PersonnelPageState extends State<UnarchivedPersonnelPage> {
                 : Container(
                     color: Theme.of(context).colorScheme.surface,
                     child: PersonnelTable(
+                      role: widget.role,
                       paginatedPersonnelData: getPaginatedData(
                         data: filteredData,
                         currentPage: currentPage,

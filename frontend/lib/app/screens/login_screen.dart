@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/app/integration/popop_status.dart';
 import 'package:frontend/app/pages/app_dialog_box.dart';
+import '../../model/habilitation/role_enum.dart';
 import '../../model/habilitation/role_model.dart';
 import 'package:gap/gap.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
@@ -65,13 +66,25 @@ class _LoginScreenState extends State<LoginScreen> {
       _dialog.hide();
 
       AuthService().setToken(result.token!);
-      final role = result.roles!.last;
-      AuthService().setRoles(role);
-      if (result.isTheFirstConnection == true) {
-        openEditLoginParameter();
-        return;
+      try {
+        final role = result.roles!.firstWhere((userRole) {
+          return userRole.roleAuthorization == RoleAuthorization.accepted;
+        }).role;
+
+        AuthService().setRoles(role);
+        if (result.isTheFirstConnection == true) {
+          openEditLoginParameter();
+          return;
+        }
+        _navigateToMainLayout(role);
+      } catch (e) {
+        _dialog.hide();
+        MutationRequestContextualBehavior.showPopup(
+          customMessage:
+              "Vous n'êtes pas encore autoriser faire une action dans cete application.",
+          status: PopupStatus.serverError,
+        );
       }
-      _navigateToMainLayout(role);
     } catch (e) {
       _dialog.hide();
       MutationRequestContextualBehavior.showPopup(

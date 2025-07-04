@@ -4,6 +4,7 @@ import 'package:gap/gap.dart';
 import '../../../global/global_value.dart';
 import '../../../model/flux_financier/flux_financier_model.dart';
 import '../../../model/flux_financier/type_flux_financier.dart';
+import '../../../model/habilitation/role_model.dart';
 import '../../../service/flux_financier_service.dart';
 import '../../../widget/filter_bar.dart';
 import '../../../widget/pagination.dart';
@@ -13,8 +14,10 @@ import '../no_data_page.dart';
 import 'flux_table.dart';
 
 class ArchivesPage extends StatefulWidget {
+  final RoleModel role;
   const ArchivesPage({
     super.key,
+required this.role,
   });
 
   @override
@@ -171,6 +174,7 @@ class _ArchivesPageState extends State<ArchivesPage> {
                           child: Container(
                             color: Theme.of(context).colorScheme.surface,
                             child: FinanceTable(
+                              role: widget.role,
                               fluxFinanciers: getPaginatedData(
                                 data: filteredData,
                                 currentPage: currentPage,

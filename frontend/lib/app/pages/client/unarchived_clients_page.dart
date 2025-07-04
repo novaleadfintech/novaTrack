@@ -19,9 +19,13 @@ import '../../../auth/authentification_token.dart';
 import '../../../model/habilitation/role_model.dart';
 
 class UnarchivedClientPage extends StatefulWidget {
+  final RoleModel role;
+
   final Function(ClientModel) onDetailClients;
   const UnarchivedClientPage({
     super.key,
+    required this.role,
+
     required this.onDetailClients,
   });
 
@@ -198,6 +202,7 @@ class _UnarchivedClientPageState extends State<UnarchivedClientPage> {
                               child: Container(
                                 color: Theme.of(context).colorScheme.surface,
                                 child: ClientTable(
+                                  role: widget.role,
                                   paginatedClientData: getPaginatedData(
                                     data: filteredData,
                                     currentPage: currentPage,

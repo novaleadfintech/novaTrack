@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/helper/paginate_data.dart';
 import 'package:gap/gap.dart';
-import '../../../auth/authentification_token.dart';
 import '../../../global/constant/permission_alias.dart';
 import '../../../global/global_value.dart';
 import '../../../helper/user_helper.dart';
@@ -20,8 +19,11 @@ import 'add_flux_page.dart';
 import 'flux_table.dart';
 
 class InputPage extends StatefulWidget {
+  final RoleModel role;
+
   const InputPage({
     super.key,
+    required this.role,
   });
 
   @override
@@ -42,7 +44,7 @@ class _InputPageState extends State<InputPage> {
   @override
   void initState() {
     super.initState();
-    getRole();
+    role = widget.role; // getRole();
 
     _researchController.addListener(_onSearchChanged);
     _loadFluxFinancierData();
@@ -76,7 +78,7 @@ class _InputPageState extends State<InputPage> {
     }
   }
 
-void onSelected(String value) {
+  void onSelected(String value) {
     setState(() {
       if (value == "Tout") {
         selectedFilter = null;
@@ -95,7 +97,7 @@ void onSelected(String value) {
           .contains(searchQuery.toLowerCase().trim());
 
       // Vérification du filtre sélectionné
-bool matchesFilter =
+      bool matchesFilter =
           selectedFilter == null || flux.status!.label == selectedFilter;
       // if (selectedFilter != null) {
       //   switch (selectedFilter) {
@@ -115,7 +117,6 @@ bool matchesFilter =
     }).toList();
   }
 
-
   void updateCurrentPage(int page) {
     setState(() {
       currentPage = page;
@@ -133,9 +134,8 @@ bool matchesFilter =
     );
   }
 
-  Future<void> getRole() async {
-    role = await AuthService().getRole();
-  }
+  
+
   @override
   Widget build(BuildContext context) {
     List<FluxFinancierModel> filteredData = filterFluxFinancierData();
@@ -147,15 +147,15 @@ bool matchesFilter =
         children: [
           if (hasPermission(
               role: role,
-                  permission: PermissionAlias.createFluxFinancier.label))
-          Container(
-            alignment: Alignment.centerRight,
-            child: AddElementButton(
-              addElement: onClickAddFluxButton,
-              icon: Icons.add_outlined,
-              label: "Ajouter une entrée",
+              permission: PermissionAlias.createFluxFinancier.label))
+            Container(
+              alignment: Alignment.centerRight,
+              child: AddElementButton(
+                addElement: onClickAddFluxButton,
+                icon: Icons.add_outlined,
+                label: "Ajouter une entrée",
+              ),
             ),
-          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -165,7 +165,9 @@ bool matchesFilter =
                 controller: _researchController,
               ),
               FilterBar(
-                label: selectedFilter == null ? "Filtrer par statut" : selectedFilter!,
+                label: selectedFilter == null
+                    ? "Filtrer par statut"
+                    : selectedFilter!,
                 items: selectedFilterOptions,
                 onSelected: onSelected,
               ),
@@ -206,6 +208,7 @@ bool matchesFilter =
                           child: Container(
                             color: Theme.of(context).colorScheme.surface,
                             child: FinanceTable(
+                              role: widget.role,
                               fluxFinanciers: getPaginatedData(
                                 data: filteredData,
                                 currentPage: currentPage,
@@ -215,11 +218,11 @@ bool matchesFilter =
                           ),
                         ),
                         if (filteredData.isNotEmpty)
-                        PaginationSpace(
-                          currentPage: currentPage,
-                          onPageChanged: updateCurrentPage,
-                          filterDataCount: filteredData.length,
-                        ),
+                          PaginationSpace(
+                            currentPage: currentPage,
+                            onPageChanged: updateCurrentPage,
+                            filterDataCount: filteredData.length,
+                          ),
                       ],
                     ),
             ),

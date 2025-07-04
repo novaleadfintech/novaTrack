@@ -15,7 +15,6 @@ import '../app/pages/app_dialog_box.dart';
 import '../app/pages/detail_pop.dart';
 import '../app/pages/facturation/facture/detail_facture.dart';
 import '../app/pdf/facture_generate_and_download/facture_acompte.dart';
-import '../auth/authentification_token.dart';
 import '../helper/user_helper.dart';
 import '../model/habilitation/role_model.dart';
 import '../service/facture_service.dart';
@@ -43,11 +42,14 @@ import 'table_body_middle.dart';
 import 'validate_button.dart';
 
 class FactureTile extends StatefulWidget {
+  final RoleModel role;
+
   final Future<void> Function() refresh;
   final FactureModel facture;
 
   const FactureTile({
     super.key,
+    required this.role,
     required this.refresh,
     required this.facture,
   });
@@ -64,12 +66,12 @@ class _FactureTileState extends State<FactureTile> {
   TextEditingController delaisController = TextEditingController();
   late RoleModel role;
 
-  Future<void> getRole() async {
-    RoleModel currentRole = await AuthService().getRole();
-    setState(() {
-      role = currentRole;
-    });
-  }
+  // Future<void> getRole() async {
+  //   RoleModel currentRole = await AuthService().getRole();
+  //   setState(() {
+  //     role = currentRole;
+  //   });
+  // }
 
   _editFacture({
     required FactureModel facture,
@@ -443,8 +445,8 @@ class _FactureTileState extends State<FactureTile> {
 
   @override
   void initState() {
+    role = widget.role;
     _dialog = SimpleFontelicoProgressDialog(context: context);
-    getRole();
     super.initState();
   }
 

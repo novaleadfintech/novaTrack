@@ -9,8 +9,7 @@ import '../../../helper/user_helper.dart';
 import '../../../model/service/enum_service.dart';
 import '../../../model/service/service_model.dart';
 import '../../../model/habilitation/role_model.dart';
- import '../../../service/service_service.dart';
-import '../../../auth/authentification_token.dart';
+import '../../../service/service_service.dart';
 import '../../../style/app_style.dart';
 import '../../../widget/confirmation_dialog_box.dart';
 import '../../../widget/table_body_last.dart';
@@ -26,10 +25,14 @@ import 'edit_service_page.dart';
 import 'more_detail_service.dart';
 
 class ServiceTable extends StatefulWidget {
+  final RoleModel role;
+
   final List<ServiceModel> paginatedServiceData;
   final Future<void> Function() refresh;
   const ServiceTable({
     super.key,
+    required this.role,
+
     required this.paginatedServiceData,
     required this.refresh,
   });
@@ -40,19 +43,20 @@ class ServiceTable extends StatefulWidget {
 
 class _ServiceTableState extends State<ServiceTable> {
   late SimpleFontelicoProgressDialog _dialog;
-  late Future<void> _futureRoles;
+  // late Future<void> _futureRoles;
   late RoleModel role;
 
   @override
   void initState() {
     super.initState();
     _dialog = SimpleFontelicoProgressDialog(context: context);
-    _futureRoles = getRole();
+    role = widget.role;
+    // _futureRoles = getRole();
   }
 
-  Future<void> getRole() async {
-    role = await AuthService().getRole();
-  }
+  // Future<void> getRole() async {
+  //   role = await AuthService().getRole();
+  // }
 
   void onEdit({
     required ServiceModel service,
@@ -123,21 +127,7 @@ class _ServiceTableState extends State<ServiceTable> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _futureRoles,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Erreur de chargement des rôles'));
-        } else {
-          return buildContent(context);
-        }
-      },
-    );
-  }
-
-  Widget buildContent(BuildContext context) {
+    
     return Column(
       children: [
         Table(

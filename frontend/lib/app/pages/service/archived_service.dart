@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../model/habilitation/role_model.dart';
 import "../error_page.dart";
 import 'package:gap/gap.dart';
 import '../../../global/global_value.dart';
@@ -13,7 +14,12 @@ import '../no_data_page.dart';
 import 'service_table.dart';
 
 class ArchivedServicePage extends StatefulWidget {
-  const ArchivedServicePage({super.key});
+  final RoleModel role;
+
+  const ArchivedServicePage({
+    super.key,
+    required this.role,
+  });
 
   @override
   State<ArchivedServicePage> createState() => _ServicePageState();
@@ -157,6 +163,7 @@ String? errorMessage;
                         child: Container(
                           color: Theme.of(context).colorScheme.surface,
                           child: ServiceTable(
+                            role: widget.role,
                             paginatedServiceData: getPaginatedData(
                               data: filteredData,
                               currentPage: currentPage,

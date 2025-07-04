@@ -30,7 +30,9 @@ class _PermissionPageState extends State<PermissionPage> {
   late SimpleFontelicoProgressDialog _dialog;
   @override
   void initState() {
+    fetchRoleItems();
     super.initState();
+
     _dialog = SimpleFontelicoProgressDialog(context: context);
   }
 
@@ -43,14 +45,13 @@ class _PermissionPageState extends State<PermissionPage> {
   // }
 
   Future<List<RoleModel>> fetchRoleItems() async {
-    return await RoleService.getRole();
+    return await RoleService.getRoles();
   }
 
   Future<void> fetchPermissionsByRole({required RoleModel profil}) async {
     setState(() => isLoading = true);
     try {
-      permissions =
-          await ModulePermissionService.getModuleParmission(
+      permissions = await ModulePermissionService.getModuleParmission(
         id: profil.id!,
       );
       setState(() {});
@@ -298,6 +299,6 @@ class _PermissionPageState extends State<PermissionPage> {
         customMessage:
             "Une erreur s'est produite lors de la mise à jour des permissions${e.toString()}",
       );
-    } 
+    }
   }
 }

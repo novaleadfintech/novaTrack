@@ -9,8 +9,7 @@ import '../app/pdf/facture_generate_and_download/proforma.dart';
 import '../app/pages/facturation/proforma/validate_proforma_page.dart';
 import '../app/pages/utils/facture_util.dart';
 import '../app/responsitvity/responsivity.dart';
-import '../auth/authentification_token.dart';
-import '../global/constant/constant.dart';
+ import '../global/constant/constant.dart';
 import '../global/constant/permission_alias.dart';
 import '../global/constant/request_management_value.dart';
 import '../helper/amout_formatter.dart';
@@ -36,11 +35,13 @@ import '../app/pages/detail_pop.dart';
 
 class ProformaTile extends StatefulWidget {
   final ProformaModel proforma;
+  final RoleModel role;
   final Future<void> Function() refresh;
   const ProformaTile({
     super.key,
     required this.refresh,
     required this.proforma,
+    required this.role,
   });
 
   @override
@@ -51,13 +52,7 @@ class _ProformaTileState extends State<ProformaTile> {
   late SimpleFontelicoProgressDialog _dialog;
   List<String> infoFacture = [];
   late RoleModel role;
-
-  Future<void> getRole() async {
-    final result = await AuthService().getRole();
-    setState(() {
-      role = result;
-    });
-  }
+  String? errorMessage;
 
   editProformat({required ProformaModel proforma}) {
     showResponsiveDialog(
@@ -177,9 +172,10 @@ class _ProformaTileState extends State<ProformaTile> {
     );
   }
 
+
   @override
   void initState() {
-    getRole();
+role = widget.role;
     _dialog = SimpleFontelicoProgressDialog(context: context);
     super.initState();
   }
@@ -270,7 +266,7 @@ class _ProformaTileState extends State<ProformaTile> {
                           ),
                         if (hasPermission(
                               role: role,
-                          permission: PermissionAlias.cancelProformat.label,
+                              permission: PermissionAlias.cancelProformat.label,
                             ) &&
                             widget.proforma.status == StatusProforma.wait)
                           (

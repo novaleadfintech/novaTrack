@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/model/pays_model.dart';
-import '../../../auth/authentification_token.dart';
-import '../../../global/constant/permission_alias.dart';
+ import '../../../global/constant/permission_alias.dart';
 import '../../../helper/user_helper.dart';
 import '../../../model/habilitation/role_model.dart';
- import '../../../service/pays_service.dart';
+import '../../../service/pays_service.dart';
 import '../app_dialog_box.dart';
 import '../../../widget/add_element_button.dart';
 import "../error_page.dart";
@@ -18,7 +17,11 @@ import 'add_pays_page.dart';
 import 'pays_table.dart';
 
 class PaysPage extends StatefulWidget {
-  const PaysPage({super.key});
+  final RoleModel role;
+  const PaysPage({
+    super.key,
+    required this.role,
+  });
 
   @override
   State<PaysPage> createState() => _ServicePageState();
@@ -38,15 +41,16 @@ class _ServicePageState extends State<PaysPage> {
 
   @override
   void initState() {
+    role = widget.role;
     super.initState();
     _researchController.addListener(_onSearchChanged);
     _loadPaysData();
-    getRole();
+    // getRole();
   }
 
-  Future<void> getRole() async {
-    role = await AuthService().getRole();
-  }
+  // Future<void> getRole() async {
+  //   role = await AuthService().getRole();
+  // }
 
   void _onSearchChanged() {
     setState(() {
@@ -120,14 +124,14 @@ class _ServicePageState extends State<PaysPage> {
                 role: role,
                 permission: PermissionAlias.createPays.label,
               ))
-              Container(
-                alignment: Alignment.centerRight,
-                child: AddElementButton(
-                  addElement: onClickAddServiceButton,
-                  icon: Icons.add_outlined,
-                  label: "Ajouter un pays",
+                Container(
+                  alignment: Alignment.centerRight,
+                  child: AddElementButton(
+                    addElement: onClickAddServiceButton,
+                    icon: Icons.add_outlined,
+                    label: "Ajouter un pays",
+                  ),
                 ),
-              ),
             ],
           ),
           const Gap(4),
@@ -163,6 +167,7 @@ class _ServicePageState extends State<PaysPage> {
                           child: Container(
                             color: Theme.of(context).colorScheme.surface,
                             child: PaysTable(
+                              role: widget.role,
                               paginatedServiceData: getPaginatedData(
                                 data: filteredData,
                                 currentPage: currentPage,

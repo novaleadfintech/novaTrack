@@ -1,4 +1,5 @@
 import 'dart:convert';
+import '../model/habilitation/role_enum.dart';
 import '../model/habilitation/user_model.dart';
 import 'package:http/http.dart' as http;
 import '../app/integration/popop_status.dart';
@@ -11,10 +12,11 @@ class UserService {
   static Future<RequestResponse> assignRoleToPersonnel({
     required String personnelId,
     required String roleId,
+    required String createBy,
   }) async {
     var body = '''
     mutation AttribuerRolePersonnel {
-        attribuerRolePersonnel(personnelId: "$personnelId", roleId:"$roleId",)    }
+        attribuerRolePersonnel(personnelId: "$personnelId", roleId:"$roleId", createBy: "$createBy")    }
   ''';
 
     try {
@@ -69,20 +71,68 @@ class UserService {
             _id
             login
             password
-            roles{
+            roles {
             _id
-            libelle
-            permissions{
+            roleAuthorization
+            authorizeTime
+            role {
                 _id
                 libelle
-                alias
-                module{
-                  _id
-                  name
-                  alias
+                permissions {
+                    _id
+                    libelle
+                    alias
+                    isChecked
+                    module {
+                        _id
+                        name
+                        alias
+                    }
                 }
-             }
             }
+            authorizer {
+                _id
+                login
+                password
+                canLogin
+                _token
+                isTheFirstConnection
+                dateEnregistrement
+            }
+            createBy {
+                _id
+                login
+                password
+                canLogin
+                _token
+                isTheFirstConnection
+                dateEnregistrement
+                personnel {
+                    _id
+                    nom
+                    prenom
+                    email
+                    telephone
+                    adresse
+                    sexe
+                    poste
+                    situationMatrimoniale
+                    commentaire
+                    etat
+                    dateEnregistrement
+                    dateNaissance
+                    dateDebut
+                    dateFin
+                    nombreEnfant
+                    nombrePersonneCharge
+                    dureeEssai
+                    typePersonnel
+                    typeContrat
+                    fullCount
+                }
+            }
+            timeStamp
+        }
             isTheFirstConnection
             canLogin
             _token
@@ -108,6 +158,7 @@ class UserService {
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
         var data = jsonData['data']['seConnecter'];
+
         return UserModel.fromJson(data);
       } else {
         throw jsonDecode(response.body)['errors'][0]['message'];
@@ -131,7 +182,65 @@ class UserService {
         dateEnregistrement
         roles {
             _id
-            libelle
+            roleAuthorization
+            authorizeTime
+            role {
+                _id
+                libelle
+                permissions {
+                    _id
+                    libelle
+                    alias
+                    isChecked
+                    module {
+                        _id
+                        name
+                        alias
+                    }
+                }
+            }
+            authorizer {
+                _id
+                login
+                password
+                canLogin
+                _token
+                isTheFirstConnection
+                dateEnregistrement
+            }
+            createBy {
+                _id
+                login
+                password
+                canLogin
+                _token
+                isTheFirstConnection
+                dateEnregistrement
+                personnel {
+                    _id
+                    nom
+                    prenom
+                    email
+                    telephone
+                    adresse
+                    sexe
+                    poste
+                    situationMatrimoniale
+                    commentaire
+                    etat
+                    dateEnregistrement
+                    dateNaissance
+                    dateDebut
+                    dateFin
+                    nombreEnfant
+                    nombrePersonneCharge
+                    dureeEssai
+                    typePersonnel
+                    typeContrat
+                    fullCount
+                }
+            }
+            timeStamp
         }
         personnel {
             _id
@@ -182,15 +291,45 @@ class UserService {
   static Future<List<UserModel>> getUsers() async {
     var body = '''
      query Users {
-    users {
+         users {
         _id
-        login
+         login
         password
         canLogin
-        dateEnregistrement
+        _token
+          dateEnregistrement
         roles {
             _id
-            libelle
+            roleAuthorization
+            authorizeTime
+            role {
+                _id
+                libelle
+            }
+            authorizer {
+                _id
+                 personnel {
+                    _id
+                    nom
+                    prenom
+                     telephone
+                    adresse
+                    poste
+                }
+              }
+            createBy {
+                _id
+                personnel {
+                _id
+                nom
+                prenom
+                sexe
+                 telephone
+                adresse
+                 poste
+              }
+            }
+            timeStamp
         }
         isTheFirstConnection
         personnel {
@@ -198,51 +337,47 @@ class UserService {
             nom
             prenom
             email
+            etat
+            sexe
             telephone
             adresse
-            sexe
             poste
-            situationMatrimoniale
-            commentaire
-            etat
-            dateEnregistrement
-            fullCount
         }
     }
 }
   ''';
 
-    // try {
-    var response = await http
-        .post(
-      Uri.parse(serverUrl),
-      body: json.encode({'query': body}),
-      headers: getHeaders(),
-    )
-        .timeout(
-      const Duration(seconds: reqTimeout),
-      onTimeout: () {
-        throw RequestMessage.timeoutMessage;
-      },
-    );
+    try {
+      var response = await http
+          .post(
+        Uri.parse(serverUrl),
+        body: json.encode({'query': body}),
+        headers: getHeaders(),
+      )
+          .timeout(
+        const Duration(seconds: reqTimeout),
+        onTimeout: () {
+          throw RequestMessage.timeoutMessage;
+        },
+      );
 
-    if (response.statusCode == 200) {
-      var jsonData = jsonDecode(response.body);
-      var data = jsonData['data']['users'];
-
-      List<UserModel> users = [];
-      if (data != null) {
-        for (var user in data) {
-          users.add(UserModel.fromJson(user));
+      if (response.statusCode == 200) {
+        var jsonData = jsonDecode(response.body);
+        print(jsonData);
+        var data = jsonData['data']['users'];
+        List<UserModel> users = [];
+        if (data != null) {
+          for (var user in data) {
+            users.add(UserModel.fromJson(user));
+          }
         }
+        return users;
+      } else {
+        throw jsonDecode(response.body)['errors'][0]['message'];
       }
-      return users;
-    } else {
-      throw jsonDecode(response.body)['errors'][0]['message'];
+    } catch (error) {
+      throw error.toString();
     }
-    // } catch (error) {
-    //   throw error.toString();
-    // }
   }
 
   static Future<RequestResponse> seDeconnecter({
@@ -295,6 +430,58 @@ class UserService {
     }
   }
 
+  static Future<RequestResponse> handleRoleEditing({
+    required String userRoleId,
+    required String authorizer,
+    required RoleAuthorization roleAuthorization,
+  }) async {
+    var body = '''
+    mutation HandleRoleEditing {
+        handleRoleEditing(authorizer: "$authorizer", userRoleId: "$userRoleId", roleAuthorization: ${RoleAuthorization.roleAuthorizationToString(roleAuthorization)})
+    }
+  ''';
+
+    try {
+      var response = await http
+          .post(
+        Uri.parse(serverUrl),
+        body: json.encode({'query': body}),
+        headers: getHeaders(),
+      )
+          .timeout(
+        const Duration(seconds: reqTimeout),
+        onTimeout: () {
+          throw RequestMessage.timeoutMessage;
+        },
+      );
+      if (response.statusCode == 200) {
+        var jsonData = jsonDecode(response.body);
+        var data = jsonData['data']['handleRoleEditing'];
+        if (data == RequestMessage.success) {
+          return RequestResponse(
+            message: RequestMessage.successMessage,
+            status: PopupStatus.success,
+          );
+        } else {
+          return RequestResponse(
+            message: RequestMessage.successwithbugMessage,
+            status: PopupStatus.information,
+          );
+        }
+      } else {
+        return RequestResponse(
+          message: jsonDecode(response.body)['errors'][0]['message'],
+          status: PopupStatus.serverError,
+        );
+      }
+    } catch (error) {
+      return RequestResponse(
+        message: RequestMessage.onCatchErrorMessage,
+        status: PopupStatus.customError,
+      );
+    }
+  }
+
   static Future<RequestResponse> access({
     required String userId,
     required bool canLogin,
@@ -303,7 +490,7 @@ class UserService {
     mutation Access {
     access(key: "$userId", canLogin: $canLogin)
 }
-  ''';
+    ''';
 
     try {
       var response = await http
