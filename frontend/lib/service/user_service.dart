@@ -363,8 +363,7 @@ class UserService {
 
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
-        print(jsonData);
-        var data = jsonData['data']['users'];
+         var data = jsonData['data']['users'];
         List<UserModel> users = [];
         if (data != null) {
           for (var user in data) {

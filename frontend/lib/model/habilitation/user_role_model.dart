@@ -22,8 +22,7 @@ class UserRoleModel {
   });
 
   factory UserRoleModel.fromJson(Map<String, dynamic> json) {
-    print(json['authorizeTime']);
-    return UserRoleModel(
+     return UserRoleModel(
       id: json['_id'],
       role: RoleModel.fromJson(json['role']),
       timeStamp: json['timeStamp'] != null

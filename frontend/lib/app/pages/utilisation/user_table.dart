@@ -126,7 +126,7 @@ class _UserTableState extends State<UserTable> {
     bool confirmed = await handleOperationButtonPress(
       context,
       content:
-          "Voulez vous vraiment réinitialiser les paramètres de connexion de ${user.personnel?.nom ?? ''} ${user.personnel?.prenom ?? ''}",
+          "Voulez vous vraiment réinitialiser les paramètres de connexion de ${user.personnel?.nom ?? ''} ${user.personnel?.prenom ?? ''} ?",
     );
     if (confirmed) {
       _dialog.show(

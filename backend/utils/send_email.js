@@ -34,7 +34,7 @@ export const sendRoleAssignmentEmail = async ({
         <li><strong>Mot de passe</strong> : ${password}</li>
     </ul>
 
-    <p>La modification de ce mot de passe est toujours possible. <a href=${process.env.WEB_URL} target="_blank">Cliquez ici</a> pour vous connecter à la version web</p>
+    <p><a href=${process.env.WEB_URL} target="_blank">Cliquez ici</a> pour vous connecter à la version web</p>
 
     <div class="footer">
         <p>Cordialement,<br>L'équipe</p>
@@ -245,7 +245,7 @@ export const sendresetLoginEmail = async ({ personnel, password }) => {
         <li><strong>Mot de passe</strong> : ${password}</li>
     </ul>
 
-    <p>Veuillez changer votre mot de passe après votre première connexion. <a href=${process.env.WEB_URL} target="_blank">Cliquez ici</a> pour vous connecter à la version web</p>
+    <p><a href=${process.env.WEB_URL} target="_blank">Cliquez ici</a> pour vous connecter à la version web</p>
 
     <div class="footer">
         <p>Cordialement,<br>L'équipe</p>
