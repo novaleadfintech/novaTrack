@@ -84,6 +84,9 @@ const PermissionAlias = {
   updateBulletinRubrique: "EDIT_BULLETIN_RUBRIQUE",
   createBulletinRubrique: "CREATE_BULLETIN_RUBRIQUE",
   readBulletinRubrique: "READ_BULLETIN_RUBRIQUE",
+  createPoste: "CREATE_POSTE",
+  updatePoste: "EDIT_POSTE",
+  readPoste: "READ_POSTE",
   assignRubriqueCategoriePaie: "ASSIGN_RUBRIQUE_TO_CATEGORIE",
 };
 

@@ -42,6 +42,7 @@ class SimpleTextField extends StatefulWidget {
 
 class _SimpleTextFieldState extends State<SimpleTextField> {
   late final TextEditingController _displayController;
+  bool _isUpdating = false;
 
   @override
   void initState() {
@@ -58,29 +59,62 @@ class _SimpleTextFieldState extends State<SimpleTextField> {
   }
 
   void _syncFromTextController() {
-    if (widget.keyboardType == TextInputType.number ||
-        widget.keyboardType == TextInputType.numberWithOptions(decimal: true) &&
-            widget.textController.text.isNotEmpty) {
-      final rawValue = double.parse(widget.textController.text);
+    if (_isUpdating) return;
+
+    String currentText = widget.textController.text;
+
+    if ((widget.keyboardType == TextInputType.number ||
+            widget.keyboardType ==
+                TextInputType.numberWithOptions(decimal: true)) &&
+        currentText.isNotEmpty) {
+      final rawValue = double.tryParse(currentText) ?? 0;
       final formattedValue = Formatter.formatAmount(rawValue);
+
       if (_displayController.text != formattedValue) {
-        _displayController.text = formattedValue;
+        _displayController.value = TextEditingValue(
+          text: formattedValue,
+          selection: TextSelection.collapsed(offset: formattedValue.length),
+          composing: TextRange.empty,
+        );
       }
     } else {
-      _displayController.text = widget.textController.text;
+      if (_displayController.text != currentText) {
+        _displayController.value = TextEditingValue(
+          text: currentText,
+          selection: TextSelection.collapsed(offset: currentText.length),
+          composing: TextRange.empty,
+        );
+      }
     }
   }
 
   void _syncToTextController(String value) {
+    if (_isUpdating) return;
+
+    _isUpdating = true;
+
     if (widget.keyboardType == TextInputType.number ||
         widget.keyboardType == TextInputType.numberWithOptions(decimal: true)) {
       final rawValue = Formatter.parseAmount(value);
+
       if (widget.textController.text != rawValue) {
-        widget.textController.text = rawValue;
+        widget.textController.value = TextEditingValue(
+          text: rawValue,
+          selection: widget.textController.selection,
+          composing: TextRange.empty,
+        );
       }
     } else {
-      widget.textController.text = value;
+      if (widget.textController.text != value) {
+        widget.textController.value = TextEditingValue(
+          text: value,
+          selection: widget.textController.selection,
+          composing: TextRange.empty,
+        );
+      }
     }
+
+    _isUpdating = false;
   }
 
   @override
@@ -122,9 +156,7 @@ class _SimpleTextFieldState extends State<SimpleTextField> {
           SizedBox(
             height: widget.height,
             child: TextField(
-              // key: widget.putUniqueKey ? UniqueKey() : null,
-              inputFormatters: widget.inputFormaters != null &&
-                      widget.keyboardType == TextInputType.number
+              inputFormatters: widget.keyboardType == TextInputType.number
                   ? [FilteringTextInputFormatter.digitsOnly, _AmountFormatter()]
                   : widget.keyboardType ==
                           TextInputType.numberWithOptions(decimal: true)
@@ -132,10 +164,9 @@ class _SimpleTextFieldState extends State<SimpleTextField> {
                           FilteringTextInputFormatter.allow(
                             RegExp(r'^[\d ]*(\.[\d ]*)?$'),
                           ),
-                          // _AmountFormatter()
+                          _AmountFormatter()
                         ]
                       : widget.inputFormaters,
-              // enableInteractiveSelection: true,
               readOnly: widget.readOnly,
               maxLines: widget.maxLines,
               expands: widget.expands,
@@ -196,14 +227,22 @@ class _AmountFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
       TextEditingValue oldValue, TextEditingValue newValue) {
-    final formatted = newValue.text.isEmpty
-        ? newValue.text
-        : Formatter.formatAmount(
-            double.parse(newValue.text),
-          );
+    if (newValue.text.isEmpty) {
+      return newValue;
+    }
 
+    // Formatter le texte
+    final double? numericValue =
+        double.tryParse(newValue.text.replaceAll(' ', ''));
+    if (numericValue == null) return oldValue;
+
+    final String formatted = Formatter.formatAmount(numericValue);
+
+    // Mettre le curseur à la fin à chaque fois
     return TextEditingValue(
       text: formatted,
+      selection: TextSelection.collapsed(offset: formatted.length),
+      composing: TextRange.empty,
     );
   }
 }

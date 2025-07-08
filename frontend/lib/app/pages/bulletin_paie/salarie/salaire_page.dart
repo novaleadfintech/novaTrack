@@ -91,7 +91,9 @@ class _PersonnelPageState extends State<SalariePage> {
       bool matchesSearch = salarie.personnel.nom
               .toLowerCase()
               .contains(searchQuery.toLowerCase().trim()) ||
-          salarie.personnel.poste!
+          (salarie.personnel.poste != null
+                  ? salarie.personnel.poste!.libelle
+                  : "Aucun poste")
               .toLowerCase()
               .contains(searchQuery.toLowerCase().trim()) ||
           salarie.personnel.prenom

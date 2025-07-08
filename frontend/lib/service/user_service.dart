@@ -115,7 +115,7 @@ class UserService {
                     telephone
                     adresse
                     sexe
-                    poste
+                    poste{_id, libelle}
                     situationMatrimoniale
                     commentaire
                     etat
@@ -224,7 +224,7 @@ class UserService {
                     telephone
                     adresse
                     sexe
-                    poste
+                    poste{_id, libelle}
                     situationMatrimoniale
                     commentaire
                     etat
@@ -250,7 +250,7 @@ class UserService {
             telephone
             adresse
             sexe
-            poste
+            poste{_id, libelle}
             situationMatrimoniale
             commentaire
             etat
@@ -314,7 +314,7 @@ class UserService {
                     prenom
                      telephone
                     adresse
-                    poste
+                    poste{_id, libelle}
                 }
               }
             createBy {
@@ -326,7 +326,7 @@ class UserService {
                 sexe
                  telephone
                 adresse
-                 poste
+                 poste{_id, libelle}
               }
             }
             timeStamp
@@ -341,7 +341,7 @@ class UserService {
             sexe
             telephone
             adresse
-            poste
+            poste{_id, libelle}
         }
     }
 }
@@ -633,7 +633,7 @@ class UserService {
       }
     } catch (error) {
       return RequestResponse(
-        message: RequestMessage.onCatchErrorMessage,
+        message: error.toString(),
         status: PopupStatus.customError,
       );
     }

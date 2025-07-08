@@ -36,6 +36,7 @@ class _EditUserPageState extends State<EditUserPage> {
   PersonnelModel? personnel;
   RoleModel? role;
   String? currentPersonnelId;
+  String? currentUserId;
 
   @override
   void initState() {
@@ -52,6 +53,7 @@ class _EditUserPageState extends State<EditUserPage> {
     UserModel? user = await AuthService().decodeToken();
     setState(() {
       currentPersonnelId = user!.personnel!.id;
+      currentUserId = user.id;
     });
   }
 
@@ -76,7 +78,7 @@ class _EditUserPageState extends State<EditUserPage> {
       RequestResponse result = await UserService.assignRoleToPersonnel(
         personnelId: personnel.id,
         roleId: role.id!,
-        createBy: currentPersonnelId!,
+        createBy: currentUserId!,
       );
       _dialog.hide();
 

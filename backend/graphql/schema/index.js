@@ -32,6 +32,7 @@ import salaireSchema from "./salarie_schema.js";
 import moyenPaiementSchema from "./moyen_paiement_schema.js";
 import rubriqueCategorieSchema from "./rubrique_categorie_schema.js";
 import clientFactureGlobalValueSchema from "./client_facture_global_value_schema.js";
+import posteSchema from "./poste_schema.js";
 
 const types = [];
 const queries = [];
@@ -71,6 +72,7 @@ const schemas = [
   moyenPaiementSchema,
   rubriqueCategorieSchema,
   clientFactureGlobalValueSchema,
+  posteSchema,
 ];
 
 schemas.forEach((schema) => {

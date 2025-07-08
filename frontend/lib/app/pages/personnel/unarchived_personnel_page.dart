@@ -65,6 +65,7 @@ class _PersonnelPageState extends State<UnarchivedPersonnelPage> {
   Future<void> _loadPersonnelData() async {
     try {
       personnelData = await PersonnelService.getUnarchivedPersonnels();
+
     } catch (error) {
       setState(() {
         errorMessage = error.toString();
@@ -94,7 +95,7 @@ class _PersonnelPageState extends State<UnarchivedPersonnelPage> {
       bool matchesSearch = personnel.nom
               .toLowerCase()
               .contains(searchQuery.toLowerCase().trim()) ||
-          personnel.poste!
+          (personnel.poste != null ? personnel.poste!.libelle : "Aucun poste")
               .toLowerCase()
               .contains(searchQuery.toLowerCase().trim()) ||
           personnel.prenom

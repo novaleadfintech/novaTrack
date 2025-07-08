@@ -62,7 +62,7 @@ class BulletinService {
                 telephone
                 adresse
                 sexe
-                poste
+                poste{_id, libelle}
                 situationMatrimoniale
                 commentaire
                 etat
@@ -115,7 +115,7 @@ class BulletinService {
                     telephone
                     adresse
                     sexe
-                    poste
+                    poste{_id, libelle}
                     situationMatrimoniale
                     commentaire
                     etat
@@ -306,7 +306,7 @@ class BulletinService {
                 telephone
                 adresse
                 sexe
-                poste
+                poste{_id, libelle}
                 situationMatrimoniale
                 commentaire
                 etat
@@ -359,7 +359,7 @@ class BulletinService {
                     telephone
                     adresse
                     sexe
-                    poste
+                    poste{_id, libelle}
                     situationMatrimoniale
                     commentaire
                     etat
@@ -549,7 +549,7 @@ class BulletinService {
                 telephone
                 adresse
                 sexe
-                poste
+                poste{_id, libelle}
                 situationMatrimoniale
                 commentaire
                 etat
@@ -602,7 +602,7 @@ class BulletinService {
                     telephone
                     adresse
                     sexe
-                    poste
+                    poste{_id, libelle}
                     situationMatrimoniale
                     commentaire
                     etat
@@ -791,7 +791,7 @@ class BulletinService {
                 telephone
                 adresse
                 sexe
-                poste
+                poste{_id, libelle}
                 situationMatrimoniale
                 commentaire
                 etat
@@ -844,7 +844,7 @@ class BulletinService {
                     telephone
                     adresse
                     sexe
-                    poste
+                    poste{_id, libelle}
                     situationMatrimoniale
                     commentaire
                     etat
@@ -1228,7 +1228,7 @@ class BulletinService {
 //                         telephone
 //                         adresse
 //                         sexe
-//                         poste
+//                         poste{_id, libelle}
 //                         pays {
 //                             name
 //                             code

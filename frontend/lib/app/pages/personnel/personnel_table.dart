@@ -195,7 +195,10 @@ class _PersonnelTableState extends State<PersonnelTable> {
                         decoration: tableDecoration(context),
                         children: [
                           TableBodyMiddle(valeur: personnel.nom),
-                          TableBodyMiddle(valeur: personnel.poste!),
+                          TableBodyMiddle(
+                              valeur: personnel.poste != null
+                                  ? personnel.poste!.libelle
+                                  : "Aucun poste"),
                           TableBodyLast(
                             items: [
                               (
@@ -250,7 +253,12 @@ class _PersonnelTableState extends State<PersonnelTable> {
                         children: [
                           TableBodyMiddle(valeur: personnel.nom),
                           TableBodyMiddle(valeur: personnel.prenom),
-                          TableBodyMiddle(valeur: personnel.poste!),
+                          TableBodyMiddle(
+                              valeur: personnel.poste != null
+                                  ? personnel.poste != null
+                                      ? personnel.poste!.libelle
+                                      : "Aucun poste"
+                                  : "Aucun poste"),
                           TableBodyMiddle(
                             valeur:
                                 "+${personnel.pays!.code} ${personnel.telephone}",

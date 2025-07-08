@@ -79,7 +79,7 @@ class _ServiceTariffieldsState extends State<ServiceTariffields> {
               children: [
                 for (int i = 0;
                     i < widget.controllers.length;
-                    i++) // Parcourez dans l'ordre croissant
+                    i++)
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(

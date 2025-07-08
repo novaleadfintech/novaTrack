@@ -4,6 +4,7 @@ import 'package:frontend/app/pages/configure_page_dialog.dart';
 import 'package:frontend/app/pages/entreprise/entreprise_page.dart';
 import 'package:frontend/app/pages/moyen_de_payement/moyen_payement_page.dart';
 import 'package:frontend/app/pages/pays/pays_page.dart';
+import 'package:frontend/app/pages/poste/poste_page.dart';
 import 'package:frontend/app/pages/profil/profil_page.dart';
 import 'package:frontend/app/pages/bulletin_paie/rubrique_bulletin/rubrique_page.dart';
 import 'package:frontend/global/constant/permission_alias.dart';
@@ -144,6 +145,16 @@ class _ConfigPageState extends State<ConfigPage> {
                     },
                   ),
                   InkWell(
+                              child: ResponsiveCard(label: "Poste"),
+                              onTap: () {
+                                showResponsiveConfigPageDialogBox(
+                                  context,
+                                  title: "Poste",
+                                  content: PostePage(),
+                                );
+                              },
+                            ),
+                            InkWell(
                     child: ResponsiveCard(label: "Rubriques de bulletin"),
                     onTap: () {
                       showResponsiveConfigPageDialogBox(
@@ -207,13 +218,23 @@ class _ConfigPageState extends State<ConfigPage> {
                       );
                     },
                   ),
+                            if (hasPermission(
+                                    role: role,
+                                    permission:
+                                        PermissionAlias.readEntreprise.label) ||
+                                hasPermission(
+                                    role: role,
+                                    permission:
+                                        PermissionAlias.manageEntreprise.label))
                   InkWell(
                     child: ResponsiveCard(label: "Entreprise"),
                     onTap: () {
                       showResponsiveConfigPageDialogBox(
                         context,
                         title: "Entreprise",
-                                  content: EntreprisePage(role: role),
+                                    content: EntreprisePage(
+                                      role: role,
+                                    ),
                       );
                     },
                   ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/model/personnel/personne_prevenir.dart';
+import 'package:frontend/model/personnel/poste_model.dart';
+import 'package:frontend/service/poste_service.dart';
 import 'package:gap/gap.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 import '../../../global/constant/request_management_value.dart';
@@ -37,7 +39,6 @@ class _AddPersonnelPageState extends State<AddPersonnelPage> {
   final TextEditingController _prenomController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _commentaireController = TextEditingController();
-  final TextEditingController _posteController = TextEditingController();
   final TextEditingController _telephoneController = TextEditingController();
   final TextEditingController _telephone1Controller = TextEditingController();
   final TextEditingController _telephone2Controller = TextEditingController();
@@ -57,6 +58,8 @@ class _AddPersonnelPageState extends State<AddPersonnelPage> {
   late SimpleFontelicoProgressDialog _dialog;
   Sexe? sexe;
   PaysModel? _selectedCountry;
+  PosteModel? _selectedPoste;
+
   SituationMatrimoniale? situationMatrimoniale;
   DateTime? dateNaissance;
   DateTime? dateDebut;
@@ -76,8 +79,7 @@ class _AddPersonnelPageState extends State<AddPersonnelPage> {
     final String email = _emailController.text.trim();
     final String adresse = _adresseController.text.trim();
     final String commentaire = _commentaireController.text.trim();
-    final poste = _posteController.text.trim();
-
+ 
     final telephone = _telephoneController.text.trim();
     final telephone1 = _telephone1Controller.text.trim();
     final telephone2 = _telephone2Controller.text.trim();
@@ -89,7 +91,7 @@ class _AddPersonnelPageState extends State<AddPersonnelPage> {
     String? errorMessage;
     if (nom.isEmpty ||
         prenom.isEmpty ||
-        poste.isEmpty ||
+        _selectedPoste == null ||
         sexe == null ||
         dateDebut == null ||
         dateNaissance == null ||
@@ -157,7 +159,7 @@ class _AddPersonnelPageState extends State<AddPersonnelPage> {
       email: email,
       pays: _selectedCountry!,
       commentaire: commentaire.isNotEmpty ? commentaire : null,
-      poste: poste,
+      poste: _selectedPoste!,
       sexe: sexe!,
       telephone: int.parse(telephone),
       situationMatrimoniale: situationMatrimoniale!,
@@ -203,13 +205,15 @@ class _AddPersonnelPageState extends State<AddPersonnelPage> {
   Future<List<PaysModel>> fetchCountryItems() async {
     return await PaysService.getAllPays();
   }
+  Future<List<PosteModel>> fetchPostsItems() async {
+    return await PosteService.getPostes();
+  }
 
   @override
   Widget build(BuildContext context) {
     bool isMobile = Responsive.isMobile(context);
     return SingleChildScrollView(
       child: Form(
-        key: UniqueKey(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -279,10 +283,20 @@ class _AddPersonnelPageState extends State<AddPersonnelPage> {
               maxLines: null,
               height: 50,
             ),
-            SimpleTextField(
+            FutureCustomDropDownField<PosteModel>(
               label: "Poste",
-              textController: _posteController,
-              keyboardType: TextInputType.text,
+              showSearchBox: true,
+              selectedItem: _selectedPoste,
+              fetchItems: fetchPostsItems,
+              onChanged: (PosteModel? value) {
+                if (value != null) {
+                  setState(() {
+                    _selectedPoste = value;
+                  });
+                }
+              },
+              canClose: false,
+              itemsAsString: (s) => s.libelle,
             ),
             DateField(
               label: "Date de naissance",
@@ -424,7 +438,7 @@ class _AddPersonnelPageState extends State<AddPersonnelPage> {
               ),
             ),
             SimpleTextField(
-              label: "Nom",
+              label: "Nom et prénoms",
               textController: _nomPersonnePrevenirController,
             ),
             SimpleTextField(

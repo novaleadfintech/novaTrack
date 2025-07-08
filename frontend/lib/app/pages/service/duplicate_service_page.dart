@@ -2,62 +2,84 @@ import 'package:flutter/material.dart';
 import 'package:frontend/model/pays_model.dart';
 import 'package:gap/gap.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
-import '../../../model/service/service_prix_model.dart';
-import '../../../service/pays_service.dart';
-import '../../../widget/future_dropdown_field.dart';
-import '../../../widget/service_prix_field.dart';
-import '../../integration/popop_status.dart';
-import '../../integration/request_frot_behavior.dart';
 import '../../../global/constant/request_management_value.dart';
 import '../../../model/service/enum_service.dart';
+import '../../../model/service/service_model.dart';
+import '../../../model/service/service_prix_model.dart';
+import '../../../service/pays_service.dart';
 import '../../../service/service_service.dart';
 import '../../../widget/drop_down_text_field.dart';
+import '../../../widget/future_dropdown_field.dart';
+import '../../../widget/service_prix_field.dart';
 import '../../../widget/simple_text_field.dart';
 import '../../../widget/validate_button.dart';
+import '../../integration/popop_status.dart';
+import '../../integration/request_frot_behavior.dart';
 
-class AddServicePage extends StatefulWidget {
+class DuplicateServicePage extends StatefulWidget {
+  final ServiceModel service;
   final Future<void> Function() refresh;
-  const AddServicePage({
+  const DuplicateServicePage({
     super.key,
+    required this.service,
     required this.refresh,
   });
 
   @override
-  State<AddServicePage> createState() => _AddServicePageState();
+  State<DuplicateServicePage> createState() => _DuplicateServicePageState();
 }
 
-class _AddServicePageState extends State<AddServicePage> {
+class _DuplicateServicePageState extends State<DuplicateServicePage> {
   final TextEditingController _libelleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _prixController = TextEditingController();
   PaysModel? _selectedCountry;
   final List<Map<String, dynamic>> _tarifControllers = [];
-
   ServiceType? type;
   NatureService? nature;
-
+  PaysModel? newCountry;
   late SimpleFontelicoProgressDialog _dialog;
 
   @override
   void initState() {
     super.initState();
     _dialog = SimpleFontelicoProgressDialog(context: context);
+    _libelleController.text = widget.service.libelle;
+    _prixController.text = widget.service.prix.toString();
+    _descriptionController.text = (widget.service.description ?? '');
+    _selectedCountry = widget.service.country;
+    if (widget.service.tarif.isNotEmpty) {
+      _tarifControllers.addAll(widget.service.tarif.map((e) => {
+            "minQuantity":
+                TextEditingController(text: e!.minQuantity.toString()),
+            "maxQuantity": TextEditingController(
+                text: e.maxQuantity != null ? e.maxQuantity.toString() : ""),
+            "prix": TextEditingController(text: e.prix.toString()),
+          }));
+    }
+    type = widget.service.type;
+    nature = widget.service.nature;
   }
 
-  Future<void> addService() async {
+  Future<List<PaysModel>> fetchCountryItems() async {
+    return await PaysService.getAllPays();
+  }
+
+  Future<void> editService() async {
     final libelle = _libelleController.text.trim();
-    String errorMessage = "";
-    final description = _descriptionController.text.trim();
     final prix = _prixController.text.trim();
+    final description = _descriptionController.text.trim();
+    String errorMessage = "";
 
     if (type == null ||
-        nature == null ||
         libelle.isEmpty ||
         _selectedCountry == null ||
         (nature == NatureService.unique && prix.isEmpty) ||
         (nature == NatureService.multiple && _tarifControllers.isEmpty)) {
       errorMessage = "Tous les champs marqués doivent être remplis";
     }
+
+    ServiceModel initialService = widget.service;
 
     if (nature == NatureService.unique) {
       if (double.tryParse(prix) == null) {
@@ -69,7 +91,6 @@ class _AddServicePageState extends State<AddServicePage> {
     }
 
     final List<ServiceTarifModel> tarifModifies = [];
-
     if (nature == NatureService.multiple) {
       for (int i = 0; i < _tarifControllers.length; i++) {
         final minQuantity =
@@ -80,7 +101,6 @@ class _AddServicePageState extends State<AddServicePage> {
           _tarifControllers[i]["prix"].text.trim(),
         );
 
-        // Vérification des champs obligatoires (sauf max du dernier)
         if (minQuantity == null ||
             prix == null ||
             (i != _tarifControllers.length - 1 && maxQuantity == null)) {
@@ -91,6 +111,13 @@ class _AddServicePageState extends State<AddServicePage> {
           return;
         }
 
+        // Vérification que min, max et prix ne sont pas 0
+        if (minQuantity == 0 ||
+            prix == 0 ||
+            (maxQuantity != null && maxQuantity == 0)) {
+          errorMessage = "Aucune valeur des tranches ne doit être 0.";
+        }
+
         if (_tarifControllers.first["minQuantity"].text != "1" ||
             _tarifControllers.last["maxQuantity"].text.isNotEmpty) {
           MutationRequestContextualBehavior.showCustomInformationPopUp(
@@ -98,13 +125,6 @@ class _AddServicePageState extends State<AddServicePage> {
                 "Le format des tranches est incorrect. Il doit commencer par 1 et se terminer par un champ vide.",
           );
           return;
-        }
-
-        // Vérification que min, max et prix ne sont pas 0
-        if (minQuantity == 0 ||
-            prix == 0 ||
-            (maxQuantity != null && maxQuantity == 0)) {
-          errorMessage = "Aucune valeur des tranches ne doit être 0.";
         }
 
         // Vérification que min < max (si max existe)
@@ -129,7 +149,6 @@ class _AddServicePageState extends State<AddServicePage> {
           errorMessage = "Le max du dernier tarif peut être vide mais pas 0.";
         }
 
-        // Ajout à la liste si tout est valide
         tarifModifies.add(ServiceTarifModel(
           minQuantity: minQuantity,
           maxQuantity: maxQuantity,
@@ -145,38 +164,54 @@ class _AddServicePageState extends State<AddServicePage> {
       return;
     }
 
+    if (_selectedCountry != initialService.country) {
+      newCountry = _selectedCountry;
+    }
+
+    if (newCountry == null) {
+      MutationRequestContextualBehavior.showCustomInformationPopUp(
+        message: "Veuillez changer le pays.",
+      );
+      return;
+    }
+
     _dialog.show(
       message: RequestMessage.loadinMessage,
       type: SimpleFontelicoProgressDialogType.phoenix,
       backgroundColor: Colors.transparent,
     );
+
+    // Envoi des modifications
     try {
       var result = await ServiceService.createService(
-      libelle: libelle,
-      tarif: tarifModifies,
-      type: type!,
-      nature: nature!,
-      prix: double.tryParse(prix),
-      description: description.isNotEmpty ? description : null,
-      country: _selectedCountry!,
-    );
-
-    _dialog.hide();
-
-    if (result.status == PopupStatus.success) {
-      MutationRequestContextualBehavior.closePopup();
-      MutationRequestContextualBehavior.showPopup(
-          status: PopupStatus.success,
-          customMessage: "Service créé avec succès");
-      await widget.refresh();
-    } else {
-      MutationRequestContextualBehavior.showPopup(
-        status: result.status,
-        customMessage: result.message,
+        libelle: libelle,
+        tarif: tarifModifies,
+        type: type!,
+        nature: nature!,
+        description: description.isEmpty ? null : description,
+        country: newCountry!,
+        prix: double.tryParse(prix),
       );
-    }
+
+      _dialog.hide();
+
+      // Gestion du résultat
+      if (result.status == PopupStatus.success) {
+        MutationRequestContextualBehavior.closePopup();
+        MutationRequestContextualBehavior.showPopup(
+          status: PopupStatus.success,
+          customMessage: "Service modifié avec succès",
+        );
+        await widget.refresh();
+      } else {
+        MutationRequestContextualBehavior.showPopup(
+          status: result.status,
+          customMessage: result.message,
+        );
+      }
     } catch (err) {
       _dialog.hide();
+
       MutationRequestContextualBehavior.showPopup(
         status: PopupStatus.customError,
         customMessage: err.toString(),
@@ -184,14 +219,11 @@ class _AddServicePageState extends State<AddServicePage> {
     }
   }
 
-  Future<List<PaysModel>> fetchCountryItems() async {
-    return await PaysService.getAllPays();
-  }
-
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Form(
+        key: UniqueKey(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -215,7 +247,7 @@ class _AddServicePageState extends State<AddServicePage> {
               itemsAsString: (s) => s.name,
             ),
             CustomDropDownField<ServiceType>(
-              items: ServiceType.values.map((e) => e).toList(),
+              items: [type!],
               onChanged: (value) {
                 if (value != null) {
                   setState(() {
@@ -228,7 +260,7 @@ class _AddServicePageState extends State<AddServicePage> {
               label: "Type",
             ),
             CustomDropDownField<NatureService>(
-              items: NatureService.values.map((e) => e).toList(),
+              items: [nature!], // NatureService.values.map((e) => e).toList(),
               onChanged: (value) {
                 if (value != null) {
                   setState(() {
@@ -252,11 +284,14 @@ class _AddServicePageState extends State<AddServicePage> {
                 keyboardType: TextInputType.number,
               ),
             if (nature == NatureService.multiple)
-              ServiceTariffields(controllers: _tarifControllers),
+              ServiceTariffields(
+                controllers: _tarifControllers,
+              ),
             SimpleTextField(
               label: "Description",
               textController: _descriptionController,
               expands: true,
+              // readOnly: true,
               required: false,
               maxLines: null,
               height: 80,
@@ -268,7 +303,7 @@ class _AddServicePageState extends State<AddServicePage> {
                 alignment: Alignment.bottomRight,
                 child: ValidateButton(
                   onPressed: () {
-                    addService();
+                    editService();
                   },
                 ),
               ),

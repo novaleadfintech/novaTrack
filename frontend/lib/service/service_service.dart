@@ -114,7 +114,7 @@ class ServiceService {
         throw RequestMessage.timeoutMessage;
       },
     );
- 
+
     List<ServiceModel> services = [];
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
@@ -127,7 +127,7 @@ class ServiceService {
         throw RequestMessage.failgettingDataMessage;
       }
     } else {
-       throw jsonDecode(response.body)['errors'][0]['message'];
+      throw jsonDecode(response.body)['errors'][0]['message'];
     }
     return services;
   }
@@ -170,6 +170,7 @@ class ServiceService {
       )
     }
   ''';
+    print(body);
     try {
       var response = await http
           .post(

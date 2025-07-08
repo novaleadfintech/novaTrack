@@ -21,6 +21,7 @@ import '../../responsitvity/responsivity.dart';
 import '../app_dialog_box.dart';
 import '../detail_pop.dart';
 import '../utils/service_util.dart';
+import 'duplicate_service_page.dart';
 import 'edit_service_page.dart';
 import 'more_detail_service.dart';
 
@@ -66,6 +67,19 @@ class _ServiceTableState extends State<ServiceTable> {
       context,
       title: "Modifier un service",
       content: EditServicePage(
+        service: service,
+        refresh: refresh,
+      ),
+    );
+  }
+  void onDuplicate({
+    required ServiceModel service,
+    required Future<void> Function() refresh,
+  }) {
+    showResponsiveDialog(
+      context,
+      title: "Dupliquer un service",
+      content: DuplicateServicePage(
         service: service,
         refresh: refresh,
       ),
@@ -164,7 +178,10 @@ class _ServiceTableState extends State<ServiceTable> {
                 ...widget.paginatedServiceData.map(
                   (service) => Responsive.isMobile(context)
                       ? TableRow(
-                          decoration: tableDecoration(context),
+                          decoration: tableDecoration(context,
+                              color: service.type == ServiceType.recurrent
+                                  ? Colors.amber.shade50
+                                  : null),
                           children: [
                             TableBodyMiddle(
                               valeur:
@@ -185,7 +202,7 @@ class _ServiceTableState extends State<ServiceTable> {
                                   onTap: () {
                                     onShowDetail(service: service);
                                   },
-                                  color: null, // couleur null
+                                  color: null, 
                                 ),
                                 if (hasPermission(
                                     role: role,
@@ -208,6 +225,20 @@ class _ServiceTableState extends State<ServiceTable> {
                                     hasPermission(
                                         role: role,
                                         permission: PermissionAlias
+                                            .createService.label)) ...[
+                                  (
+                                    label: Constant.duplicate,
+                                    onTap: () => onDuplicate(
+                                          service: service,
+                                          refresh: widget.refresh,
+                                        ),
+                                    color: null,
+                                  ),
+                                ],
+                                if (service.etat != EtatService.archived &&
+                                    hasPermission(
+                                        role: role,
+                                        permission: PermissionAlias
                                             .updateService.label)) ...[
                                           (
                                             label: Constant.edit,
@@ -225,7 +256,10 @@ class _ServiceTableState extends State<ServiceTable> {
                           ],
                         )
                       : TableRow(
-                          decoration: tableDecoration(context),
+                          decoration: tableDecoration(context,
+                              color: service.type == ServiceType.recurrent
+                                  ? Colors.amber.shade50
+                                  : null),
                           children: [
                             TableBodyMiddle(
                               valeur:
@@ -250,7 +284,20 @@ class _ServiceTableState extends State<ServiceTable> {
                                   },
                                   color: null, // couleur null
                                 ),
-                                
+                                if (service.etat != EtatService.archived &&
+                                    hasPermission(
+                                        role: role,
+                                        permission: PermissionAlias
+                                            .createService.label)) ...[
+                                  (
+                                    label: Constant.duplicate,
+                                    onTap: () => onDuplicate(
+                                          service: service,
+                                          refresh: widget.refresh,
+                                        ),
+                                    color: null,
+                                  ),
+                                ],
                                 if (hasPermission(
                                     role: role,
                                     permission:

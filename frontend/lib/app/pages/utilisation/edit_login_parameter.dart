@@ -46,7 +46,8 @@ class _EditLoginParametterState extends State<EditLoginParametter> {
   }
 
   editLoginParametter() async {
-    String? newLogin;
+    try {
+      String? newLogin;
     String? newPassword;
 
     // Vérifier si le login a changé
@@ -118,15 +119,21 @@ class _EditLoginParametterState extends State<EditLoginParametter> {
               "Les paramètres de connexion sont mise à jour avec succès. Veuillez à present vous reconnecter avec votre nouveau de passe! ",
         );
       } else {
-        MutationRequestContextualBehavior.showPopup(
+          MutationRequestContextualBehavior.showPopup(
           status: result.status,
           customMessage: result.message,
         );
       }
     } else {
-      MutationRequestContextualBehavior.showPopup(
+        MutationRequestContextualBehavior.showPopup(
         status: result.status,
         customMessage: result.message,
+      );
+    }
+    } catch (e) {
+      MutationRequestContextualBehavior.showPopup(
+        status: PopupStatus.customError,
+        customMessage: e.toString(),
       );
     }
   }

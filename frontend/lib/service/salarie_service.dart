@@ -29,7 +29,7 @@ class SalarieService {
             telephone
             adresse
             sexe
-            poste
+            poste{_id, libelle}
             situationMatrimoniale
             commentaire
             etat
@@ -111,7 +111,7 @@ class SalarieService {
             telephone
             adresse
             sexe
-            poste
+            poste{_id, libelle}
             situationMatrimoniale
             commentaire
             etat

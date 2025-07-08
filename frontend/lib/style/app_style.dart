@@ -54,14 +54,15 @@ class DestopAppStyle {
   static const double iconSize = 24;
 }
 
-BoxDecoration tableDecoration(BuildContext context) => BoxDecoration(
+BoxDecoration tableDecoration(BuildContext context, {Color? color}) =>
+    BoxDecoration(
       border: Border.symmetric(
         horizontal: BorderSide(
           color: Theme.of(context).colorScheme.surfaceBright,
           width: 2,
         ),
       ),
-      color: Theme.of(context).colorScheme.surface,
+      color: color ?? Theme.of(context).colorScheme.surface,
     );
 
 BoxDecoration marktableDecoration(BuildContext context) => BoxDecoration(

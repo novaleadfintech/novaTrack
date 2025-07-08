@@ -19,6 +19,10 @@ final List<String> sectionTableTitles = [
   "LIBELLÉ",
   "",
 ];
+final List<String> posteTableTitles = [
+  "LIBELLÉ",
+  "",
+];
 final List<String> profilTableTitles = [
   "LIBELLÉ",
   "",

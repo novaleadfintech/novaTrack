@@ -1,8 +1,8 @@
 enum CanauxPaiement {
   caisse('Caisse'),
   operateurMobile('Opérateur mobile'),
-  banque("Banque"),
-  bitCoins('Bitcoins');
+  banque("Banque");
+  // bitCoins('Bitcoins');
 
   final String label;
   const CanauxPaiement(this.label);

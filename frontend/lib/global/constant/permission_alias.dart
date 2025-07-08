@@ -101,11 +101,14 @@ enum PermissionAlias {
 // Rubrique Bulletin
   createBulletinRubrique("CREATE_BULLETIN_RUBRIQUE"),
   updateBulletinRubrique("EDIT_BULLETIN_RUBRIQUE"),
-  readBulletinRubrique("READ_BULLETIN_RUBRIQUE"),
+readBulletinRubrique("READ_BULLETIN_RUBRIQUE"),
+  createPoste("CREATE_POSTE"),
+  updatePoste("EDIT_POSTE"),
+  readPoste("READ_POSTE"),
 
 // Assignation
   assignRubriqueCategoriePaie("ASSIGN_RUBRIQUE_TO_CATEGORIE");
-
+//Poste
   final String label;
   const PermissionAlias(this.label);
 }

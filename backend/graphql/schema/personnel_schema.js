@@ -44,7 +44,7 @@ input PersonnePrevenirInput{
         telephone:Float!
         adresse:String
         sexe:Sexe!        
-        poste:String!
+        poste:Poste
         situationMatrimoniale:SituationMatrimoniale!
         commentaire:String
         etat:EtatPersonnel!
@@ -90,7 +90,7 @@ const mutation = `#graphql
             pays:String!
             telephone:Float!,
             sexe:Sexe!,
-            poste:String!,
+            poste:PosteInput!,
             situationMatrimoniale:SituationMatrimoniale!,
             etat:EtatPersonnel
             adresse:String,
@@ -114,7 +114,7 @@ const mutation = `#graphql
             pays:String
             telephone:Float,
             sexe:Sexe,
-            poste:String,
+            poste:PosteInput,
             situationMatrimoniale:SituationMatrimoniale,
             adresse:String,
             dureeEssai:Float

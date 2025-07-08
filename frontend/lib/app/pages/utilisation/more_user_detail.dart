@@ -80,7 +80,7 @@ class _MoreUserDetailState extends State<MoreUserDetail> {
                     isbold: true,
                   ),
                   TabledetailBodyMiddle(
-                    valeur: widget.user.personnel!.poste!,
+                    valeur: widget.user.personnel!.poste!.libelle,
                   ),
                 ],
               ),

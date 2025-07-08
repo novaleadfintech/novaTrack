@@ -24,6 +24,7 @@ import moyenPaiementResolvers from "./moyen_paiement.js";
 import salaireResolvers from "./salaire.js";
 import rubriqueCategorieRubrique from "./rubrique_categorie.js";
 import clientFactureGlobalValueResolvers from "./client_facture_global_value.js";
+import posteResolvers from "./poste.js";
 
 const graphQlResolvers = {
   ...serviceResolvers,
@@ -53,6 +54,7 @@ const graphQlResolvers = {
   ...moyenPaiementResolvers,
   ...rubriqueCategorieRubrique,
   ...clientFactureGlobalValueResolvers,
+  ...posteResolvers,
 };
 
 export default graphQlResolvers;

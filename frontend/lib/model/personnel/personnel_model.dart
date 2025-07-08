@@ -1,3 +1,5 @@
+import 'package:frontend/model/personnel/poste_model.dart';
+
 import '../../helper/string_helper.dart';
 import '../pays_model.dart';
 import '../common_type.dart';
@@ -13,7 +15,7 @@ class PersonnelModel {
   final PaysModel? pays;
   final String? adresse;
   final Sexe? sexe;
-  final String? poste;
+  final PosteModel? poste;
   final SituationMatrimoniale? situationMatrimoniale;
   final String? commentaire;
   final EtatPersonnel? etat;
@@ -66,7 +68,7 @@ class PersonnelModel {
       telephone: json['telephone'],
       adresse: json['adresse'],
       sexe: json['sexe'] != null ? sexeFromString(json['sexe']) : null,
-      poste: json['poste'],
+      poste: json['poste'] != null ? PosteModel.fromJson(json['poste']) : null,
       pays: json['pays'] != null ? PaysModel.fromJson(json['pays']) : null,
       situationMatrimoniale: json['situationMatrimoniale'] != null
           ? situationMatrimonialeFromString(json['situationMatrimoniale'])
@@ -111,7 +113,7 @@ class PersonnelModel {
       'telephone': telephone,
       'adresse': adresse,
       'sexe': sexe != null ? sexeToString(sexe!) : null,
-      'poste': poste,
+      'poste': poste?.toJson(),
       'pays': pays?.toJson(),
       'situationMatrimoniale': situationMatrimoniale != null
           ? situationMatrimonialeToString(situationMatrimoniale!)

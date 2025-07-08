@@ -12,8 +12,7 @@ import {
   sendRoleAssignmentEmail,
   sendresetLoginEmail,
 } from "../../utils/send_email.js";
-import { timeStamp } from "console";
-import { create } from "domain";
+
 
 const personnelModel = new Personnel();
 const roleModel = new Role();
@@ -28,15 +27,15 @@ const roleAuthorization = {
 };
 const generateToken = ({ user, password }) => {
   const cleanedRoles = user.roles.map(
-    ({
-      role: { permissions, ...roleWithoutPermissions },
-      ...otherRoleProps
-    }) => ({
-      ...otherRoleProps,
-      role: roleWithoutPermissions,
+    ({ _id, _from, _to, roleAuthorization, role }) => ({
+      _id,
+      _from,
+      _to,
+      roleAuthorization,
+      role: { _id: role._id, libelle: role.libelle },
     })
   );
-
+  console.log("cleanedRoles", cleanedRoles);
   return jwt.sign(
     {
       user: {
@@ -201,16 +200,28 @@ class User {
     );
 
     if (userDoublonpersonnel.hasNext) {
+      const user = await userDoublonpersonnel.next();
       const userDoublon = await db.query(
-        aql`FOR user IN ${userCollection} FILTER user.personnelId == ${personnelId} AND user.roleId == ${roleId} RETURN user`
+        aql`FOR userRole IN ${userRoleCollection} FILTER userRole._from == ${user._id} AND userRole._to == ${roleId} RETURN userRole`
       );
 
       if (userDoublon.hasNext) {
-        throw new Error("Ce personnel a déjà ce rôle");
+        const userRoleExistant = await userDoublon.all();
+        if (userRoleExistant.length > 0) {
+          for (const userRole of userRoleExistant) {
+            if (userRole.roleAuthorization == roleAuthorization.wait) {
+              throw new Error(
+                "Ce personnel a déjà un rôle en attente de validation."
+              );
+            }
+          }
+        }
+
+        // throw new Error("Ce personnel a déjà ce rôle");
       }
 
       try {
-        const user = await userDoublonpersonnel.next();
+        // const user = await userDoublonpersonnel.next();
         userRoleCollection.save({
           _from: user._id,
           _to: roleId,
@@ -306,7 +317,7 @@ class User {
 
     if (doublon.hasNext) {
       const role = await roleModel.getRole(roleId);
-      throw new Error(`Cet utilisateur joue dejà le role de ${role.libelle}`);
+      throw new Error(`Cet utilisateur joue dejà le rôle de ${role.libelle}`);
     }
     try {
       await userRoleCollection.save({ _from: userId, _to: roleId });
@@ -391,6 +402,8 @@ class User {
   };
 
   seConnecter = async ({ login, password }) => {
+    console.log(login);
+
     isValidValue({ value: [login, password] });
     var existingUser = null;
     try {

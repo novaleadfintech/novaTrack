@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/model/request_response.dart';
+import 'package:frontend/service/poste_service.dart';
 import '../../../helper/date_helper.dart';
 import '../../../helper/telephone_number_helper.dart';
 import '../../../model/personnel/enum_personnel.dart';
 import '../../../model/personnel/personne_prevenir.dart';
+import '../../../model/personnel/poste_model.dart';
 import '../../../service/pays_service.dart';
 import '../../../widget/date_text_field.dart';
 import '../../../widget/future_dropdown_field.dart';
@@ -41,10 +43,11 @@ class _EditPersonnelPageState extends State<EditPersonnelPage> {
   late TextEditingController _prenomController;
   late TextEditingController _emailController;
   late TextEditingController _commentaireController;
-  late TextEditingController _posteController;
+  // late TextEditingController _posteController;
   late TextEditingController _telephoneController;
   late TextEditingController _adresseController;
   PaysModel? _selectedCountry;
+  PosteModel? _selectedPoste;
 
   Sexe? sexe;
   SituationMatrimoniale? situationMatrimoniale;
@@ -54,9 +57,10 @@ class _EditPersonnelPageState extends State<EditPersonnelPage> {
   String? newprenom;
   String? newemail;
   String? newcommentaire;
-  String? newposte;
+  PosteModel? newposte;
   int? newtelephone;
   PaysModel? newpays;
+  PaysModel? newPoste;
   String? newadresse;
   Sexe? newSexe;
   SituationMatrimoniale? newSituationMatrimoniale;
@@ -102,12 +106,11 @@ class _EditPersonnelPageState extends State<EditPersonnelPage> {
     _emailController = TextEditingController(text: widget.personnel.email);
     _commentaireController =
         TextEditingController(text: widget.personnel.commentaire ?? '');
-    _posteController = TextEditingController(text: widget.personnel.poste);
     _telephoneController =
         TextEditingController(text: widget.personnel.telephone.toString());
     _adresseController = TextEditingController(text: widget.personnel.adresse);
     _selectedCountry = widget.personnel.pays!;
-
+    _selectedPoste = widget.personnel.poste;
     _dureeEssaiController = TextEditingController(
         text: (widget.personnel.dureeEssai != null
                 ? (widget.personnel.dureeEssai!)
@@ -158,7 +161,7 @@ class _EditPersonnelPageState extends State<EditPersonnelPage> {
         _emailController.text.trim() != widget.personnel.email ||
         _commentaireController.text.trim() !=
             (widget.personnel.commentaire ?? '') ||
-        _posteController.text.trim() != widget.personnel.poste ||
+        _selectedPoste != widget.personnel.poste ||
         _telephoneController.text.trim() !=
             widget.personnel.telephone.toString() ||
         _adresseController.text.trim() != (widget.personnel.adresse ?? '') ||
@@ -198,7 +201,6 @@ class _EditPersonnelPageState extends State<EditPersonnelPage> {
     final String nom = _nomController.text.trim();
     final String prenom = _prenomController.text.trim();
     final String email = _emailController.text.trim();
-    final String poste = _posteController.text.trim();
     final String adresse = _adresseController.text.trim();
 
     final String telephone = _telephoneController.text.trim();
@@ -206,7 +208,7 @@ class _EditPersonnelPageState extends State<EditPersonnelPage> {
     String? errorMessage;
     if (nom.isEmpty ||
         prenom.isEmpty ||
-        poste.isEmpty ||
+        _selectedPoste == null ||
         sexe == null ||
         _selectedCountry == null ||
         situationMatrimoniale == null ||
@@ -231,8 +233,6 @@ class _EditPersonnelPageState extends State<EditPersonnelPage> {
         _dateFinController.text.trim().isEmpty) {
       errorMessage = "Tous les champs marqués doivent être remplis.";
     }
-
-    // errorMessage = 'quelque chose';
 
     if (dateDebut != null && dateFin != null) {
       if (dateDebut!
@@ -281,8 +281,8 @@ class _EditPersonnelPageState extends State<EditPersonnelPage> {
         (widget.personnel.commentaire ?? '')) {
       newcommentaire = _commentaireController.text.trim();
     }
-    if (_posteController.text.trim() != widget.personnel.poste) {
-      newposte = _posteController.text.trim();
+    if (_selectedPoste != widget.personnel.poste) {
+      newposte = _selectedPoste;
     }
     if (_telephoneController.text.trim() !=
         widget.personnel.telephone.toString()) {
@@ -409,7 +409,6 @@ class _EditPersonnelPageState extends State<EditPersonnelPage> {
 
     if (result.status == PopupStatus.success) {
       MutationRequestContextualBehavior.closePopup();
-
       MutationRequestContextualBehavior.showPopup(
         status: PopupStatus.success,
         customMessage: "Personnel modifié avec succès",
@@ -425,6 +424,9 @@ class _EditPersonnelPageState extends State<EditPersonnelPage> {
 
   Future<List<PaysModel>> fetchCountryItems() async {
     return await PaysService.getAllPays();
+  }
+  Future<List<PosteModel>> fetchPosteItems() async {
+    return await PosteService.getPostes();
   }
 
   @override
@@ -502,10 +504,20 @@ class _EditPersonnelPageState extends State<EditPersonnelPage> {
               maxLines: null,
               height: 50,
             ),
-            SimpleTextField(
+            FutureCustomDropDownField<PosteModel>(
               label: "Poste",
-              textController: _posteController,
-              keyboardType: TextInputType.text,
+              showSearchBox: true,
+              selectedItem: _selectedPoste,
+              fetchItems: fetchPosteItems,
+              onChanged: (PosteModel? value) {
+                if (value != null) {
+                  setState(() {
+                    _selectedPoste = value;
+                  });
+                }
+              },
+              canClose: false,
+              itemsAsString: (s) => s.libelle,
             ),
             DateField(
               label: "Date de naissance",
@@ -645,7 +657,7 @@ class _EditPersonnelPageState extends State<EditPersonnelPage> {
               ),
             ),
             SimpleTextField(
-              label: "Nom",
+              label: "Nom et prénoms",
               textController: _nomPersonnePrevenirController,
             ),
             SimpleTextField(
@@ -720,7 +732,6 @@ class _EditPersonnelPageState extends State<EditPersonnelPage> {
     _prenomController.dispose();
     _emailController.dispose();
     _commentaireController.dispose();
-    _posteController.dispose();
     _telephoneController.dispose();
     _adresseController.dispose();
     _dateNaissanceController.dispose();

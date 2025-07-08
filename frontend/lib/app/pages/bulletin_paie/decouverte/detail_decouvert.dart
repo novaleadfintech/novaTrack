@@ -50,7 +50,9 @@ class MoreDetaildecouvertePage extends StatelessWidget {
                   isbold: true,
                 ),
                 TabledetailBodyMiddle(
-                  valeur: decouverte.salarie.personnel.poste!,
+                  valeur: decouverte.salarie.personnel.poste != null
+                      ? decouverte.salarie.personnel.poste!.libelle
+                      : "Aucun poste",
                 ),
               ],
             ),

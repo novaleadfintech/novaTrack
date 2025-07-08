@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:frontend/helper/date_helper.dart';
 import 'package:frontend/model/personnel/personne_prevenir.dart';
+import 'package:frontend/model/personnel/poste_model.dart';
 
 import '../model/common_type.dart';
 import '../model/personnel/enum_personnel.dart';
@@ -47,7 +48,7 @@ class PersonnelService {
                     }
                       adresse
                       sexe
-                      poste
+                      poste{_id, libelle}
                       commentaire
                       etat
                       situationMatrimoniale
@@ -75,10 +76,10 @@ class PersonnelService {
         return PersonnelModel.personnelErr;
       },
     );
-
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
       var data = jsonData['data']['personnels'];
+      print(data);
       if (data != null) {
         for (var personnel in data) {
           personnels.add(PersonnelModel.fromJson(personnel));
@@ -109,7 +110,7 @@ class PersonnelService {
                     telephone
                     adresse
                     sexe
-                    poste
+                    poste{_id, libelle}
                     dateNaissance
                     dateDebut
                     dateFin
@@ -187,7 +188,7 @@ class PersonnelService {
                           phoneNumber
                           initiauxPays
                       }
-                      poste
+                      poste{_id, libelle}
                       situationMatrimoniale
                       commentaire
                       etat
@@ -257,7 +258,7 @@ class PersonnelService {
     required TypePersonnel typePersonnel,
     required TypeContrat? typeContrat,
     required PersonnePrevenirModel personnePrevenir,
-    required String poste,
+    required PosteModel poste,
     required String adresse,
     required int? dureeEssai,
     required String? commentaire,
@@ -271,7 +272,7 @@ class PersonnelService {
           pays: "${pays.id}",
           telephone: $telephone
           sexe: ${sexeToString(sexe)}
-          poste: "$poste"
+          poste: "${poste.toJson()}"
           adresse: "$adresse",
           situationMatrimoniale:${situationMatrimonialeToString(situationMatrimoniale)},
           dateDebut: ${dateDebut.millisecondsSinceEpoch},
@@ -350,7 +351,7 @@ class PersonnelService {
     required SituationMatrimoniale? situationMatrimoniale,
     required Sexe? sexe,
     required PaysModel? pays,
-    required String? poste,
+    required PosteModel? poste,
     required String? adresse,
     required PersonnePrevenirModel? personnePrevenir,
     required DateTime? dateNaissance,
@@ -379,7 +380,7 @@ mutation UpdatePersonnel {
       body += 'email: "$email",';
     }
     if (poste != null) {
-      body += 'poste: "$poste",';
+      body += 'poste: ${poste.toJson()},';
     }
     if (telephone != null) {
       body += 'telephone: $telephone,';
@@ -432,6 +433,8 @@ mutation UpdatePersonnel {
       )
     }
   ''';
+
+    print(body);
 
     try {
       var response = await http

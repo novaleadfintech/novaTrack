@@ -6,6 +6,7 @@ class Constant {
       "Donner son avis sur le changement de profil";
   static const String unarchived = "Désarchiver";
   static const String delete = "Supprimer";
+  static const String duplicate = "Dupliquer";
   static const String validate = "Valider";
   static const String obtain = "Obtenir";
   static const String download = "Visualiser";

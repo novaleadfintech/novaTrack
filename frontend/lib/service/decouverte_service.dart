@@ -65,7 +65,7 @@ class DecouverteService {
                 telephone
                 adresse
                 sexe
-                poste
+                poste{_id, libelle}
                 situationMatrimoniale
                 commentaire
                 etat

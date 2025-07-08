@@ -20,7 +20,7 @@ const query = `#graphql
 const mutation = `#graphql
     createMoyenPaiement(libelle:String!, type: CanalType
 !    ):String!
-    updateMoyenPaiement(key:ID!, libelle:String,        type: CanalType
+    updateMoyenPaiement(key:ID!, libelle:String, type: CanalType
     ):String!
     deleteMoyenPaiement(key:ID!):String!
 `;
