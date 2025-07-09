@@ -78,8 +78,8 @@ class FinancialBarChartState extends State<FinancialBarChart> {
                           onPressed: () => _showYearPicker(context),
                           child: Text(
                             '$_selectedYear',
-                            style: const TextStyle(
-                              color: Colors.black,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                         ),

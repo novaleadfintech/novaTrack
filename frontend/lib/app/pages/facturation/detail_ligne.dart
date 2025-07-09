@@ -155,12 +155,12 @@ class MoreDetailLignePage extends StatelessWidget {
                 Expanded(
                   child: Container(
                     padding: const EdgeInsets.all(8),
-                    child: const Text(
+                    child: Text(
                       "Frais divers",
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                        // color: Theme.of(context).colorScheme.surface,
                       ),
                     ),
                   ),

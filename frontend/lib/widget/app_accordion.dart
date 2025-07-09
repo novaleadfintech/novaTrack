@@ -22,7 +22,7 @@ final bool isOpen;
 class _AppAccordionState extends State<AppAccordion> {
   @override
   Widget build(BuildContext context) {
-    Color headercolor = AppColor.grayprimary;
+    Color headercolor = Theme.of(context).colorScheme.surface;
     return Accordion(
       openAndCloseAnimation: true,
       maxOpenSections: 1,
@@ -43,8 +43,9 @@ class _AppAccordionState extends State<AppAccordion> {
           isOpen: widget.isOpen,
           paddingBetweenClosedSections: 0,
           paddingBetweenOpenSections: 0,
-          headerBackgroundColorOpened: headercolor.withOpacity(0.7),
-          contentBackgroundColor: headercolor.withOpacity(0.05),
+          headerBackgroundColorOpened:
+              Theme.of(context).colorScheme.surfaceBright,
+          contentBackgroundColor: Theme.of(context).colorScheme.surface,
           contentBorderColor: headercolor,
           contentBorderWidth: 1,
           headerBorderRadius: 4,

@@ -319,7 +319,8 @@ class _ArchiveBulletinState extends State<ArchiveBulletinPage> {
           !Responsive.isDesktop(context) &&
           hasPermission(
               role: widget.role,
-              permission: PermissionAlias.readBulletin.label))
+              permission: PermissionAlias.readBulletin.label) &&
+          bulletinData.isNotEmpty)
         Padding(
           padding: const EdgeInsets.only(bottom: 60, right: 8),
           child: Align(

@@ -6,7 +6,6 @@ import '../app/screens/setting_screen.dart';
 import '../auth/authentification_token.dart';
 import '../model/habilitation/role_enum.dart';
 import '../model/habilitation/user_model.dart';
-import '../style/app_color.dart';
 import 'app_menu_popup.dart';
 import 'package:gap/gap.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
@@ -74,11 +73,8 @@ class _HeaderState extends State<Header> {
         ? Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => Scaffold(
-                backgroundColor: AppColor.whiteColor,
                 appBar: AppBar(
                   title: Text("Utilisateur"),
-                  backgroundColor: AppColor.primaryColor,
-                  foregroundColor: AppColor.whiteColor,
                 ),
                 body: SettingScreen(),
               ),
@@ -154,12 +150,13 @@ class _HeaderState extends State<Header> {
               ],
               child: Row(
                 children: [
-                  const CircleAvatar(
+                  CircleAvatar(
                     radius: 15,
-                    backgroundColor: AppColor.dirtyWhite,
+                    backgroundColor:
+                        Theme.of(context).colorScheme.surfaceBright,
                     child: Icon(
                       Icons.person,
-                      color: AppColor.blackColor,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   if (Responsive.isDesktop(context)) ...[

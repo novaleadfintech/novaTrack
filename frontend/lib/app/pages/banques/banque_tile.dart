@@ -168,7 +168,8 @@ class _BanqueTileState extends State<BanqueTile> {
                                 },
                                 child: Icon(
                                   Icons.edit_outlined,
-                                  color: AppColor.blackColor,
+                                  color: AppColor.adaptiveModificationColor(
+                                      context),
                                 ),
                               ),
                             const Gap(4),

@@ -44,6 +44,10 @@ class ErrorPage extends StatelessWidget {
                 onPressed: onPressed,
                 icon: SvgPicture.asset(
                   AssetsIcons.refresh,
+                  colorFilter: ColorFilter.mode(
+                    Theme.of(context).colorScheme.onSurface,
+                    BlendMode.srcIn,
+                  ),
                   //width: Responsive.isMobile(context) ? 75 : 120,
                 ),
                 label: const Text(

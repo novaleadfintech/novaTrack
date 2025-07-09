@@ -29,7 +29,7 @@ class DetailDialogBox extends StatelessWidget {
 
         return isMobile
             ? Scaffold(
-                backgroundColor: AppColor.whiteColor,
+                backgroundColor: Theme.of(context).colorScheme.surface,
                 body: Container(
                   decoration: const BoxDecoration(
                     border: Border(

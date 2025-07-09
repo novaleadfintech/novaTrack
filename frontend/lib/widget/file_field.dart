@@ -263,12 +263,12 @@ class FilePickedCard extends StatelessWidget {
             onTap: () async => await openFile(
               name: file.path!,
             ),
-            child: const Text(
+            child: Text(
               "Afficher",
               style: TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 14,
-                color: AppColor.greensecondary500,
+                color: AppColor.adaptiveGreenSecondary500(context),
               ),
             ),
           ),

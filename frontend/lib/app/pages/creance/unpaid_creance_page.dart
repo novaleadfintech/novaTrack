@@ -208,7 +208,9 @@ class _UnpaidCreancePageState extends State<UnpaidCreancePage> {
                                         decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(4),
-                                          color: AppColor.greensecondary500,
+                                          color: AppColor
+                                              .adaptiveGreenSecondary500(
+                                                  context),
                                         ),
                                         child: Text(
                                           textAlign: TextAlign.end,

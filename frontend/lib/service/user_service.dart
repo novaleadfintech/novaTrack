@@ -65,6 +65,12 @@ class UserService {
     required String login,
     required String password,
   }) async {
+    print(
+      login,
+    );
+    print(
+      password,
+    );
     var body = '''
    mutation SeConnecter {
         seConnecter(login: "$login", password: "$password") {
@@ -154,11 +160,10 @@ class UserService {
           throw RequestMessage.timeoutMessage;
         },
       );
-
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
-        var data = jsonData['data']['seConnecter'];
 
+        var data = jsonData['data']['seConnecter'];
         return UserModel.fromJson(data);
       } else {
         throw jsonDecode(response.body)['errors'][0]['message'];
@@ -363,7 +368,7 @@ class UserService {
 
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
-         var data = jsonData['data']['users'];
+        var data = jsonData['data']['users'];
         List<UserModel> users = [];
         if (data != null) {
           for (var user in data) {

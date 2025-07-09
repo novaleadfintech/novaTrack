@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../style/app_color.dart';
-import '../responsitvity/responsivity.dart';
+ import '../responsitvity/responsivity.dart';
 
 class AppTabBar extends StatefulWidget {
   final List<String> tabTitles;
@@ -34,7 +33,7 @@ class _AppTabBarState extends State<AppTabBar> {
               padding: EdgeInsets.zero,
               labelPadding: EdgeInsets.zero,
               automaticIndicatorColorAdjustment: true,
-              indicatorColor: AppColor.primaryColor,
+              indicatorColor: Theme.of(context).colorScheme.primary,
               tabAlignment: TabAlignment.center,
               tabs: widget.tabTitles.map((title) {
                 return Tab(
@@ -45,7 +44,6 @@ class _AppTabBarState extends State<AppTabBar> {
                     ),
                     child: Text(
                       title,
-                      style: const TextStyle(fontFamily: "Inter"),
                     ),
                   ),
                 );

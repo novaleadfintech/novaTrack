@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/app/responsitvity/responsivity.dart';
-import 'package:frontend/style/app_color.dart';
-
+ 
 class ResponsiveCard extends StatelessWidget {
   final String label;
   final double width;
@@ -12,7 +11,7 @@ class ResponsiveCard extends StatelessWidget {
     required this.label,
     this.width = 250,
     this.iconData = Icons.settings,
-      this.color = AppColor.whiteColor
+    this.color,
   });
 
   bool isMobile(BuildContext context) {

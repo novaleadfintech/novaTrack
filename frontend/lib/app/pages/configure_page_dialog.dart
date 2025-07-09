@@ -47,7 +47,7 @@ class ResponsiveConfigPageDialogBox extends StatelessWidget {
                       ),
                       child: Container(
                         margin: EdgeInsets.symmetric(horizontal: 8),
-                        color: AppColor.whiteColor,
+                        color: Theme.of(context).colorScheme.surface,
                         child: Padding(
                           padding:
                               EdgeInsets.symmetric(horizontal: 8, vertical: 16),

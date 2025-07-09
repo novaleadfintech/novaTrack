@@ -21,7 +21,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.getDarkTheme(),
+      theme: AppTheme.getLightTheme(),
+      darkTheme: AppTheme.getDarkTheme(),
+      // themeMode: ThemeMode.system,
       home: LoginScreen(),
       title: "novaTrack",
       navigatorKey: navigatorKey,

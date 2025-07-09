@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/style/app_color.dart';
-import 'package:gap/gap.dart';
+ import 'package:gap/gap.dart';
 import '../global/global_value.dart';
 import '../style/app_style.dart';
 
@@ -78,7 +77,7 @@ class _PaginationSpaceState extends State<PaginationSpace> {
             child: Text(
               currentPageItemsInfo,
               style: DestopAppStyle.paginationNumberStyle.copyWith(
-                color: AppColor.blackColor,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
           ),

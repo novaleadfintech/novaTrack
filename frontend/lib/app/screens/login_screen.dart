@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/app/integration/popop_status.dart';
 import 'package:frontend/app/pages/app_dialog_box.dart';
+import 'package:frontend/style/app_color.dart';
 import '../../helper/user_helper.dart';
 import '../../model/habilitation/role_enum.dart';
 import '../../model/habilitation/role_model.dart';
@@ -121,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       resizeToAvoidBottomInset:
           false, // Ne pas bouger le layout quand le clavier sort
-      backgroundColor: Theme.of(context).colorScheme.primary,
+      backgroundColor: AppColor.adaptiveBackgroundColor(context),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(

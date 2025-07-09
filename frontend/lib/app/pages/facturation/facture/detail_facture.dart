@@ -359,7 +359,7 @@ class MoreDetailFacturePage extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                        // color: Colors.black,
                       ),
                     ),
                   ),
@@ -458,7 +458,7 @@ class MoreDetailFacturePage extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                        // color: Colors.black,
                       ),
                     ),
                   ),
@@ -515,7 +515,7 @@ class MoreDetailFacturePage extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                        // color: Colors.black,
                       ),
                     ),
                   ),
@@ -710,7 +710,7 @@ class MoreDetailFacturePage extends StatelessWidget {
                                         style: TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.black,
+                                          // color: Colors.black,
                                         ),
                                       ),
                                     ),
@@ -826,7 +826,7 @@ class MoreDetailFacturePage extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                        // color: Colors.black,
                       ),
                     ),
                   ),

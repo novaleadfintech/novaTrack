@@ -132,7 +132,7 @@ class _MoreUserDetailState extends State<MoreUserDetail> {
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
-                              color: Colors.black,
+                              // color: Colors.black,
                             ),
                           ),
                         ),
@@ -157,7 +157,8 @@ class _MoreUserDetailState extends State<MoreUserDetail> {
                                 child: Container(
                                   color: userRole.roleAuthorization ==
                                           RoleAuthorization.accepted
-                                      ? AppColor.greensecondary500
+                                      ? AppColor.adaptiveGreenSecondary500(
+                                          context)
                                       : userRole.roleAuthorization ==
                                               RoleAuthorization.refused
                                           ? AppColor.redColor.withOpacity(0.3)

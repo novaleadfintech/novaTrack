@@ -208,7 +208,7 @@ class _SimpleTextFieldState extends State<SimpleTextField> {
                 ),
                 contentPadding: const EdgeInsets.all(8),
                 fillColor: widget.readOnly
-                    ? const Color.fromARGB(255, 219, 217, 217)
+                    ? Theme.of(context).colorScheme.secondary
                     : Theme.of(context).colorScheme.surface,
                 filled: widget.readOnly,
               ),

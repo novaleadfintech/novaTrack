@@ -424,12 +424,13 @@ class _FactureTileState extends State<FactureTile> {
             : downloadResult.message,
       );
     } catch (e) {
+      _dialog.hide();
       MutationRequestContextualBehavior.showPopup(
         status: PopupStatus.customError,
         customMessage: "Erreur lors du téléchargement de la facture.",
       );
     } finally {
-      _dialog.hide();
+      // _dialog.hide();
     }
   }
 

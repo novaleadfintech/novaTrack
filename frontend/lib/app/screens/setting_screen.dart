@@ -88,7 +88,10 @@ class _SettingScreenState extends State<SettingScreen> {
                     children: [
                       CircleAvatar(
                         radius: 32,
-                        backgroundColor: AppColor.primaryColor.withOpacity(0.2),
+                        backgroundColor: Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .withOpacity(0.2),
                         child: Text(
                           getInitials(),
                           style: const TextStyle(
@@ -119,7 +122,7 @@ class _SettingScreenState extends State<SettingScreen> {
               ListTile(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8)),
-                tileColor: Colors.grey[100],
+                tileColor: Theme.of(context).colorScheme.surface,
                 onTap: () {
                   showResponsiveDialog(
                     context,

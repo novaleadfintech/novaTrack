@@ -3,8 +3,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:frontend/app/pages/error_page.dart';
 import 'package:frontend/global/constant/permission_alias.dart';
 import 'package:frontend/helper/user_helper.dart';
-import 'package:frontend/style/app_color.dart';
-import 'package:gap/gap.dart';
+ import 'package:gap/gap.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 import '../../../auth/authentification_token.dart';
 import '../../../helper/telephone_number_helper.dart';
@@ -131,7 +130,7 @@ class _EntreprisePageState extends State<EntreprisePage> {
       },
       child: Scaffold(
         body: Container(
-          color: AppColor.whiteColor,
+          color: Theme.of(context).colorScheme.surface,
           child: Form(
             key: UniqueKey(),
             child: Column(

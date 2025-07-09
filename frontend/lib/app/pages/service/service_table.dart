@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/helper/string_helper.dart';
+import 'package:frontend/style/app_color.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 
 import '../../../global/constant/constant.dart';
@@ -180,7 +181,7 @@ class _ServiceTableState extends State<ServiceTable> {
                       ? TableRow(
                           decoration: tableDecoration(context,
                               color: service.type == ServiceType.recurrent
-                                  ? Colors.amber.shade50
+                                  ? AppColor.adaptiveamber(context)
                                   : null),
                           children: [
                             TableBodyMiddle(

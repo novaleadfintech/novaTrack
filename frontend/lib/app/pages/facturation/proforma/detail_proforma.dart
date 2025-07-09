@@ -163,10 +163,10 @@ class MoreDetailProformaPage extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                        // color: Colors.black,
                       ),
                     ),
-                  ),
+                    ),
                 ),
                 CircleAvatar(
                   radius: 12,

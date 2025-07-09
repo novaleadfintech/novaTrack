@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/style/app_color.dart';
-import 'app_menu_popup.dart';
+ import 'app_menu_popup.dart';
 
-class TableBodyLast extends StatelessWidget {
+class TableBodyLast extends StatefulWidget {
   final List<({String label, VoidCallback onTap, Color? color})> items;
 
   const TableBodyLast({
@@ -11,19 +10,27 @@ class TableBodyLast extends StatelessWidget {
   });
 
   @override
+  State<TableBodyLast> createState() => _TableBodyLastState();
+}
+
+class _TableBodyLastState extends State<TableBodyLast> {
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12).copyWith(left: 8),
       child: CustomPopupMenu(
         onSelected: (value) {
-          final index = items.indexWhere((item) => item.label == value);
+          final index = widget.items.indexWhere((item) => item.label == value);
           if (index != -1) {
-            items[index].onTap();
+            widget.items[index].onTap();
           }
         },
-        items: items
+        items: widget.items
             .map((item) =>
-                (value: item.label, color: item.color ?? AppColor.blackColor))
+                (
+                  value: item.label,
+                  color: item.color ?? Theme.of(context).colorScheme.onSurface
+                ))
             .toList(),
         tooltip: "Actions",
         child: const Icon(Icons.more_vert),
