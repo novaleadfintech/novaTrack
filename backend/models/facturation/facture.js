@@ -37,8 +37,25 @@ const TypeFacture = {
 };
 
 class Facture {
-  constructor() {}
+   constructor() {
+    this.initializeCollections();
+  }
 
+  async initializeCollections() {
+    if (!(await factureCollection.exists())) {
+      factureCollection.create();
+    }
+    if (!(await ligneFactureCollection.exists())) {
+      ligneFactureCollection.create({ type: CollectionType.EDGE_COLLECTION });
+    }
+    if (!(await entrepriseCollection.exists())) {
+      entrepriseCollection.create();
+    }
+    if (!(await fluxFinancierCollection.exists())) {
+      fluxFinancierCollection.create();
+    }
+    
+  }
   /* getAllFactures = async ({ skip, perPage }) => {
     let limit = aql``;
     let filtre = aql``;

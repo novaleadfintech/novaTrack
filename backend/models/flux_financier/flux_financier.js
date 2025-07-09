@@ -26,7 +26,15 @@ const FluxFinancierStatus = {
 const locateFinanceFolder = "finance";
 
 class FluxFinancier {
-  constructor() {}
+  constructor() {
+    this.initializeCollections();
+  }
+
+  async initializeCollections() {
+    if (!(await fluxFinancierCollection.exists())) {
+      fluxFinancierCollection.create();
+    }
+  }
   getAllFluxFinanciers = async ({ perPage, skip, type }) => {
     try {
       let limit = aql``;

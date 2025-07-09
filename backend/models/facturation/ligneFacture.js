@@ -9,104 +9,113 @@ const ligneFactureCollection = db.collection("ligneFactures");
 const factureCollection = db.collection("factures");
 
 class LigneFacture {
-  constructor() {}
+  constructor() {
+    this.initializeCollections();
+  }
+
+  async initializeCollections() {
+    if (!(await ligneFactureCollection.exists())) {
+      ligneFactureCollection.create({ type: CollectionType.EDGE_COLLECTION });
+    }
+    if (!(await factureCollection.exists())) {
+      factureCollection.create();
+    }
+  }
 
   getLigneFacture = async ({ key }) => {
     try {
       const ligneFacture = await ligneFactureCollection.document(key);
       const fraisDivers = ligneFacture.fraisDivers ?? [];
-          const prixSupplementaire = ligneFacture.prixSupplementaire ?? 0;
+      const prixSupplementaire = ligneFacture.prixSupplementaire ?? 0;
 
-          let prixRecalcule;
-          if (ligneFacture.service.tarif.length === 0) {
-            prixRecalcule = ligneFacture.service.prix + prixSupplementaire;
+      let prixRecalcule;
+      if (ligneFacture.service.tarif.length === 0) {
+        prixRecalcule = ligneFacture.service.prix + prixSupplementaire;
+      } else {
+        const tarif = ligneFacture.service.tarif.find((tarif) => {
+          if (tarif["maxQuantity"] == null) {
+            return ligneFacture.quantite >= tarif["minQuantity"];
           } else {
-            const tarif = ligneFacture.service.tarif.find((tarif) => {
-              if (tarif["maxQuantity"] == null) {
-                return ligneFacture.quantite >= tarif["minQuantity"];
-              } else {
-                return (
-                  ligneFacture.quantite >= tarif["minQuantity"] &&
-                  ligneFacture.quantite <= tarif["maxQuantity"]
-                );
-              }
-            });
-
-            if (tarif) {
-              prixRecalcule = tarif.prix + prixSupplementaire;
-            } else {
-              prixRecalcule =
-                ligneFacture.service.prix + prixSupplementaire;
-            }
+            return (
+              ligneFacture.quantite >= tarif["minQuantity"] &&
+              ligneFacture.quantite <= tarif["maxQuantity"]
+            );
           }
-          const montantLigneFacture = this.calculerMontantLigneFacture({
-            prix: prixRecalcule,
-            quantite: ligneFacture.quantite,
-            remise: ligneFacture.remise,
-          });
+        });
 
-          return {
-            ...ligneFacture,
-            fraisDivers: fraisDivers,
-            montant: montantLigneFacture,
-          };
+        if (tarif) {
+          prixRecalcule = tarif.prix + prixSupplementaire;
+        } else {
+          prixRecalcule = ligneFacture.service.prix + prixSupplementaire;
+        }
+      }
+      const montantLigneFacture = this.calculerMontantLigneFacture({
+        prix: prixRecalcule,
+        quantite: ligneFacture.quantite,
+        remise: ligneFacture.remise,
+      });
+
+      return {
+        ...ligneFacture,
+        fraisDivers: fraisDivers,
+        montant: montantLigneFacture,
+      };
     } catch (err) {
       throw new Error(`Document introuvable : ` + err.message);
     }
   };
 
- getLigneFactureByFacture = async ({ factureId }) => {
-  try {
-    const ligneFactures = await ligneFactureCollection.edges(factureId);
-    
-    return await Promise.all(
-      ligneFactures.edges
-        .sort((a, b) => a.timeStamp - b.timeStamp) // Trie les lignes par timeStamp
-        .map(async (ligneFactureEdge) => {
-          if (!ligneFactureEdge || !ligneFactureEdge.service) {
-            throw new Error("Ligne de facture invalide ou service manquant.");
-          }
+  getLigneFactureByFacture = async ({ factureId }) => {
+    try {
+      const ligneFactures = await ligneFactureCollection.edges(factureId);
 
-          const fraisDivers = ligneFactureEdge.fraisDivers ?? [];
-          const prixSupplementaire = ligneFactureEdge.prixSupplementaire ?? 0;
+      return await Promise.all(
+        ligneFactures.edges
+          .sort((a, b) => a.timeStamp - b.timeStamp) // Trie les lignes par timeStamp
+          .map(async (ligneFactureEdge) => {
+            if (!ligneFactureEdge || !ligneFactureEdge.service) {
+              throw new Error("Ligne de facture invalide ou service manquant.");
+            }
 
-          let prixRecalcule = prixSupplementaire;
+            const fraisDivers = ligneFactureEdge.fraisDivers ?? [];
+            const prixSupplementaire = ligneFactureEdge.prixSupplementaire ?? 0;
 
-          // Vérifie si le service a des tarifs définis
-          if (ligneFactureEdge.service.nature === Nature.unique) {
-            prixRecalcule += ligneFactureEdge.service.prix;
-          } else {
-            const tarif = ligneFactureEdge.service.tarif.find((tarif) =>
-              tarif.maxQuantity == null
-                ? ligneFactureEdge.quantite >= tarif.minQuantity
-                : ligneFactureEdge.quantite >= tarif.minQuantity &&
-                  ligneFactureEdge.quantite <= tarif.maxQuantity
-            );
+            let prixRecalcule = prixSupplementaire;
 
-            prixRecalcule += tarif ? tarif.prix : 0;
-          }
+            // Vérifie si le service a des tarifs définis
+            if (ligneFactureEdge.service.nature === Nature.unique) {
+              prixRecalcule += ligneFactureEdge.service.prix;
+            } else {
+              const tarif = ligneFactureEdge.service.tarif.find((tarif) =>
+                tarif.maxQuantity == null
+                  ? ligneFactureEdge.quantite >= tarif.minQuantity
+                  : ligneFactureEdge.quantite >= tarif.minQuantity &&
+                    ligneFactureEdge.quantite <= tarif.maxQuantity
+              );
 
-          // Calcul du montant total de la ligne de facture
-          const montantLigneFacture = this.calculerMontantLigneFacture({
-            prix: prixRecalcule,
-            quantite: ligneFactureEdge.quantite ?? 0,
-            // remise: ligneFactureEdge.remise ?? 0,
-          });
+              prixRecalcule += tarif ? tarif.prix : 0;
+            }
 
-          return {
-            ...ligneFactureEdge,
-            montant: montantLigneFacture,
-            fraisDivers,
-          };
-        })
-    );
-  } catch (err) {
-    throw new Error(
-      "Erreur lors de la récupération des lignes de service : " + err.message
-    );
-  }
-};
+            // Calcul du montant total de la ligne de facture
+            const montantLigneFacture = this.calculerMontantLigneFacture({
+              prix: prixRecalcule,
+              quantite: ligneFactureEdge.quantite ?? 0,
+              // remise: ligneFactureEdge.remise ?? 0,
+            });
 
+            return {
+              ...ligneFactureEdge,
+              montant: montantLigneFacture,
+              fraisDivers,
+            };
+          })
+      );
+    } catch (err) {
+      throw new Error(
+        "Erreur lors de la récupération des lignes de service : " + err.message
+      );
+    }
+  };
 
   /*  getLigneFacturesByFactureId =async ({serviceId})=>{
     const query = await db.query(
@@ -187,100 +196,104 @@ class LigneFacture {
     }
   };
 
+  updateLigneFacture = async ({
+    key,
+    designation,
+    quantite,
+    serviceId,
+    unit,
+    dureeLivraison,
+    remise,
+    prixSupplementaire,
+    fraisDivers,
+  }) => {
+    const session = await db.beginTransaction({
+      write: ["factures", "ligneFactures"], // Définition des collections à modifier
+    });
+    try {
+      const updateField = {};
 
-updateLigneFacture = async ({
-  key,
-  designation,
-  quantite,
-  serviceId,
-  unit,
-  dureeLivraison,
-  remise,
-  prixSupplementaire,
-  fraisDivers,
-}) => {
-  
-  const session = await db.beginTransaction({
-    write: ["factures", "ligneFactures"], // Définition des collections à modifier
-  });
-  try {
-    const updateField = {};
+      if (serviceId !== undefined) {
+        const service = await serviceModel.getService({ key: serviceId });
+        updateField._from = serviceId;
+        updateField.service = service;
+      }
+      if (designation !== undefined) updateField.designation = designation;
 
-    if (serviceId !== undefined) {
-      const service = await serviceModel.getService({ key: serviceId });
-      updateField._from = serviceId;
-      updateField.service = service;
-    }
-    if (designation !== undefined) updateField.designation = designation;
-    
-    if (dureeLivraison !== undefined) updateField.dureeLivraison = dureeLivraison;
-    if (unit !== undefined) updateField.unit = unit;
-    if (prixSupplementaire !== undefined) updateField.prixSupplementaire = prixSupplementaire;
-    if (remise !== undefined) updateField.remise = remise;
-    
-    if (fraisDivers !== undefined) {
-      fraisDivers.forEach((frais) => {
-        for (const key in frais) {
-          isValidValue({ value: key });
-        }
-      });
-      updateField.fraisDivers = fraisDivers;
-    }
+      if (dureeLivraison !== undefined)
+        updateField.dureeLivraison = dureeLivraison;
+      if (unit !== undefined) updateField.unit = unit;
+      if (prixSupplementaire !== undefined)
+        updateField.prixSupplementaire = prixSupplementaire;
+      if (remise !== undefined) updateField.remise = remise;
 
-    if (quantite !== undefined) {
-      updateField.quantite = quantite;
-      isValidValue({ value: quantite });
-    
-
-      let montantTotal = 0;
-
-      await session.step(async () => {
-        await ligneFactureCollection.update(key, updateField);
-
-        const ligneFacture = await this.getLigneFacture({ key: key });
-        if (!ligneFacture || !ligneFacture._to) {
-          throw new Error("Impossible de récupérer la facture liée.");
-        }
-
-        const facture = await factureCollection.document(ligneFacture._to);
-        if (!facture) {
-          throw new Error("Facture introuvable.");
-        }
-
-        const lignesFactures = await this.getLigneFactureByFacture({ factureId: facture._id });
-        lignesFactures.forEach((ligne) => {
-          if (ligne._id === key) {
-            if (ligne.service.nature === Nature.unique) {
-              ligne.montant = ligne.service.prix * quantite;
-            } else {
-              const tarif = ligne.service.tarif.find((tarif) => {
-                return tarif.maxQuantity == null
-                  ? quantite >= tarif.minQuantity
-                  : quantite >= tarif.minQuantity && quantite <= tarif.maxQuantity;
-              });
-              ligne.montant = (tarif ? tarif.prix : 0) * quantite;
-            }
-            ligne.quantite = ligne.quantite;
+      if (fraisDivers !== undefined) {
+        fraisDivers.forEach((frais) => {
+          for (const key in frais) {
+            isValidValue({ value: key });
           }
         });
-        montantTotal =  utils.calculerMontantTotal({
-          lignes: lignesFactures,
-          reduction: facture.reduction,
-          tauxTVA: facture.tauxTVA,
-          tva: facture.tva,
+        updateField.fraisDivers = fraisDivers;
+      }
+
+      if (quantite !== undefined) {
+        updateField.quantite = quantite;
+        isValidValue({ value: quantite });
+
+        let montantTotal = 0;
+
+        await session.step(async () => {
+          await ligneFactureCollection.update(key, updateField);
+
+          const ligneFacture = await this.getLigneFacture({ key: key });
+          if (!ligneFacture || !ligneFacture._to) {
+            throw new Error("Impossible de récupérer la facture liée.");
+          }
+
+          const facture = await factureCollection.document(ligneFacture._to);
+          if (!facture) {
+            throw new Error("Facture introuvable.");
+          }
+
+          const lignesFactures = await this.getLigneFactureByFacture({
+            factureId: facture._id,
+          });
+          lignesFactures.forEach((ligne) => {
+            if (ligne._id === key) {
+              if (ligne.service.nature === Nature.unique) {
+                ligne.montant = ligne.service.prix * quantite;
+              } else {
+                const tarif = ligne.service.tarif.find((tarif) => {
+                  return tarif.maxQuantity == null
+                    ? quantite >= tarif.minQuantity
+                    : quantite >= tarif.minQuantity &&
+                        quantite <= tarif.maxQuantity;
+                });
+                ligne.montant = (tarif ? tarif.prix : 0) * quantite;
+              }
+              ligne.quantite = ligne.quantite;
+            }
+          });
+          montantTotal = utils.calculerMontantTotal({
+            lignes: lignesFactures,
+            reduction: facture.reduction,
+            tauxTVA: facture.tauxTVA,
+            tva: facture.tva,
+          });
+          if (montantTotal <= 0) {
+            throw new Error(
+              "Le montant total de la facture semble être inférieur ou égal à zéro."
+            );
+          }
         });
-        if (montantTotal <= 0) {
-          throw new Error("Le montant total de la facture semble être inférieur ou égal à zéro.");
-        }
-      });
-    }
-    await session.commit();
-    return "OK";
-  } catch (err) {
+      }
+      await session.commit();
+      return "OK";
+    } catch (err) {
       await session.abort();
-    throw new Error("Erreur lors du traitement : " + err.message);
-  }
-};
+      throw new Error("Erreur lors du traitement : " + err.message);
+    }
+  };
 
   //une methode à utiliser pour la tache cron
   updateLigneFactureFactures = async ({ key }) => {
@@ -334,7 +347,7 @@ updateLigneFacture = async ({
     }
   };
 
-  calculerMontantLigneFacture({ prix, quantite, remise = 0, }) {
+  calculerMontantLigneFacture({ prix, quantite, remise = 0 }) {
     let total = prix * quantite - remise;
 
     /* if (fraisDivers.length > 0) {
@@ -348,8 +361,6 @@ updateLigneFacture = async ({
     } */
     return total;
   }
-
-
 }
 
 export default LigneFacture;

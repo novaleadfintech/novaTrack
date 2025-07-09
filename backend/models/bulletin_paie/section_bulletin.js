@@ -5,7 +5,18 @@ import { isValidValue } from "../../utils/util.js";
 const sectionBulletinCollection = db.collection("sectionBulletins");
 const rubriqueBulletinCollection = db.collection("rubriqueBulletins");
 class SectionBulletin {
-  constructor() {}
+  constructor() {
+    this.initializeCollections();
+  }
+
+  async initializeCollections() {
+    if (!(await sectionBulletinCollection.exists())) {
+      sectionBulletinCollection.create();
+    }
+    if (!(await rubriqueBulletinCollection.exists())) {
+      rubriqueBulletinCollection.create();
+    }
+  }
 
   getAllSectionBulletin = async ({ skip, perPage }) => {
     let limit = aql``;

@@ -9,7 +9,15 @@ const locateEntrepriseFolder = "entreprise";
 import CountryModel from "./country.js";
 const paysModel = new CountryModel();
 class Entreprise {
-  constructor() {}
+  constructor() {
+    this.initializeCollections();
+  }
+
+  async initializeCollections() {
+    if (!(await entreprise.exists())) {
+      entreprise.create();
+    }
+  }
   getEntreprise = async () => {
     const query = await db.query(
       aql`FOR info IN ${entreprise} LIMIT 1 RETURN info`

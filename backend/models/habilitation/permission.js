@@ -8,7 +8,21 @@ const moduleCollection = db.collection("modules");
 const rolePermissionEdges = db.collection("rolePermissions");
 
 class Permission {
-  constructor() {}
+  constructor() {
+    this.initializeCollections();
+  }
+
+  async initializeCollections() {
+    if (!(await permissionCollection.exists())) {
+      permissionCollection.create();
+    }
+    if (!(await moduleCollection.exists())) {
+      moduleCollection.create();
+    }
+    if (!(await rolePermissionEdges.exists())) {
+      rolePermissionEdges.create({ type: CollectionType.EDGE_COLLECTION });
+    }
+  }
 
   getAllPermissions = async () => {
     const query = await db.query(

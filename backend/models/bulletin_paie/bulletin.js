@@ -3,8 +3,7 @@ import db from "../../db/database_connection.js";
 import { isValidValue } from "../../utils/util.js";
 import Banque, { locateBanqueFolder } from "../banque.js";
 import FluxFinancier, {
-  FluxFinancierStatus,
-  FluxFinancierType,
+   FluxFinancierType,
 } from "../flux_financier/flux_financier.js";
 import Salarie from "./salarie.js";
 import RubriqueBulletin from "./rubrique_bulletin.js";
@@ -38,6 +37,18 @@ const RubriqueIdentity = {
 };
 
 class BulletinPaie {
+  constructor() {
+    this.initializeCollections();
+  }
+
+  async initializeCollections() {
+    if (!(await bulletinCollection.exists())) {
+      bulletinCollection.create();
+    }
+    if (!(await decouverteCollection.exists())) {
+      decouverteCollection.create();
+    }
+  }
   async getAllCurrentBulletins({ perPage, skip, etat }) {
     let limit = aql``;
     let filter = aql``;

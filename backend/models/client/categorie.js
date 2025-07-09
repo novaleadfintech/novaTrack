@@ -5,7 +5,15 @@ import { isValidValue } from "../../utils/util.js";
 const categorieCollection = db.collection("categories");
 
 class Categorie {
-  constructor() {}
+  constructor() {
+    this.initializeCollections();
+  }
+
+  async initializeCollections() {
+    if (!(await categorieCollection.exists())) {
+      categorieCollection.create();
+    }
+  }
 
   getCategories = async ({ skip, perPage }) => {
     let limit = aql``;

@@ -9,7 +9,17 @@ const rubriqueBulletin = new RubriqueBulletin();
 const categoriePaieModel = new CategoriePaie();
 
 class RubriqueCategorie {
-  constructor() {}
+  constructor() {
+    this.initializeCollections();
+  }
+
+  async initializeCollections() {
+    if (!(await rubriqueCategorieCollection.exists())) {
+      rubriqueCategorieCollection.create({
+        type: CollectionType.EDGE_COLLECTION,
+      });
+    }
+  }
 
   getRubriqueBulletinByCategoriePaie = async ({ categoriePaieId }) => {
     try {

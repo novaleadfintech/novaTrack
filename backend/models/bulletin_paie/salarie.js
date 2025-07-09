@@ -10,7 +10,15 @@ const salarieCollection = db.collection("salaries");
 const PersonnelModel = new Personnel();
 const CategoriePaieModel = new CategoriePaie();
 class Salarie {
-  constructor() {}
+  constructor() {
+    this.initializeCollections();
+  }
+
+  async initializeCollections() {
+    if (!(await salarieCollection.exists())) {
+      salarieCollection.create();
+    }
+  }
 
   getAllSalarie = async ({ skip, perPage }) => {
     let limit = aql``;

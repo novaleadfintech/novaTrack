@@ -7,6 +7,15 @@ const clientFacureGlobalValueCollection = db.collection(
 );
 const clientModel = new Client();
 class ClientFactureGlobaLValueModel {
+  constructor() {
+    this.initializeCollections();
+  }
+
+  async initializeCollections() {
+    if (!(await clientFacureGlobalValueCollection.exists())) {
+      clientFacureGlobalValueCollection.create();
+    }
+  }
   clientFactureGlobalValues = async () => {
     // Récupérer toutes les valeurs configurées
     const query = await db.query(

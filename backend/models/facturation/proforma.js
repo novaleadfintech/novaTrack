@@ -32,7 +32,27 @@ const TypeFacture = {
 };
 
 class Proforma {
-  constructor() {}
+  constructor() {
+    this.initializeCollections();
+  }
+
+  async initializeCollections() {
+    if (!(await proformaCollection.exists())) {
+      proformaCollection.create();
+    }
+    if (!(await factureCollection.exists())) {
+      factureCollection.create();
+    }
+    if (!(await ligneFactureCollection.exists())) {
+      ligneFactureCollection.create({ type: CollectionType.EDGE_COLLECTION });
+    }
+    if (!(await entrepriseCollection.exists())) {
+      entrepriseCollection.create();
+    }
+    if (!(await ligneProformaCollection.exists())) {
+      ligneProformaCollection.create({ type: CollectionType.EDGE_COLLECTION });
+    }
+  }
 
   getAllProformas = async ({ skip, perPage }) => {
     let limit = aql``;

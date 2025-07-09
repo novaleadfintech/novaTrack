@@ -5,7 +5,15 @@ import { isValidValue } from "../utils/util.js";
 const countryCollection = db.collection("countries");
 
 class CountryModel {
-  constructor() {}
+  constructor() {
+    this.initializeCollections();
+  }
+
+  async initializeCollections() {
+    if (!(await countryCollection.exists())) {
+      countryCollection.create();
+    }
+  }
 
   async getAllCountries({ perPage, skip }) {
     let limit = aql``;

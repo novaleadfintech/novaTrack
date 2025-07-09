@@ -13,7 +13,15 @@ export const Nature = {
 };
 
 class Service {
-  constructor() {}
+  constructor() {
+    this.initializeCollections();
+  }
+
+  async initializeCollections() {
+    if (!(await serviceCollection.exists())) {
+      serviceCollection.create();
+    }
+  }
 
   //récuperer tous les services
   getAllServices = async ({ skip, perPage, etat }) => {
@@ -63,15 +71,15 @@ class Service {
     country,
   }) => {
     //verifier le remplissage des champs
-    isValidValue({ value: [libelle, type, etat, country, nature,] });
+    isValidValue({ value: [libelle, type, etat, country, nature] });
 
     if (description != undefined) {
       isValidValue({ value: description });
-    }else{
-      description=null;
+    } else {
+      description = null;
     }
 
-    if (nature == Nature.multiple ) {
+    if (nature == Nature.multiple) {
       const { maxQuantity, ...othertarifData } = tarif;
       isValidValue({ value: othertarifData });
     }
@@ -129,8 +137,8 @@ class Service {
 
     isValidValue({ value: updateField });
 
-    if (description !== undefined  ) {
-      updateField.description = description!=""?description:null;
+    if (description !== undefined) {
+      updateField.description = description != "" ? description : null;
     }
 
     if (tarif !== undefined) {
@@ -140,17 +148,16 @@ class Service {
       }
       updateField.tarif = tarif;
     }
-    
+
     if (nature !== undefined) {
       updateField.nature = nature;
       if (nature == Nature.multiple) {
-        updateField.prix = null
+        updateField.prix = null;
       }
       if (nature == Nature.unique) {
-        updateField.tarif = null
+        updateField.tarif = null;
       }
     }
-
 
     try {
       // const updatedService = result.new;
@@ -159,8 +166,8 @@ class Service {
       //     const query = await db.query(
       //       aql`
       //         FOR ligneProforma IN ${ligneProformaCollection}
-      //           FILTER ligneProforma._from == ${updatedService._id}  
-      //           LET proforma = DOCUMENT(ligneProforma._to)  
+      //           FILTER ligneProforma._from == ${updatedService._id}
+      //           LET proforma = DOCUMENT(ligneProforma._to)
       //           FILTER proforma.garantyTime == 0
       //           OR (${Date.now()} - proforma.dateEnvoie) >= proforma.garantyTime
       //           RETURN ligneProforma

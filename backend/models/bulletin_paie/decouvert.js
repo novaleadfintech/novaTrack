@@ -23,6 +23,15 @@ const DecouverteStatus = {
 };
 
 class Decouverte {
+  constructor() {
+    this.initializeCollections();
+  }
+
+  async initializeCollections() {
+    if (!(await decouverteCollection.exists())) {
+      decouverteCollection.create();
+    }
+  }
   getAllDecouvertes = async ({ perPage, skip }) => {
     let limit = aql``;
     if (skip !== undefined && perPage !== undefined) {

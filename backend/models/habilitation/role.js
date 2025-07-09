@@ -1,4 +1,4 @@
-import { aql } from "arangojs";
+import { aql, CollectionType } from "arangojs";
 import db from "../../db/database_connection.js";
 import Permission from "./permission.js";
 import { isValidValue } from "../../utils/util.js";
@@ -8,9 +8,19 @@ const rolePermissionEdges = db.collection("rolePermissions");
 const permissionModel = new Permission();
 
 class Role {
-  //recuperer tous les roles
+  constructor() {
+    this.initializeCollections();
+  }
+
+  async initializeCollections() {
+    if (!(await roleCollection.exists())) {
+      roleCollection.create();
+    }
+    if (!(await rolePermissionEdges.exists())) {
+      roleCollection.create({ type: CollectionType.EDGE_COLLECTION });
+    }
+  }
   getAllRoles = async () => {
-    console.log("-èèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèè");
     const query = await db.query(
       aql`FOR role IN ${roleCollection} RETURN role`
     );

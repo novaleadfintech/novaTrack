@@ -6,6 +6,18 @@ const categoriePaieCollection = db.collection("categoriePaies");
 const categoriePaieRubriqueCollection = db.collection("categoriePaieRubriques");
 
 class CategoriePaie {
+  constructor() {
+    this.initializeCollections();
+  }
+
+  async initializeCollections() {
+    if (!(await categoriePaieCollection.exists())) {
+      categoriePaieCollection.create();
+    }
+    if (!(await categoriePaieRubriqueCollection.exists())) {
+      categoriePaieRubriqueCollection.create();
+    }
+  }
   async getAllCategoriePaie({ perPage, skip }) {
     let limit = aql``;
 

@@ -25,7 +25,20 @@ const BaseType = {
 };
 
 class RubriqueBulletin {
-  constructor() {}
+  constructor() {
+    this.initializeCollections();
+  }
+
+  async initializeCollections() {
+    if (!(await rubriqueBulletinCollection.exists())) {
+      rubriqueBulletinCollection.create();
+    }
+    if (!(await rubriqueCategorieCollection.exists())) {
+      rubriqueCategorieCollection.create({
+        type: CollectionType.EDGE_COLLECTION,
+      });
+    }
+  }
 
   getAllRubriqueBulletin = async ({ skip, perPage } = {}) => {
     let limit = aql``;

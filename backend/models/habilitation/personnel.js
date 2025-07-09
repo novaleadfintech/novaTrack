@@ -14,7 +14,18 @@ const EtatPersonnel = {
 };
 
 class Personnel {
-  constructor() {}
+  constructor() {
+    this.initializeCollections();
+  }
+
+  async initializeCollections() {
+    if (!(await personnelCollection.exists())) {
+      personnelCollection.create();
+    }
+    if (!(await bulletinCollection.exists())) {
+      bulletinCollection.create();
+    }
+  }
 
   //recuperer tous les personnels
   getAllPersonnel = async ({ skip, perPage, etat }) => {

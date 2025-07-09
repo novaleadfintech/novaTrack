@@ -5,6 +5,15 @@ import { isValidValue } from "../utils/util.js";
 const moyenPaiementCollection = db.collection("moyenPaiements");
 
 class MoyenPaiement {
+  constructor() {
+    this.initializeCollections();
+  }
+
+  async initializeCollections() {
+    if (!(await moyenPaiementCollection.exists())) {
+      moyenPaiementCollection.create();
+    }
+  }
   async getAllMoyenPaiement({ perPage, skip }) {
     let limit = aql``;
 
@@ -44,7 +53,7 @@ class MoyenPaiement {
     }
   }
 
-  async createMoyenPaiement({ libelle , type}) {
+  async createMoyenPaiement({ libelle, type }) {
     // Validation des données
     isValidValue({ value: libelle });
 

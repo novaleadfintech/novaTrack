@@ -100,7 +100,18 @@ const hashPassword = async ({ password }) => {
 };*/
 
 class User {
-  constructor() {}
+  constructor() {
+    this.initializeCollections();
+  }
+
+  async initializeCollections() {
+    if (!(await userCollection.exists())) {
+      userCollection.create();
+    }
+    if (!(await userRoleCollection.exists())) {
+      userRoleCollection.create({ type: CollectionType.EDGE_COLLECTION });
+    }
+  }
 
   //recuperer tous les users
   getAllUsers = async () => {

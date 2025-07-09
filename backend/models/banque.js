@@ -14,7 +14,15 @@ const CanauxPaiement = {
   banque: "banque",
 };
 class Banque {
-  constructor() {}
+  constructor() {
+    this.initializeCollections();
+  }
+
+  async initializeCollections() {
+    if (!(await banqueCollection.exists())) {
+      banqueCollection.create();
+    }
+  }
   getAllBanques = async ({ skip, perPage }) => {
     let limit = aql``;
     if (skip !== undefined && perPage !== undefined) {

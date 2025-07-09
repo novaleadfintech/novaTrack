@@ -23,7 +23,18 @@ const categorieModel = new Categorie();
 
 const locateClientFolder = "client";
 class Client {
-  constructor() {}
+  constructor() {
+    this.initializeCollections();
+  }
+
+  async initializeCollections() {
+    if (!(await clientCollection.exists())) {
+      clientCollection.create();
+    }
+    if (!(await factureCollection.exists())) {
+      factureCollection.create();
+    }
+  }
 
   // Récupérer tous les clients avec pagination
   getAllClients = async ({ skip, perPage, etat, nature }) => {

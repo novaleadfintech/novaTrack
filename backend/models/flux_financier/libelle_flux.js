@@ -5,7 +5,15 @@ import { isValidValue } from "../../utils/util.js";
 const libelleFluxCollection = db.collection("libelleFlux");
 
 class LibelleFlux {
-  constructor() {}
+  constructor() {
+    this.initializeCollections();
+  }
+
+  async initializeCollections() {
+    if (!(await libelleFluxCollection.exists())) {
+      libelleFluxCollection.create();
+    }
+  }
 
   getLibelleFlux = async ({ skip, perPage, type }) => {
     let limit = aql``;
