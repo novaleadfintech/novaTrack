@@ -47,6 +47,8 @@ class _EditFluxPageState extends State<EditPayement> {
 
   double? montant;
   PlatformFile? file;
+  PlatformFile? initialFile;
+
 
   editPayement({required FluxFinancierModel flux}) async {
     if (moyenPayement == null ||
@@ -85,7 +87,8 @@ class _EditFluxPageState extends State<EditPayement> {
         montant == null &&
         newbanque == null &&
         referenceTransaction == null &&
-        file == null) {
+        initialFile == file &&
+        file?.bytes == null) {
       _dialog.hide();
       MutationRequestContextualBehavior.showCustomInformationPopUp(
         message: "Aucune donnée n'a été modifiée",
@@ -129,6 +132,18 @@ class _EditFluxPageState extends State<EditPayement> {
       time: widget.payement.dateOperation!,
     );
     _selectedBank = widget.payement.bank!;
+file = widget.payement.pieceJustificative == null
+        ? null
+        : PlatformFile(
+            name: widget.payement.pieceJustificative!.split("/").last,
+            size: 10,
+            path: widget.payement.pieceJustificative);
+    initialFile = widget.payement.pieceJustificative == null
+        ? null
+        : PlatformFile(
+            name: widget.payement.pieceJustificative!.split("/").last,
+            size: 10,
+            path: widget.payement.pieceJustificative);
 
     _dialog = SimpleFontelicoProgressDialog(context: context);
     moyenPayement = widget.payement.moyenPayement;
@@ -155,7 +170,7 @@ Future<List<MoyenPaiementModel>> fetchMoyenPaiementItems() async {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Form(
-        key: UniqueKey(),
+        //key: UniqueKey(),
         child: Column(
           children: [
             SimpleTextField(

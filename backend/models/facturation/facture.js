@@ -1059,7 +1059,7 @@ class Facture {
       );
 
       acomptePaye.penalty = {
-        montant: penaltyAmount,
+        montant: acomptePaye.canPenalty == ture ? penaltyAmount : 0,
         isPaid: false,
         nombreRetard: daysDifference,
       };

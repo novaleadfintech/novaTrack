@@ -148,7 +148,7 @@ class _AddFluxPageState extends State<AddFluxPage> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Form(
-        key: UniqueKey(),
+        //key: UniqueKey(),
         child: Column(
           children: [
             FutureCustomDropDownField<ClientModel>(

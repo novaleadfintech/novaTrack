@@ -153,18 +153,21 @@ class _EditClientPageState extends State<EditClientPage> {
   }
 
   Future<void> _editClient() async {
-    String? errMessage = validateClientFields() ??
-        checkPhoneNumber(
-          phoneNumber: _telephoneController.text.trim(),
+    String? errMessage = validateClientFields();
+
+    errMessage ??= checkPhoneNumber(
+      phoneNumber: _telephoneController.text.trim(),
+      pays: _selectedCountry!,
+    );
+
+    if (errMessage == null) {
+      if (type == TypeClient.moral) {
+        errMessage = checkPhoneNumber(
+          phoneNumber: _responsableTelephoneController.text.trim(),
           pays: _selectedCountry!,
-        ) ??
-            type == TypeClient.moral
-        ? checkPhoneNumber(
-            phoneNumber: _responsableTelephoneController.text.trim(),
-            pays: _selectedCountry!,
-          )
-        : null;
-    
+        );
+      }
+    }
     if (errMessage != null) {
       MutationRequestContextualBehavior.showCustomInformationPopUp(
         message: errMessage,
@@ -326,7 +329,7 @@ class _EditClientPageState extends State<EditClientPage> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Form(
-        key: UniqueKey(),
+        //key: UniqueKey(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

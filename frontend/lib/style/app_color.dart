@@ -44,6 +44,8 @@ class AppColor {
 
   static Color adaptiveBackgroundColor(BuildContext context) =>
       isDark(context) ? bbackgroundColor : backgroundColor;
+  static Color adaptativeLoginScreenBachroundColor(BuildContext context) =>
+      isDark(context) ? bbackgroundColor : primaryColor;
 
   static Color adaptiveWhiteColor(BuildContext context) =>
       isDark(context) ? bwhiteColor : whiteColor;

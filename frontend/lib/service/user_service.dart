@@ -65,12 +65,6 @@ class UserService {
     required String login,
     required String password,
   }) async {
-    print(
-      login,
-    );
-    print(
-      password,
-    );
     var body = '''
    mutation SeConnecter {
         seConnecter(login: "$login", password: "$password") {

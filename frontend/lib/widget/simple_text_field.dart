@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:frontend/style/app_color.dart';
 import '../helper/amout_formatter.dart';
 import '../style/app_style.dart';
 import 'package:gap/gap.dart';
@@ -208,7 +209,7 @@ class _SimpleTextFieldState extends State<SimpleTextField> {
                 ),
                 contentPadding: const EdgeInsets.all(8),
                 fillColor: widget.readOnly
-                    ? Theme.of(context).colorScheme.secondary
+                    ? AppColor.adaptivePopGrey(context)
                     : Theme.of(context).colorScheme.surface,
                 filled: widget.readOnly,
               ),

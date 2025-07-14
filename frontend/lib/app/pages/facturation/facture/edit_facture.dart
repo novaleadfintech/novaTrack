@@ -370,7 +370,7 @@ class _EditFactureState extends State<EditFacture> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Form(
-        key: UniqueKey(),
+        //key: UniqueKey(),
         child: Column(
           children: [
             ShowInformation(

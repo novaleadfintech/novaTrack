@@ -70,7 +70,7 @@ class _EditRubriquePageState extends State<EditRubriquePage> {
   @override
   Widget build(BuildContext context) {
     return Form(
-      // key: UniqueKey(),
+      // //key: UniqueKey(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

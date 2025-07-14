@@ -79,8 +79,7 @@ class PersonnelService {
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
       var data = jsonData['data']['personnels'];
-      print(data);
-      if (data != null) {
+       if (data != null) {
         for (var personnel in data) {
           personnels.add(PersonnelModel.fromJson(personnel));
         }
@@ -434,8 +433,7 @@ mutation UpdatePersonnel {
     }
   ''';
 
-    print(body);
-
+ 
     try {
       var response = await http
           .post(

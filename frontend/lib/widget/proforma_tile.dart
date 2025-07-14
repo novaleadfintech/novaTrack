@@ -341,6 +341,10 @@ role = widget.role;
                             },
                             icon: SvgPicture.asset(
                               AssetsIcons.download,
+                              colorFilter: ColorFilter.mode(
+                                Theme.of(context).colorScheme.onSurface,
+                                BlendMode.srcIn,
+                              ),
                             ),
                           )
                         else

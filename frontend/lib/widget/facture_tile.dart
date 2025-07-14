@@ -534,33 +534,46 @@ class _FactureTileState extends State<FactureTile> {
                                     ((widget.facture.regenerate == true &&
                                         widget.facture.isDeletable ==
                                             true))) ...[
-                                  if (hasPermission(
-                                    role: role,
-                                    permission:
-                                        PermissionAlias.updateFacture.label,
-                                  ))
+                                  if ((widget.facture.status ==
+                                              StatusFacture.tobepaid &&
+                                          !widget.facture
+                                              .isConvertFromProforma!) &&
+                                      widget.facture.facturesAcompte.every(
+                                          (acompte) =>
+                                              acompte.datePayementEcheante ==
+                                              null) &&
+                                      hasPermission(
+                                        role: role,
+                                        permission:
+                                            PermissionAlias.updateFacture.label,
+                                      ))
                                     (
                                       label: Constant.edit,
-                                      onTap: (widget.facture.status ==
-                                                      StatusFacture.tobepaid &&
-                                                  !widget.facture
-                                                      .isConvertFromProforma!) &&
-                                              widget.facture.facturesAcompte
-                                                  .every((acompte) =>
-                                                      acompte
-                                                          .datePayementEcheante ==
-                                                      null)
-                                          ? () {
-                                              _editFacture(
-                                                  facture: widget.facture);
-                                            }
-                                          : () {
-                                              _editPartialPaidFacture(
-                                                  facture: widget.facture);
-                                            },
+                                      onTap: () {
+                                        _editFacture(facture: widget.facture);
+                                      },
+                                      color: null,
+                                    )
+                                  // Condition pour édition partielle
+                                  else if ((hasPermission(
+                                        role: role,
+                                        permission: PermissionAlias
+                                            .updateFactureAfterSend.label,
+                                      ) ||
+                                      hasPermission(
+                                        role: role,
+                                        permission: PermissionAlias
+                                            .exonorerFacturePenalty.label,
+                                      )))
+                                    (
+                                      label: Constant.edit,
+                                      onTap: () {
+                                        _editPartialPaidFacture(
+                                            facture: widget.facture);
+                                      },
                                       color: null,
                                     ),
-                                ],
+                                ],                               
                                 if (widget.facture.status ==
                                         StatusFacture.tobepaid &&
                                     !widget.facture.isConvertFromProforma!) ...[
@@ -701,64 +714,77 @@ class _FactureTileState extends State<FactureTile> {
                                   items: [
                                     if (widget.facture.status !=
                                             StatusFacture.paid ||
-                                        (widget.facture.regenerate == true &&
+                                        ((widget.facture.regenerate == true &&
                                             widget.facture.isDeletable ==
-                                                true)) ...[
-                                      if (hasPermission(
-                                        role: role,
-                                        permission:
-                                            PermissionAlias.updateFacture.label,
-                                      ))
+                                                true))) ...[
+                                      if ((widget.facture.status ==
+                                                  StatusFacture.tobepaid &&
+                                              !widget.facture
+                                                  .isConvertFromProforma!) &&
+                                          widget.facture.facturesAcompte.every(
+                                              (acompte) =>
+                                                  acompte
+                                                      .datePayementEcheante ==
+                                                  null) &&
+                                          hasPermission(
+                                            role: role,
+                                            permission: PermissionAlias
+                                                .updateFacture.label,
+                                          ))
                                         (
                                           label: Constant.edit,
-                                          onTap: (widget.facture.status ==
-                                                          StatusFacture
-                                                              .unpaid &&
-                                                      !widget.facture
-                                                          .isConvertFromProforma!) &&
-                                                  widget.facture.facturesAcompte
-                                                      .every((acompte) =>
-                                                          acompte
-                                                              .datePayementEcheante ==
-                                                          null)
-                                              ? () {
-                                                  _editFacture(
-                                                      facture: widget.facture);
-                                                }
-                                              : () {
-                                                  _editPartialPaidFacture(
-                                                      facture: widget.facture);
-                                                },
+                                          onTap: () {
+                                            _editFacture(
+                                                facture: widget.facture);
+                                          },
+                                          color: null,
+                                        )
+                                      // Condition pour édition partielle
+                                      else if ((hasPermission(
+                                            role: role,
+                                            permission: PermissionAlias
+                                                .updateFactureAfterSend.label,
+                                          ) ||
+                                          hasPermission(
+                                            role: role,
+                                            permission: PermissionAlias
+                                                .exonorerFacturePenalty.label,
+                                          )))
+                                        (
+                                          label: Constant.edit,
+                                          onTap: () {
+                                            _editPartialPaidFacture(
+                                                facture: widget.facture);
+                                          },
                                           color: null,
                                         ),
                                     ],
+    
                                     if (widget.facture.status ==
                                             StatusFacture.tobepaid &&
                                         !widget.facture
                                             .isConvertFromProforma!) ...[
                                       if (hasPermission(
-                                        role: role,
-                                        permission:
-                                            PermissionAlias.deleteFacture.label,
-                                      ))
-                                        if (widget.facture.type !=
-                                                TypeFacture.recurrent &&
-                                            widget.facture.isDeletable !=
-                                                true &&
-                                            widget.facture.facturesAcompte
-                                                .every((acompte) =>
-                                                    acompte
-                                                        .datePayementEcheante ==
-                                                    null)) ...[
-                                          (
-                                            label: Constant.delete,
-                                            onTap: () {
-                                              _deleteFacture(
-                                                  facture: widget.facture);
-                                            },
-                                            color: null,
-                                          ),
-                                        ],
+                                            role: role,
+                                            permission: PermissionAlias
+                                                .deleteFacture.label,
+                                          ) &&
+                                          widget.facture.type !=
+                                              TypeFacture.recurrent &&
+                                          widget.facture.isDeletable != true &&
+                                          widget.facture.facturesAcompte.every(
+                                              (acompte) =>
+                                                  acompte
+                                                      .datePayementEcheante ==
+                                                  null))
+                                        (
+                                          label: Constant.delete,
+                                          onTap: () {
+                                            _deleteFacture(
+                                                facture: widget.facture);
+                                          },
+                                          color: null,
+                                        )
                                     ],
                                     if (widget.facture.status !=
                                             StatusFacture.paid &&

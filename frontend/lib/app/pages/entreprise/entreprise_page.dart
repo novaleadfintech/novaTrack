@@ -132,7 +132,7 @@ class _EntreprisePageState extends State<EntreprisePage> {
         body: Container(
           color: Theme.of(context).colorScheme.surface,
           child: Form(
-            key: UniqueKey(),
+            //key: UniqueKey(),
             child: Column(
               children: [
                 Expanded(

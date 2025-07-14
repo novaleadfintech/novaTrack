@@ -276,7 +276,7 @@ class _UpdateLigneProformaState extends State<UpdateLigneProforma> {
     return IntrinsicHeight(
       child: SingleChildScrollView(
         child: Form(
-          key: UniqueKey(),
+          //key: UniqueKey(),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [

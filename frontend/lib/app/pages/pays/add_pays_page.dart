@@ -128,7 +128,7 @@ class _AddPaysPageState extends State<AddPaysPage> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Form(
-        key: UniqueKey(),
+        //key: UniqueKey(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

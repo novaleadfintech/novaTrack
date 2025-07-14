@@ -122,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       resizeToAvoidBottomInset:
           false, // Ne pas bouger le layout quand le clavier sort
-      backgroundColor: AppColor.adaptiveBackgroundColor(context),
+      backgroundColor: AppColor.adaptativeLoginScreenBachroundColor(context),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(

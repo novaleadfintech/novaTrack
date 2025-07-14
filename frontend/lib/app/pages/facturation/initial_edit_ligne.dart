@@ -225,7 +225,7 @@ class _AddInitialLigneServiceState extends State<EditInitialLigne> {
     return IntrinsicHeight(
       child: SingleChildScrollView(
         child: Form(
-          key: UniqueKey(),
+          //key: UniqueKey(),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [

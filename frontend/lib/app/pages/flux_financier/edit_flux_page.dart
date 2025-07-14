@@ -51,6 +51,8 @@ class _EditFluxFiancierPageState extends State<EditFluxFiancierPage> {
   String? libelle;
   String? referenceTransaction;
   PlatformFile? file;
+  PlatformFile? initialFile;
+
   BanqueModel? _selectedBank;
   BanqueModel? newbanque;
   ClientModel? newclient;
@@ -117,7 +119,7 @@ class _EditFluxFiancierPageState extends State<EditFluxFiancierPage> {
         montant == null &&
         newbanque == null &&
         referenceTransaction == null &&
-        file?.bytes == null) {
+        initialFile == file) {
       MutationRequestContextualBehavior.showCustomInformationPopUp(
         message: "Aucune donnée n'a été modifiée",
       );
@@ -130,7 +132,6 @@ class _EditFluxFiancierPageState extends State<EditFluxFiancierPage> {
       backgroundColor: Colors.transparent,
     );
 
- 
     RequestResponse result = await FluxFinancierService.updateFluxFinancier(
       key: flux.id,
       dateOperation: newdateOperation,
@@ -174,6 +175,7 @@ class _EditFluxFiancierPageState extends State<EditFluxFiancierPage> {
     _selectedBank = widget.flux.bank!;
     referenceTransactionFieldController.text =
         widget.flux.referenceTransaction!;
+    initialFile = file;
     file = widget.flux.pieceJustificative == null
         ? null
         : PlatformFile(
@@ -218,7 +220,7 @@ class _EditFluxFiancierPageState extends State<EditFluxFiancierPage> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Form(
-        key: UniqueKey(),
+        //key: UniqueKey(),
         child: Column(
           children: [
             FutureCustomDropDownField<ClientModel>(

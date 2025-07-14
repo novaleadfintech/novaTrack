@@ -103,21 +103,25 @@ class _AddClientPageState extends State<AddClientPage> {
   }
 
   Future<void> _addClient() async {
-    String? errMessage = validateClientFields() ??
-            checkPhoneNumber(
-              phoneNumber: _telephoneController.text.trim(),
-              pays: _selectedCountry!,
-            ) ??
-            type == TypeClient.moral
-        ? checkPhoneNumber(
-            phoneNumber: _responsableTelephoneController.text.trim(),
-            pays: _selectedCountry!,
-          )
-        : null;
+    String? errMessage = validateClientFields();
+
+    errMessage ??= checkPhoneNumber(
+      phoneNumber: _telephoneController.text.trim(),
+      pays: _selectedCountry!,
+    );
+
+    if (errMessage == null) {
+      if (type == TypeClient.moral) {
+        errMessage = checkPhoneNumber(
+          phoneNumber: _responsableTelephoneController.text.trim(),
+          pays: _selectedCountry!,
+        );
+      }
+    }
 
     if (errMessage != null) {
       MutationRequestContextualBehavior.showCustomInformationPopUp(
-        message: errMessage,
+      message: errMessage,
       );
       return;
     }
@@ -182,7 +186,7 @@ class _AddClientPageState extends State<AddClientPage> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Form(
-        key: UniqueKey(),
+        //key: UniqueKey(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
