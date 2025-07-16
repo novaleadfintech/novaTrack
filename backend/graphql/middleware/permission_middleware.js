@@ -16,8 +16,7 @@ export const hasPermission = (permissionAlias) =>
     const allPermissions = [];
 
     for (const userRole of roles) {
-      console.log("userRole", userRole);
-      const permissions = await PermissionModel.getAllPermissionsByRoleForUser({
+       const permissions = await PermissionModel.getAllPermissionsByRoleForUser({
         roleId: userRole.role._id,
       });
       const aliases = permissions.map((p) => p.alias);

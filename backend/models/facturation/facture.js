@@ -349,8 +349,7 @@ class Facture {
 
     if (query.hasNext) {
       const factures = await query.all();
-      console.log(factures);
-      return Promise.all(
+       return Promise.all(
         factures.map(async (facture) => {
           let factureCopy = { ...facture };
 
@@ -384,8 +383,7 @@ class Facture {
           const payements = await fluxFinancierModel.getFluxFiancierbyFacture({
             factureId: factureCopy._id,
           });
-          console.log(payements);
-          const montantTotal = utils.calculerMontantTotal({
+           const montantTotal = utils.calculerMontantTotal({
             lignes: ligneFactures,
             reduction: factureCopy.reduction,
             tva: factureCopy.tva,
@@ -567,16 +565,13 @@ class Facture {
 
   getFacture = async ({ key }) => {
     try {
-      console.log(1);
-      const facture = await factureCollection.document(key);
-      console.log(2);
-
+       const facture = await factureCollection.document(key);
+ 
       // Récupérer les lignes de services associées à la facture
       const ligneFactures = await ligneFactureModel.getLigneFactureByFacture({
         factureId: facture._id,
       });
-      console.log(4);
-
+ 
       const montantTotal = utils.calculerMontantTotal({
         lignes: ligneFactures,
         reduction: facture.reduction || 0,
@@ -954,8 +949,7 @@ class Facture {
     }
 
     isValidValue({ value: updateField });
-    console.log(updateField);
-    try {
+     try {
       await factureCollection.update(key, updateField);
       return "OK";
     } catch {
@@ -974,8 +968,7 @@ class Facture {
   };
 
   calculerMontantPaye = ({ payements, montantactuelle = 0 }) => {
-    console.log(payements);
-    return payements
+     return payements
 
       .map((payement) => payement.montant)
       .reduce((total, montant) => total + montant, montantactuelle);
@@ -1259,16 +1252,13 @@ class Facture {
             const acomptesPayes = facture.facturesAcompte.filter(
               (a) => a.isPaid === true
             ).length;
-            console.log(acomptesPayes)
-            const prochainAcompte = facture.facturesAcompte.find(
+             const prochainAcompte = facture.facturesAcompte.find(
               (a) => a.rang === acomptesPayes + 1
             );
 
             if (prochainAcompte) {
-              console.log("je suis rentré dedans")
-              prochainAcompte.isPaid = true;
-              console.log(facture.facturesAcompte);
-               await this.updateFacture({
+               prochainAcompte.isPaid = true;
+                await this.updateFacture({
                 key: facture._id,
                 facturesAcompte: facture.facturesAcompte,
                });
@@ -1665,16 +1655,11 @@ class Facture {
   };
 
   blockServiceAutomatically = async () => {
-    console.log("Début du blocage automatique des services");
-    try {
-      console.log("awe na wo");
-      const todayMidnight = new Date();
-      console.log("awo je dire que wo");
-
-      // todayMidnight.setHours(0, 0, 0, 0);
+     try {
+       const todayMidnight = new Date();
+       // todayMidnight.setHours(0, 0, 0, 0);
       const now = Date.now();
-      console.log("ça continue");
-
+ 
       const query = await db.query(aql`
         FOR facture IN ${factureCollection}
         FILTER facture.regenerate == true AND (facture.status != ${StatusFacture.paid} AND facture.status != ${StatusFacture.blocked})
@@ -1692,8 +1677,7 @@ class Facture {
       const results = [];
 
       if (query.hasNext) {
-        console.log("au moins j'ai selectionné");
-
+ 
         const factures = await query.all();
         for (const facture of factures) {
           // Récupérer la config client (nbreJrMaxPenalty)
@@ -1726,9 +1710,8 @@ class Facture {
         });
         await this.blockerService({ secretekey: facture.secreteKey });
       }
-      console.log("Factures à bloquer :", results);
-    } catch (e) {
-      console.log(e);
+     } catch (e) {
+      console.error(e);
     }
   };
 
@@ -1788,10 +1771,8 @@ class Facture {
           const factureInsertResult = await factureCollection.save(newFacture, {
             returnNew: true,
           });
-          console.log(factureInsertResult);
-          const returnFacture = factureInsertResult.new;
-
-          const ligneFactures =
+           const returnFacture = factureInsertResult.new;
+           const ligneFactures =
             await ligneFactureModel.getLigneFactureByFacture({
               factureId: facture._id,
             });
@@ -1828,11 +1809,7 @@ class Facture {
           } else {
             await this.deleteFacture({ key: facture._id });
           }
-          console.log("---------------------------------------------");
-
-          console.log(returnFacture._id);
-          console.log("---------------------------------------------");
-        });
+         });
       }
       await session.commit();
       await reccurentInvoiceReadyEmail({
@@ -1840,8 +1817,7 @@ class Facture {
       }).catch(() => {
         throw new Error("Échec d'envoi d'e-mail");
       });
-      console.log("Factures régénérées avec succès.");
-    } catch (error) {
+     } catch (error) {
       await session.abort();
       console.error("Erreur lors de la régénération des factures :", error);
     }
@@ -1876,15 +1852,7 @@ class Facture {
 
     // Correction ici : Assurer l'incrémentation correcte
     const newCount = (count ?? 0) + 1;
-
-    console.log(
-      `DG/FAC/${lastTwoDigitsYear}/${String(currentMonth).padStart(
-        2,
-        "0"
-      )}/${String(newCount).padStart(2, "0")}`
-    );
-
-    return `DG/FAC/${lastTwoDigitsYear}/${String(currentMonth).padStart(
+      return `DG/FAC/${lastTwoDigitsYear}/${String(currentMonth).padStart(
       2,
       "0"
     )}/${String(newCount).padStart(2, "0")}`;

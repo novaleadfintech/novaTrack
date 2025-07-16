@@ -186,10 +186,8 @@ class Banque {
     if (cleRIB !== undefined) {
       updateField.cleRIB = cleRIB;
     }
-    console.log(updateField);
-    isValidValue({ value: updateField });
-    console.log(logo);
-    if (logo == null) {
+     isValidValue({ value: updateField });
+     if (logo == null) {
       updateField.logo = null;
     } else if (
       logo !== undefined &&

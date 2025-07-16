@@ -229,8 +229,7 @@ class FluxFinancier {
       );
 
       const fluxFinanciers = await query.all();
-      console.log(fluxFinanciers);
-      return Promise.all(
+       return Promise.all(
         fluxFinanciers.map(async (fluxFinancier) => {
           return {
             ...fluxFinancier,
@@ -355,8 +354,7 @@ class FluxFinancier {
 
     if (query.hasNext) {
       const fluxFinancier = await query.next();
-      console.log(fluxFinancier);
-      let validate;
+       let validate;
       if (fluxFinancier.validate != null) {
         validate = fluxFinancier.validate ?? [];
         await Promise.all(
@@ -493,16 +491,7 @@ class FluxFinancier {
     bulletinId,
     dateOperation = Date.now(),
   }) => {
-    console.log(
-      libelle,
-      montant,
-      moyenPayement,
-      userId,
-      // clientId,
-      bankId,
-      referenceTransaction
-    );
-    isValidValue({
+     isValidValue({
       value: [
         libelle,
         montant,
@@ -912,8 +901,7 @@ class FluxFinancier {
 
       const cursor = await db.query(query);
       const yearResult = await cursor.all();
-      console.log(yearResult);
-      return yearResult;
+       return yearResult;
     } catch (err) {
       throw new Error(`Erreur lors de la récupération du bilan` + err.message);
     }

@@ -35,8 +35,7 @@ const generateToken = ({ user, password }) => {
       role: { _id: role._id, libelle: role.libelle },
     })
   );
-  console.log("cleanedRoles", cleanedRoles);
-  return jwt.sign(
+   return jwt.sign(
     {
       user: {
         _id: user._id,
@@ -308,8 +307,7 @@ class User {
         authorizer: userId,
         authorizeTime: Date.now(),
       });
-      console.log("pourtant j'ai presque tout fait");
-      return "OK";
+       return "OK";
     } catch (error) {
       throw new Error(
         `Une erreur s'est produite lors du traitement > ${error.message}`
@@ -413,9 +411,7 @@ class User {
   };
 
   seConnecter = async ({ login, password }) => {
-    console.log(login);
-
-    isValidValue({ value: [login, password] });
+     isValidValue({ value: [login, password] });
     var existingUser = null;
     try {
       existingUser = await db.query(

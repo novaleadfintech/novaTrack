@@ -122,11 +122,7 @@ class _MoreDatailClientPageState extends State<MoreDatailClientPage> {
                                     "Téléphone",
                                     "+${(widget.client as ClientMoralModel).pays!.code} ${(widget.client as ClientMoralModel).responsable!.telephone}",
                                   ),
-                                  buildTableRow(
-                                      "Adresse",
-                                      capitalizeFirstLetter(
-                                        word: widget.client.adresse,
-                                      )),
+                                  
                                 ],
                               ),
                             ],

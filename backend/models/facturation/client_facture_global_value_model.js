@@ -63,8 +63,7 @@ class ClientFactureGlobaLValueModel {
 
   configClientFactureGlobaLValue = async ({ clientId, nbreJrMaxPenalty }) => {
     isValidValue({ value: { clientId, nbreJrMaxPenalty } });
-    console.log("nbreJrMaxPenalty", nbreJrMaxPenalty);
-    // Vérifie que le client existe
+     // Vérifie que le client existe
     await clientModel.isExistClient({
       key: clientId,
     });
@@ -79,19 +78,12 @@ class ClientFactureGlobaLValueModel {
 
     if (query.hasNext) {
       const exist = await query.next();
-      console.log(
-        "maintenant c'est" +
-          exist._key +
-          " et nbreJrMaxPenalty: " +
-          exist.nbreJrMaxPenalty
-      );
-
+ 
       // Mise à jour
       await clientFacureGlobalValueCollection.update(exist._key, {
         nbreJrMaxPenalty: nbreJrMaxPenalty,
       });
-      console.log("mise à jour effectuée" + nbreJrMaxPenalty);
-    } else {
+     } else {
       // Création
       await clientFacureGlobalValueCollection.save({
         clientId: clientId,

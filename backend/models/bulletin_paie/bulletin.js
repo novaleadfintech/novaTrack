@@ -199,8 +199,7 @@ class BulletinPaie {
             validate = bulletin.validate ?? [];
             await Promise.all(
               validate.map(async (valid) => {
-                console.log(valid);
-                valid.validater = await userModel.getUser({
+                 valid.validater = await userModel.getUser({
                   key: valid.validater,
                 });
               })
@@ -330,20 +329,17 @@ class BulletinPaie {
       const rubriqueNetAPayer = rubriquesResolues.find(
         (r) => r.rubrique?.rubriqueIdentity === RubriqueIdentity.netPayer
       );
-      console.log(rubriqueNetAPayer);
-      let valeurNet;
+       let valeurNet;
       if (!rubriqueNetAPayer) {
         valeurNet = 0;
       } else {
         valeurNet = rubriqueNetAPayer.value;
-        console.log(valeurNet);
-        if (isNaN(valeurNet)) {
+         if (isNaN(valeurNet)) {
           valeurNet = 0;
         }
       }
 
-      console.log(valeurNet);
-
+ 
       const moitie = valeurNet / 2;
       if (montantDemande > moitie) {
         throw new Error(
@@ -448,8 +444,7 @@ class BulletinPaie {
 `);
 
     const decouvertes = await decouvertesQuery.all();
-    console.log(decouvertes);
-    // Étape 2 : Calculer la somme totale à déduire pour avance sur salaire
+     // Étape 2 : Calculer la somme totale à déduire pour avance sur salaire
     let totalAvance = 0;
 
     for (const dec of decouvertes) {
@@ -467,19 +462,13 @@ class BulletinPaie {
       });
       rubriques[i].rubrique = rubriqueData;
     }
-    console.log(rubriques);
-
-    const indexRubriqueAvance = rubriques.findIndex(
+     const indexRubriqueAvance = rubriques.findIndex(
       (r) => r.rubrique?.rubriqueIdentity === RubriqueIdentity.avanceSurSalaire
     );
     if (indexRubriqueAvance !== -1) {
       rubriques[indexRubriqueAvance].value = totalAvance;
     }
-    console.log(
-      "C'est à dire que je l'ai trouvé juste que je ne sais pas ou mettre"
-    );
-    console.log(totalAvance);
-    // else {
+        // else {
     //   rubriques.push({
     //     rubrique: {
     //       constant: {
@@ -587,9 +576,7 @@ class BulletinPaie {
       updateField.salarieId = salarieId;
     }
 
-    console.log(10);
-
-    try {
+     try {
       await bulletinCollection.update(key, updateField);
       return "OK";
     } catch (e) {

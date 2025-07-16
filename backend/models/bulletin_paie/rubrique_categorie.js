@@ -48,11 +48,9 @@ class RubriqueCategorie {
         const tB = b.rubrique?.timeStamp ?? 0;
         return tA - tB;
       });
-      console.log(result);
-      return result;
+       return result;
     } catch (e) {
-      console.log(e);
-      throw new Error(e);
+       throw new Error(e);
     }
   };
 

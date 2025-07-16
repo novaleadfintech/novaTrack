@@ -366,8 +366,7 @@ class Client {
       }
 
       // Gestion de l'upload du logo
-      console.log(logo);
-      if (logo?.file) {
+       if (logo?.file) {
         const file = logo.file;
         const { createReadStream, filename } = file;
         if (filename) {

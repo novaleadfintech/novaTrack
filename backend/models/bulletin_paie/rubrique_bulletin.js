@@ -207,12 +207,10 @@ class RubriqueBulletin {
       value: [rubrique, code, nature],
     });
 
-    console.log(1);
-    if (rubriqueRole != RubriqueRole.variable) {
+     if (rubriqueRole != RubriqueRole.variable) {
       isValidValue({ value: type });
     }
-    console.log(2);
-
+ 
     if (nature == NatureRubrique.taux) {
       isValidValue({ value: taux });
     } else {
@@ -285,8 +283,7 @@ class RubriqueBulletin {
     nature,
     bareme,
   }) => {
-    console.log(rubrique);
-    const updateField = {};
+     const updateField = {};
     if (rubrique != undefined) {
       updateField.rubrique = rubrique;
     }

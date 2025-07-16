@@ -28,8 +28,7 @@ class Role {
       const roles = await query.all();
       return await Promise.all(
         roles.map(async (role) => {
-          console.log(role._id);
-          return {
+           return {
             ...role,
             permissions: await permissionModel.getPermissionByRole({
               roleId: role._id,

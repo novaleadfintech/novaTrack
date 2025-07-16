@@ -43,7 +43,6 @@ class Decouverte {
     );
     if (query.hasNext) {
       const decouvertes = await query.all();
-      console.log(decouvertes);
       return Promise.all(
         decouvertes.map(async (decouverte) => {
           return {
@@ -96,8 +95,8 @@ class Decouverte {
     });
 
     const salarie = await SalaireModel.getSalarie({ key: salarieId });
-    console.log(salarie);
-    const bulletin = await bulletinModel.verifyMontantDecouvertPossible({
+    // const bulletin =
+    await bulletinModel.verifyMontantDecouvertPossible({
       id: salarieId,
       montantDemande: montant,
     });
@@ -229,7 +228,6 @@ class Decouverte {
           );
         } else {
           await decouverteCollection.update(key, updateField);
-          console.log(decouvertfluxFinancier._id);
           await FluxFinancierModel.updateFluxFinancier({
             key: decouvertfluxFinancier._id,
             ...fluxUpateField,

@@ -57,7 +57,7 @@ export const sendRoleAssignmentEmail = async ({
     });
     return data;
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };
 
@@ -129,7 +129,7 @@ export const stopServiceEmail = async ({ facture }) => {
 
     return data;
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };
 
@@ -213,7 +213,7 @@ export const reccurentInvoiceReadyEmail = async ({ facture }) => {
 
     return data;
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };
 
@@ -269,28 +269,6 @@ export const sendresetLoginEmail = async ({ personnel, password }) => {
 
     return data;
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };
-
-// export const sendSimpleMessage = async () => {
-//   const mailgun = new Mailgun(FormData);
-//   const mg = mailgun.client({
-//     username: "api",
-//     key: process.env.EMAIL_API_KEY,
-//     // url: process.env.EMAIL_URL,
-//   });
-//   try {
-//     const data = await mg.messages.create("mg.novalead.dev", {
-//       from: `NOVALEAD <${process.env.EMAIL_FROM}>`,
-//       to: "ayawaetsiam2004@gmail.com",
-//       subject: "Hello Komlatse Komla Dodji",
-
-//       text: "Congratulations Komlatse Komla Dodji, you just sent an email with Mailgun! You are truly awesome!",
-//     });
-
-//     console.log(data);
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
