@@ -47,7 +47,8 @@ class _DetailClientState extends State<DetailClient> {
           ),
           const Gap(18),
           if (Responsive.isMobile(context) &&
-              widget.client is ClientMoralModel) ...[
+              widget.client is ClientMoralModel &&
+              (widget.client as ClientMoralModel).logo != null) ...[
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
               child: Column(
@@ -60,10 +61,10 @@ class _DetailClientState extends State<DetailClient> {
                           .primary
                           .withOpacity(0.2),
                       image: DecorationImage(
-                              image: NetworkImage(
+                        image: NetworkImage(
                             (widget.client as ClientMoralModel).logo!),
-                              fit: BoxFit.contain,
-                            ),
+                        fit: BoxFit.contain,
+                      ),
                     ),
                   ),
                 ],
@@ -76,7 +77,8 @@ class _DetailClientState extends State<DetailClient> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (widget.client is ClientMoralModel &&
-                  !Responsive.isMobile(context))
+                  !Responsive.isMobile(context) &&
+                  (widget.client as ClientMoralModel).logo != null)
                 Padding(
                   padding: const EdgeInsets.only(right: 8.0),
                   child: Column(
@@ -90,11 +92,11 @@ class _DetailClientState extends State<DetailClient> {
                               .surface
                               .withOpacity(1),
                           image: DecorationImage(
-                                  image: NetworkImage(
+                            image: NetworkImage(
                               (widget.client as ClientMoralModel).logo!,
-                                  ),
-                                  fit: BoxFit.contain,
-                                ),
+                            ),
+                            fit: BoxFit.contain,
+                          ),
                         ),
                       ),
                     ],
@@ -118,7 +120,7 @@ class _DetailClientState extends State<DetailClient> {
                         ),
                         buildTableRow(
                           "Email",
-                          widget.client.email,
+                          widget.client.email ?? "inconnu",
                         ),
                         buildTableRow(
                           "Type",
@@ -126,13 +128,12 @@ class _DetailClientState extends State<DetailClient> {
                         ),
                         if (widget.client is ClientMoralModel) ...[
                           buildTableRow(
-                            "Catégorie",
+                              "Catégorie",
                               capitalizeFirstLetter(
                                 word: (widget.client as ClientMoralModel)
-                                .categorie!
+                                    .categorie!
                                     .libelle,
-                              )
-                          ),
+                              )),
                         ],
                         if (widget.client is ClientPhysiqueModel) ...[
                           buildTableRow(
@@ -146,11 +147,16 @@ class _DetailClientState extends State<DetailClient> {
                         ),
                         buildTableRow(
                           "Téléphone",
-                          "+${widget.client.pays!.code} ${widget.client.telephone}",
+                          "+${widget.client.pays!.code} ${widget.client.telephone ?? "_" * widget.client.pays!.phoneNumber!}",
                         ),
                         buildTableRow(
                           "Adresse",
-                          capitalizeFirstLetter(word: widget.client.adresse),
+                          widget.client.adresse == null ||
+                                  widget.client.adresse!.isEmpty
+                              ? "inconnu"
+                              : capitalizeFirstLetter(
+                                  word: widget.client.adresse,
+                                ),
                         ),
                         buildTableRow(
                           "Crée",

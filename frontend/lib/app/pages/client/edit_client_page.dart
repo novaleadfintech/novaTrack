@@ -90,8 +90,8 @@ class _EditClientPageState extends State<EditClientPage> {
     super.initState();
     _dialog = SimpleFontelicoProgressDialog(context: context);
     _adresseController.text = widget.client.adresse;
-    _emailController.text = widget.client.email;
-    _telephoneController.text = widget.client.telephone.toString();
+    _emailController.text = widget.client.email ?? "";
+    _telephoneController.text = (widget.client.telephone ?? "").toString();
     nature = widget.client.nature!;
     _selectedCountry = widget.client.pays;
     type = widget.client.typeName!;
@@ -103,17 +103,19 @@ class _EditClientPageState extends State<EditClientPage> {
     if (type == TypeClient.moral) {
       ClientMoralModel client = widget.client as ClientMoralModel;
       categorie = client.categorie;
-      file = PlatformFile(
-          name: client.logo!.split("/").last, size: 10, path: client.logo);
+      file = client.logo != null
+          ? PlatformFile(
+              name: client.logo!.split("/").last, size: 10, path: client.logo)
+          : null;
       _raisonSocialeController.text = client.raisonSociale;
-      _responsableEmailController.text = client.responsable!.email;
-      _responsableNomController.text = client.responsable!.nom;
-      _responsablePrenomControlller.text = client.responsable!.prenom;
-      _responsablePosteController.text = client.responsable!.poste;
-      responsableSexe = client.responsable!.sexe;
-      responsableCivilite = client.responsable!.civilite;
+      _responsableEmailController.text = client.responsable?.email ?? "";
+      _responsableNomController.text = client.responsable?.nom ?? "";
+      _responsablePrenomControlller.text = client.responsable?.prenom ?? "";
+      _responsablePosteController.text = client.responsable?.poste ?? "";
+      responsableSexe = client.responsable?.sexe;
+      responsableCivilite = client.responsable?.civilite;
       _responsableTelephoneController.text =
-          client.responsable!.telephone.toString();
+          client.responsable?.telephone.toString() ?? "";
     } else {
       ClientPhysiqueModel client = widget.client as ClientPhysiqueModel;
       sexe = client.sexe;
@@ -123,24 +125,34 @@ class _EditClientPageState extends State<EditClientPage> {
   }
 
   String? validateClientFields() {
-    if (_adresseController.text.isEmpty ||
-        _selectedCountry == null ||
-        _telephoneController.text.isEmpty ||
-        _emailController.text.isEmpty) {
+    if (_selectedCountry == null) {
       return "Veuillez remplir tous les champs marqués.";
     }
-    if (type == TypeClient.moral) {
-      if (_raisonSocialeController.text.isEmpty ||
-          categorie == null ||
-          _responsableEmailController.text.isEmpty ||
-          _responsableNomController.text.isEmpty ||
-          _responsablePrenomControlller.text.isEmpty ||
-          _responsablePosteController.text.isEmpty ||
-          _responsableTelephoneController.text.isEmpty ||
-          file == null || 
-          responsableSexe == null ||
-          responsableCivilite == null) {
+
+    if (nature != NatureClient.fournisseur) {
+      if (_telephoneController.text.isEmpty ||
+          _adresseController.text.isEmpty ||
+          _emailController.text.isEmpty) {
         return "Veuillez remplir tous les champs marqués.";
+      }
+    }
+
+    if (type == TypeClient.moral) {
+      if (_raisonSocialeController.text.isEmpty || categorie == null) {
+        return "Veuillez remplir tous les champs marqués.";
+      }
+
+      if (nature != NatureClient.fournisseur) {
+        if (_responsableEmailController.text.isEmpty ||
+            _responsableNomController.text.isEmpty ||
+            _responsablePosteController.text.isEmpty ||
+            _responsablePrenomControlller.text.isEmpty ||
+            _responsableTelephoneController.text.isEmpty ||
+            responsableSexe == null ||
+            responsableCivilite == null ||
+            file == null) {
+          return "Veuillez remplir tous les champs marqués.";
+        }
       }
     } else {
       if (_nomController.text.isEmpty ||
@@ -149,175 +161,201 @@ class _EditClientPageState extends State<EditClientPage> {
         return "Veuillez remplir tous les champs marqués.";
       }
     }
+
     return null;
   }
 
   Future<void> _editClient() async {
-    String? errMessage = validateClientFields();
+    try {
+      if (nature == NatureClient.fournisseur) {
+        _responsableEmailController.clear();
+        _responsableNomController.clear();
+        _responsablePosteController.clear();
+        _responsablePrenomControlller.clear();
+        _responsableTelephoneController.clear();
+        responsableSexe == null;
+        responsableCivilite == null;
+        _responsableEmailController.clear();
+        _responsableTelephoneController.clear();
+      }
 
-    errMessage ??= checkPhoneNumber(
-      phoneNumber: _telephoneController.text.trim(),
-      pays: _selectedCountry!,
-    );
-
-    if (errMessage == null) {
-      if (type == TypeClient.moral) {
-        errMessage = checkPhoneNumber(
-          phoneNumber: _responsableTelephoneController.text.trim(),
+      String? errMessage = validateClientFields();
+      if (_telephoneController.text.trim().isNotEmpty) {
+        errMessage ??= checkPhoneNumber(
+          phoneNumber: _telephoneController.text.trim(),
           pays: _selectedCountry!,
         );
       }
-    }
-    if (errMessage != null) {
-      MutationRequestContextualBehavior.showCustomInformationPopUp(
-        message: errMessage,
+      if (_responsableTelephoneController.text.trim().isNotEmpty) {
+        if (errMessage == null) {
+          if (type == TypeClient.moral) {
+            errMessage = checkPhoneNumber(
+              phoneNumber: _responsableTelephoneController.text.trim(),
+              pays: _selectedCountry!,
+            );
+          }
+        }
+      }
+      if (errMessage != null) {
+        MutationRequestContextualBehavior.showCustomInformationPopUp(
+          message: errMessage,
+        );
+        return;
+      }
+
+      _dialog.show(
+        message: "",
+        type: SimpleFontelicoProgressDialogType.phoenix,
+        backgroundColor: Colors.transparent,
       );
-      return;
-    }
 
-    _dialog.show(
-      message: "",
-      type: SimpleFontelicoProgressDialogType.phoenix,
-      backgroundColor: Colors.transparent,
-    );
+      ClientModel initialClient = widget.client;
 
-    ClientModel initialClient = widget.client;
-
-    // Vérification des modifications générales
-    if (_adresseController.text != initialClient.adresse) {
-      adresse = _adresseController.text;
-    }
-    if (_emailController.text != initialClient.email) {
-      email = _emailController.text;
-    }
-    if (_telephoneController.text != initialClient.telephone.toString()) {
-      telephone = int.tryParse(_telephoneController.text);
-    }
-
-    final selectedCountry = _selectedCountry;
-
-    if (selectedCountry!.code != initialClient.pays!.code ||
-        selectedCountry.name != initialClient.pays!.name) {
-      pays = selectedCountry;
-    }
-
-    if (nature != widget.client.nature) newNature = nature;
-
-    if (type == TypeClient.moral) {
-      final client = initialClient as ClientMoralModel;
-
-      if (categorie != client.categorie) categorieId = categorie?.id;
-      if (_raisonSocialeController.text != client.raisonSociale) {
-        raisonSociale = _raisonSocialeController.text;
+      // Vérification des modifications générales
+      if (_adresseController.text != initialClient.adresse) {
+        adresse = _adresseController.text;
+      }
+      if (_emailController.text != initialClient.email) {
+        email = _emailController.text;
+      }
+      if (_telephoneController.text != initialClient.telephone.toString()) {
+        telephone = int.tryParse(_telephoneController.text);
       }
 
-      bool responsableModified =
-          _responsablePrenomControlller.text != client.responsable!.prenom ||
-              _responsableNomController.text != client.responsable!.nom ||
-              responsableSexe != client.responsable!.sexe ||
-              responsableCivilite != client.responsable!.civilite ||
-              _responsableEmailController.text != client.responsable!.email ||
-              _responsableTelephoneController.text !=
-                  client.responsable!.telephone.toString() ||
-              _responsablePosteController.text != client.responsable!.poste;
+      final selectedCountry = _selectedCountry;
 
-      if (adresse == null &&
-          email == null &&
-          telephone == null &&
-          pays == null &&
-          newNature == null &&
-          categorieId == null &&
-          raisonSociale == null &&
-          !responsableModified &&
-          file?.bytes == null) {
-        _dialog.hide();
-        MutationRequestContextualBehavior.showCustomInformationPopUp(
-          message: "Aucune modification n'a été faite.",
-        );
-        return;
+      if (selectedCountry!.code != initialClient.pays!.code ||
+          selectedCountry.name != initialClient.pays!.name) {
+        pays = selectedCountry;
       }
-    } else {
-      final client = initialClient as ClientPhysiqueModel;
 
-      if (_nomController.text != client.nom) nom = _nomController.text;
-      if (_prenomController.text != client.prenom) {
-        prenom = _prenomController.text;
-      }
-      if (sexe != client.sexe) newsexe = sexe;
+      if (nature != widget.client.nature) newNature = nature;
 
-      if (adresse == null &&
-          email == null &&
-          telephone == null &&
-          pays == null &&
-          newsexe == null &&
-          newNature == null &&
-          nom == null &&
-          prenom == null) {
-        _dialog.hide();
-        MutationRequestContextualBehavior.showCustomInformationPopUp(
-          message: "Aucune modification n'a été faite.",
-        );
-        return;
-      }
-    }
+      if (type == TypeClient.moral) {
+        final client = initialClient as ClientMoralModel;
 
-    var result = type == TypeClient.moral
-        ? await ClientService.updateClientMoral(
-            id: initialClient.id,
-            adresse: adresse,
-            categorieId: categorieId,
-            email: email,
-            nature: newNature,
-            pays: pays,
-            file: file?.bytes == null ? null : file,
-            raisonSociale: raisonSociale,
-            telephone: telephone,
-            responsable: (responsableEmail == null &&
-                    newResponsableCivilite == null &&
-                    responsableNom == null &&
-                    responsablePoste != null &&
-                    newResponsableSexe != null &&
-                    responsableTelephone != null)
-                ? null
-                : ResponsableModel(
-                    prenom: _responsablePrenomControlller.text,
-                    nom: _responsableNomController.text,
-                    sexe: responsableSexe!,
-                    civilite: responsableCivilite!,
-                    email: _responsableEmailController.text,
-                    telephone: int.parse(
-                      _responsableTelephoneController.text,
-                    ),
-                    poste: _responsablePosteController.text,
-                  ),
-          )
-        : await ClientService.updatePhysiqueClient(
-            clientId: initialClient.id,
-            adresse: adresse,
-            nom: nom,
-            prenom: prenom,
-            nature: newNature,
-            sexe: sexe,
-            email: email,
-            pays: pays,
-            telephone: telephone,
+        if (categorie != client.categorie) categorieId = categorie?.id;
+        if (_raisonSocialeController.text != client.raisonSociale) {
+          raisonSociale = _raisonSocialeController.text;
+        }
+
+        bool responsableModified =
+            _responsablePrenomControlller.text != client.responsable?.prenom ||
+                _responsableNomController.text != client.responsable?.nom ||
+                responsableSexe != client.responsable?.sexe ||
+                responsableCivilite != client.responsable?.civilite ||
+                _responsableEmailController.text != client.responsable?.email ||
+                _responsableTelephoneController.text !=
+                    client.responsable?.telephone.toString() ||
+                _responsablePosteController.text != client.responsable?.poste;
+
+        if (adresse == null &&
+            email == null &&
+            telephone == null &&
+            pays == null &&
+            newNature == null &&
+            categorieId == null &&
+            raisonSociale == null &&
+            !responsableModified &&
+            file?.bytes == null) {
+          _dialog.hide();
+          MutationRequestContextualBehavior.showCustomInformationPopUp(
+            message: "Aucune modification n'a été faite.",
           );
+          return;
+        }
+      } else {
+        final client = initialClient as ClientPhysiqueModel;
 
-    _dialog.hide();
+        if (_nomController.text != client.nom) nom = _nomController.text;
+        if (_prenomController.text != client.prenom) {
+          prenom = _prenomController.text;
+        }
+        if (sexe != client.sexe) newsexe = sexe;
 
-    // Gestion du résultat
-    if (result.status == PopupStatus.success) {
-      MutationRequestContextualBehavior.closePopup();
+        if (adresse == null &&
+            email == null &&
+            telephone == null &&
+            pays == null &&
+            newsexe == null &&
+            newNature == null &&
+            nom == null &&
+            prenom == null) {
+          _dialog.hide();
+          MutationRequestContextualBehavior.showCustomInformationPopUp(
+            message: "Aucune modification n'a été faite.",
+          );
+          return;
+        }
+      }
+
+      ResponsableModel? buildResponsable() {
+        try {
+          return ResponsableModel(
+            prenom: _responsablePrenomControlller.text,
+            nom: _responsableNomController.text,
+            sexe: responsableSexe!,
+            civilite: responsableCivilite!,
+            email: _responsableEmailController.text,
+            telephone: int.parse(_responsableTelephoneController.text),
+            poste: _responsablePosteController.text,
+          );
+        } catch (e) {
+          if (nature != NatureClient.fournisseur) {
+            throw "Revérifiez les données du responsable et reessayez";
+          }
+          return null;
+        }
+      }
+
+      var result = type == TypeClient.moral
+          ? await ClientService.updateClientMoral(
+              id: initialClient.id,
+              adresse: adresse,
+              categorieId: categorieId,
+              email: email,
+              nature: newNature,
+              pays: pays,
+              file: file?.bytes == null ? null : file,
+              raisonSociale: raisonSociale,
+              telephone: telephone,
+              responsable: buildResponsable(),
+            )
+          : await ClientService.updatePhysiqueClient(
+              clientId: initialClient.id,
+              adresse: adresse,
+              nom: nom,
+              prenom: prenom,
+              nature: newNature,
+              sexe: sexe,
+              email: email,
+              pays: pays,
+              telephone: telephone,
+            );
+
+      _dialog.hide();
+
+      // Gestion du résultat
+      if (result.status == PopupStatus.success) {
+        MutationRequestContextualBehavior.closePopup();
+        MutationRequestContextualBehavior.showPopup(
+          status: PopupStatus.success,
+          customMessage: "Le partenaire a été mis à jour avec succès",
+        );
+        await widget.refresh();
+      } else {
+        MutationRequestContextualBehavior.showPopup(
+          status: result.status,
+          customMessage: result.message,
+        );
+      }
+    } catch (e) {
+      _dialog.hide();
       MutationRequestContextualBehavior.showPopup(
-        status: PopupStatus.success,
-        customMessage: "Le partenaire a été mis à jour avec succès",
+        status: PopupStatus.customError,
+        customMessage: e.toString(),
       );
-      await widget.refresh();
-    } else {
-      MutationRequestContextualBehavior.showPopup(
-        status: result.status,
-        customMessage: result.message,
-      );
+      rethrow;
     }
   }
 
@@ -327,6 +365,7 @@ class _EditClientPageState extends State<EditClientPage> {
 
   @override
   Widget build(BuildContext context) {
+    bool isNotFournisseur = !(nature == NatureClient.fournisseur);
     return SingleChildScrollView(
       child: Form(
         //key: UniqueKey(),
@@ -374,16 +413,19 @@ class _EditClientPageState extends State<EditClientPage> {
             ),
             SimpleTextField(
               label: "Adresse",
+              required: isNotFournisseur,
               textController: _adresseController,
               keyboardType: TextInputType.streetAddress,
             ),
             SimpleTextField(
               label: "Email",
+              required: isNotFournisseur,
               textController: _emailController,
               keyboardType: TextInputType.emailAddress,
             ),
             TelephoneTextField(
               label: "Téléphone",
+              required: isNotFournisseur,
               maxLength:
                   _selectedCountry == null ? 1 : _selectedCountry!.phoneNumber!,
               textController: _telephoneController,
@@ -397,6 +439,7 @@ class _EditClientPageState extends State<EditClientPage> {
             if (type == TypeClient.moral) ...[
               FileField(
                 canTakePhoto: false,
+                required: isNotFournisseur,
                 label: "Logo",
                 platformFile: file,
                 removeFile: () => setState(() {
@@ -410,6 +453,7 @@ class _EditClientPageState extends State<EditClientPage> {
                 },
               ),
               MoralFields(
+                isNotFournisseur: isNotFournisseur,
                 categorie: categorie,
                 onCategorieChanged: (newCategorie) {
                   setState(() {
@@ -510,6 +554,7 @@ class MoralFields extends StatefulWidget {
   final void Function(Sexe?) onResponsableSexeChanged;
   final void Function(Civilite?) onResponsableCiviliteChanged;
   final TextEditingController responsableNomController;
+  final bool isNotFournisseur;
   final TextEditingController responsablePrenomControlller;
   final TextEditingController responsableEmailController;
   final TextEditingController responsablePosteController;
@@ -522,6 +567,7 @@ class MoralFields extends StatefulWidget {
     required this.onResponsableCiviliteChanged,
     required this.responsableCivilite,
     required this.responsableEmailController,
+    required this.isNotFournisseur,
     required this.responsableSexe,
     required this.responsableNomController,
     required this.country,
@@ -538,7 +584,6 @@ class MoralFields extends StatefulWidget {
 }
 
 class _MoralFieldsState extends State<MoralFields> {
-
   void _handleCategoryChange(CategorieModel? newValue) {
     setState(() {
       widget.onCategorieChanged(newValue);
@@ -599,13 +644,19 @@ class _MoralFieldsState extends State<MoralFields> {
                   SimpleTextField(
                     label: "Nom",
                     textController: widget.responsableNomController,
+                    required: widget.isNotFournisseur,
+
                   ),
                   SimpleTextField(
                     label: "Prénoms",
+                    required: widget.isNotFournisseur,
+
                     textController: widget.responsablePrenomControlller,
                   ),
                   CustomDropDownField<Sexe>(
                     items: Sexe.values.toList(),
+                    required: widget.isNotFournisseur,
+
                     onChanged: _handleResponsableSexeChange,
                     label: "Sexe",
                     selectedItem: widget.responsableSexe,
@@ -613,6 +664,8 @@ class _MoralFieldsState extends State<MoralFields> {
                   ),
                   CustomDropDownField<Civilite>(
                     items: Civilite.values.toList(),
+                    required: widget.isNotFournisseur,
+
                     onChanged: _handleResponsableCiviliteChange,
                     label: "Civilité",
                     selectedItem: widget.responsableCivilite,
@@ -620,6 +673,8 @@ class _MoralFieldsState extends State<MoralFields> {
                   ),
                   TelephoneTextField(
                     label: "Téléphone",
+                    required: widget.isNotFournisseur,
+
                     textController: widget.responsableTelephoneController,
                     contryCode: widget.country == null
                         ? ""
@@ -630,11 +685,15 @@ class _MoralFieldsState extends State<MoralFields> {
                   ),
                   SimpleTextField(
                     label: "Email",
+                    required: widget.isNotFournisseur,
+
                     textController: widget.responsableEmailController,
                     keyboardType: TextInputType.emailAddress,
                   ),
                   SimpleTextField(
                     label: "Poste",
+                    required: widget.isNotFournisseur,
+
                     textController: widget.responsablePosteController,
                   ),
                 ],

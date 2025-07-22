@@ -1,13 +1,13 @@
 import '../common_type.dart';
 
 class ResponsableModel {
-  final String prenom;
-  final String nom;
-  final Sexe sexe;
-  final Civilite civilite;
-  final String email;
-  final int telephone;
-  final String poste;
+  final String? prenom;
+  final String? nom;
+  final Sexe? sexe;
+  final Civilite? civilite;
+  final String? email;
+  final int? telephone;
+  final String? poste;
 
   ResponsableModel({
     required this.prenom,
@@ -33,13 +33,13 @@ class ResponsableModel {
 
   Map<String, String> toJson() {
     return {
-      "prenom": prenom,
-      "nom": nom,
-      "sexe": sexeToString(sexe),
-      "civilite": civiliteToString(civilite),
-      "email": email,
-      "telephone": telephone.toString(),
-      "poste": poste,
+      "prenom": prenom ?? "",
+      "nom": nom ?? "",
+      "sexe": sexe != null ? sexeToString(sexe!) : "",
+      "civilite": civilite != null ? civiliteToString(civilite!) : "",
+      "email": email ?? "",
+      "telephone": telephone?.toString() ?? "",
+      "poste": poste ?? "",
     };
   }
 }

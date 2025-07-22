@@ -210,7 +210,7 @@ class _ClientTableState extends State<ClientTable> {
                         : [
                             TableBodyFirst(client: client),
                             TableBodyMiddle(valeur: client.pays!.name),
-                            TableBodyMiddle(valeur: client.email),
+                            TableBodyMiddle(valeur: client.email ?? "inconnu"),
                             TableBodyMiddle(valeur: client.nature!.label),
                             TableBodyLast(
                               items: [

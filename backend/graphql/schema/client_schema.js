@@ -33,9 +33,9 @@ const typeDef = `#graphql
     #Definition du type client
     interface Client{
         _id:ID!
-        email:String!
-        telephone:Float!
-        adresse:String! 
+        email:String
+        telephone:Float
+        adresse:String
         pays:Country!
         nature: NatureClient!      
         etat:EtatClient!            
@@ -47,14 +47,14 @@ const typeDef = `#graphql
         _id:ID!
         raisonSociale:String!
         logo:String
-        email:String!
+        email:String
         nature: NatureClient!      
-        telephone:Float!
+        telephone:Float
         pays:Country!
-        adresse:String!
+        adresse:String
         categorie:Categorie!
         etat:EtatClient!
-        responsable:Responsable!
+        responsable:Responsable
         dateEnregistrement:Float!
         fullCount:Int
     }
@@ -66,9 +66,9 @@ const typeDef = `#graphql
         sexe: Sexe!
         pays:Country!        
         nature: NatureClient!      
-        email: String!
-        telephone: Float!
-        adresse: String!        
+        email: String
+        telephone: Float
+        adresse: String      
         etat: EtatClient!            
         dateEnregistrement: Float!
         fullCount: Int
@@ -88,25 +88,25 @@ const mutation = `#graphql
         nom:String!
         prenom:String!
         sexe:Sexe!
-        email:String!
+        email:String
         nature: NatureClient!      
-        telephone:Float!
+        telephone:Float
         pays:CountryInput!
-        adresse:String!
+        adresse:String
         etat:EtatClient
     ):String!
 
     createClientMoral(
         raisonSociale:String!
         logo:Upload
-        email:String!
-        telephone:Float!
-        adresse:String!
+        email:String
+        telephone:Float
+        adresse:String
         nature: NatureClient!      
         pays:CountryInput!
         categorieId: String!
         etat: EtatClient
-        responsable: ResponsableInput!
+        responsable: ResponsableInput
     ):String!
 
     updateClientPhysique(

@@ -28,9 +28,10 @@ class _PayementPageState extends State<PayementPage> {
 
   @override
   void initState() {
-    super.initState();
     _researchController.addListener(_onSearchChanged);
     _loadPayementData();
+    super.initState();
+  
   }
 
   void _onSearchChanged() {

@@ -66,7 +66,7 @@ class Client {
             return {
               ...client,
               fullCount: query.extra.stats.fullCount,
-              logo: client.raisonSociale
+              logo: client.logo
                 ? process.env.FILE_PREFIX +
                   `${locateClientFolder}/` +
                   client.logo
@@ -115,7 +115,7 @@ class Client {
             return {
               ...client,
               fullCount: query.extra.stats.fullCount,
-              logo: client.raisonSociale
+              logo: client.logo
                 ? process.env.FILE_PREFIX +
                   `${locateClientFolder}/` +
                   client.logo
@@ -145,7 +145,7 @@ class Client {
       const client = await clientCollection.document(key);
       return {
         ...client,
-        logo: client.raisonSociale
+        logo: client.logo
           ? process.env.FILE_PREFIX + `${locateClientFolder}/` + client.logo
           : null,
         __typename: client.raisonSociale ? "ClientMoral" : "ClientPhysique",
@@ -182,7 +182,7 @@ class Client {
         return Promise.all(
           clients.map(async (client) => ({
             ...client,
-            logo: process.env.FILE_PREFIX,
+            logo: client.logo ? process.env.FILE_PREFIX : null,
             filePath,
             categorie:
               client.nom ??
@@ -242,25 +242,22 @@ class Client {
   }) => {
     // Validation des champs obligatoires
     isValidValue({
-      value: [
-        raisonSociale,
-        email,
-        telephone,
-        pays,
-        categorieId,
-        responsable,
-        nature,
-      ],
+      value: [raisonSociale, pays, categorieId, nature],
     });
-
+    if (nature !== NatureClient.fournisseur) {
+      isValidValue({
+        value: [email, telephone, pays, responsable, logo, adresse],
+      });
+      isValidEmail({ email: email });
+      isValidEmail({ email: responsable.email });
+    }
     // Vérifier les types des champs
-    isValidEmail({ email: email });
 
     await categorieModel.isExistCategorie({ key: categorieId });
 
     try {
       let filePath = null;
-      if (logo !== undefined) {
+      if (logo && logo.file) {
         const file = await logo.file;
         const filename = file.filename;
         const createReadStream = file.createReadStream;
@@ -277,17 +274,19 @@ class Client {
             mimetype: mimetype,
             uniquefilename: uniquefilename,
           });
+
           if (filePath == null) {
-            throw new Error("");
+            throw new Error();
           }
         }
       } else {
-        throw new Error();
+        if (nature !== NatureClient.fournisseur)
+          throw new Error("Veuillez uploader le logo");
       }
 
       const clientMoral = {
         raisonSociale: raisonSociale,
-        logo: filePath.replace(/\\/g, "/"),
+        logo: filePath?.replace(/\\/g, "/"),
         email: email,
         telephone: telephone,
         adresse: adresse,
@@ -318,12 +317,15 @@ class Client {
   }) => {
     // Validation des champs obligatoires
     isValidValue({
-      value: [nom, prenom, sexe, email, telephone, pays, adresse],
+      value: [nom, prenom, sexe, pays],
     });
-
+    if (nature !== NatureClient.fournisseur) {
+      isValidValue({
+        value: [email, telephone, adresse],
+      });
+      isValidEmail({ email: email });
+    }
     // Validation du format de l'email
-    isValidEmail({ email: email });
-
     const ClientPhysique = {
       nom: nom,
       prenom: prenom,
@@ -365,32 +367,73 @@ class Client {
         updateField.raisonSociale = raisonSociale;
       }
 
-      // Gestion de l'upload du logo
-       if (logo?.file) {
-        const file = logo.file;
-        const { createReadStream, filename } = file;
-        if (filename) {
-          let uniqueFilename;
-          const validName = client.raisonSociale.replace(/ /g, "_");
-          const extension = path.extname(filename);
-          uniqueFilename = `${Date.now()}_${validName}${extension}`;
+      // Vérifie la nature pour appliquer la logique
+      const isFournisseur =
+        nature === NatureClient.fournisseur ||
+        client.nature === NatureClient.fournisseur;
 
-          updateField.logo = await uploadFile({
+      // Gestion de l'upload du logo
+      if (logo?.file) {
+        const file = logo.file;
+        const { createReadStream, filename, mimetype } = file;
+
+        if (filename) {
+          const validName = (raisonSociale || client.raisonSociale).replace(
+            / /g,
+            "_"
+          );
+          const extension = path.extname(filename);
+          const uniqueFilename = `${Date.now()}_${validName}${extension}`;
+
+          const filePath = await uploadFile({
             createReadStream,
             locateFolder: locateClientFolder,
             uniquefilename: uniqueFilename,
+            mimetype,
           });
 
-          if (!updateField.logo) {
+          if (!filePath) {
             throw new Error("Échec de l'upload du logo.");
           }
-          updateField.logo.replace(/\\/g, "/");
+
+          updateField.logo = filePath.replace(/\\/g, "/");
         }
+      } else if (!isFournisseur && logo !== undefined) {
+        // logo est requis si ce n’est pas un fournisseur
+        throw new Error("Veuillez uploader le logo");
       }
 
-      if (email !== undefined) {
-        isValidEmail({ email });
-        updateField.email = email;
+      if (categorieId !== undefined) {
+        await categorieModel.isExistCategorie({ key: categorieId });
+        updateField.categorieId = categorieId;
+      }
+
+      if (nature !== undefined) {
+        updateField.nature = nature;
+      }
+
+      // Validation conditionnelle
+      if (!isFournisseur) {
+        isValidValue({
+          value: [
+            email,
+            telephone,
+            pays,
+            responsable,
+            logo || client.logo,
+            adresse,
+          ],
+        });
+
+        if (email !== undefined) {
+          isValidEmail({ email });
+          updateField.email = email;
+        }
+
+        if (responsable !== undefined) {
+          updateField.responsable = responsable;
+          isValidEmail({ email: responsable.email });
+        }
       }
 
       if (telephone !== undefined) {
@@ -405,20 +448,8 @@ class Client {
         updateField.pays = pays;
       }
 
-      if (categorieId !== undefined) {
-        await categorieModel.isExistCategorie({ key: categorieId });
-        updateField.categorieId = categorieId;
-      }
+      isValidValue({ value: updateField }); // Vérifie les champs présents
 
-      if (nature !== undefined) {
-        updateField.nature = nature;
-      }
-
-      if (responsable !== undefined) {
-        updateField.responsable = responsable;
-      }
-
-      isValidValue({ value: updateField });
       await clientCollection.update(key, updateField);
 
       return "OK";

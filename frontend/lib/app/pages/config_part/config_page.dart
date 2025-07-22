@@ -62,13 +62,13 @@ class _ConfigPageState extends State<ConfigPage> {
   @override
   Widget build(BuildContext context) {
     return (isLoading)
-        ? const Expanded(
+        ? const SizedBox.expand(
             child: Center(
               child: CircularProgressIndicator(),
             ),
           )
         : (hasError)
-            ? Expanded(
+            ? SizedBox.expand(
                 child: ErrorPage(
                   message: errMessage ?? "Une erreur s'est produite",
                   onPressed: () async {

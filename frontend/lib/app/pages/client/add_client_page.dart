@@ -70,26 +70,34 @@ class _AddClientPageState extends State<AddClientPage> {
   }
 
   String? validateClientFields() {
-    if (_adresseController.text.isEmpty ||
-        _selectedCountry == null ||
-        _telephoneController.text.isEmpty ||
-        _emailController.text.isEmpty) {
+    if (_selectedCountry == null) {
       return "Veuillez remplir tous les champs marqués.";
     }
-    if (type == TypeClient.moral) {
-      if (_raisonSocialeController.text.isEmpty ||
-          categorie == null ||
-          _responsableEmailController.text.isEmpty ||
-          _responsableNomController.text.isEmpty ||
-          _responsablePosteController.text.isEmpty ||
-          _responsablePrenomControlller.text.isEmpty ||
-          _responsableTelephoneController.text.isEmpty ||
-          responsableSexe == null ||
-          responsableCivilite == null ||
-          _responsableEmailController.text.isEmpty ||
-          _responsableTelephoneController.text.isEmpty ||
-          file == null) {
+
+    if (nature != NatureClient.fournisseur) {
+      if (_telephoneController.text.isEmpty ||
+          _adresseController.text.isEmpty ||
+          _emailController.text.isEmpty) {
         return "Veuillez remplir tous les champs marqués.";
+      }
+    }
+
+    if (type == TypeClient.moral) {
+      if (_raisonSocialeController.text.isEmpty || categorie == null) {
+        return "Veuillez remplir tous les champs marqués.";
+      }
+
+      if (nature != NatureClient.fournisseur) {
+        if (_responsableEmailController.text.isEmpty ||
+            _responsableNomController.text.isEmpty ||
+            _responsablePosteController.text.isEmpty ||
+            _responsablePrenomControlller.text.isEmpty ||
+            _responsableTelephoneController.text.isEmpty ||
+            responsableSexe == null ||
+            responsableCivilite == null ||
+            file == null) {
+          return "Veuillez remplir tous les champs marqués.";
+        }
       }
     } else {
       if (_nomController.text.isEmpty ||
@@ -103,62 +111,87 @@ class _AddClientPageState extends State<AddClientPage> {
   }
 
   Future<void> _addClient() async {
+    try {
+      if (nature == NatureClient.fournisseur) {
+        _responsableEmailController.clear();
+        _responsableNomController.clear();
+        _responsablePosteController.clear();
+        _responsablePrenomControlller.clear();
+        _responsableTelephoneController.clear();
+        responsableSexe == null;
+        responsableCivilite == null;
+        _responsableEmailController.clear();
+        _responsableTelephoneController.clear();
+      }
+
     String? errMessage = validateClientFields();
-
-    errMessage ??= checkPhoneNumber(
-      phoneNumber: _telephoneController.text.trim(),
-      pays: _selectedCountry!,
-    );
-
-    if (errMessage == null) {
-      if (type == TypeClient.moral) {
-        errMessage = checkPhoneNumber(
-          phoneNumber: _responsableTelephoneController.text.trim(),
+      if (_telephoneController.text.trim().isNotEmpty) {
+        errMessage ??= checkPhoneNumber(
+          phoneNumber: _telephoneController.text.trim(),
           pays: _selectedCountry!,
         );
       }
-    }
-
+      if (_responsableTelephoneController.text.trim().isNotEmpty) {
+        if (errMessage == null) {
+          if (type == TypeClient.moral) {
+            errMessage = checkPhoneNumber(
+              phoneNumber: _responsableTelephoneController.text.trim(),
+              pays: _selectedCountry!,
+            );
+          }
+        }
+      }
     if (errMessage != null) {
       MutationRequestContextualBehavior.showCustomInformationPopUp(
-      message: errMessage,
+          message: errMessage,
       );
       return;
     }
+    
     _dialog.show(
       message: "",
       type: SimpleFontelicoProgressDialogType.phoenix,
       backgroundColor: Colors.transparent,
     );
+ResponsableModel? buildResponsable() {
+        try {
+          return ResponsableModel(
+            prenom: _responsablePrenomControlller.text,
+            nom: _responsableNomController.text,
+            sexe: responsableSexe!,
+            civilite: responsableCivilite!,
+            email: _responsableEmailController.text,
+            telephone: int.parse(_responsableTelephoneController.text),
+            poste: _responsablePosteController.text,
+          );
+        } catch (e) {
+          if (nature != NatureClient.fournisseur) {
+            throw "Revérifiez les données du responsable et reessayez";
+          }
+          return null;
+        }
+      }
 
-    RequestResponse result = type == TypeClient.moral
-        ? await ClientService.createMoralClient(
-            nature: nature,
-            raisonSociale: _raisonSocialeController.text,
-            responsable: ResponsableModel(
-              prenom: _responsablePrenomControlller.text,
-              nom: _responsableNomController.text,
-              sexe: responsableSexe!,
-              civilite: responsableCivilite!,
-              email: _responsableEmailController.text,
-              telephone: int.parse(_telephoneController.text),
-              poste: _responsablePosteController.text,
-            ),
+      RequestResponse result = type == TypeClient.moral
+          ? await ClientService.createMoralClient(
+              nature: nature,
+              raisonSociale: _raisonSocialeController.text.trim(),
+              responsable: buildResponsable(),
             categorieId: categorie!.id,
-            email: _emailController.text,
-            telephone: int.tryParse(_telephoneController.text)!,
-            adresse: _adresseController.text,
-            file: file!,
+              email: _emailController.text.trim(),
+              telephone: int.tryParse(_telephoneController.text.trim()),
+              adresse: _adresseController.text.trim(),
+              file: file,
             pays: _selectedCountry!,
           )
         : await ClientService.createPhysiqueClient(
-            nom: _nomController.text,
-            prenom: _prenomController.text,
+              nom: _nomController.text.trim(),
+              prenom: _prenomController.text.trim(),
             sexe: sexe!,
             nature: nature,
-            email: _emailController.text,
-            telephone: int.parse(_telephoneController.text),
-            adresse: _adresseController.text,
+              email: _emailController.text.trim(),
+              telephone: int.parse(_telephoneController.text.trim()),
+              adresse: _adresseController.text.trim(),
             pays: _selectedCountry!);
 
     _dialog.hide();
@@ -176,6 +209,12 @@ class _AddClientPageState extends State<AddClientPage> {
         customMessage: result.message,
       );
     }
+    } catch (e) {
+      MutationRequestContextualBehavior.showPopup(
+        status: PopupStatus.customError,
+        customMessage: e.toString(),
+      );
+    }
   }
 
   Future<List<PaysModel>> fetchCountryItems() async {
@@ -184,6 +223,7 @@ class _AddClientPageState extends State<AddClientPage> {
 
   @override
   Widget build(BuildContext context) {
+    bool isNotFournisseur = !(nature == NatureClient.fournisseur);
     return SingleChildScrollView(
       child: Form(
         //key: UniqueKey(),
@@ -245,6 +285,7 @@ class _AddClientPageState extends State<AddClientPage> {
             SimpleTextField(
               label: "Email",
               textController: _emailController,
+              required: isNotFournisseur,
               keyboardType: TextInputType.emailAddress,
             ),
             TelephoneTextField(
@@ -252,6 +293,7 @@ class _AddClientPageState extends State<AddClientPage> {
               maxLength:
                   _selectedCountry == null ? 1 : _selectedCountry!.phoneNumber!,
               textController: _telephoneController,
+              required: isNotFournisseur,
               contryCode: _selectedCountry == null
                   ? ""
                   : _selectedCountry!.code.toString(),
@@ -260,6 +302,7 @@ class _AddClientPageState extends State<AddClientPage> {
               label: "Adresse",
               textController: _adresseController,
               expands: true,
+              required: isNotFournisseur,
               maxLines: null,
               height: 50,
             ),
@@ -270,6 +313,7 @@ class _AddClientPageState extends State<AddClientPage> {
               FileField(
                 canTakePhoto: false,
                 label: "Logo",
+                required: isNotFournisseur,
                 platformFile: file,
                 removeFile: () => setState(() {
                   file = null;
@@ -290,6 +334,7 @@ class _AddClientPageState extends State<AddClientPage> {
                 },
                 raisonSocialeController: _raisonSocialeController,
                 responsableEmailController: _responsableEmailController,
+                isNotFournisseur: isNotFournisseur,
                 onResponsableCiviliteChanged: (newCivilite) {
                   setState(() {
                     responsableCivilite = newCivilite;
@@ -380,6 +425,7 @@ class MoralFields extends StatefulWidget {
   final TextEditingController responsableTelephoneController;
   final CategorieModel? categorie;
   final Sexe? responsableSexe;
+  final bool isNotFournisseur;
   final PaysModel? country;
   final Civilite? responsableCivilite;
   final void Function(CategorieModel?) onCategorieChanged;
@@ -393,6 +439,7 @@ class MoralFields extends StatefulWidget {
     required this.responsableNomController,
     required this.responsablePosteController,
     required this.responsablePrenomControlller,
+    required this.isNotFournisseur,
     this.categorie,
     required this.country,
     required this.onCategorieChanged,
@@ -442,74 +489,78 @@ class _MoralFieldsState extends State<MoralFields> {
             onChanged: _handleCategoryChange,
             itemsAsString: (CategorieModel c) => c.libelle,
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Container(
+          if (widget.isNotFournisseur) ...[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Container(
+                padding: const EdgeInsets.all(8.0),
+                color: AppColor.primaryColor.withOpacity(0.5),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Personne contact",
+                      style: TextStyle(fontWeight: FontWeight.w200),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Padding(
               padding: const EdgeInsets.all(8.0),
-              color: AppColor.primaryColor.withOpacity(0.5),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Personne contact",
-                    style: TextStyle(fontWeight: FontWeight.w200),
-                  ),
-                ],
+              child: Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all()),
+                child: Column(
+                  children: [
+                    SimpleTextField(
+                      label: "Nom",
+                      required: widget.isNotFournisseur,
+                      textController: widget.responsableNomController,
+                    ),
+                    SimpleTextField(
+                      label: "Prénoms",
+                      textController: widget.responsablePrenomControlller,
+                    ),
+                    CustomDropDownField<Sexe>(
+                      items: Sexe.values.toList(),
+                      onChanged: _handleResponsableSexeChange,
+                      label: "Sexe",
+                      selectedItem: widget.responsableSexe,
+                      itemsAsString: (s) => s.label,
+                    ),
+                    CustomDropDownField<Civilite>(
+                      items: Civilite.values.toList(),
+                      onChanged: _handleResponsableCiviliteChange,
+                      label: "Civilité",
+                      selectedItem: widget.responsableCivilite,
+                      itemsAsString: (s) => s.label,
+                    ),
+                    TelephoneTextField(
+                      label: "Téléphone",
+                      textController: widget.responsableTelephoneController,
+                      contryCode: widget.country == null
+                          ? ""
+                          : widget.country!.code.toString(),
+                      maxLength: widget.country == null
+                          ? 1
+                          : widget.country!.phoneNumber!,
+                    ),
+                    SimpleTextField(
+                      label: "Email",
+                      textController: widget.responsableEmailController,
+                      keyboardType: TextInputType.emailAddress,
+                    ),
+                    SimpleTextField(
+                      label: "Poste",
+                      textController: widget.responsablePosteController,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(6), border: Border.all()),
-              child: Column(
-                children: [
-                  SimpleTextField(
-                    label: "Nom",
-                    textController: widget.responsableNomController,
-                  ),
-                  SimpleTextField(
-                    label: "Prénoms",
-                    textController: widget.responsablePrenomControlller,
-                  ),
-                  CustomDropDownField<Sexe>(
-                    items: Sexe.values.toList(),
-                    onChanged: _handleResponsableSexeChange,
-                    label: "Sexe",
-                    selectedItem: widget.responsableSexe,
-                    itemsAsString: (s) => s.label,
-                  ),
-                  CustomDropDownField<Civilite>(
-                    items: Civilite.values.toList(),
-                    onChanged: _handleResponsableCiviliteChange,
-                    label: "Civilité",
-                    selectedItem: widget.responsableCivilite,
-                    itemsAsString: (s) => s.label,
-                  ),
-                  TelephoneTextField(
-                    label: "Téléphone",
-                    textController: widget.responsableTelephoneController,
-                    contryCode: widget.country == null
-                        ? ""
-                        : widget.country!.code.toString(),
-                    maxLength: widget.country == null
-                        ? 1
-                        : widget.country!.phoneNumber!,
-                  ),
-                  SimpleTextField(
-                    label: "Email",
-                    textController: widget.responsableEmailController,
-                    keyboardType: TextInputType.emailAddress,
-                  ),
-                  SimpleTextField(
-                    label: "Poste",
-                    textController: widget.responsablePosteController,
-                  ),
-                ],
-              ),
-            ),
-          ),
+          ]
         ],
       ),
     );

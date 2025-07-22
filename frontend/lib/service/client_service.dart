@@ -120,7 +120,7 @@ class ClientService {
       }
     } catch (error) {
       throw error.toString();
-    }                                                                                                
+    }
     return clients;
   }
 
@@ -550,9 +550,8 @@ class ClientService {
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
         var data = jsonData['data']['clients'];
- 
+
         if (data != null) {
- 
           for (var client in data) {
             clients.add(ClientModel.fromJson(client));
           }
@@ -561,11 +560,10 @@ class ClientService {
           throw RequestMessage.failgettingDataMessage;
         }
       } else {
- 
         throw jsonDecode(response.body)['errors'][0]['message'];
       }
     } catch (error) {
-       rethrow;
+      rethrow;
     }
   }
 
@@ -677,13 +675,13 @@ class ClientService {
 
   static Future<RequestResponse> createMoralClient({
     required String raisonSociale,
-    required ResponsableModel responsable,
+    required ResponsableModel? responsable,
     required String categorieId,
     required NatureClient nature,
     PlatformFile? file,
-    required String email,
-    required int telephone,
-    required String adresse,
+    required String? email,
+    required int? telephone,
+    required String? adresse,
     required PaysModel pays,
   }) async {
     try {
@@ -691,14 +689,26 @@ class ClientService {
       mutation CreateClientMoral(\$logo: Upload) {
         createClientMoral(
           raisonSociale: "$raisonSociale",
-          email: "$email",
           telephone: $telephone,
           adresse: "$adresse",
           nature: ${natureClientToString(nature)},
-          responsable: {prenom: "${responsable.prenom}", nom: "${responsable.nom}", sexe: ${sexeToString(responsable.sexe)}, civilite: ${civiliteToString(responsable.civilite)}, email: "${responsable.email}", telephone: ${responsable.telephone}, poste: "${responsable.poste}"},
           categorieId: "$categorieId",
           pays: {_id: "${pays.id}", name: "${pays.name}", code: ${pays.code}, phoneNumber: ${pays.phoneNumber}, tauxTVA: ${pays.tauxTVA}, initiauxPays: ${pays.initiauxPays.toList()}},
-          logo: \$logo
+          logo: \$logo''';
+      if (responsable != null) {
+        body +=
+            'responsable: {prenom: "${responsable.prenom}", nom: "${responsable.nom}", sexe: ${sexeToString(responsable.sexe!)}, civilite: ${civiliteToString(responsable.civilite!)}, email: "${responsable.email}", telephone: ${responsable.telephone}, poste: "${responsable.poste}"},';
+      }
+      if (email != null && email.isNotEmpty) {
+        body += 'email: "$email",';
+      }
+      if (adresse != null && adresse.isNotEmpty) {
+        body += 'adresse: "$adresse",';
+      }
+      if (telephone != null) {
+        body += 'telephone: $telephone,';
+      }
+      body += '''
         )
       }
       ''';
@@ -717,7 +727,8 @@ class ClientService {
           ...getHeaders(),
         });
 
-      if (file != null && file.bytes != null) {
+
+      if (file != null) {
         multipartRequest.files.add(
           http.MultipartFile.fromBytes(
             'logo',
@@ -775,9 +786,9 @@ class ClientService {
     required String prenom,
     required Sexe sexe,
     required NatureClient nature,
-    required String email,
-    required int telephone,
-    required String adresse,
+    required String? email,
+    required int? telephone,
+    required String? adresse,
     required PaysModel pays,
   }) async {
     var body = '''
@@ -786,11 +797,19 @@ class ClientService {
             nom: "$nom"
             prenom: "$prenom"
             sexe: ${sexeToString(sexe)}
-            email: "$email"
-          nature: ${natureClientToString(nature)},
-            telephone:$telephone
-          pays: {_id: "${pays.id}", name: "${pays.name}", code: ${pays.code}, phoneNumber: ${pays.phoneNumber}, tauxTVA: ${pays.tauxTVA}, initiauxPays: ${pays.initiauxPays.toList()}},
-            adresse: "$adresse"
+           nature: ${natureClientToString(nature)},
+           pays: {_id: "${pays.id}", name: "${pays.name}", code: ${pays.code}, phoneNumber: ${pays.phoneNumber}, tauxTVA: ${pays.tauxTVA}, initiauxPays: ${pays.initiauxPays.toList()}},
+             ''';
+    if (email != null && email.isNotEmpty) {
+      body += 'email: "$email",';
+    }
+    if (adresse != null && adresse.isNotEmpty) {
+      body += 'adresse: "$adresse",';
+    }
+    if (telephone != null) {
+      body += 'telephone: $telephone,';
+    }
+    body += '''
         )
     }
 
@@ -856,12 +875,12 @@ class ClientService {
         key: "$id",
     ''';
 
-      if (raisonSociale != null) {
+      if (raisonSociale != null && raisonSociale.isNotEmpty) {
         body += 'raisonSociale: "$raisonSociale",';
       }
       if (responsable != null) {
         body +=
-            'responsable: {prenom: "${responsable.prenom}", nom: "${responsable.nom}", sexe: ${sexeToString(responsable.sexe)}, civilite: ${civiliteToString(responsable.civilite)}, email: "${responsable.email}", telephone: ${responsable.telephone}, poste: "${responsable.poste}"},';
+            'responsable: {prenom: "${responsable.prenom}", nom: "${responsable.nom}", sexe: ${sexeToString(responsable.sexe!)}, civilite: ${civiliteToString(responsable.civilite!)}, email: "${responsable.email}", telephone: ${responsable.telephone}, poste: "${responsable.poste}"},';
       }
       if (categorieId != null) {
         body += 'categorieId: "$categorieId",';

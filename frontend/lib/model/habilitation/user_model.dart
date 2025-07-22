@@ -64,7 +64,8 @@ class UserModel {
     return personnel!.toStringify();
   }
 
-  bool equalTo({required UserModel user}) {
+  bool equalTo({required UserModel? user}) {
+    if (user == null) return false;
     return user.id == id;
   }
 }

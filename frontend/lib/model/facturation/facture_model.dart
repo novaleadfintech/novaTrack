@@ -87,7 +87,7 @@ class FactureModel {
           ? (json['payements'] as List)
               .map((payement) => FluxFinancierModel.fromJson(payement))
               .toList()
-          : null,
+          : [],
       ligneFactures: json['ligneFactures'] != null
           ? (json['ligneFactures'] as List)
               .map((ligneFacture) => LigneModel.fromJson(ligneFacture))

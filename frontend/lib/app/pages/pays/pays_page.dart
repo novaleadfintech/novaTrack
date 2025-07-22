@@ -129,6 +129,7 @@ class _ServicePageState extends State<PaysPage> {
                   child: AddElementButton(
                     addElement: onClickAddServiceButton,
                     icon: Icons.add_outlined,
+                    isSmall: true,
                     label: "Ajouter un pays",
                   ),
                 ),

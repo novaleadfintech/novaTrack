@@ -114,7 +114,10 @@ class _PayementDetailState extends State<PayementDetail> {
   }
 
   Future<void> getRole() async {
-    role = await AuthService().getRole();
+    RoleModel currentRole = await AuthService().getRole();
+    setState(() {
+      role = currentRole;
+    });
   }
 
   addPayement({required FactureModel facture}) {
@@ -206,7 +209,7 @@ class _PayementDetailState extends State<PayementDetail> {
                     ),
                     TableBodyLast(
                       items: [
-                        if (payement.user!.equalTo(user: user!) &&
+                        if (payement.user!.equalTo(user: user) &&
                             (payement.status != FluxFinancierStatus.valid &&
                                 payement.status !=
                                     FluxFinancierStatus.reject) &&
@@ -219,14 +222,14 @@ class _PayementDetailState extends State<PayementDetail> {
                             onTap: () {
                               editPayement(payement: payement);
                             },
-                            color: null, 
+                            color: null,
                           ),
                         (
                           label: Constant.detail,
                           onTap: () {
                             detailPayement(payement: payement);
                           },
-                          color: null, 
+                          color: null,
                         ),
                       ],
                     ),

@@ -49,6 +49,7 @@ class _MoreDatailClientPageState extends State<MoreDatailClientPage> {
                   ),
                   color: Theme.of(context).colorScheme.surface,
                 ),
+
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -78,46 +79,70 @@ class _MoreDatailClientPageState extends State<MoreDatailClientPage> {
                                       : const FlexColumnWidth()
                                 },
                                 children: [
+                                  if ((widget.client as ClientMoralModel)
+                                          .responsable!
+                                          .nom !=
+                                      null) 
                                   buildTableRow(
                                     "Nom",
                                     (widget.client as ClientMoralModel)
                                         .responsable!
-                                        .nom
+                                          .nom!
                                         .toUpperCase(),
                                   ),
+                                  if ((widget.client as ClientMoralModel)
+                                          .responsable!
+                                          .prenom !=
+                                      null) 
                                   buildTableRow(
                                     "Prénoms",
                                     capitalizeFirstLetter(
                                       word: (widget.client as ClientMoralModel)
                                           .responsable!
-                                          .prenom,
+                                                .prenom!,
                                     ),
                                   ),
+                                  if ((widget.client as ClientMoralModel)
+                                          .responsable!
+                                          .sexe !=
+                                      null) 
                                   buildTableRow(
                                     "Sexe",
                                     (widget.client as ClientMoralModel)
                                         .responsable!
-                                        .sexe
+                                          .sexe!
                                         .label,
                                   ),
+                                  if ((widget.client as ClientMoralModel)
+                                          .responsable!
+                                          .civilite !=
+                                      null) 
                                   buildTableRow(
                                     "Civilité",
                                     (widget.client as ClientMoralModel)
                                         .responsable!
-                                        .civilite
+                                          .civilite!
                                         .label,
                                   ),
+                                  if ((widget.client as ClientMoralModel)
+                                          .responsable!
+                                          .email !=
+                                      null) 
                                   buildTableRow(
                                     "Email",
                                     (widget.client as ClientMoralModel)
                                         .responsable!
-                                        .email,
+                                          .email!,
                                   ),
 
                                   /* buildTableRow(
                                     "Pays",
                                     widget.client.pays!.name,
                                   ), */
+                                  if ((widget.client as ClientMoralModel)
+                                          .responsable!
+                                          .telephone !=
+                                      null) 
                                   buildTableRow(
                                     "Téléphone",
                                     "+${(widget.client as ClientMoralModel).pays!.code} ${(widget.client as ClientMoralModel).responsable!.telephone}",

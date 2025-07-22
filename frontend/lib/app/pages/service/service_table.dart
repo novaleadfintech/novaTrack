@@ -259,7 +259,7 @@ class _ServiceTableState extends State<ServiceTable> {
                       : TableRow(
                           decoration: tableDecoration(context,
                               color: service.type == ServiceType.recurrent
-                                  ? Colors.amber.shade50
+                                  ? AppColor.adaptiveamber(context)
                                   : null),
                           children: [
                             TableBodyMiddle(
