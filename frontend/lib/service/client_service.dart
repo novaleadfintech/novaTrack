@@ -689,12 +689,10 @@ class ClientService {
       mutation CreateClientMoral(\$logo: Upload) {
         createClientMoral(
           raisonSociale: "$raisonSociale",
-          telephone: $telephone,
-          adresse: "$adresse",
           nature: ${natureClientToString(nature)},
           categorieId: "$categorieId",
           pays: {_id: "${pays.id}", name: "${pays.name}", code: ${pays.code}, phoneNumber: ${pays.phoneNumber}, tauxTVA: ${pays.tauxTVA}, initiauxPays: ${pays.initiauxPays.toList()}},
-          logo: \$logo''';
+          logo: \$logo,''';
       if (responsable != null) {
         body +=
             'responsable: {prenom: "${responsable.prenom}", nom: "${responsable.nom}", sexe: ${sexeToString(responsable.sexe!)}, civilite: ${civiliteToString(responsable.civilite!)}, email: "${responsable.email}", telephone: ${responsable.telephone}, poste: "${responsable.poste}"},';
@@ -726,7 +724,6 @@ class ClientService {
         ..headers.addAll({
           ...getHeaders(),
         });
-
 
       if (file != null) {
         multipartRequest.files.add(
@@ -815,6 +812,7 @@ class ClientService {
 
     ''';
 
+    print(body);
     try {
       var response = await http
           .post(

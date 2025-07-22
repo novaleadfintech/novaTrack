@@ -97,7 +97,6 @@ class _ClientPageState extends State<ClientPage> {
                         'Détails',
                         style: TextStyle(
                           fontSize: 18,
-                          color: Colors.black,
                           fontWeight: FontWeight.w600,
                         ),
                       ),

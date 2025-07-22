@@ -112,19 +112,7 @@ class _AddClientPageState extends State<AddClientPage> {
 
   Future<void> _addClient() async {
     try {
-      if (nature == NatureClient.fournisseur) {
-        _responsableEmailController.clear();
-        _responsableNomController.clear();
-        _responsablePosteController.clear();
-        _responsablePrenomControlller.clear();
-        _responsableTelephoneController.clear();
-        responsableSexe == null;
-        responsableCivilite == null;
-        _responsableEmailController.clear();
-        _responsableTelephoneController.clear();
-      }
-
-    String? errMessage = validateClientFields();
+      String? errMessage = validateClientFields();
       if (_telephoneController.text.trim().isNotEmpty) {
         errMessage ??= checkPhoneNumber(
           phoneNumber: _telephoneController.text.trim(),
@@ -141,19 +129,19 @@ class _AddClientPageState extends State<AddClientPage> {
           }
         }
       }
-    if (errMessage != null) {
-      MutationRequestContextualBehavior.showCustomInformationPopUp(
+      if (errMessage != null) {
+        MutationRequestContextualBehavior.showCustomInformationPopUp(
           message: errMessage,
+        );
+        return;
+      }
+
+      _dialog.show(
+        message: "",
+        type: SimpleFontelicoProgressDialogType.phoenix,
+        backgroundColor: Colors.transparent,
       );
-      return;
-    }
-    
-    _dialog.show(
-      message: "",
-      type: SimpleFontelicoProgressDialogType.phoenix,
-      backgroundColor: Colors.transparent,
-    );
-ResponsableModel? buildResponsable() {
+      ResponsableModel? buildResponsable() {
         try {
           return ResponsableModel(
             prenom: _responsablePrenomControlller.text,
@@ -177,43 +165,45 @@ ResponsableModel? buildResponsable() {
               nature: nature,
               raisonSociale: _raisonSocialeController.text.trim(),
               responsable: buildResponsable(),
-            categorieId: categorie!.id,
+              categorieId: categorie!.id,
               email: _emailController.text.trim(),
               telephone: int.tryParse(_telephoneController.text.trim()),
               adresse: _adresseController.text.trim(),
               file: file,
-            pays: _selectedCountry!,
-          )
-        : await ClientService.createPhysiqueClient(
+              pays: _selectedCountry!,
+            )
+          : await ClientService.createPhysiqueClient(
               nom: _nomController.text.trim(),
               prenom: _prenomController.text.trim(),
-            sexe: sexe!,
-            nature: nature,
+              sexe: sexe!,
+              nature: nature,
               email: _emailController.text.trim(),
-              telephone: int.parse(_telephoneController.text.trim()),
+              telephone: int.tryParse(_telephoneController.text.trim()),
               adresse: _adresseController.text.trim(),
-            pays: _selectedCountry!);
+              pays: _selectedCountry!);
 
-    _dialog.hide();
+      _dialog.hide();
 
-    if (result.status == PopupStatus.success) {
-      MutationRequestContextualBehavior.closePopup();
-      MutationRequestContextualBehavior.showPopup(
-        status: PopupStatus.success,
-        customMessage: "Le partenaire a été crée avec succès",
-      );
-      await widget.refresh();
-    } else {
-      MutationRequestContextualBehavior.showPopup(
-        status: result.status,
-        customMessage: result.message,
-      );
-    }
+      if (result.status == PopupStatus.success) {
+        MutationRequestContextualBehavior.closePopup();
+        MutationRequestContextualBehavior.showPopup(
+          status: PopupStatus.success,
+          customMessage: "Le partenaire a été crée avec succès",
+        );
+        await widget.refresh();
+      } else {
+        MutationRequestContextualBehavior.showPopup(
+          status: result.status,
+          customMessage: result.message,
+        );
+      }
     } catch (e) {
+      _dialog.hide();
       MutationRequestContextualBehavior.showPopup(
         status: PopupStatus.customError,
         customMessage: e.toString(),
       );
+      rethrow;
     }
   }
 
@@ -489,7 +479,7 @@ class _MoralFieldsState extends State<MoralFields> {
             onChanged: _handleCategoryChange,
             itemsAsString: (CategorieModel c) => c.libelle,
           ),
-          if (widget.isNotFournisseur) ...[
+        // if (widget.isNotFournisseur) ...[
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Container(
@@ -521,12 +511,14 @@ class _MoralFieldsState extends State<MoralFields> {
                     ),
                     SimpleTextField(
                       label: "Prénoms",
+                  required: widget.isNotFournisseur,
                       textController: widget.responsablePrenomControlller,
                     ),
                     CustomDropDownField<Sexe>(
                       items: Sexe.values.toList(),
                       onChanged: _handleResponsableSexeChange,
                       label: "Sexe",
+                  required: widget.isNotFournisseur,
                       selectedItem: widget.responsableSexe,
                       itemsAsString: (s) => s.label,
                     ),
@@ -534,11 +526,13 @@ class _MoralFieldsState extends State<MoralFields> {
                       items: Civilite.values.toList(),
                       onChanged: _handleResponsableCiviliteChange,
                       label: "Civilité",
+                  required: widget.isNotFournisseur,
                       selectedItem: widget.responsableCivilite,
                       itemsAsString: (s) => s.label,
                     ),
                     TelephoneTextField(
                       label: "Téléphone",
+                  required: widget.isNotFournisseur,
                       textController: widget.responsableTelephoneController,
                       contryCode: widget.country == null
                           ? ""
@@ -549,11 +543,13 @@ class _MoralFieldsState extends State<MoralFields> {
                     ),
                     SimpleTextField(
                       label: "Email",
+                  required: widget.isNotFournisseur,
                       textController: widget.responsableEmailController,
                       keyboardType: TextInputType.emailAddress,
                     ),
                     SimpleTextField(
                       label: "Poste",
+                  required: widget.isNotFournisseur,
                       textController: widget.responsablePosteController,
                     ),
                   ],
@@ -561,7 +557,7 @@ class _MoralFieldsState extends State<MoralFields> {
               ),
             ),
           ]
-        ],
+          // ],
       ),
     );
   }

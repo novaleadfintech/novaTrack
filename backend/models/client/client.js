@@ -448,7 +448,7 @@ class Client {
         updateField.pays = pays;
       }
 
-      isValidValue({ value: updateField }); // Vérifie les champs présents
+      // isValidValue({ value: updateField }); // Vérifie les champs présents
 
       await clientCollection.update(key, updateField);
 

@@ -14,9 +14,9 @@ Sexe sexeFromString(String sexe) {
   return Sexe.values.firstWhere((e) => e.toString().split('.').last == sexe);
 }
 enum Civilite {
-  madam('Mme'),
-  miss('Mlle'),
-  sir('M.');
+  madam('Madame'),
+  miss('Mademoiselle'),
+  sir('Monsieur');
 
   final String label;
   const Civilite(this.label);

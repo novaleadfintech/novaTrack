@@ -89,7 +89,7 @@ class _EditClientPageState extends State<EditClientPage> {
   void initState() {
     super.initState();
     _dialog = SimpleFontelicoProgressDialog(context: context);
-    _adresseController.text = widget.client.adresse;
+    _adresseController.text = widget.client.adresse ?? "";
     _emailController.text = widget.client.email ?? "";
     _telephoneController.text = (widget.client.telephone ?? "").toString();
     nature = widget.client.nature!;
