@@ -183,7 +183,7 @@ class BulletinPdfGenerator {
                     entreprise.adresse,
                     style: const pw.TextStyle(
                       fontSize: 8,
-                      color: PdfColors.grey600,
+                      // color: PdfColors.grey600,
                     ),
                   ),
                 ],
@@ -206,13 +206,13 @@ class BulletinPdfGenerator {
                   ),
                   pw.SizedBox(height: 3),
                   pw.Text(
-                    "Poste : ${bulletin.salarie.personnel.poste}",
+                    "Poste : ${bulletin.salarie.personnel.poste != null ? bulletin.salarie.personnel.poste!.libelle : "Aucun poste"}",
                     style: const pw.TextStyle(
                       fontSize: 9,
                     ),
                   ),
                   pw.Text(
-                    "Tel : +${bulletin.salarie.personnel.telephone}",
+                    "Tel : +${bulletin.salarie.personnel.pays!.code} ${bulletin.salarie.personnel.telephone}",
                     style: const pw.TextStyle(
                       fontSize: 9,
                     ),
@@ -685,7 +685,7 @@ class BulletinPdfGenerator {
                           "Par ${bulletin.moyenPayement!.libelle}",
                         ),
                         pw.Text(
-                          "A ${bulletin.banque!.name}",
+                          bulletin.banque!.name,
                         ),
                         pw.Text(
                           "${bulletin.referencePaie}",

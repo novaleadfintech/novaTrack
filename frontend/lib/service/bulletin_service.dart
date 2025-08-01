@@ -503,10 +503,11 @@ class BulletinService {
   }
 
 
-  static Future<BulletinPaieModel?> getPreviousBulletins() async {
+  static Future<BulletinPaieModel?> getPreviousBulletins(
+      {required String salarieId}) async {
     var body = '''
               query PreviousBulletinsPaie {
-    previousBulletinsPaie {
+    previousBulletinsPaie(salarieId: "$salarieId") {
         _id
         etat
         moyenPayement{

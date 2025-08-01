@@ -199,7 +199,7 @@ class BulletinPaie {
             validate = bulletin.validate ?? [];
             await Promise.all(
               validate.map(async (valid) => {
-                 valid.validater = await userModel.getUser({
+                valid.validater = await userModel.getUser({
                   key: valid.validater,
                 });
               })
@@ -252,10 +252,10 @@ class BulletinPaie {
     }
   }
 
-  async getPreviousBulletin() {
+  async getPreviousBulletin({ salarieId }) {
     try {
       const query = await db.query(
-        aql`FOR bulletin IN ${bulletinCollection} SORT bulletin.timeStamp
+        aql`FOR bulletin IN ${bulletinCollection} FILTER bulletin.salarie._id == ${salarieId} SORT bulletin.timeStamp
         LIMIT 1
         RETURN bulletin`
       );
@@ -329,17 +329,16 @@ class BulletinPaie {
       const rubriqueNetAPayer = rubriquesResolues.find(
         (r) => r.rubrique?.rubriqueIdentity === RubriqueIdentity.netPayer
       );
-       let valeurNet;
+      let valeurNet;
       if (!rubriqueNetAPayer) {
         valeurNet = 0;
       } else {
         valeurNet = rubriqueNetAPayer.value;
-         if (isNaN(valeurNet)) {
+        if (isNaN(valeurNet)) {
           valeurNet = 0;
         }
       }
 
- 
       const moitie = valeurNet / 2;
       if (montantDemande > moitie) {
         throw new Error(
@@ -444,7 +443,7 @@ class BulletinPaie {
 `);
 
     const decouvertes = await decouvertesQuery.all();
-     // Étape 2 : Calculer la somme totale à déduire pour avance sur salaire
+    // Étape 2 : Calculer la somme totale à déduire pour avance sur salaire
     let totalAvance = 0;
 
     for (const dec of decouvertes) {
@@ -462,13 +461,13 @@ class BulletinPaie {
       });
       rubriques[i].rubrique = rubriqueData;
     }
-     const indexRubriqueAvance = rubriques.findIndex(
+    const indexRubriqueAvance = rubriques.findIndex(
       (r) => r.rubrique?.rubriqueIdentity === RubriqueIdentity.avanceSurSalaire
     );
     if (indexRubriqueAvance !== -1) {
       rubriques[indexRubriqueAvance].value = totalAvance;
     }
-        // else {
+    // else {
     //   rubriques.push({
     //     rubrique: {
     //       constant: {
@@ -576,7 +575,7 @@ class BulletinPaie {
       updateField.salarieId = salarieId;
     }
 
-     try {
+    try {
       await bulletinCollection.update(key, updateField);
       return "OK";
     } catch (e) {

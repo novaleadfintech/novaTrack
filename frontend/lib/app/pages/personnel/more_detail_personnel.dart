@@ -295,8 +295,7 @@ class MoreDatailPersonnelPage extends StatelessWidget {
                 isbold: true,
               ),
               TabledetailBodyMiddle(
-                valeur: (personnel.dureeEssai!)
-                    .toString(),
+                valeur: "${personnel.dureeEssai!} mois"
               ),
             ],
           ),

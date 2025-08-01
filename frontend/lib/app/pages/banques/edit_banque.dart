@@ -15,7 +15,6 @@ import '../../../widget/drop_down_text_field.dart';
 import '../../../widget/file_field.dart';
 import '../../../widget/future_dropdown_field.dart';
 import '../../../widget/simple_text_field.dart';
-import '../../../widget/telephone_field.dart';
 import '../../../widget/validate_button.dart';
 
 class EditBanquePage extends StatefulWidget {
@@ -39,7 +38,7 @@ class _EditBanquePageState extends State<EditBanquePage> {
   late TextEditingController _numCompteController;
   late TextEditingController _codeBICController;
   late TextEditingController _codeBanqueController;
-  final TextEditingController _telephoneController = TextEditingController();
+  // final TextEditingController _telephoneController = TextEditingController();
   PlatformFile? file;
   PlatformFile? initialFile;
   CanauxPaiement? type;
@@ -66,7 +65,7 @@ class _EditBanquePageState extends State<EditBanquePage> {
         : null;
     _nomController = TextEditingController(text: widget.banque.name);
     type = widget.banque.type;
-    _telephoneController.text = widget.banque.numCompte;
+    // _telephoneController.text = widget.banque.numCompte;
     _codeGuichetController =
         TextEditingController(text: widget.banque.codeGuichet);
     _ribController = TextEditingController(text: widget.banque.cleRIB);
@@ -121,9 +120,6 @@ class _EditBanquePageState extends State<EditBanquePage> {
                       _numCompteController.clear();
                     }
 
-                    if (type != CanauxPaiement.operateurMobile) {
-                      _telephoneController.clear();
-                    }
                   });
                 }
               },
@@ -154,15 +150,9 @@ class _EditBanquePageState extends State<EditBanquePage> {
               ),
             ],
             if (type == CanauxPaiement.operateurMobile) ...[
-              TelephoneTextField(
-                label: "Téléphone",
-                maxLength: _selectedCountry == null
-                    ? 1
-                    : _selectedCountry!.phoneNumber!,
-                textController: _telephoneController,
-                contryCode: _selectedCountry == null
-                    ? ""
-                    : _selectedCountry!.code.toString(),
+              SimpleTextField(
+                label: "Numéro de compte",
+                textController: _numCompteController,
               ),
             ],
             if (type != CanauxPaiement.caisse) ...[
@@ -243,12 +233,8 @@ class _EditBanquePageState extends State<EditBanquePage> {
     }
 
     if (type == CanauxPaiement.operateurMobile) {
-      if (_telephoneController.text.trim().isEmpty) {
-        return "Le numéro de téléphone est requis.";
-      }
-      if (_telephoneController.text.trim().length !=
-          (_selectedCountry?.phoneNumber ?? 8)) {
-        return "Le numéro de téléphone doit comporter ${_selectedCountry?.phoneNumber ?? 8} chiffres.";
+      if (_numCompteController.text.trim().isEmpty) {
+        return "Le numéro de compte est requis.";
       }
     }
 
@@ -285,11 +271,7 @@ class _EditBanquePageState extends State<EditBanquePage> {
           ? null
           : _codeBICController.text.trim(),
       type: type,
-      numCompte: type == CanauxPaiement.operateurMobile
-          ? (_telephoneController.text.trim().isNotEmpty
-              ? _telephoneController.text.trim()
-              : null)
-          : (_numCompteController.text.trim().isNotEmpty
+      numCompte: (_numCompteController.text.trim().isNotEmpty
               ? _numCompteController.text.trim()
               : null),
       codeBanque: _codeBanqueController.text.trim().isEmpty

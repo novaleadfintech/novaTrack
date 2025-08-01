@@ -14,14 +14,14 @@ final List<String> bulletinPdfTableTitles = [
   "ELEMENT DE PAIE",
   "BASE",
   "TAUX",
-  "A DÉDUIRE",
-  "A PAYER",
+  "À DÉDUIRE",
+  "À PAYER",
 ];
 final List<String> bulletinPdfFooterTableTitles = [
   "CODE",
   "ELEMENT DE PAIE",
   "BASE",
   "TAUX",
-  "A DÉDUIRE",
-  "A PAYER",
+  "À DÉDUIRE",
+  "À PAYER",
 ];

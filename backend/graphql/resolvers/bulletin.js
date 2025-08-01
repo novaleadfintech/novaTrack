@@ -27,7 +27,7 @@ const bulletinPaieResolvers = {
   },
 
   previousBulletinsPaie: async () => {
-    return await bulletinPaieModel.getPreviousBulletin();
+    return await bulletinPaieModel.getPreviousBulletin({salarieId: salarieId});
   },
 
   bulletinPaie: async ({ key }) => {

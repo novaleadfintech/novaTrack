@@ -70,9 +70,10 @@ class _PersonnelPageState extends State<UnarchivedPersonnelPage> {
       setState(() {
         errorMessage = error.toString();
         hasError = true;
+        isLoading = false;
       });
     } finally {
-      setState(() {
+      setState(() { 
         isLoading = false;
       });
     }

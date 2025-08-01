@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:frontend/helper/date_helper.dart';
 import 'package:frontend/model/personnel/personne_prevenir.dart';
 import 'package:frontend/model/personnel/poste_model.dart';
 
@@ -289,7 +288,7 @@ class PersonnelService {
       body += 'dateFin: ${dateFin.millisecondsSinceEpoch},';
     }
     if (dureeEssai != null) {
-      body += 'dureeEssai: ${dureeEssai * unitMultipliers["mois"]!},';
+      body += 'dureeEssai: $dureeEssai,';
     }
     if (typeContrat != null) {
       body += 'typeContrat: ${typeContratlToString(typeContrat)},';

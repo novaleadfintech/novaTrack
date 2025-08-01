@@ -4,7 +4,6 @@ import 'package:frontend/app/pages/utils/bulletin_util.dart';
 import 'package:frontend/model/bulletin_paie/bulletin_model.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 import '../../../../../widget/table_header.dart';
-import '../../../../auth/authentification_token.dart';
 import '../../../../global/constant/constant.dart';
 import '../../../../global/constant/permission_alias.dart';
 import '../../../../helper/date_helper.dart';
@@ -24,12 +23,14 @@ import 'edit_bulletin.dart';
 import 'validate_current_bulletin.dart';
 
 class CurrentBulletinTable extends StatefulWidget {
+  final RoleModel role;
   final List<BulletinPaieModel> paginatedCurrentBulletintData;
   final VoidCallback refresh;
 
   const CurrentBulletinTable({
     super.key,
     required this.refresh,
+    required this.role,
     required this.paginatedCurrentBulletintData,
   });
 
@@ -39,7 +40,6 @@ class CurrentBulletinTable extends StatefulWidget {
 
 class _CurrentBulletinTableState extends State<CurrentBulletinTable> {
   late SimpleFontelicoProgressDialog _dialog;
-  late RoleModel role;
 
   onShowDetail({required BulletinPaieModel bulletin}) {
     showDetailDialog(
@@ -51,11 +51,7 @@ class _CurrentBulletinTableState extends State<CurrentBulletinTable> {
     );
   }
 
-  Future<void> getRole() async {
-    role = await AuthService().getRole();
-    setState(() {});
-  }
-
+ 
   onValidate({required BulletinPaieModel bulletin}) {
     Responsive.isMobile(context)
         ? showResponsiveDialog(
@@ -195,7 +191,6 @@ class _CurrentBulletinTableState extends State<CurrentBulletinTable> {
   @override
   void initState() {
     _dialog = SimpleFontelicoProgressDialog(context: context);
-    getRole();
     super.initState();
   }
 
@@ -259,7 +254,7 @@ class _CurrentBulletinTableState extends State<CurrentBulletinTable> {
                                   color: null, // couleur null
                                 ),
                                 if (hasPermission(
-                                  role: role,
+                                  role: widget.role,
                                   permission:
                                       PermissionAlias.validBulletin.label,
                                 ))
@@ -281,7 +276,7 @@ class _CurrentBulletinTableState extends State<CurrentBulletinTable> {
                                   color: null, // couleur null
                                 ),
                                 if (hasPermission(
-                                  role: role,
+                                  role: widget.role,
                                   permission:
                                       PermissionAlias.updateBulletin.label,
                                 ))
@@ -356,7 +351,7 @@ class _CurrentBulletinTableState extends State<CurrentBulletinTable> {
                                       color: null, // couleur null
                                     ),
                                     if (hasPermission(
-                                      role: role,
+                                      role: widget.role,
                                       permission:
                                           PermissionAlias.validBulletin.label,
                                     ))
@@ -378,7 +373,7 @@ class _CurrentBulletinTableState extends State<CurrentBulletinTable> {
                                       color: null, // couleur null
                                     ),
                                     if (hasPermission(
-                                      role: role,
+                                      role: widget.role,
                                       permission:
                                           PermissionAlias.updateBulletin.label,
                                     ))

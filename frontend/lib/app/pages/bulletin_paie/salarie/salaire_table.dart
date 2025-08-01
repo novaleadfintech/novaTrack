@@ -311,10 +311,13 @@ class _SalarieTableState extends State<SalarieTable> {
 
   void onEditBulletin({required SalarieModel salarie}) {
     try {
-      if (DateTime.now().isBefore(salarie.personnel.dateDebut!.add(Duration(
+      final todayMidnight = DateTime(
+          DateTime.now().year, DateTime.now().month, DateTime.now().day);
+
+      if (todayMidnight.isBefore(salarie.personnel.dateDebut!.add(Duration(
               milliseconds: ((salarie.personnel.dureeEssai ?? 0) *
                   (unitMultipliers['mois'] ?? 0))))) ||
-          DateTime.now().isAfter(salarie.personnel.dateFin!)) {
+          todayMidnight.isAfter(salarie.personnel.dateFin!)) {
         MutationRequestContextualBehavior.showCustomInformationPopUp(
           message:
               "Vous ne pouvez pas éditer un bulletin en dehors de la période du contrat",

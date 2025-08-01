@@ -22,7 +22,7 @@ class Categorie {
     }
     try {
       const query = await db.query(
-        aql`FOR categorie IN ${categorieCollection} SORT categorie._key DESC ${limit} RETURN categorie`
+        aql`FOR categorie IN ${categorieCollection} SORT categorie.libelle ASC ${limit} RETURN categorie`
       );
       if (query.hasNext) {
         return await query.all();
@@ -84,7 +84,7 @@ class Categorie {
   isExistCategorie = async ({ key }) => {
     const exist = await categorieCollection.documentExists(key);
     if (!exist) {
-      throw new Error("Cette categorie est inexistante!");
+      throw new Error("Cette catégorie est inexistante!");
     }
   };
 }

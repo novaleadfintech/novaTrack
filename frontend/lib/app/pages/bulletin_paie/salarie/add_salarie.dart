@@ -132,10 +132,10 @@ class _AddSalariePageState extends State<AddSalariePage> {
     List<PersonnelModel> personnels =
         await PersonnelService.getUnarchivedPersonnels();
 
-    // Exclure l'utilisateur connecté de la liste
-    if (currentPersonnelId != null) {
-      personnels.removeWhere((p) => p.id == currentPersonnelId);
-    }
+    // // Exclure l'utilisateur connecté de la liste
+    // if (currentPersonnelId != null) {
+    //   personnels.removeWhere((p) => p.id == currentPersonnelId);
+    // }
 
     return personnels;
   }

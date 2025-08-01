@@ -41,7 +41,7 @@ const query = `#graphql
     currentBulletinsPaie(perPage: Int, skip: Int, etat:EtatBulletin): [BulletinPaie]!
     archiveBulletinsPaie(perPage: Int, skip: Int, etat:EtatBulletin): [BulletinPaie]!
     currentValidateBulletin(perPage: Int, skip: Int): [BulletinPaie]!
-    previousBulletinsPaie: BulletinPaie
+    previousBulletinsPaie(salarieId: String!): BulletinPaie
     bulletinPaie(key: ID!): BulletinPaie!
 `;
 

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
- import 'package:frontend/service/bulletin_service.dart';
+import 'package:frontend/model/habilitation/role_model.dart';
+import 'package:frontend/service/bulletin_service.dart';
 import 'package:gap/gap.dart';
 
+import '../../../../auth/authentification_token.dart';
 import '../../../../global/global_value.dart';
 import '../../../../helper/paginate_data.dart';
 import '../../../../model/bulletin_paie/bulletin_model.dart';
@@ -21,10 +23,22 @@ class BulletinPage extends StatefulWidget {
 class _ArchiveBulletinState extends State<BulletinPage> {
   final TextEditingController _researchController = TextEditingController();
   int currentPage = GlobalValue.currentPage;
+  RoleModel? role;
+
+  @override
+  void initState() {
+    super.initState();
+    getRole();
+  }
+
+  Future<void> getRole() async {
+    role = await AuthService().getRole();
+    setState(() {});
+  }
 
   Future<List<BulletinPaieModel>> _loadServiceData() async {
     try {
-      return (await BulletinService.getCurrentBulletins());
+      return await BulletinService.getCurrentBulletins();
     } catch (error) {
       throw error.toString();
     }
@@ -32,6 +46,11 @@ class _ArchiveBulletinState extends State<BulletinPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Afficher un indicateur de chargement tant que le rôle n'est pas encore chargé
+    if (role == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -67,9 +86,9 @@ class _ArchiveBulletinState extends State<BulletinPage> {
                 }
 
                 final filteredData = data.where((item) {
-                  return item.salarie.personnel.toStringify().contains(
-                        _researchController.text.trim(),
-                      );
+                  return item.salarie.personnel
+                      .toStringify()
+                      .contains(_researchController.text.trim());
                 }).toList();
 
                 return Column(
@@ -78,6 +97,7 @@ class _ArchiveBulletinState extends State<BulletinPage> {
                       child: Container(
                         color: Theme.of(context).colorScheme.surface,
                         child: CurrentBulletinTable(
+                          role: role!,
                           paginatedCurrentBulletintData: getPaginatedData(
                             data: filteredData,
                             currentPage: currentPage,

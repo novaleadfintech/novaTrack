@@ -13,7 +13,6 @@ import '../../../widget/drop_down_text_field.dart';
 import '../../../widget/file_field.dart';
 import '../../../widget/future_dropdown_field.dart';
 import '../../../widget/simple_text_field.dart';
-import '../../../widget/telephone_field.dart';
 import '../../../widget/validate_button.dart';
 
 class AddBanquePage extends StatefulWidget {
@@ -36,7 +35,6 @@ class _AddBanquePageState extends State<AddBanquePage> {
   final TextEditingController _codeBanqueController = TextEditingController();
   final TextEditingController _codeBICController = TextEditingController();
   final TextEditingController _numBanqueController = TextEditingController();
-  final TextEditingController _telephoneController = TextEditingController();
   PlatformFile? file;
   CanauxPaiement? type;
 
@@ -92,10 +90,6 @@ class _AddBanquePageState extends State<AddBanquePage> {
                       _ribController.clear();
                       _numBanqueController.clear();
                     }
-
-                    if (type != CanauxPaiement.operateurMobile) {
-                      _telephoneController.clear();
-                    }
                   });
                 }
               },
@@ -136,16 +130,21 @@ class _AddBanquePageState extends State<AddBanquePage> {
               // ),
             ],
             if (type == CanauxPaiement.operateurMobile) ...[
-              TelephoneTextField(
-                label: "Téléphone",
-                maxLength: _selectedCountry == null
-                    ? 1
-                    : _selectedCountry!.phoneNumber!,
-                textController: _telephoneController,
-                contryCode: _selectedCountry == null
-                    ? ""
-                    : _selectedCountry!.code.toString(),
+              SimpleTextField(
+                label: "Numéro de compte",
+                textController: _numBanqueController,
+                //maxlength: 2,
               ),
+              // TelephoneTextField(
+              //   label: "Téléphone",
+              //   maxLength: _selectedCountry == null
+              //       ? 1
+              //       : _selectedCountry!.phoneNumber!,
+              //   textController: _telephoneController,
+              //   contryCode: _selectedCountry == null
+              //       ? ""
+              //       : _selectedCountry!.code.toString(),
+              // ),
             ],
             if (type != CanauxPaiement.caisse) ...[
               FileField(
@@ -214,12 +213,8 @@ class _AddBanquePageState extends State<AddBanquePage> {
     }
 
     if (type == CanauxPaiement.operateurMobile) {
-      if (_telephoneController.text.trim().isEmpty) {
-        return "Le numéro de téléphone est requis.";
-      }
-      if (_telephoneController.text.trim().length !=
-          (_selectedCountry?.phoneNumber ?? 8)) {
-        return "Le numéro de téléphone doit comporter ${_selectedCountry?.phoneNumber ?? 8} chiffres.";
+      if (_numBanqueController.text.trim().isEmpty) {
+        return "Le numéro de compte est requis.";
       }
     }
 
@@ -246,9 +241,7 @@ class _AddBanquePageState extends State<AddBanquePage> {
       type: type!,
       codeBanque: _codeBanqueController.text.trim(),
       codeBIC: _codeBICController.text.trim(),
-      numCompte: type == CanauxPaiement.operateurMobile
-          ? _telephoneController.text.trim()
-          : _numBanqueController.text.trim(),
+      numCompte: _numBanqueController.text.trim(),
       codeGuichet: _codeGuichetController.text.trim(),
       country: _selectedCountry!,
       cleRIB: _ribController.text.trim(),

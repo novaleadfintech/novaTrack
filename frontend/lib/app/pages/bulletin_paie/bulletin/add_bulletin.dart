@@ -64,52 +64,54 @@ class _AddBulletinState extends State<AddBulletinPage> {
   String? errorMessage;
   @override
   void initState() {
-    super.initState();
+    
     _dialog = SimpleFontelicoProgressDialog(context: context);
     _initRubriques();
+    super.initState();
   }
 
   MoyenPaiementModel? moyenPayement;
   BanqueModel? banque;
   Future<void> _initRubriques() async {
     // try {
-      previousBulletin = await BulletinService.getPreviousBulletins();
+    previousBulletin = await BulletinService.getPreviousBulletins(
+      salarieId: widget.salarie.id,
+    );
 
-      final List<RubriqueOnBulletinModel> rubriquePaieResponse =
-          await RubriqueCategorieConfService
-              .getBulletinRubriquesByCategoriePaie(
-        categorie: widget.salarie.categoriePaie,
-      );
+    final List<RubriqueOnBulletinModel> rubriquePaieResponse =
+        await RubriqueCategorieConfService.getBulletinRubriquesByCategoriePaie(
+      categorie: widget.salarie.categoriePaie,
+    );
 
-      setState(() {
-        moyenPayement = previousBulletin?.moyenPayement;
-        banque = previousBulletin?.banque;
-        dateEdition = previousBulletin?.dateEdition;
-        _rubriquesOnBulletin = rubriquePaieResponse;
-        dateFieldController.text =
-            getStringDate(time: dateEdition ?? DateTime.now());
+    setState(() {
+      moyenPayement = previousBulletin?.moyenPayement;
+      banque = previousBulletin?.banque;
+      dateEdition = previousBulletin?.dateEdition;
+      _rubriquesOnBulletin = rubriquePaieResponse;
+      dateEdition = DateTime.now();
+      dateFieldController.text =
+          getStringDate(time: dateEdition ?? DateTime.now());
       // datedebutFieldController.text =
       //     getStringDate(time: widget.debutPeriodePaie ?? DateTime.now());
-        isLoading = false;
-        hasError = false;
-      });
+      isLoading = false;
+      hasError = false;
+    });
 
-      for (var rubrique in rubriquePaieResponse) {
-        final previousValue = previousBulletin?.rubriques
-            .firstWhere(
-              (r) => r.rubrique.id == rubrique.rubrique.id,
-              orElse: () =>
-                  RubriqueOnBulletinModel(rubrique: rubrique.rubrique),
-            )
-            .value;
+    for (var rubrique in rubriquePaieResponse) {
+      final previousValue = previousBulletin?.rubriques
+          .firstWhere(
+            (r) => r.rubrique.id == rubrique.rubrique.id,
+            orElse: () => RubriqueOnBulletinModel(rubrique: rubrique.rubrique),
+          )
+          .value;
 
-        final valueToSet = previousValue ?? rubrique.value;
-        rubrique.value = valueToSet;
-        if (valueToSet != null) {
-          valueControllers[rubrique.rubrique.id] =
-              TextEditingController(text: valueToSet.toString());
-        }
+      final valueToSet = previousValue ?? rubrique.value;
+      rubrique.value = valueToSet;
+      if (valueToSet != null) {
+        valueControllers[rubrique.rubrique.id] =
+            TextEditingController(text: valueToSet.toString());
       }
+    }
     // } catch (e) {
     //   setState(() {
     //     errorMessage = e.toString();
@@ -131,7 +133,7 @@ class _AddBulletinState extends State<AddBulletinPage> {
             .toList();
   }
 
-Future<List<MoyenPaiementModel>> fetchMoyenPaiementItems() async {
+  Future<List<MoyenPaiementModel>> fetchMoyenPaiementItems() async {
     return banque == null
         ? await MoyenPaiementService.getMoyenPaiements()
         : (await MoyenPaiementService.getMoyenPaiements())
@@ -294,6 +296,7 @@ Future<List<MoyenPaiementModel>> fetchMoyenPaiementItems() async {
   }
 
   _addBulletin() async {
+    print(dateEdition);
     if (dateEdition == null ||
         moyenPayement == null ||
         banque == null ||
