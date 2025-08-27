@@ -10,6 +10,12 @@ const typeDef = `#graphql
        returne
     }
 
+    enum BuyingManner{
+        total
+        partial
+        credit
+    }
+
     type Bilan{
         fluxFinanciers:[FluxFinancier]!
         total:Float!
@@ -35,6 +41,16 @@ const typeDef = `#graphql
         input:Float!
         output:Float!
     }
+
+    type TranchePayement{
+        datePayement: Float!
+        montantPaye: Float!
+    }
+
+    input TranchePayementInput{
+        datePayement: Float!
+        montantPaye: Float!
+    }
     
     type FluxFinancier{
         _id:ID!
@@ -50,15 +66,19 @@ const typeDef = `#graphql
         isFromSystem: Boolean,
         dateEnregistrement:Float!
         pieceJustificative: String
+        modePayement: BuyingManner
+        montantPaye: Float
+        TranchePayement: [TranchePayement]
         user: User #userId
         client: Client
-        bank:Banque!
+        bank:Banque! 
         factureId: String #factureId
     }
 `;
 
 const query = `#graphql
     fluxFinanciers(perPage:Int, skip:Int, type: FluxFinancierType,): [FluxFinancier]!
+    debtFluxFinanciers(perPage:Int, skip:Int,): [FluxFinancier]!
     unValidatedFluxFinanciers(perPage:Int, skip:Int, type: FluxFinancierType,): [FluxFinancier]!
     archiveFluxFinanciers(perPage:Int, skip:Int,): [FluxFinancier]!
     fluxFinancier(key:ID!): FluxFinancier!
@@ -80,6 +100,9 @@ const mutation = `#graphql
         referenceTransaction: String!
         dateOperation:Float
         factureId:String,
+        modePayement: BuyingManner,
+        tranchePayement: [TranchePayementInput],
+        montantPaye: Float,
         bankId: String!
         clientId: String!
     ):String!

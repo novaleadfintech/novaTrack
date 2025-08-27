@@ -6,6 +6,7 @@ enum ModuleAlias {
   payement("PAYEMENT"),
   fluxFinancier("FLUX_FINANCIER"),
   creance("CREANCE"),
+  // dette("DETTE"),
   config("CONFIG"),
   banque("BANQUE"),
   utilisateur("UTILISATEUR"),

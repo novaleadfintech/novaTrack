@@ -1,7 +1,7 @@
 import 'dart:convert';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:frontend/model/commentaire_model.dart';
+import 'package:frontend/model/flux_financier/tranche_payement_credit.dart';
 import 'package:frontend/model/flux_financier/validate_flux_model.dart';
 import '../global/constant/request_management_value.dart';
 import '../model/client/client_model.dart';
@@ -24,6 +24,9 @@ class FluxFinancierService {
     required ClientModel client,
     required double montant,
     DateTime? dateOperation,
+    BuyingManner? modePayement,
+    double? montantPaye,
+    List<TranchePayementModel?>? tranchePayement,
     required BanqueModel banque,
     required MoyenPaiementModel moyenPayement,
     required referenceTransaction,
@@ -47,13 +50,27 @@ class FluxFinancierService {
       if (dateOperation != null) {
         body += 'dateOperation: ${dateOperation.millisecondsSinceEpoch},';
       }
+      if (modePayement == null) {
+        body += 'modePayement: ${buyingMannerToString(modePayement!)}';
+        if (modePayement != BuyingManner.total && tranchePayement != null) {
+          body += 'tranchePayement: [';
+          for (var tranche in tranchePayement) {
+            body += '${tranche?.toJson()}';
+          }
+          body += '],';
+        }
+      }
+      if (montantPaye == null) {
+        body += 'montantPaye: $montantPaye';
+      }
+
       body += 'pieceJustificative: \$pieceJustificative';
       body += '''
             )
         }
         ''';
 
-       // Création de la requête multipart
+      // Création de la requête multipart
       var multipartRequest = http.MultipartRequest('POST', Uri.parse(serverUrl))
         ..fields['operations'] = jsonEncode({
           "query": body,
@@ -167,12 +184,10 @@ class FluxFinancierService {
         "pieceJustificative": isFileUnchanged ? "__unchanged__" : null
       };
       // Création de la requête multipart
-      http.MultipartRequest multipartRequest =
-          http.MultipartRequest('POST', Uri.parse(serverUrl))
-            ..fields['operations'] = jsonEncode(<String, Object>{
-              "query": body,
-              "variables": variables
-            });
+      http.MultipartRequest multipartRequest = http.MultipartRequest(
+          'POST', Uri.parse(serverUrl))
+        ..fields['operations'] =
+            jsonEncode(<String, Object>{"query": body, "variables": variables});
 
       multipartRequest.fields['map'] = jsonEncode(<String, List<String>>{
         "pieceJustificative": ["variables.pieceJustificative"]
@@ -424,6 +439,110 @@ class FluxFinancierService {
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
       var data = jsonData['data']['fluxFinanciers'];
+      if (data != null) {
+        for (var fluxFinancier in data) {
+          fluxFinanciers.add(FluxFinancierModel.fromJson(fluxFinancier));
+        }
+      } else {
+        throw RequestMessage.failgettingDataMessage;
+      }
+    } else {
+      throw jsonDecode(response.body)['errors'][0]['message'];
+    }
+    return fluxFinanciers;
+  }
+  static Future<List<FluxFinancierModel>> getDebt() async {
+    var body = '''
+               query DebtFluxFinanciers {
+                  debtFluxFinanciers() {
+                      _id
+                      libelle
+                      type
+                      montant
+                      reference
+                      referenceTransaction
+                      status
+                      factureId
+                      moyenPayement{
+                      _id
+                      libelle
+                      type
+                      }
+                      pieceJustificative
+                      isFromSystem
+                      client {
+                        _id
+                        ... on ClientMoral {
+                            _id
+                            raisonSociale
+                        }
+                        ... on ClientPhysique {
+                            _id
+                            nom
+                            prenom
+                        }
+                    }
+                      validate {
+                          validateStatus
+                          date
+                          validater {
+                              _id
+                              personnel {
+                                  _id
+                                  nom
+                                  prenom
+                              }
+                          }
+                          commentaire
+                      }
+                      
+                      user {
+                          _id
+                          personnel {
+                              _id
+                              nom
+                              prenom
+                              email
+                              telephone
+                          }
+                      }
+                      dateOperation
+                      bank {
+            _id
+            name
+            type
+            codeGuichet
+                        codeBIC
+            numCompte
+            codeBanque
+            cleRIB
+            soldeReel
+            soldeTheorique
+        }
+                      dateEnregistrement
+                  }
+              }
+            ''';
+    var response = await http
+        .post(
+      Uri.parse(serverUrl),
+      body: json.encode({
+        'query': body,
+      }),
+      headers: getHeaders(),
+    )
+        .catchError((onError) {
+      throw RequestMessage.failgettingDataMessage;
+    }).timeout(
+      const Duration(seconds: reqTimeout),
+      onTimeout: () {
+        throw RequestMessage.timeoutMessage;
+      },
+    );
+    List<FluxFinancierModel> fluxFinanciers = [];
+    if (response.statusCode == 200) {
+      var jsonData = jsonDecode(response.body);
+      var data = jsonData['data']['debtFluxFinanciers'];
       if (data != null) {
         for (var fluxFinancier in data) {
           fluxFinanciers.add(FluxFinancierModel.fromJson(fluxFinancier));

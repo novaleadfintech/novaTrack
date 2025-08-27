@@ -10,6 +10,9 @@ const fluxFinancierResolvers = {
   fluxFinanciers: async ({ perPage, skip, type }) =>
     await fluxFiancierModel.getAllFluxFinanciers({ perPage, skip, type }),
 
+  debtFluxFinanciers: async ({ perPage, skip }) =>
+    await fluxFiancierModel.getAllDebtFluxFinanciers({ perPage, skip }),
+
   archiveFluxFinanciers: async ({ perPage, skip }) =>
     await fluxFiancierModel.getArchiveFluxFinanciers({ perPage, skip }),
 
@@ -18,6 +21,7 @@ const fluxFinancierResolvers = {
 
   fluxFinancier: async ({ key }) =>
     await fluxFiancierModel.getFluxFinancier({ key }),
+
   fluxFinanciersByBank: async ({ debut, fin, banque, status }) =>
     await fluxFiancierModel.getFluxFinanciersByDateAndBank({
       banque: banque,
@@ -49,6 +53,9 @@ const fluxFinancierResolvers = {
       referenceTransaction,
       pieceJustificative,
       dateOperation,
+      tranchePayement,
+      modePayement,
+      montantPaye,
       clientId,
       userId,
       factureId,
@@ -67,6 +74,9 @@ const fluxFinancierResolvers = {
       moyenPayement: moyenPayement,
       pieceJustificative: pieceJustificative,
       type: type,
+      modePayement: modePayement,
+      tranchePayement: tranchePayement,
+      montantPaye: montantPaye,
       userId: user._id,
       dateOperation: dateOperation,
       bankId: bankId,

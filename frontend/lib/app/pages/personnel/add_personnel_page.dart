@@ -96,6 +96,7 @@ class _AddPersonnelPageState extends State<AddPersonnelPage> {
         dateDebut == null ||
         dateNaissance == null ||
         typePersonnel == null ||
+        typeContrat == null ||
         _selectedCountry == null ||
         situationMatrimoniale == null ||
         telephone.isEmpty ||
@@ -108,9 +109,9 @@ class _AddPersonnelPageState extends State<AddPersonnelPage> {
       errorMessage = "Tous les champs marqués doivent être remplis.";
     }
 
-    if ((typePersonnel == TypePersonnel.employe && typeContrat == null) ||
-        (typeContrat == TypeContrat.cdd && dateFin == null) ||
-        (typePersonnel == TypePersonnel.stagiaire && dateFin == null)) {
+    if ((typeContrat == TypeContrat.cdd ||
+            typePersonnel == TypePersonnel.stagiaire) &&
+        dateFin == null) {
       errorMessage = "Tous les champs marqués doivent être remplis.";
     }
 
@@ -347,6 +348,7 @@ class _AddPersonnelPageState extends State<AddPersonnelPage> {
               onChanged: (value) {
                 setState(() {
                   typePersonnel = value;
+                  typeContrat = null;
                 });
               },
               selectedItem: typePersonnel,

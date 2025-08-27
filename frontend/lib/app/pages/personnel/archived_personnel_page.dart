@@ -78,7 +78,7 @@ class _PersonnelPageState extends State<ArchivedPersonnelPage> {
       bool matchesSearch = personnel.nom
               .toLowerCase()
               .contains(searchQuery.toLowerCase().trim()) ||
-          (personnel.poste != null ? personnel.poste!.libelle : "Aucun poste")
+          (personnel.poste != null ? personnel.poste!.libelle : "Aucun")
               .toLowerCase()
               .contains(searchQuery.toLowerCase().trim()) ||
           personnel.prenom

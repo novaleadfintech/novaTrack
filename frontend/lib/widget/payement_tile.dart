@@ -178,7 +178,9 @@ class _PayementDetailState extends State<PayementDetail> {
   @override
   Widget build(BuildContext context) {
     final isMobile = Responsive.isMobile(context);
-    // final isTablet = Responsive.isTablet(context);
+    if (user == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
     return Table(
       columnWidths: {
         4: const IntrinsicColumnWidth(),

@@ -812,7 +812,6 @@ class ClientService {
 
     ''';
 
-    print(body);
     try {
       var response = await http
           .post(

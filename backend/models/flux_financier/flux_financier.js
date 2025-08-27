@@ -38,19 +38,84 @@ class FluxFinancier {
   getAllFluxFinanciers = async ({ perPage, skip, type }) => {
     try {
       let limit = aql``;
+      let filtreType = aql``; // Variable séparée pour le filtre de type
+      let filtreStatus = aql``;
+
+      // Gestion de la pagination
+      if (perPage !== undefined && skip !== undefined) {
+        limit = aql`LIMIT ${skip}, ${perPage}`;
+      }
+
+      // Gestion du filtre par type
+      if (type !== undefined) {
+        filtreType = aql`FILTER fluxFinancier.type == ${type}`;
+      }
+
+      // Filtre par statut
+      filtreStatus = aql`FILTER fluxFinancier.status == ${FluxFinancierStatus.wait}
+  OR fluxFinancier.status == ${FluxFinancierStatus.returne}`;
+
+      // Requête avec l'ordre correct des clauses
+      const query = await db.query(
+        aql`FOR fluxFinancier IN ${fluxFinancierCollection} 
+      ${filtreType}
+      ${filtreStatus}
+      SORT fluxFinancier.dateEnregistrement DESC 
+      ${limit} 
+      RETURN fluxFinancier`
+      );
+
+      const fluxFinanciers = await query.all();
+      return Promise.all(
+        fluxFinanciers.map(async (fluxFinancier) => {
+          let validate;
+          if (fluxFinancier.validate != null) {
+            validate = fluxFinancier.validate ?? [];
+            await Promise.all(
+              validate.map(async (valid) => {
+                valid.validater = await userModel.getUser({
+                  key: valid.validater,
+                });
+              })
+            );
+          }
+          return {
+            ...fluxFinancier,
+            validate: validate,
+            user: await userModel.getUser({ key: fluxFinancier.userId }),
+            client:
+              fluxFinancier.clientId == null
+                ? null
+                : await clientModel.getClient({
+                    key: fluxFinancier.clientId,
+                  }),
+
+            pieceJustificative:
+              fluxFinancier.pieceJustificative !== null
+                ? process.env.FILE_PREFIX +
+                  `${locateFinanceFolder}/` +
+                  fluxFinancier.pieceJustificative
+                : null,
+          };
+        })
+      );
+    } catch (err) {
+      return [];
+    }
+  };
+  getAllDebtFluxFinanciers = async ({ perPage, skip }) => {
+    try {
+      let limit = aql``;
       let filtre = aql``;
       if (perPage !== undefined && skip !== undefined) {
         limit = aql`LIMIT ${skip}, ${perPage}`;
       }
-      if (type !== undefined) {
-        limit = aql`FILTER fluxFinancier.type == ${type}`;
-      }
-      filtre = aql`FILTER fluxFinancier.status==${FluxFinancierStatus.wait}
-        OR fluxFinancier.status==${FluxFinancierStatus.returne}`;
+      
+      filtre = aql`FILTER fluxFinancier.type == ${FluxFinancierType.output} AND fluxFinancier.status==${FluxFinancierStatus.valid}
+        AND fluxFinancier.type == ${FluxFinancierType.output} AND (fluxFinancier.montant - fluxFinancier.montantPaye)>0`;
       const query = await db.query(
         aql`FOR fluxFinancier IN ${fluxFinancierCollection} SORT fluxFinancier.dateEnregistrement DESC ${limit} ${filtre} RETURN fluxFinancier`
       );
-
       const fluxFinanciers = await query.all();
       return Promise.all(
         fluxFinanciers.map(async (fluxFinancier) => {
@@ -229,7 +294,7 @@ class FluxFinancier {
       );
 
       const fluxFinanciers = await query.all();
-       return Promise.all(
+      return Promise.all(
         fluxFinanciers.map(async (fluxFinancier) => {
           return {
             ...fluxFinancier,
@@ -354,7 +419,7 @@ class FluxFinancier {
 
     if (query.hasNext) {
       const fluxFinancier = await query.next();
-       let validate;
+      let validate;
       if (fluxFinancier.validate != null) {
         validate = fluxFinancier.validate ?? [];
         await Promise.all(
@@ -484,6 +549,9 @@ class FluxFinancier {
     referenceTransaction,
     userId,
     clientId,
+    tranchePayement,
+    modePayement,
+    montantPaye,
     factureId,
     decouvertId,
     isFromSystem = false,
@@ -491,7 +559,7 @@ class FluxFinancier {
     bulletinId,
     dateOperation = Date.now(),
   }) => {
-     isValidValue({
+    isValidValue({
       value: [
         libelle,
         montant,
@@ -572,6 +640,9 @@ class FluxFinancier {
         factureId: factureId,
         bank: otherdata,
         isFromSystem: isFromSystem,
+        montantPaye: montantPaye,
+        tranchePayement: tranchePayement,
+        modePayement: modePayement,
         decouvertId: decouvertId,
         dateOperation: dateOperation,
         bulletinId: bulletinId,
@@ -901,7 +972,7 @@ class FluxFinancier {
 
       const cursor = await db.query(query);
       const yearResult = await cursor.all();
-       return yearResult;
+      return yearResult;
     } catch (err) {
       throw new Error(`Erreur lors de la récupération du bilan` + err.message);
     }

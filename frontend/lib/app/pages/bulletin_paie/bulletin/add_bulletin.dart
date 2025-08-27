@@ -296,7 +296,6 @@ class _AddBulletinState extends State<AddBulletinPage> {
   }
 
   _addBulletin() async {
-    print(dateEdition);
     if (dateEdition == null ||
         moyenPayement == null ||
         banque == null ||

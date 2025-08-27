@@ -58,7 +58,7 @@ class DetailBulletinPage extends StatelessWidget {
                 TabledetailBodyMiddle(
                   valeur: bulletin.salarie.personnel.poste != null
                       ? bulletin.salarie.personnel.poste!.libelle
-                      : "Aucun poste",
+                      : "Aucun",
                 ),
               ],
             ),

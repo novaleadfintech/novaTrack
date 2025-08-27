@@ -206,7 +206,7 @@ class BulletinPdfGenerator {
                   ),
                   pw.SizedBox(height: 3),
                   pw.Text(
-                    "Poste : ${bulletin.salarie.personnel.poste != null ? bulletin.salarie.personnel.poste!.libelle : "Aucun poste"}",
+                    "Poste : ${bulletin.salarie.personnel.poste != null ? bulletin.salarie.personnel.poste!.libelle : "Aucun"}",
                     style: const pw.TextStyle(
                       fontSize: 9,
                     ),
@@ -656,7 +656,7 @@ class BulletinPdfGenerator {
                     padding: const pw.EdgeInsets.all(5),
                     child: pw.Text(
                       textAlign: pw.TextAlign.center,
-                      "${bulletin.rubriques.firstWhere(
+                      "${Formatter.formatAmount(bulletin.rubriques.firstWhere(
                             (r) =>
                                 r.rubrique.rubriqueIdentity ==
                                 RubriqueIdentity.netPayer,
@@ -671,7 +671,7 @@ class BulletinPdfGenerator {
                               ),
                               value: 0,
                             ),
-                          ).value ?? 0} FCFA",
+                          ).value ?? 0)} FCFA",
                       style: pw.TextStyle(
                         fontWeight: pw.FontWeight.bold,
                       ),

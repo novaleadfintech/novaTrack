@@ -131,7 +131,7 @@ class MoreDatailPersonnelPage extends StatelessWidget {
               TabledetailBodyMiddle(
                 valeur: personnel.poste != null
                     ? personnel.poste!.libelle
-                    : "Aucun poste",
+                    : "Aucun",
               ),
             ],
           ),

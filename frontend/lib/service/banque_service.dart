@@ -55,14 +55,16 @@ class BanqueService {
       multipartRequest.fields['map'] = jsonEncode({
         "logo": ["variables.logo"]
       });
-
-      if (file != null && file.bytes != null) {
+       if (file != null && file.bytes != null) {
         multipartRequest.files.add(
           http.MultipartFile.fromBytes(
             'logo',
             file.bytes!,
             filename: file.name,
-            contentType: MediaType("application", "octet-stream"),
+            contentType: MediaType(
+              "application",
+              "octet-stream",
+            ),
           ),
         );
       }
@@ -213,7 +215,7 @@ class BanqueService {
         ''';
 
       // Détection des cas
-       bool isFileModified = file != null && file.bytes != null;
+      bool isFileModified = file != null && file.bytes != null;
       bool isFileUnchanged = file != null && file.bytes == null;
 
 // Définir les variables à envoyer
@@ -226,7 +228,6 @@ class BanqueService {
         });
 
       if (isFileModified) {
- 
         multipartRequest.fields['map'] = json.encode({
           "0": ["variables.logo"]
         });

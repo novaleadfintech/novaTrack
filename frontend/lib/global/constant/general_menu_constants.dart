@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/app/pages/banques/banque_page.dart';
-import 'package:frontend/app/pages/bulletin_paie/bulletin_page.dart';
-import 'package:frontend/app/pages/config_part/config_page.dart';
-import 'package:frontend/app/pages/creance/creance_page.dart';
-import 'package:frontend/app/pages/utilisation/user_page.dart';
+import '../../app/pages/banques/banque_page.dart';
+import '../../app/pages/bulletin_paie/bulletin_page.dart';
+import '../../app/pages/config_part/config_page.dart';
+import '../../app/pages/creance/creance_page.dart';
+import '../../app/pages/utilisation/user_page.dart';
 import '../../app/pages/client/client_page.dart';
 import '../../app/pages/dashboard/dashboard_page.dart';
+import '../../app/pages/debt/debt_page.dart';
 import '../../app/pages/facturation/facture_page_layout.dart';
 import '../../app/pages/flux_financier/flux_financier_layout.dart';
 import '../../app/pages/payement/payement_page.dart';
@@ -26,6 +27,7 @@ class Menu {
   static String fluxFinancier = "Flux financiers";
   static String config = "Configurations";
   static String creance = "Créances";
+  static String dette = "Dettes";
   static String utilisation = "Utilisateurs";
   static String bulletin = "Bulletin de paie";
   static String comptebancaires = "Canaux de paiement";
@@ -41,10 +43,11 @@ final allMenuItems = [
   (Menu.payement, AssetsIcons.payment, 5),
   (Menu.fluxFinancier, AssetsIcons.flux, 6),
   (Menu.creance, AssetsIcons.claim, 7),
-  (Menu.config, AssetsIcons.fluxLibelle, 8),
-  (Menu.comptebancaires, AssetsIcons.bank, 9),
-  (Menu.bulletin, AssetsIcons.facture, 10),
-  (Menu.utilisation, AssetsIcons.user, 11),
+  (Menu.dette, AssetsIcons.claim, 8),
+  (Menu.config, AssetsIcons.fluxLibelle, 9),
+  (Menu.comptebancaires, AssetsIcons.bank, 10),
+  (Menu.bulletin, AssetsIcons.facture, 11),
+  (Menu.utilisation, AssetsIcons.user, 12),
 ];
 
 // Pages correspondantes
@@ -57,6 +60,7 @@ final allPages = <Widget>[
   const PayementPage(),
   const FluxFinancierLayout(),
   const CreancePage(),
+  const DebtPage(),
   const ConfigPage(),
   const BanquePage(),
   const BulletinLayout(),
@@ -75,6 +79,7 @@ final Map<String, List<String>> menuPermissions = {
   Menu.fluxFinancier: [ModuleAlias.fluxFinancier.label],
   Menu.config: [ModuleAlias.config.label],
   Menu.creance: [ModuleAlias.facturation.label],
+  Menu.dette: [ModuleAlias.fluxFinancier.label],
   Menu.utilisation: [ModuleAlias.utilisateur.label],
   Menu.bulletin: [ModuleAlias.bulletin.label],
   Menu.comptebancaires: [ModuleAlias.banque.label],

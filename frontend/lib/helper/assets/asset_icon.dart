@@ -19,6 +19,7 @@ class AssetsIcons {
   static const String arrowRight = "$_svg/arrow_right_icon.svg";
   static const String refresh = "$_svg/refresh.svg";
   static const String creance = "$_svg/creance_icon.svg";
+  static const String debt= "$_svg/creance_icon.svg";
   static const String fileIcon = "$_svg/file_icon.svg";
   static const String deleteIcon = "$_svg/delete_icon.svg";
   static const String role = "$_svg/role_icon.svg";

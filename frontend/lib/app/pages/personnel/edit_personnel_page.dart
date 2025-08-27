@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/model/request_response.dart';
 import 'package:frontend/service/poste_service.dart';
 import '../../../helper/date_helper.dart';
+import '../../../helper/personne_helper.dart';
 import '../../../helper/telephone_number_helper.dart';
 import '../../../model/personnel/enum_personnel.dart';
 import '../../../model/personnel/personne_prevenir.dart';
@@ -214,6 +215,8 @@ class _EditPersonnelPageState extends State<EditPersonnelPage> {
         situationMatrimoniale == null ||
         telephone.isEmpty ||
         email.isEmpty ||
+        typePersonnel == null ||
+        typeContrat == null ||
         adresse.isEmpty ||
         _dateNaissanceController.text.trim().isEmpty ||
         _dateDebutController.text.trim().isEmpty ||
@@ -225,12 +228,13 @@ class _EditPersonnelPageState extends State<EditPersonnelPage> {
       errorMessage = "Tous les champs marqués doivent être remplis.";
     }
 
-    if (typePersonnel == TypePersonnel.employe && typeContrat == null) {
-      errorMessage = "Tous les champs marqués doivent être remplis.";
-    }
+    // if (typePersonnel == TypePersonnel.employe && typeContrat == null) {
+    //   errorMessage = "Tous les champs marqués doivent être remplis.";
+    // }
 
-    if (typeContrat == TypeContrat.cdd &&
-        _dateFinController.text.trim().isEmpty) {
+    if ((typeContrat == TypeContrat.cdd ||
+            typePersonnel == TypePersonnel.stagiaire) &&
+        dateFin == null) {
       errorMessage = "Tous les champs marqués doivent être remplis.";
     }
 
@@ -425,6 +429,7 @@ class _EditPersonnelPageState extends State<EditPersonnelPage> {
   Future<List<PaysModel>> fetchCountryItems() async {
     return await PaysService.getAllPays();
   }
+
   Future<List<PosteModel>> fetchPosteItems() async {
     return await PosteService.getPostes();
   }
@@ -566,6 +571,7 @@ class _EditPersonnelPageState extends State<EditPersonnelPage> {
               onChanged: (value) {
                 setState(() {
                   typePersonnel = value;
+                  typeContrat = null;
                 });
               },
               selectedItem: typePersonnel,
@@ -573,7 +579,9 @@ class _EditPersonnelPageState extends State<EditPersonnelPage> {
               itemsAsString: (TypePersonnel p0) => p0.label,
             ),
             CustomDropDownField(
-              items: TypeContrat.values,
+              items: typePersonnel == null
+                  ? []
+                  : getContratsFor(type: typePersonnel!),
               onChanged: (value) {
                 setState(() {
                   typeContrat = value;

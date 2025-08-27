@@ -167,7 +167,7 @@ class _PostePageState extends State<PostePage> {
               child: filteredData.isEmpty
                   ? NoDataPage(
                       data: filteredData,
-                      message: "Aucun poste",
+                      message: "Aucun",
                     )
                   : Column(
                       children: [

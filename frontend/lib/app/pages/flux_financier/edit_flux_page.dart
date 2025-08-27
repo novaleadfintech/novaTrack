@@ -12,6 +12,7 @@ import '../../../service/client_service.dart';
 import '../../../service/flux_financier_service.dart';
 import '../../../service/moyen_paiement_service.dart';
 import '../../../widget/date_text_field.dart';
+import '../../../widget/enum_selector_radio.dart';
 import '../../../widget/file_field.dart';
 import 'package:gap/gap.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
@@ -42,6 +43,8 @@ class _EditFluxFiancierPageState extends State<EditFluxFiancierPage> {
   final amountFieldController = TextEditingController();
   final dateOperationController = TextEditingController();
   final referenceTransactionFieldController = TextEditingController();
+  final montantPayeTextFieldController = TextEditingController();
+
   MoyenPaiementModel? moyenPayement;
   DateTime? dateOperation;
   ClientModel? client;
@@ -52,7 +55,7 @@ class _EditFluxFiancierPageState extends State<EditFluxFiancierPage> {
   String? referenceTransaction;
   PlatformFile? file;
   PlatformFile? initialFile;
-
+  BuyingManner? _modePayement;
   BanqueModel? _selectedBank;
   BanqueModel? newbanque;
   ClientModel? newclient;
@@ -308,6 +311,37 @@ class _EditFluxFiancierPageState extends State<EditFluxFiancierPage> {
                 });
               },
             ),
+            if (widget.flux.type == FluxFinancierType.output) ...[
+              Gap(4),
+              EnumRadioSelector<BuyingManner>(
+                title: "Mode de payement",
+                selectedValue: _modePayement,
+                values: BuyingManner.values,
+                getLabel: (value) => value.label,
+                onChanged: (value) {
+                  setState(() {
+                    if (value != null) {
+                      _modePayement = value;
+                      if (_modePayement == BuyingManner.credit) {
+                        montantPayeTextFieldController.text = "0";
+                      } else if (_modePayement == BuyingManner.total) {
+                        montantPayeTextFieldController.text =
+                            amountFieldController.text;
+                      } else {
+                        montantPayeTextFieldController.clear();
+                      }
+                    }
+                  });
+                },
+                isRequired: true,
+              ),
+              SimpleTextField(
+                label: "Montant payé",
+                readOnly: _modePayement != BuyingManner.partiel,
+                textController: montantPayeTextFieldController,
+                keyboardType: TextInputType.number,
+              ),
+            ],
             const Gap(16),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),

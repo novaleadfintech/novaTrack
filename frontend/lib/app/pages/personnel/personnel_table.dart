@@ -198,7 +198,7 @@ class _PersonnelTableState extends State<PersonnelTable> {
                           TableBodyMiddle(
                               valeur: personnel.poste != null
                                   ? personnel.poste!.libelle
-                                  : "Aucun poste"),
+                                  : "Aucun"),
                           TableBodyLast(
                             items: [
                               (
@@ -257,8 +257,8 @@ class _PersonnelTableState extends State<PersonnelTable> {
                               valeur: personnel.poste != null
                                   ? personnel.poste != null
                                       ? personnel.poste!.libelle
-                                      : "Aucun poste"
-                                  : "Aucun poste"),
+                                      : "Aucun"
+                                  : "Aucun"),
                           TableBodyMiddle(
                             valeur:
                                 "+${personnel.pays!.code} ${personnel.telephone}",

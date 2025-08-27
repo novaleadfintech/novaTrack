@@ -167,7 +167,7 @@ class _ClientTableState extends State<ClientTable> {
                             TableBodyFirst(client: client),
                             TableBodyMiddle(
                               valeur:
-                                  "+${client.pays!.code} ${client.telephone.toString()}",
+                                  "+${client.pays!.code} ${client.telephone ?? "_" * client.pays!.phoneNumber!}",
                             ),
                             TableBodyLast(
                               items: [

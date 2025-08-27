@@ -77,7 +77,7 @@ class AppColor {
       isDark(context) ? Color.fromARGB(255, 62, 53, 35) : Colors.amber.shade50;
 
   static Color adaptivePopGrey(BuildContext context) =>
-      isDark(context) ? bpopGrey : popGrey;
+      isDark(context) ? grayprimary : popGrey;
 
   static Color adaptiveModificationColor(BuildContext context) =>
       isDark(context) ? bmodificationColor : modificationColor;
