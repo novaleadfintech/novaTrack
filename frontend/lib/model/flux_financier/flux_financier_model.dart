@@ -88,8 +88,8 @@ class FluxFinancierModel {
               .map((valide) => ValidateFluxModel.fromJson(valide))
               .toList()
           : null,
-      buyingManner: json['buyingManner'] != null
-          ? buyingMannerFromString(json['buyingManner'])
+      buyingManner: json['modePayement'] != null
+          ? buyingMannerFromString(json['modePayement'])
           : null,
       // debtStatus: json['debtStatus'] != null
       //     ? debtStatusFromString(json['debtStatus'])

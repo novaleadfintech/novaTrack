@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/model/flux_financier/type_flux_financier.dart';
-import 'package:frontend/model/habilitation/user_model.dart';
-import 'package:frontend/service/flux_financier_service.dart';
+import '../../../model/flux_financier/type_flux_financier.dart';
+import '../../../model/habilitation/user_model.dart';
+import '../../../service/flux_financier_service.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 import '../../../auth/authentification_token.dart';
 import '../../../global/constant/permission_alias.dart';

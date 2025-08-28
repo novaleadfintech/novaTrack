@@ -14,6 +14,7 @@ class Constant {
   static const String downloadPartialFacture = "Obtenir une facture d'acompte";
   static const String cancel = "Annuler";
   static const String editer = "Editer";
+  static const String payer = "Payer";
   static const String forbide = "Refuser l'accès";
   static const String autorise = "Autoriser l'accès";
   static const String reinitialiser = "Réinitialiser le mot de passe";

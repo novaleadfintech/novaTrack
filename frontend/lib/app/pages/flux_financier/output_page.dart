@@ -117,11 +117,6 @@ class _OutputPageState extends State<OutputPage> {
     });
   }
 
-
-  // Future<void> getRole() async {
-  //   role = await AuthService().getRole();
-  // }
-
   void onClickAddFluxButton() {
     showResponsiveDialog(
       context,

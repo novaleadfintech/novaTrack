@@ -81,7 +81,7 @@ class _EditFluxFiancierPageState extends State<EditFluxFiancierPage> {
         _selectedBank == null ||
         client == null) {
       MutationRequestContextualBehavior.showCustomInformationPopUp(
-        message: "Veuiller renprir tous les champs marqué",
+        message: "Veuiller remplir tous les champs marqué",
       );
       return;
     }

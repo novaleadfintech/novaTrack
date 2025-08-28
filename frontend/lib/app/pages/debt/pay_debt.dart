@@ -2,45 +2,39 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/model/client/client_model.dart';
 import 'package:frontend/model/entreprise/banque.dart';
+import 'package:frontend/model/flux_financier/flux_financier_model.dart';
 import 'package:frontend/model/flux_financier/libelle_flux.dart';
-import 'package:frontend/model/flux_financier/tranche_payement_credit.dart';
 import 'package:frontend/model/moyen_paiement_model.dart';
 import 'package:frontend/service/banque_service.dart';
 import 'package:frontend/service/client_service.dart';
-import 'package:frontend/service/libelle_flux_financier_service.dart';
 import 'package:frontend/service/moyen_paiement_service.dart';
-import '../../../widget/enum_selector_radio.dart';
 import '../../../widget/future_dropdown_field.dart';
 import '../../integration/request_frot_behavior.dart';
 import '../../../auth/authentification_token.dart';
 import '../../../helper/date_helper.dart';
-import '../../../model/flux_financier/type_flux_financier.dart';
 import '../../../model/habilitation/user_model.dart';
-import '../../../service/flux_financier_service.dart';
 import '../../../widget/date_text_field.dart';
-import '../../../widget/file_field.dart';
 import 'package:gap/gap.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
-import '../../../model/request_response.dart';
 import '../../../widget/simple_text_field.dart';
 import '../../../widget/validate_button.dart';
 
 import '../../integration/popop_status.dart';
 
-class AddFluxPage extends StatefulWidget {
+class PayDebt extends StatefulWidget {
+  final FluxFinancierModel flux;
   final Future<void> Function() refresh;
-  final FluxFinancierType type;
-  const AddFluxPage({
+  const PayDebt({
     super.key,
     required this.refresh,
-    required this.type,
+    required this.flux,
   });
 
   @override
-  State<AddFluxPage> createState() => _AddFluxPageState();
+  State<PayDebt> createState() => _PayDebtState();
 }
 
-class _AddFluxPageState extends State<AddFluxPage> {
+class _PayDebtState extends State<PayDebt> {
   final libelleFieldController = TextEditingController();
   final amountFieldController = TextEditingController();
   final referenceTransactionFieldController = TextEditingController();
@@ -51,7 +45,6 @@ class _AddFluxPageState extends State<AddFluxPage> {
   PlatformFile? file;
   late SimpleFontelicoProgressDialog _dialog;
   UserModel? user;
-  BuyingManner? _modePayement;
   LibelleFluxModel? libelleType;
   ClientModel? client;
   BanqueModel? banque;
@@ -76,17 +69,6 @@ class _AddFluxPageState extends State<AddFluxPage> {
       return;
     }
 
-    if (widget.type == FluxFinancierType.output) {
-      if (_modePayement == null ||
-          _modePayement == BuyingManner.partiel &&
-              montantPayeTextFieldController.text.isEmpty) {
-        MutationRequestContextualBehavior.showCustomInformationPopUp(
-          message: "Veuiller remplir tous les champs marqué",
-        );
-        return;
-      }
-    }
-
     _dialog.show(
       message: "",
       type: SimpleFontelicoProgressDialogType.phoenix,
@@ -102,44 +84,44 @@ class _AddFluxPageState extends State<AddFluxPage> {
       );
       return;
     }
-    RequestResponse result = await FluxFinancierService.createFluxFinancier(
-      libelle: "${libelleType!.libelle} : ${libelleFieldController.text}",
-      montant: double.parse(amountFieldController.text),
-      moyenPayement: moyenPayement!,
-      type: widget.type,
-      referenceTransaction: referenceTransactionFieldController.text,
-      dateOperation: dateOperation,
-      client: client!,
-      file: file,
-      banque: banque!,
-      userId: user!.id!,
-      modePayement: _modePayement,
-      montantPaye: double.tryParse(montantPayeTextFieldController.text),
-      tranchePayement: _modePayement != BuyingManner.total
-          ? [
-              TranchePayementModel(
-                datePayement: dateOperation ?? DateTime.now(),
-                montantPaye: double.parse(montantPayeTextFieldController.text),
-              )
-            ]
-          : [],
-    );
-    _dialog.hide();
-    if (result.status == PopupStatus.success) {
-      MutationRequestContextualBehavior.closePopup();
-      MutationRequestContextualBehavior.showPopup(
-        status: PopupStatus.success,
-        customMessage: widget.type == FluxFinancierType.input
-            ? "Entrée enrégistrée avec succès"
-            : "Sortie enrégistrée avec succès",
-      );
-      await widget.refresh();
-    } else {
-      MutationRequestContextualBehavior.showPopup(
-        status: result.status,
-        customMessage: result.message,
-      );
-    }
+    // RequestResponse result = await FluxFinancierService.createFluxFinancier(
+    //   libelle: "${libelleType!.libelle} : ${libelleFieldController.text}",
+    //   montant: double.parse(amountFieldController.text),
+    //   moyenPayement: moyenPayement!,
+    //   type: widget.type,
+    //   referenceTransaction: referenceTransactionFieldController.text,
+    //   dateOperation: dateOperation,
+    //   client: client!,
+    //   file: file,
+    //   banque: banque!,
+    //   userId: user!.id!,
+    //   modePayement: _modePayement,
+    //   montantPaye: double.tryParse(montantPayeTextFieldController.text),
+    //   tranchePayement: _modePayement != BuyingManner.total
+    //       ? [
+    //           TranchePayementModel(
+    //             datePayement: dateOperation ?? DateTime.now(),
+    //             montantPaye: double.parse(montantPayeTextFieldController.text),
+    //           )
+    //         ]
+    //       : [],
+    // );
+    // _dialog.hide();
+    // if (result.status == PopupStatus.success) {
+    //   MutationRequestContextualBehavior.closePopup();
+    //   MutationRequestContextualBehavior.showPopup(
+    //     status: PopupStatus.success,
+    //     customMessage: widget.type == FluxFinancierType.input
+    //         ? "Entrée enrégistrée avec succès"
+    //         : "Sortie enrégistrée avec succès",
+    //   );
+    //   await widget.refresh();
+    // } else {
+    //   MutationRequestContextualBehavior.showPopup(
+    //     status: result.status,
+    //     customMessage: result.message,
+    //   );
+    // }
   }
 
   Future<List<BanqueModel>> fetchBanqueItems() async {
@@ -148,11 +130,6 @@ class _AddFluxPageState extends State<AddFluxPage> {
         : (await BanqueService.getAllBanques())
             .where((b) => b.type == moyenPayement!.type)
             .toList();
-  }
-
-  Future<List<LibelleFluxModel>> fetchLibelleItems() async {
-    return await LibelleFluxFinancierService.getLibelleFluxFinanciers(
-        type: widget.type);
   }
 
   Future<List<ClientModel>> fetchClientItems() async {
@@ -178,40 +155,9 @@ class _AddFluxPageState extends State<AddFluxPage> {
         //key: UniqueKey(),
         child: Column(
           children: [
-            FutureCustomDropDownField<ClientModel>(
-              fetchItems: widget.type == FluxFinancierType.input
-                  ? fetchClientItems
-                  : fetchFournisseurItems,
-              onChanged: (value) {
-                setState(() {
-                  client = value;
-                });
-              },
-              label: widget.type == FluxFinancierType.input
-                  ? "Client"
-                  : "Fournisseur",
-              selectedItem: client,
-              itemsAsString: (l) => l.toStringify(),
-            ),
-            FutureCustomDropDownField<LibelleFluxModel>(
-              fetchItems: fetchLibelleItems,
-              onChanged: (value) {
-                setState(() {
-                  libelleType = value;
-                });
-              },
-              label: "Type de libellé",
-              selectedItem: libelleType,
-              itemsAsString: (l) => l.libelle,
-            ),
             SimpleTextField(
-              label: "Libellé",
-              textController: libelleFieldController,
-              keyboardType: TextInputType.text,
-            ),
-            SimpleTextField(
-              label: "Montant",
-              textController: amountFieldController,
+              label: "Montant payé",
+              textController: montantPayeTextFieldController,
               keyboardType: TextInputType.number,
             ),
             FutureCustomDropDownField<MoyenPaiementModel>(
@@ -260,51 +206,6 @@ class _AddFluxPageState extends State<AddFluxPage> {
               textController: referenceTransactionFieldController,
               keyboardType: TextInputType.text,
             ),
-            FileField(
-              canTakePhoto: true,
-              label: "Pièce justificative",
-              platformFile: file,
-              removeFile: () => setState(() {
-                file = null;
-              }),
-              pickFile: (p0) {
-                setState(() {
-                  file = p0;
-                });
-              },
-              required: false,
-            ),
-            if (widget.type == FluxFinancierType.output) ...[
-              Gap(4),
-              EnumRadioSelector<BuyingManner>(
-                title: "Mode de payement",
-                selectedValue: _modePayement,
-                values: BuyingManner.values,
-                getLabel: (value) => value.label,
-                onChanged: (value) {
-                  setState(() {
-                    if (value != null) {
-                      _modePayement = value;
-                      if (_modePayement == BuyingManner.credit) {
-                        montantPayeTextFieldController.text = "0";
-                      } else if (_modePayement == BuyingManner.total) {
-                        montantPayeTextFieldController.text =
-                            amountFieldController.text;
-                      } else {
-                        montantPayeTextFieldController.clear();
-                      }
-                    }
-                  });
-                },
-                isRequired: true,
-              ),
-              SimpleTextField(
-                label: "Montant payé",
-                readOnly: _modePayement != BuyingManner.partiel,
-                textController: montantPayeTextFieldController,
-                keyboardType: TextInputType.number,
-              ),
-            ],
             const Gap(16),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),

@@ -9,7 +9,7 @@ class TranchePayementModel {
 
   factory TranchePayementModel.fromJson(Map<String, dynamic> json) {
     return TranchePayementModel(
-       montantPaye: json["montantPaye"],
+      montantPaye: json["montantPaye"].toDouble(),
       datePayement: DateTime.fromMillisecondsSinceEpoch(json['datePayement']),
     );
   }

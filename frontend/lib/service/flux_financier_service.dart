@@ -50,8 +50,8 @@ class FluxFinancierService {
       if (dateOperation != null) {
         body += 'dateOperation: ${dateOperation.millisecondsSinceEpoch},';
       }
-      if (modePayement == null) {
-        body += 'modePayement: ${buyingMannerToString(modePayement!)}';
+      if (modePayement != null) {
+        body += 'modePayement: ${buyingMannerToString(modePayement)},';
         if (modePayement != BuyingManner.total && tranchePayement != null) {
           body += 'tranchePayement: [';
           for (var tranche in tranchePayement) {
@@ -60,8 +60,8 @@ class FluxFinancierService {
           body += '],';
         }
       }
-      if (montantPaye == null) {
-        body += 'montantPaye: $montantPaye';
+      if (montantPaye != null) {
+        body += 'montantPaye: $montantPaye,';
       }
 
       body += 'pieceJustificative: \$pieceJustificative';
@@ -451,10 +451,11 @@ class FluxFinancierService {
     }
     return fluxFinanciers;
   }
+
   static Future<List<FluxFinancierModel>> getDebt() async {
     var body = '''
                query DebtFluxFinanciers {
-                  debtFluxFinanciers() {
+                  debtFluxFinanciers {
                       _id
                       libelle
                       type
@@ -470,6 +471,12 @@ class FluxFinancierService {
                       }
                       pieceJustificative
                       isFromSystem
+                      montantPaye
+                      modePayement
+                      tranchePayement {
+                        montantPaye
+                        datePayement
+                      }
                       client {
                         _id
                         ... on ClientMoral {

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/helper/paginate_data.dart';
+import 'debt_table.dart';
+import '../../../helper/paginate_data.dart';
+import '../../../auth/authentification_token.dart';
 import '../../../model/habilitation/role_model.dart';
-import '../flux_financier/flux_table.dart';
 import '../no_data_page.dart';
 import '../../../global/global_value.dart';
 import '../../../model/flux_financier/flux_financier_model.dart';
@@ -18,15 +19,14 @@ class DebtPage extends StatefulWidget {
   });
 
   @override
-  State<DebtPage> createState() => _OutputPageState();
+  State<DebtPage> createState() => _DebtPageState();
 }
 
-class _OutputPageState extends State<DebtPage> {
+class _DebtPageState extends State<DebtPage> {
   final TextEditingController _researchController = TextEditingController();
   int currentPage = GlobalValue.currentPage;
   List<FluxFinancierModel> fluxFinancierData = [];
   String? errorMessage;
-
   bool isLoading = true;
   bool hasError = false;
   String searchQuery = "";
@@ -42,7 +42,7 @@ class _OutputPageState extends State<DebtPage> {
   @override
   void initState() {
     super.initState();
-    // role = widget.role; // getRole();
+    getRole();
     _researchController.addListener(_onSearchChanged);
     _loadFluxFinancierData();
   }
@@ -59,6 +59,24 @@ class _OutputPageState extends State<DebtPage> {
     });
     try {
       fluxFinancierData = await FluxFinancierService.getDebt();
+    } catch (error) {
+      setState(() {
+        errorMessage = error.toString();
+        hasError = true;
+      });
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> getRole() async {
+    try {
+      setState(() {
+        isLoading = true;
+      });
+      role = await AuthService().getRole();
     } catch (error) {
       setState(() {
         errorMessage = error.toString();
@@ -186,14 +204,14 @@ class _OutputPageState extends State<DebtPage> {
               child: filteredData.isEmpty
                   ? NoDataPage(
                       data: filteredData,
-                      message: "Aucune sortie financière",
+                      message: "Aucune dette financière trouvée.",
                     )
                   : Column(
                       children: [
                         Expanded(
                           child: Container(
                             color: Theme.of(context).colorScheme.surface,
-                            child: FinanceTable(
+                            child: DebtTable(
                               role: role,
                               fluxFinanciers: getPaginatedData(
                                 data: filteredData,

@@ -192,6 +192,34 @@ class DetailFluxPage extends StatelessWidget {
                 ],
               ),
             ],
+            if (flux.buyingManner != null) ...[
+              TableRow(
+                decoration: tableDecoration(context),
+                children: [
+                  const TabledetailBodyMiddle(
+                    valeur: "Mode de payement",
+                    isbold: true,
+                  ),
+                  TabledetailBodyMiddle(
+                    valeur: flux.buyingManner!.label,
+                  ),
+                ],
+              ),
+            ],
+            if (flux.montantPaye != null) ...[
+              TableRow(
+                decoration: tableDecoration(context),
+                children: [
+                  const TabledetailBodyMiddle(
+                    valeur: "Montant payé",
+                    isbold: true,
+                  ),
+                  TabledetailBodyMiddle(
+                    valeur: Formatter.formatAmount(flux.montantPaye!),
+                  ),
+                ],
+              ),
+            ],
             if (flux.pieceJustificative != null) ...[
               TableRow(
                 decoration: tableDecoration(context),
@@ -248,6 +276,130 @@ class DetailFluxPage extends StatelessWidget {
             ),
           ],
         ),
+
+        if (flux.tranchePayement != null &&
+            flux.tranchePayement!.isNotEmpty) ...[
+          AppAccordion(
+            header: Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    child: const Text(
+                      "Tranches de payement",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        // color: Colors.black,
+                      ),
+                    ),
+                  ),
+                ),
+                CircleAvatar(
+                  radius: 12,
+                  child: Text(
+                    flux.tranchePayement!.length.toString(),
+                  ),
+                )
+              ],
+            ),
+            content: Column(
+              children: flux.tranchePayement!.asMap().entries.map((entry) {
+                int index = entry.key;
+                var tranche = entry.value;
+                return Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: AppColor.popGrey,
+                    ),
+                  ),
+                  child: Column(children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            color: AppColor.popGrey,
+                            child: Text(
+                              "tranche ${index + 1}",
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Table(
+                      children: [
+                        TableRow(
+                          decoration: tableDecoration(context),
+                          children: [
+                            TabledetailBodyMiddle(
+                              valeur: "Montant payé",
+                              isbold: true,
+                            ),
+                            TabledetailBodyMiddle(
+                              valeur:
+                                  Formatter.formatAmount(tranche!.montantPaye),
+                            ),
+                          ],
+                        ),
+                        TableRow(
+                          decoration: tableDecoration(context),
+                          children: [
+                            TabledetailBodyMiddle(
+                              valeur: "Date de payement",
+                              isbold: true,
+                            ),
+                            TabledetailBodyMiddle(
+                              valeur: getStringDate(time: tranche.datePayement),
+                            ),
+                          ],
+                        ),
+                        // TableRow(
+                        //   decoration: tableDecoration(context),
+                        //   children: [
+                        //     TabledetailBodyMiddle(
+                        //       valeur: "Date",
+                        //       isbold: true,
+                        //     ),
+                        //     TabledetailBodyMiddle(
+                        //       valeur: getStringDate(time: validate.date),
+                        //     ),
+                        //   ],
+                        // ),
+                      ],
+                    ),
+                    // Table(
+                    //   children: [
+                    //     TableRow(
+                    //       decoration: tableDecoration(context),
+                    //       children: [
+                    //         TabledetailBodyMiddle(
+                    //           valeur: "Commentaire",
+                    //           isbold: true,
+                    //         ),
+                    //         TabledetailBodyMiddle(
+                    //           valeur: validate.commentaire,
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   ],
+                    // ),
+                    if (flux.isFromSystem!)
+                      ShowNotificationInformation(
+                        message: "Ecrit par le système",
+                      )
+                  ]),
+                );
+              }).toList(),
+            ),
+          ),
+        ],
+      
         if (flux.validated != null && flux.validated!.isNotEmpty) ...[
           AppAccordion(
             header: Row(

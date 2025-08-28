@@ -68,7 +68,7 @@ const typeDef = `#graphql
         pieceJustificative: String
         modePayement: BuyingManner
         montantPaye: Float
-        TranchePayement: [TranchePayement]
+        tranchePayement: [TranchePayement]
         user: User #userId
         client: Client
         bank:Banque! 
