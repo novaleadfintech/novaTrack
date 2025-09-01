@@ -78,7 +78,7 @@ class _AddFluxPageState extends State<AddPayement> {
       if (moyenPayement == null ||
           referenceTransactionFieldController.text.isEmpty ||
           _selectedBank == null) {
-      errorMessage = "Veuillez remplir tous les champs marqués.";
+        errorMessage = "Veuillez remplir tous les champs marqués.";
     }
     if (amounttopay < double.parse(_amountController.text)) {
       errorMessage =

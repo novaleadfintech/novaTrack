@@ -10,7 +10,7 @@ class AppTabBar extends StatefulWidget {
     required this.tabTitles,
     required this.views,
   }) : assert(tabTitles.length == views.length,
-            'The number of tab titles must match the number of views.');
+            'The number of tab titles must match the number of views.',);
 
   @override
   State<AppTabBar> createState() => _AppTabBarState();

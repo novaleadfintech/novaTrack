@@ -71,7 +71,7 @@ class _AddFluxPageState extends State<AddFluxPage> {
         client == null ||
         libelleType == null) {
       MutationRequestContextualBehavior.showCustomInformationPopUp(
-        message: "Veuiller remplir tous les champs marqué",
+        message: "Veuiller remplir tous les champs marqués",
       );
       return;
     }
@@ -81,7 +81,7 @@ class _AddFluxPageState extends State<AddFluxPage> {
           _modePayement == BuyingManner.partiel &&
               montantPayeTextFieldController.text.isEmpty) {
         MutationRequestContextualBehavior.showCustomInformationPopUp(
-          message: "Veuiller remplir tous les champs marqué",
+          message: "Veuiller remplir tous les champs marqués",
         );
         return;
       }

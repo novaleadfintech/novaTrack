@@ -33,6 +33,7 @@ import moyenPaiementSchema from "./moyen_paiement_schema.js";
 import rubriqueCategorieSchema from "./rubrique_categorie_schema.js";
 import clientFactureGlobalValueSchema from "./client_facture_global_value_schema.js";
 import posteSchema from "./poste_schema.js";
+import debtSchema from "./debt_schema.js";  
 
 const types = [];
 const queries = [];
@@ -73,6 +74,7 @@ const schemas = [
   rubriqueCategorieSchema,
   clientFactureGlobalValueSchema,
   posteSchema,
+  debtSchema,
 ];
 
 schemas.forEach((schema) => {

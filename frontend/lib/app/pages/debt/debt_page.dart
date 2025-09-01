@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import '../../../global/constant/permission_alias.dart';
+import '../../../helper/user_helper.dart';
+import '../../../widget/add_element_button.dart';
+import '../app_dialog_box.dart';
+import 'add_debt.dart';
 import 'debt_table.dart';
 import '../../../helper/paginate_data.dart';
 import '../../../auth/authentification_token.dart';
@@ -31,7 +36,7 @@ class _DebtPageState extends State<DebtPage> {
   bool hasError = false;
   String searchQuery = "";
   String? selectedFilter;
-  late RoleModel role;
+  RoleModel? role;
 
   List<String> selectedFilterOptions = [
     "Tout",
@@ -87,6 +92,17 @@ class _DebtPageState extends State<DebtPage> {
         isLoading = false;
       });
     }
+  }
+
+  void onClickAddFluxButton() {
+    showResponsiveDialog(
+      context,
+      title: "Nouvelle dette",
+      content: AddDebtPage(
+        refresh: _loadFluxFinancierData,
+        type: FluxFinancierType.output,
+      ),
+    );
   }
 
   void onSelected(String value) {
@@ -169,17 +185,21 @@ class _DebtPageState extends State<DebtPage> {
                 hintText: "Rechercher par libellé",
                 controller: _researchController,
               ),
-              // FilterBar(
-              //   label: selectedFilter == null
-              //       ? "Filtrer par statut"
-              //       : selectedFilter!,
-              //   items: selectedFilterOptions,
-              //   onSelected: onSelected,
-              // ),
+              if (hasPermission(
+                  role: role!,
+                  permission: PermissionAlias.createFluxFinancier.label))
+                Container(
+                  alignment: Alignment.centerRight,
+                  child: AddElementButton(
+                    addElement: onClickAddFluxButton,
+                    icon: Icons.add_outlined,
+                    label: "Ajouter une dette",
+                  ),
+                ),
             ],
           ),
           const Gap(4),
-          if (isLoading)
+          if (isLoading || role == null)
             const Expanded(
               child: Center(
                 child: CircularProgressIndicator(),
@@ -191,10 +211,7 @@ class _DebtPageState extends State<DebtPage> {
                 message:
                     errorMessage ?? "Erreur lors du chargement des données.",
                 onPressed: () async {
-                  setState(() {
-                    isLoading = true;
-                    hasError = false;
-                  });
+
                   await _loadFluxFinancierData();
                 },
               ),
@@ -212,7 +229,7 @@ class _DebtPageState extends State<DebtPage> {
                           child: Container(
                             color: Theme.of(context).colorScheme.surface,
                             child: DebtTable(
-                              role: role,
+                              role: role!,
                               fluxFinanciers: getPaginatedData(
                                 data: filteredData,
                                 currentPage: currentPage,

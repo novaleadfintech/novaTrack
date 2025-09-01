@@ -25,6 +25,7 @@ import salaireResolvers from "./salaire.js";
 import rubriqueCategorieRubrique from "./rubrique_categorie.js";
 import clientFactureGlobalValueResolvers from "./client_facture_global_value.js";
 import posteResolvers from "./poste.js";
+import debtResolvers from "./debt.js";
 
 const graphQlResolvers = {
   ...serviceResolvers,
@@ -55,6 +56,7 @@ const graphQlResolvers = {
   ...rubriqueCategorieRubrique,
   ...clientFactureGlobalValueResolvers,
   ...posteResolvers,
+  ...debtResolvers,
 };
 
 export default graphQlResolvers;

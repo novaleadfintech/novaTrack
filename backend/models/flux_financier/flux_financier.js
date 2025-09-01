@@ -110,7 +110,7 @@ class FluxFinancier {
       if (perPage !== undefined && skip !== undefined) {
         limit = aql`LIMIT ${skip}, ${perPage}`;
       }
-      
+
       filtre = aql`FILTER fluxFinancier.type == ${FluxFinancierType.output} AND fluxFinancier.status==${FluxFinancierStatus.valid}
         AND fluxFinancier.type == ${FluxFinancierType.output} AND (fluxFinancier.montant - fluxFinancier.montantPaye)>0`;
       const query = await db.query(
@@ -549,9 +549,6 @@ class FluxFinancier {
     referenceTransaction,
     userId,
     clientId,
-    tranchePayement,
-    modePayement,
-    montantPaye,
     factureId,
     decouvertId,
     isFromSystem = false,
@@ -640,9 +637,6 @@ class FluxFinancier {
         factureId: factureId,
         bank: otherdata,
         isFromSystem: isFromSystem,
-        montantPaye: montantPaye,
-        tranchePayement: tranchePayement,
-        modePayement: modePayement,
         decouvertId: decouvertId,
         dateOperation: dateOperation,
         bulletinId: bulletinId,

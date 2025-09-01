@@ -164,11 +164,7 @@ class _DebtTableState extends State<DebtTable> {
                             TableBodyMiddle(
                               valeur: fluxFinancier.libelle!,
                             ),
-                            TableBodyMiddle(
-                              valeur: Formatter.formatAmount(
-                                  fluxFinancier.montant -
-                                      (fluxFinancier.montantPaye ?? 0.0)),
-                            ),
+                            
                             TableBodyMiddle(
                               valeur: fluxFinancier.moyenPayement!.libelle,
                             ),

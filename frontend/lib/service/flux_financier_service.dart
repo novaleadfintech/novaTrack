@@ -50,20 +50,6 @@ class FluxFinancierService {
       if (dateOperation != null) {
         body += 'dateOperation: ${dateOperation.millisecondsSinceEpoch},';
       }
-      if (modePayement != null) {
-        body += 'modePayement: ${buyingMannerToString(modePayement)},';
-        if (modePayement != BuyingManner.total && tranchePayement != null) {
-          body += 'tranchePayement: [';
-          for (var tranche in tranchePayement) {
-            body += '${tranche?.toJson()}';
-          }
-          body += '],';
-        }
-      }
-      if (montantPaye != null) {
-        body += 'montantPaye: $montantPaye,';
-      }
-
       body += 'pieceJustificative: \$pieceJustificative';
       body += '''
             )
@@ -464,31 +450,25 @@ class FluxFinancierService {
                       referenceTransaction
                       status
                       factureId
-                      moyenPayement{
-                      _id
-                      libelle
-                      type
+                      moyenPayement {
+                          _id
+                          libelle
+                          type
                       }
                       pieceJustificative
                       isFromSystem
-                      montantPaye
-                      modePayement
-                      tranchePayement {
-                        montantPaye
-                        datePayement
-                      }
                       client {
-                        _id
-                        ... on ClientMoral {
-                            _id
-                            raisonSociale
-                        }
-                        ... on ClientPhysique {
-                            _id
-                            nom
-                            prenom
-                        }
-                    }
+                          _id
+                          ... on ClientMoral {
+                              _id
+                              raisonSociale
+                          }
+                          ... on ClientPhysique {
+                              _id
+                              nom
+                              prenom
+                          }
+                      }
                       validate {
                           validateStatus
                           date
@@ -502,7 +482,6 @@ class FluxFinancierService {
                           }
                           commentaire
                       }
-                      
                       user {
                           _id
                           personnel {
@@ -515,21 +494,21 @@ class FluxFinancierService {
                       }
                       dateOperation
                       bank {
-            _id
-            name
-            type
-            codeGuichet
-                        codeBIC
-            numCompte
-            codeBanque
-            cleRIB
-            soldeReel
-            soldeTheorique
-        }
+                          _id
+                          name
+                          type
+                          codeGuichet
+                          codeBIC
+                          numCompte
+                          codeBanque
+                          cleRIB
+                          soldeReel
+                          soldeTheorique
+                      }
                       dateEnregistrement
                   }
               }
-            ''';
+      ''';
     var response = await http
         .post(
       Uri.parse(serverUrl),

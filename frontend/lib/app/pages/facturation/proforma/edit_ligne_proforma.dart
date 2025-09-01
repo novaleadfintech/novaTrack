@@ -128,7 +128,7 @@ class _UpdateLigneProformaState extends State<UpdateLigneProforma> {
     if (designation.isEmpty ||
         quantiteString.isEmpty ||
         _unitController.text.trim().isEmpty) {
-      errorMessage = "Tous les champs marqués doivent être remplis.";
+        errorMessage = "Tous les champs marqués doivent être remplis.";
     }
     if (int.parse(quantiteString) == 0) {
       errorMessage = "la quantité doit etre supperieur à 0";

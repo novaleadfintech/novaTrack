@@ -66,9 +66,6 @@ const typeDef = `#graphql
         isFromSystem: Boolean,
         dateEnregistrement:Float!
         pieceJustificative: String
-        modePayement: BuyingManner
-        montantPaye: Float
-        tranchePayement: [TranchePayement]
         user: User #userId
         client: Client
         bank:Banque! 
@@ -100,9 +97,6 @@ const mutation = `#graphql
         referenceTransaction: String!
         dateOperation:Float
         factureId:String,
-        modePayement: BuyingManner,
-        tranchePayement: [TranchePayementInput],
-        montantPaye: Float,
         bankId: String!
         clientId: String!
     ):String!

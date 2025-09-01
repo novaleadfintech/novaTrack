@@ -4,7 +4,6 @@ import 'package:frontend/model/entreprise/banque.dart';
 import 'package:frontend/model/moyen_paiement_model.dart';
 import '../habilitation/user_model.dart';
 import './type_flux_financier.dart';
-import 'tranche_payement_credit.dart';
 import 'validate_flux_model.dart';
 
 class FluxFinancierModel {
@@ -25,10 +24,6 @@ class FluxFinancierModel {
   final UserModel? user;
   final String? factureId;
   final BanqueModel? bank;
-  final BuyingManner? buyingManner;
-  // final DebtStatus? debtStatus;
-  final double? montantPaye;
-  final List<TranchePayementModel?>? tranchePayement;
 
   FluxFinancierModel({
     required this.id,
@@ -48,10 +43,6 @@ class FluxFinancierModel {
     this.factureId,
     required this.validated,
     required this.status,
-    this.buyingManner,
-    // this.debtStatus,
-    this.montantPaye,
-    this.tranchePayement,
   });
 
   factory FluxFinancierModel.fromJson(Map<String, dynamic> json) {
@@ -87,19 +78,7 @@ class FluxFinancierModel {
           ? (json['validate'] as List<dynamic>)
               .map((valide) => ValidateFluxModel.fromJson(valide))
               .toList()
-          : null,
-      buyingManner: json['modePayement'] != null
-          ? buyingMannerFromString(json['modePayement'])
-          : null,
-      // debtStatus: json['debtStatus'] != null
-      //     ? debtStatusFromString(json['debtStatus'])
-      //     : null,
-      montantPaye: (json['montantPaye'] as num?)?.toDouble() ?? 0.0,
-      tranchePayement: json['tranchePayement'] != null
-          ? (json['tranchePayement'] as List<dynamic>)
-              .map((tranche) => TranchePayementModel.fromJson(tranche))
-              .toList()
-          : [],
+          : null,    
     );
   }
 
@@ -122,11 +101,6 @@ class FluxFinancierModel {
       'validated': validated?.map((valide) => valide.toJson()).toList(),  
       'status': status != null ? fluxFinancierStatusToString(status!) : null,
       'isFromSystem': isFromSystem,
-      'buyingManner':
-          buyingManner != null ? buyingMannerToString(buyingManner!) : null,
-      // 'debtStatus': debtStatus != null ? debtStatusToString(debtStatus!) : null
-      'montantPaye': montantPaye,
-      'tranchePayement': tranchePayement?.map((tranche) => tranche?.toJson()).toList(),
     };
   }
 

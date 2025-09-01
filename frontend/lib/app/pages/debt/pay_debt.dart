@@ -64,7 +64,7 @@ class _PayDebtState extends State<PayDebt> {
         client == null ||
         libelleType == null) {
       MutationRequestContextualBehavior.showCustomInformationPopUp(
-        message: "Veuiller remplir tous les champs marqué",
+        message: "Veuiller remplir tous les champs marqués",
       );
       return;
     }
