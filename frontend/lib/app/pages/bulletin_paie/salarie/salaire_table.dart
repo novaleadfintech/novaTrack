@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:frontend/app/integration/request_frot_behavior.dart';
 import 'package:frontend/helper/date_helper.dart';
 import 'package:frontend/helper/get_bulletin_period.dart';
+import 'package:frontend/model/bulletin_paie/bulletin_model.dart';
 import 'package:frontend/model/personnel/personnel_model.dart';
 import '../../../../auth/authentification_token.dart';
 import '../../../../global/constant/constant.dart';
@@ -13,6 +14,7 @@ import '../../../../model/bulletin_paie/salarie_model.dart';
 import '../../../../model/habilitation/role_model.dart';
 import '../../../../model/habilitation/user_model.dart';
 import '../../../../model/personnel/enum_personnel.dart';
+import '../../../../service/bulletin_service.dart';
 import '../../../../style/app_style.dart';
 import '../../../../widget/table_body_last.dart';
 import '../../../../widget/table_body_middle.dart';
@@ -42,7 +44,6 @@ class _SalarieTableState extends State<SalarieTable> {
   late Future<void> _futureRoles;
   late RoleModel role;
   UserModel? currentUser;
-
   onEdit({required SalarieModel salarie}) {
     showResponsiveDialog(
       context,
@@ -67,14 +68,19 @@ class _SalarieTableState extends State<SalarieTable> {
 
   @override
   void initState() {
-    _futureRoles = getRole();
+    
+    _futureRoles = getInitialDatas();
     super.initState();
   }
 
-  Future<void> getRole() async {
+
+
+
+  Future<void> getInitialDatas() async {
     role = await AuthService().getRole();
     setState(() {});
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -148,20 +154,19 @@ class _SalarieTableState extends State<SalarieTable> {
                                         permission: PermissionAlias
                                             .createBulletin.label,
                                       ))
-                                  (
-                                    label: Constant.editerBulletin,
-                                    onTap: () =>
-                                        onEditBulletin(salarie: salarie),
-                                    color: null,
-                                  ),
+                                    (
+                                      label: Constant.editerBulletin,
+                                      onTap: () =>
+                                          onEditBulletin(salarie: salarie),
+                                      color: null,
+                                    ),
 
-                                  if (personnel.etat != EtatPersonnel.archived
-                                           &&
+                                  if (personnel.etat !=
+                                          EtatPersonnel.archived &&
                                       hasPermission(
                                           role: role,
                                           permission: PermissionAlias
-                                              .updateSalarie.label) 
-                                      ) ...[
+                                              .updateSalarie.label)) ...[
                                     (
                                       label: Constant.edit,
                                       onTap: () => onEdit(salarie: salarie),
@@ -225,38 +230,38 @@ class _SalarieTableState extends State<SalarieTable> {
                                         permission: PermissionAlias
                                             .createBulletin.label,
                                       ))
-                                  FilledButton(
-                                      onPressed: () {
-                                        onEditBulletin(salarie: salarie);
-                                      },
-                                      style: const ButtonStyle(
-                                        padding: WidgetStatePropertyAll(
-                                            EdgeInsets.zero),
-                                        shape: WidgetStatePropertyAll(
-                                          RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(
-                                              Radius.circular(4),
+                                    FilledButton(
+                                        onPressed: () {
+                                          onEditBulletin(salarie: salarie);
+                                        },
+                                        style: const ButtonStyle(
+                                          padding: WidgetStatePropertyAll(
+                                              EdgeInsets.zero),
+                                          shape: WidgetStatePropertyAll(
+                                            RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                Radius.circular(4),
+                                              ),
+                                            ),
+                                          ),
+                                          textStyle: WidgetStatePropertyAll(
+                                            TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.white,
+                                              fontSize: 16,
                                             ),
                                           ),
                                         ),
-                                        textStyle: WidgetStatePropertyAll(
-                                          TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.white,
-                                            fontSize: 16,
+                                        child: SvgPicture.asset(
+                                          AssetsIcons.validInvoice,
+                                          height: 20,
+                                          colorFilter: ColorFilter.mode(
+                                            Theme.of(context)
+                                                .colorScheme
+                                                .onPrimary,
+                                            BlendMode.srcIn,
                                           ),
-                                        ),
-                                      ),
-                                      child: SvgPicture.asset(
-                                        AssetsIcons.validInvoice,
-                                        height: 20,
-                                        colorFilter: ColorFilter.mode(
-                                          Theme.of(context)
-                                              .colorScheme
-                                              .onPrimary,
-                                          BlendMode.srcIn,
-                                        ),
-                                      )),
+                                        )),
                                   TableBodyLast(
                                     items: [
                                       (
@@ -309,22 +314,23 @@ class _SalarieTableState extends State<SalarieTable> {
     );
   }
 
-  void onEditBulletin({required SalarieModel salarie}) {
+  void onEditBulletin({required SalarieModel salarie}) async {
     try {
       final todayMidnight = DateTime(
           DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
-      if (todayMidnight.isBefore(salarie.personnel.dateDebut!.add(Duration(
-              milliseconds: ((salarie.personnel.dureeEssai ?? 0) *
-                  (unitMultipliers['mois'] ?? 0))))) ||
-          todayMidnight.isAfter(salarie.personnel.dateFin!)) {
-        MutationRequestContextualBehavior.showCustomInformationPopUp(
-          message:
-              "Vous ne pouvez pas éditer un bulletin en dehors de la période du contrat",
+      //TODO: je sois revenir voir ce qui dois etre fait en vrai
+      {
+        BulletinPaieModel? previousBulletin =
+            await BulletinService.getPreviousBulletins(
+          salarieId: salarie.id,
         );
-      } else {
-        List<DateTime>? periode = getCurrentBulletinPeriod(salarie: salarie);
-        
+
+        List<DateTime>? periode = getCurrentBulletinPeriod(
+            salarie: salarie,
+            debutOldPeriodePaie: previousBulletin?.debutPeriodePaie,
+            finOldPeriodePaie: previousBulletin?.finPeriodePaie);
+
         final String titre = periode == null
             ? "Edition du bulletin de paie - ${salarie.personnel.toStringify()}"
             : "Edition du bulletin de paie - ${salarie.personnel.toStringify()} - du ${getStringDate(time: periode.first)} au ${getStringDate(time: periode.last)}";
@@ -341,15 +347,19 @@ class _SalarieTableState extends State<SalarieTable> {
                 finPeriodePaie: periode.last,
               );
 
-        showResponsiveDialog(
-          context,
-          title: titre,
-          content: contenu,
-        );
+        showAddBulletinPage(titre: titre, contenu: contenu);
       }
     } catch (e) {
       MutationRequestContextualBehavior.showCustomInformationPopUp(
           message: e.toString());
     }
+  }
+
+  showAddBulletinPage({required String titre, required Widget contenu}) {
+    showResponsiveDialog(
+      context,
+      title: titre,
+      content: contenu,
+    );
   }
 }

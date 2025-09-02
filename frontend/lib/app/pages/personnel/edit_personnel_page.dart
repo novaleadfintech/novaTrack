@@ -114,7 +114,8 @@ class _EditPersonnelPageState extends State<EditPersonnelPage> {
     _selectedPoste = widget.personnel.poste;
     _dureeEssaiController = TextEditingController(
         text: (widget.personnel.dureeEssai != null
-                ? (widget.personnel.dureeEssai!)
+                ? convertDuration(durationMs: widget.personnel.dureeEssai!)
+                    .compteur
                 : '')
             .toString());
     sexe = widget.personnel.sexe;
@@ -400,7 +401,7 @@ class _EditPersonnelPageState extends State<EditPersonnelPage> {
       telephone: newtelephone,
       dateNaissance: newDateNaissance,
       dateDebut: newDateDebut,
-      dateFin: newDateFin,
+      dateFin: dateFin,
       dureeEssai: dureeEssai,
       nombreEnfant: newNombreEnfant,
       nombrePersonneCharge: newNombrePersonneCharge,
@@ -586,7 +587,7 @@ class _EditPersonnelPageState extends State<EditPersonnelPage> {
                 setState(() {
                   typeContrat = value;
                   if (typeContrat == TypeContrat.cdi) {
-                    dateFin == null;
+                    dateFin = null;
                     _dateFinController.clear();
                   }
                 });

@@ -26,8 +26,10 @@ const bulletinPaieResolvers = {
     });
   },
 
-  previousBulletinsPaie: async () => {
-    return await bulletinPaieModel.getPreviousBulletin({salarieId: salarieId});
+  previousBulletinsPaie: async ({ salarieId }) => {
+    return await bulletinPaieModel.getPreviousBulletin({
+      salarieId: salarieId,
+    });
   },
 
   bulletinPaie: async ({ key }) => {

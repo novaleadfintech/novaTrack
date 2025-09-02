@@ -363,7 +363,7 @@ class _AddPersonnelPageState extends State<AddPersonnelPage> {
                 setState(() {
                   typeContrat = value;
                   if (typeContrat == TypeContrat.cdi) {
-                    dateFin == null;
+                    dateFin = null;
                     _dateFinController.clear();
                   }
                 });

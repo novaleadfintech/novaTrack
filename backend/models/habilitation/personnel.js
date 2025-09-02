@@ -207,9 +207,8 @@ class Personnel {
     if (dateDebut !== undefined) {
       updateField.dateDebut = dateDebut;
     }
-    if (dateFin !== undefined) {
-      updateField.dateFin = dateFin;
-    }
+
+    
     if (typePersonnel !== undefined) {
       updateField.typePersonnel = typePersonnel;
     }
@@ -256,6 +255,7 @@ class Personnel {
     if (dureeEssai !== undefined) {
       updateField.dureeEssai = dureeEssai;
     }
+    updateField.dateFin = dateFin;
     if (commentaire !== undefined) {
       try {
         isValidValue({ value: commentaire });

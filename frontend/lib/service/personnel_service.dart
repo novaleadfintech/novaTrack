@@ -399,9 +399,9 @@ mutation UpdatePersonnel {
     if (commentaire != null) {
       body += 'commentaire: "$commentaire",';
     }
-    if (dateFin != null) {
-      body += 'dateFin: ${dateFin.millisecondsSinceEpoch},';
-    }
+    
+    body += 'dateFin: ${dateFin?.millisecondsSinceEpoch},';
+   
     if (typeContrat != null) {
       body += 'typeContrat: ${typeContratlToString(typeContrat)},';
     }

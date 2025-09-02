@@ -295,7 +295,11 @@ class MoreDatailPersonnelPage extends StatelessWidget {
                 isbold: true,
               ),
               TabledetailBodyMiddle(
-                valeur: "${personnel.dureeEssai!} mois"
+                  valeur: "${convertDuration(
+                durationMs: personnel.dureeEssai!,
+              ).compteur} ${convertDuration(
+                durationMs: personnel.dureeEssai!,
+              ).unite}"
               ),
             ],
           ),

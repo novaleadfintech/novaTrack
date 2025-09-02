@@ -44,12 +44,20 @@ class _DebtPageState extends State<DebtPage> {
     FluxFinancierStatus.reject.label,
     // FluxFinancierStatus.valid.label,
   ];
+
   @override
   void initState() {
     super.initState();
     getRole();
     _researchController.addListener(_onSearchChanged);
     _loadFluxFinancierData();
+  }
+
+  @override
+  void dispose() {
+    _researchController.removeListener(_onSearchChanged);
+    _researchController.dispose();
+    super.dispose();
   }
 
   void _onSearchChanged() {
@@ -61,6 +69,8 @@ class _DebtPageState extends State<DebtPage> {
   Future<void> _loadFluxFinancierData() async {
     setState(() {
       isLoading = true;
+      hasError = false;
+      errorMessage = null;
     });
     try {
       fluxFinancierData = await FluxFinancierService.getDebt();
@@ -78,17 +88,11 @@ class _DebtPageState extends State<DebtPage> {
 
   Future<void> getRole() async {
     try {
-      setState(() {
-        isLoading = true;
-      });
       role = await AuthService().getRole();
     } catch (error) {
       setState(() {
         errorMessage = error.toString();
         hasError = true;
-      });
-    } finally {
-      setState(() {
         isLoading = false;
       });
     }
@@ -105,36 +109,20 @@ class _DebtPageState extends State<DebtPage> {
     );
   }
 
-  void onSelected(String value) {
-    setState(() {
-      if (value == "Tout") {
-        selectedFilter = null;
-      } else {
-        selectedFilter =
-            selectedFilterOptions.firstWhere((element) => element == value);
-      }
-    });
-  }
-
   List<FluxFinancierModel> filteredOutputData() {
     return fluxFinancierData.where((flux) {
       // Vérification de la recherche
-      bool matchesSearch = flux.libelle!
-          .toLowerCase()
-          .contains(searchQuery.toLowerCase().trim());
+      bool matchesSearch = flux.libelle != null &&
+          flux.libelle!
+              .toLowerCase()
+              .contains(searchQuery.toLowerCase().trim());
 
       // Vérification du filtre sélectionné
-      bool matchesFilter =
-          selectedFilter == null || flux.status!.label == selectedFilter;
+      bool matchesFilter = selectedFilter == null ||
+          (flux.status != null && flux.status!.label == selectedFilter);
 
       return matchesSearch && matchesFilter;
     }).toList();
-  }
-
-  void onSelectedFilter(String value) {
-    setState(() {
-      selectedFilter = value == "Tout" ? null : value;
-    });
   }
 
   void updateCurrentPage(int page) {
@@ -143,40 +131,30 @@ class _DebtPageState extends State<DebtPage> {
     });
   }
 
-  // Future<void> getRole() async {
-  //   role = await AuthService().getRole();
-  // }
-
-  // void onClickAddFluxButton() {
-  //   showResponsiveDialog(
-  //     context,
-  //     title: "Nouvelle sortie financière",
-  //     content: AddFluxPage(
-  //       refresh: _loadFluxFinancierData,
-  //       type: FluxFinancierType.output,
-  //     ),
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
+    if (hasError) {
+      return ErrorPage(
+        message: errorMessage ?? "Erreur lors du chargement des données.",
+        onPressed: () async {
+          await _loadFluxFinancierData();
+        },
+      );
+    }
+
     List<FluxFinancierModel> filteredData = filteredOutputData();
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8).copyWith(top: 4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // if (hasPermission(
-          //     role: role,
-          //     permission: PermissionAlias.createFluxFinancier.label))
-          //   Container(
-          //     alignment: Alignment.centerRight,
-          //     child: AddElementButton(
-          //       addElement: onClickAddFluxButton,
-          //       icon: Icons.add_outlined,
-          //       label: "Ajouter une sortie",
-          //     ),
-          //   ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -199,54 +177,36 @@ class _DebtPageState extends State<DebtPage> {
             ],
           ),
           const Gap(4),
-          if (isLoading || role == null)
-            const Expanded(
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
-            )
-          else if (hasError)
-            Expanded(
-              child: ErrorPage(
-                message:
-                    errorMessage ?? "Erreur lors du chargement des données.",
-                onPressed: () async {
-
-                  await _loadFluxFinancierData();
-                },
-              ),
-            )
-          else
-            Expanded(
-              child: filteredData.isEmpty
-                  ? NoDataPage(
-                      data: filteredData,
-                      message: "Aucune dette financière trouvée.",
-                    )
-                  : Column(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            color: Theme.of(context).colorScheme.surface,
-                            child: DebtTable(
-                              role: role!,
-                              fluxFinanciers: getPaginatedData(
-                                data: filteredData,
-                                currentPage: currentPage,
-                              ),
-                              refresh: _loadFluxFinancierData,
+          Expanded(
+            child: filteredData.isEmpty
+                ? NoDataPage(
+                    data: filteredData,
+                    message: "Aucune dette financière trouvée.",
+                  )
+                : Column(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          color: Theme.of(context).colorScheme.surface,
+                          child: DebtTable(
+                            role: role!,
+                            fluxFinanciers: getPaginatedData(
+                              data: filteredData,
+                              currentPage: currentPage,
                             ),
+                            refresh: _loadFluxFinancierData,
                           ),
                         ),
-                        if (filteredData.isNotEmpty)
-                          PaginationSpace(
-                            currentPage: currentPage,
-                            onPageChanged: updateCurrentPage,
-                            filterDataCount: filteredData.length,
-                          ),
-                      ],
-                    ),
-            ),
+                      ),
+                      if (filteredData.isNotEmpty)
+                        PaginationSpace(
+                          currentPage: currentPage,
+                          onPageChanged: updateCurrentPage,
+                          filterDataCount: filteredData.length,
+                        ),
+                    ],
+                  ),
+          ),
         ],
       ),
     );

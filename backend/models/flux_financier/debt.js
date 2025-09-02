@@ -176,7 +176,7 @@ class Debt {
       await clientModel.isExistClient({ key: clientId });
     }
     const query = await db.query(
-      aql`FOR debt IN ${debtCollection} FILTER debt.status != ${DebtStatus.reject} AND debt.referenceFacture == ${referenceFacture} LIMIT 1 RETURN debt`
+      aql`FOR debt IN ${debtCollection} FILTER debt.referenceFacture == ${referenceFacture} LIMIT 1 RETURN debt`
     );
 
     if (query.hasNext) {

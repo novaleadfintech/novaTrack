@@ -502,7 +502,6 @@ class BulletinService {
     return bulletins;
   }
 
-
   static Future<BulletinPaieModel?> getPreviousBulletins(
       {required String salarieId}) async {
     var body = '''
@@ -715,6 +714,7 @@ class BulletinService {
     }
 }
             ''';
+
     var response = await http
         .post(
       Uri.parse(serverUrl),
@@ -1074,7 +1074,7 @@ class BulletinService {
   }
     ''';
 
-     try {
+    try {
       var response = await http
           .post(
         Uri.parse(serverUrl),
@@ -1116,7 +1116,7 @@ class BulletinService {
       throw error.toString();
     }
   }
- 
+
   static Future<RequestResponse> updateBulletin({
     required String key,
     required MoyenPaiementModel moyenPayement,

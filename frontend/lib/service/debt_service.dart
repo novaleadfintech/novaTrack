@@ -18,7 +18,6 @@ class DebtService {
     required ClientModel client,
     required double montant,
     DateTime? dateOperation,
-    required MoyenPaiementModel moyenPayement,
     required String? referenceFacture,
     required String userId,
     PlatformFile? file,

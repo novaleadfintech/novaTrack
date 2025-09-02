@@ -6,8 +6,13 @@ import '../model/bulletin_paie/nature_rubrique.dart';
 import '../model/bulletin_paie/rubrique_paie.dart';
 import '../model/bulletin_paie/tranche_model.dart';
 
-// Les périodes de regeneration
-List<DateTime>? getCurrentBulletinPeriod({required SalarieModel salarie}) {
+List<DateTime>? getCurrentBulletinPeriod({
+  required SalarieModel salarie,
+  required DateTime? debutOldPeriodePaie,
+  required DateTime? finOldPeriodePaie,
+}) {
+  print(debutOldPeriodePaie);
+  print(finOldPeriodePaie);
   final DateTime dateDebut = salarie.personnel.dateDebut!;
   final DateTime finEssai =
       dateDebut.add(Duration(milliseconds: salarie.personnel.dureeEssai ?? 0));
@@ -27,6 +32,101 @@ List<DateTime>? getCurrentBulletinPeriod({required SalarieModel salarie}) {
 
   final bool isEndOfMonth = salarie.paieManner == PaieManner.finMois;
 
+  // Si les anciennes périodes sont nulles, utiliser la logique basée sur la date actuelle
+  if (debutOldPeriodePaie == null || finOldPeriodePaie == null) {
+    return _getCurrentPeriodBasedOnNow(salarie, dateDebut, finEssai, dateFin,
+        now, frequenceMois, isEndOfMonth);
+  }
+
+  // Calculer la période suivant l'ancienne période
+  DateTime nouvellePeriodeDebut;
+  DateTime nouvellePeriodeFin;
+
+  if (isEndOfMonth) {
+    // Mode fin de mois : périodes du 1er au dernier jour du mois
+
+    // La nouvelle période commence le 1er jour du mois suivant la fin de l'ancienne période
+    nouvellePeriodeDebut = DateTime(
+      finOldPeriodePaie.year,
+      finOldPeriodePaie.month + 1,
+      1,
+    );
+
+    // La nouvelle période se termine le dernier jour du mois (en tenant compte de la fréquence)
+    nouvellePeriodeFin = DateTime(
+      nouvellePeriodeDebut.year,
+      nouvellePeriodeDebut.month + frequenceMois,
+      1,
+    ).subtract(const Duration(days: 1));
+  } else if (salarie.paieManner == PaieManner.finPeriod) {
+    // Mode fin de période : même jour du mois que la date de début
+    final int jourDuMois = dateDebut.day;
+
+    // La nouvelle période commence le jour suivant la fin de l'ancienne période
+    nouvellePeriodeDebut = finOldPeriodePaie.add(const Duration(days: 1));
+
+    // Ajuster le début au bon jour du mois si nécessaire
+    if (nouvellePeriodeDebut.day != jourDuMois) {
+      // Aller au prochain occurrence du jour du mois
+      int moisCible = nouvellePeriodeDebut.month;
+      int anneeCible = nouvellePeriodeDebut.year;
+
+      // Si le jour est déjà passé dans le mois courant, aller au mois suivant
+      if (nouvellePeriodeDebut.day > jourDuMois) {
+        moisCible++;
+        if (moisCible > 12) {
+          moisCible = 1;
+          anneeCible++;
+        }
+      }
+
+      nouvellePeriodeDebut = DateTime(anneeCible, moisCible, jourDuMois);
+    }
+
+    // La nouvelle période se termine avant le même jour du mois suivant (en tenant compte de la fréquence)
+    nouvellePeriodeFin = DateTime(
+      nouvellePeriodeDebut.year,
+      nouvellePeriodeDebut.month + frequenceMois,
+      jourDuMois,
+    ).subtract(const Duration(days: 1));
+  } else {
+    return null;
+  }
+
+  // Vérifier que la nouvelle période commence après la fin d'essai
+  if (nouvellePeriodeDebut.isBefore(finEssai)) {
+    nouvellePeriodeDebut = finEssai;
+  }
+
+  // Vérifier que la nouvelle période ne dépasse pas la date de fin du contrat
+  if (nouvellePeriodeDebut.isAfter(dateFin)) {
+    return null; // Pas de période suivante possible
+  }
+
+  // Ajuster la fin de période si elle dépasse la date de fin du contrat
+  if (nouvellePeriodeFin.isAfter(dateFin)) {
+    nouvellePeriodeFin = dateFin;
+  }
+
+  // Vérifier que la nouvelle période ne dépasse pas la date actuelle de manière excessive
+  // (par exemple, ne pas générer une période qui commence dans plus de 2 mois)
+  if (nouvellePeriodeDebut.isAfter(now.add(const Duration(days: 60)))) {
+    return null; // Période trop dans le futur
+  }
+
+  return [nouvellePeriodeDebut, nouvellePeriodeFin];
+}
+
+// Fonction helper pour la logique basée sur la date actuelle (logique d'origine)
+List<DateTime>? _getCurrentPeriodBasedOnNow(
+  SalarieModel salarie,
+  DateTime dateDebut,
+  DateTime finEssai,
+  DateTime dateFin,
+  DateTime now,
+  int frequenceMois,
+  bool isEndOfMonth,
+) {
   if (isEndOfMonth) {
     // Mode fin de mois : périodes du 1er au dernier jour du mois
 
@@ -136,7 +236,7 @@ List<List<DateTime>> getBulletinPeriods({required SalarieModel salarie}) {
       currentStart.year,
       currentStart.month + 1,
     ).subtract(Duration(days: 1));
- 
+
     // Ajoute la première période [finEssai → fin du mois]
     periods.add([currentStart, endOfFirstMonth]);
 
@@ -156,7 +256,7 @@ List<List<DateTime>> getBulletinPeriods({required SalarieModel salarie}) {
       if (currentEnd.isAfter(dateFin)) {
         currentEnd = dateFin;
       }
- 
+
       // Ajoute la pérsiode au tableau
       periods.add([currentStart, currentEnd]);
 
@@ -538,8 +638,7 @@ String formatAnciennete(double? valueInMs) {
   if (valueInMs == null) return "0 an";
 
   final ancienneteEnAnnees = calculerAncienneteEnAnnees(valueInMs.toInt());
-  final ancienneteEntiere =
-      ancienneteEnAnnees.floor();
+  final ancienneteEntiere = ancienneteEnAnnees.floor();
 
   if (ancienneteEntiere == 0) {
     return "< 1 an";
@@ -578,7 +677,6 @@ double calculerMontantRubrique({
       final op = rubrique.calcul!.operateur;
       final rubriquesCible = rubrique.calcul!.elements;
       final valeurs = rubriquesCible.map((element) {
- 
         if (element.type == BaseType.rubrique) {
           final r = toutesLesRubriquesSurBulletin.firstWhere(
             (toElement) => toElement.rubrique.code == element.rubrique!.code,

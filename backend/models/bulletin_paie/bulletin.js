@@ -255,10 +255,11 @@ class BulletinPaie {
   async getPreviousBulletin({ salarieId }) {
     try {
       const query = await db.query(
-        aql`FOR bulletin IN ${bulletinCollection} FILTER bulletin.salarie._id == ${salarieId} SORT bulletin.timeStamp
+        aql`FOR bulletin IN ${bulletinCollection} FILTER bulletin.salarie._id == ${salarieId} SORT bulletin.dateEdition DESC
         LIMIT 1
         RETURN bulletin`
       );
+      console.log(query);
       if (query.hasNext) {
         const bulletin = await query.next();
         const rubriquesPromises = bulletin.rubriques.map(async (rubrique) => {

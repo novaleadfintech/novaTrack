@@ -41,7 +41,6 @@ class _AddDebtPageState extends State<AddDebtPage> {
   final _referenceTransactionFieldController = TextEditingController();
   final _dateFieldController = TextEditingController();
   DateTime? _dateOperation;
-  MoyenPaiementModel? _moyenPayement;
   PlatformFile? _file;
   late SimpleFontelicoProgressDialog _dialog;
   UserModel? _user;
@@ -57,8 +56,8 @@ class _AddDebtPageState extends State<AddDebtPage> {
   Future<void> addDebt() async {
     if (_libelleFieldController.text.isEmpty ||
         _amountFieldController.text.isEmpty ||
-        _moyenPayement == null ||
-        _banque == null ||
+        _referenceTransactionFieldController.text.isEmpty ||
+        _dateOperation == null ||
         _client == null) {
       MutationRequestContextualBehavior.showCustomInformationPopUp(
         message: "Veuiller remplir tous les champs marqués",
@@ -83,7 +82,6 @@ class _AddDebtPageState extends State<AddDebtPage> {
     RequestResponse result = await DebtService.createDebt(
       libelle: _libelleFieldController.text,
       montant: double.parse(_amountFieldController.text),
-      moyenPayement: _moyenPayement!,
       referenceFacture: _referenceTransactionFieldController.text,
       dateOperation: _dateOperation,
       client: _client!,
