@@ -11,9 +11,7 @@ List<DateTime>? getCurrentBulletinPeriod({
   required DateTime? debutOldPeriodePaie,
   required DateTime? finOldPeriodePaie,
 }) {
-  print(debutOldPeriodePaie);
-  print(finOldPeriodePaie);
-  final DateTime dateDebut = salarie.personnel.dateDebut!;
+   final DateTime dateDebut = salarie.personnel.dateDebut!;
   final DateTime finEssai =
       dateDebut.add(Duration(milliseconds: salarie.personnel.dureeEssai ?? 0));
   final DateTime dateFin = salarie.personnel.dateFin ?? DateTime.now();

@@ -11,8 +11,7 @@ import { stat } from "fs";
 
 const debtCollection = db.collection("debts");
 const userModel = new User();
-const BanqueModel = new Banque();
-const clientModel = new Client();
+ const clientModel = new Client();
 
 const DebtStatus = {
   paid: "paid",
@@ -54,6 +53,7 @@ class Debt {
       );
 
       const debts = await query.all();
+      console.log(debts);
       return Promise.all(
         debts.map(async (debt) => {
           return {
@@ -209,21 +209,11 @@ class Debt {
           }
         }
       }
-      // Étape 2 : Vérifier l'existence des sources de paiement
-      const banque = await BanqueModel.getBanque({ key: bankId });
-      const { logo, ...otherdata } = banque;
-      if (logo != null) {
-        otherdata.logo = logo.replace(
-          process.env.FILE_PREFIX + `${locateBanqueFolder}/`,
-          ""
-        );
-      }
 
       await userModel.isExistUser({ key: userId });
 
       // Étape 3 : Créer le debt financier
       const newDebt = {
-        reference: await this.generateNewFuxFinancierReference({ type: type }),
         libelle: libelle,
         referenceFacture: referenceFacture,
         montant: montant,

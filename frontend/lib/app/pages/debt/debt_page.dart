@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/service/debt_service.dart';
 import '../../../global/constant/permission_alias.dart';
 import '../../../helper/user_helper.dart';
+import '../../../model/flux_financier/debt_model.dart';
 import '../../../widget/add_element_button.dart';
 import '../app_dialog_box.dart';
 import 'add_debt.dart';
@@ -10,10 +12,8 @@ import '../../../auth/authentification_token.dart';
 import '../../../model/habilitation/role_model.dart';
 import '../no_data_page.dart';
 import '../../../global/global_value.dart';
-import '../../../model/flux_financier/flux_financier_model.dart';
-import '../../../model/flux_financier/type_flux_financier.dart';
-import '../../../service/flux_financier_service.dart';
-import '../../../widget/pagination.dart';
+ import '../../../model/flux_financier/type_flux_financier.dart';
+ import '../../../widget/pagination.dart';
 import '../../../widget/research_bar.dart';
 import 'package:gap/gap.dart';
 import '../error_page.dart';
@@ -30,7 +30,7 @@ class DebtPage extends StatefulWidget {
 class _DebtPageState extends State<DebtPage> {
   final TextEditingController _researchController = TextEditingController();
   int currentPage = GlobalValue.currentPage;
-  List<FluxFinancierModel> fluxFinancierData = [];
+  List<DebtModel> fluxFinancierData = [];
   String? errorMessage;
   bool isLoading = true;
   bool hasError = false;
@@ -40,9 +40,9 @@ class _DebtPageState extends State<DebtPage> {
 
   List<String> selectedFilterOptions = [
     "Tout",
-    FluxFinancierStatus.wait.label,
-    FluxFinancierStatus.reject.label,
-    // FluxFinancierStatus.valid.label,
+    DebtStatus.paid.label,
+    DebtStatus.unpaid.label,
+    // DebtStatus.valid.label,
   ];
 
   @override
@@ -50,7 +50,7 @@ class _DebtPageState extends State<DebtPage> {
     super.initState();
     getRole();
     _researchController.addListener(_onSearchChanged);
-    _loadFluxFinancierData();
+    _loadDebtData();
   }
 
   @override
@@ -66,14 +66,14 @@ class _DebtPageState extends State<DebtPage> {
     });
   }
 
-  Future<void> _loadFluxFinancierData() async {
+  Future<void> _loadDebtData() async {
     setState(() {
       isLoading = true;
       hasError = false;
       errorMessage = null;
     });
     try {
-      fluxFinancierData = await FluxFinancierService.getDebt();
+      fluxFinancierData = await DebtService.getDebts();
     } catch (error) {
       setState(() {
         errorMessage = error.toString();
@@ -103,13 +103,12 @@ class _DebtPageState extends State<DebtPage> {
       context,
       title: "Nouvelle dette",
       content: AddDebtPage(
-        refresh: _loadFluxFinancierData,
-        type: FluxFinancierType.output,
+        refresh: _loadDebtData,
       ),
     );
   }
 
-  List<FluxFinancierModel> filteredOutputData() {
+  List<DebtModel> filteredOutputData() {
     return fluxFinancierData.where((flux) {
       // Vérification de la recherche
       bool matchesSearch = flux.libelle != null &&
@@ -143,12 +142,12 @@ class _DebtPageState extends State<DebtPage> {
       return ErrorPage(
         message: errorMessage ?? "Erreur lors du chargement des données.",
         onPressed: () async {
-          await _loadFluxFinancierData();
+          await _loadDebtData();
         },
       );
     }
 
-    List<FluxFinancierModel> filteredData = filteredOutputData();
+    List<DebtModel> filteredData = filteredOutputData();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8).copyWith(top: 4),
@@ -163,6 +162,7 @@ class _DebtPageState extends State<DebtPage> {
                 hintText: "Rechercher par libellé",
                 controller: _researchController,
               ),
+              // TODO METTRE CREATE DEBT
               if (hasPermission(
                   role: role!,
                   permission: PermissionAlias.createFluxFinancier.label))
@@ -190,11 +190,11 @@ class _DebtPageState extends State<DebtPage> {
                           color: Theme.of(context).colorScheme.surface,
                           child: DebtTable(
                             role: role!,
-                            fluxFinanciers: getPaginatedData(
+                            debts: getPaginatedData(
                               data: filteredData,
                               currentPage: currentPage,
                             ),
-                            refresh: _loadFluxFinancierData,
+                            refresh: _loadDebtData,
                           ),
                         ),
                       ),

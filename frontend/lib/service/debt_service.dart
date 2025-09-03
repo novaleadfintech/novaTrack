@@ -270,8 +270,8 @@ class DebtService {
 
   static Future<List<DebtModel>> getDebts() async {
     var body = '''
-               query DebtDebts {
-                  debtDebts {
+               query Debts {
+                  debts {
                       _id
                       libelle
                       montant
@@ -324,7 +324,8 @@ class DebtService {
     List<DebtModel> debts = [];
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
-      var data = jsonData['data']['debtDebts'];
+      var data = jsonData['data']['debts'];
+      print(data);
       if (data != null) {
         for (var debt in data) {
           debts.add(DebtModel.fromJson(debt));

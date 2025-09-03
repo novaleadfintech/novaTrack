@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/service/facture_service.dart';
+import '../../../service/facture_service.dart';
 import '../no_data_page.dart';
 import 'payement_table.dart';
 import '../../../global/global_value.dart';
@@ -31,7 +31,6 @@ class _PayementPageState extends State<PayementPage> {
     _researchController.addListener(_onSearchChanged);
     _loadPayementData();
     super.initState();
-  
   }
 
   void _onSearchChanged() {

@@ -65,7 +65,7 @@ class DetailFluxPage extends StatelessWidget {
                 ],
               ),
             ],
-            if (flux.reference != null) ...[
+            if (flux.referenceTransaction != null) ...[
               TableRow(
                 decoration: tableDecoration(context),
                 children: [
@@ -250,7 +250,7 @@ class DetailFluxPage extends StatelessWidget {
           ],
         ),
 
-                if (flux.validated != null && flux.validated!.isNotEmpty) ...[
+        if (flux.validated != null && flux.validated!.isNotEmpty) ...[
           AppAccordion(
             header: Row(
               children: [
@@ -370,8 +370,6 @@ class DetailFluxPage extends StatelessWidget {
             ),
           ),
         ],
-      
-      
       ],
     );
   }

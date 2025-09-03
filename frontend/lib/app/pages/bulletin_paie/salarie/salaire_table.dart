@@ -316,8 +316,8 @@ class _SalarieTableState extends State<SalarieTable> {
 
   void onEditBulletin({required SalarieModel salarie}) async {
     try {
-      final todayMidnight = DateTime(
-          DateTime.now().year, DateTime.now().month, DateTime.now().day);
+      // final todayMidnight = DateTime(
+      //     DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
       //TODO: je sois revenir voir ce qui dois etre fait en vrai
       {

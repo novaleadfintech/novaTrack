@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/app/pages/app_dialog_box.dart';
 import 'package:frontend/app/pages/debt/pay_debt.dart';
+import '../../../model/flux_financier/debt_model.dart';
 import '../../../model/habilitation/user_model.dart';
 import '../../../auth/authentification_token.dart';
 import '../../../model/habilitation/role_model.dart';
@@ -8,24 +9,23 @@ import '../detail_pop.dart';
 import '../../../global/constant/constant.dart';
 import '../../../helper/amout_formatter.dart';
 import '../../../helper/date_helper.dart';
-import '../../../model/flux_financier/flux_financier_model.dart';
 import '../../../style/app_style.dart';
 import '../../../widget/table_body_last.dart';
 import '../../../widget/table_body_middle.dart';
 import '../../../widget/table_header.dart';
 import '../../responsitvity/responsivity.dart';
-import '../flux_financier/detail_flux.dart';
-import '../utils/flux_util.dart';
+import '../utils/debt_util.dart';
+import 'detail_debt.dart';
 
 class DebtTable extends StatefulWidget {
   final RoleModel role;
 
-  final List<FluxFinancierModel> fluxFinanciers;
+  final List<DebtModel> debts;
   final Future<void> Function() refresh;
   const DebtTable({
     super.key,
     required this.role,
-    required this.fluxFinanciers,
+    required this.debts,
     required this.refresh,
   });
 
@@ -44,35 +44,34 @@ class _DebtTableState extends State<DebtTable> {
     });
   }
 
-  // editFlux({required FluxFinancierModel flux}) {
+  // editDebt({required DebtModel debt}) {
   //   showResponsiveDialog(
   //     context,
-  //     content: EditFluxFiancierPage(
-  //       flux: flux,
+  //     content: EditDebtFiancierPage(
+  //       debt: debt,
   //       refresh: widget.refresh,
   //     ),
-  //     title: "Modifier un flux financier",
+  //     title: "Modifier un debt financier",
   //   );
   // }
 
-  _payer({required FluxFinancierModel flux}) async {
+  _payer({required DebtModel debt}) async {
     showResponsiveDialog(
       context,
       content: PayDebt(
-        flux: flux,
         refresh: widget.refresh,
       ),
       title: 'Payer la dette',
     );
   }
 
-  detailFlux({required FluxFinancierModel flux}) {
+  detailDebt({required DebtModel debt}) {
     showDetailDialog(
       context,
-      content: DetailFluxPage(
-        flux: flux,
+      content: DetailDebtPage(
+        debt: debt,
       ),
-      title: "Détail de flux financier",
+      title: "Détail de debt financier",
     );
   }
 
@@ -95,21 +94,20 @@ class _DebtTableState extends State<DebtTable> {
       children: [
         Table(
           columnWidths: {
-            4: const FixedColumnWidth(50),
+            3: const FixedColumnWidth(50),
             2: Responsive.isMobile(context)
                 ? const FixedColumnWidth(50)
                 : const FlexColumnWidth(),
-            3: const FixedColumnWidth(180),
             0: const FlexColumnWidth(2)
           },
           children: [
             Responsive.isMobile(context)
                 ? tableHeader(
-                    tablesTitles: fluxTableTitlesSmall,
+                    tablesTitles: debtTableTitlesSmall,
                     context,
                   )
                 : tableHeader(
-                    tablesTitles: fluxTableTitles,
+                    tablesTitles: debtTableTitles,
                     context,
                   ),
           ],
@@ -118,39 +116,39 @@ class _DebtTableState extends State<DebtTable> {
           child: SingleChildScrollView(
             child: Table(
               columnWidths: {
-                4: const FixedColumnWidth(50),
+                3: const FixedColumnWidth(50),
                 2: Responsive.isMobile(context)
                     ? const FixedColumnWidth(50)
                     : const FlexColumnWidth(),
-                3: const FixedColumnWidth(180),
+
                 0: const FlexColumnWidth(2)
               },
               children: [
-                ...widget.fluxFinanciers.map(
-                  (fluxFinancier) => Responsive.isMobile(context)
+                ...widget.debts.map(
+                  (debt) => Responsive.isMobile(context)
                       ? TableRow(
                           decoration: tableDecoration(context),
                           children: [
                             TableBodyMiddle(
-                              valeur: fluxFinancier.libelle!,
+                              valeur: debt.libelle!,
                             ),
                             TableBodyMiddle(
                               valeur:
-                                  Formatter.formatAmount(fluxFinancier.montant),
+                                  Formatter.formatAmount(debt.montant),
                             ),
                             TableBodyLast(
                               items: [
                                 (
                                   label: Constant.detail,
                                   onTap: () {
-                                    detailFlux(flux: fluxFinancier);
+                                    detailDebt(debt: debt);
                                   },
                                   color: null,
                                 ),
                                 (
                                   label: Constant.payer,
                                   onTap: () {
-                                    _payer(flux: fluxFinancier);
+                                    _payer(debt: debt);
                                   },
                                   color: null,
                                 ),
@@ -162,15 +160,15 @@ class _DebtTableState extends State<DebtTable> {
                           decoration: tableDecoration(context),
                           children: [
                             TableBodyMiddle(
-                              valeur: fluxFinancier.libelle!,
+                              valeur: debt.libelle!,
                             ),
                             
                             TableBodyMiddle(
-                              valeur: fluxFinancier.moyenPayement!.libelle,
+                              valeur: Formatter.formatAmount(debt.montant),
                             ),
                             TableBodyMiddle(
                               valeur: getStringDate(
-                                time: fluxFinancier.dateOperation!,
+                                time: debt.dateOperation!,
                               ),
                             ),
                             TableBodyLast(
@@ -178,14 +176,14 @@ class _DebtTableState extends State<DebtTable> {
                                 (
                                   label: Constant.detail,
                                   onTap: () {
-                                    detailFlux(flux: fluxFinancier);
+                                    detailDebt(debt: debt);
                                   },
                                   color: null,
                                 ),
                                 (
                                   label: Constant.payer,
                                   onTap: () {
-                                    _payer(flux: fluxFinancier);
+                                    _payer(debt: debt);
                                   },
                                   color: null,
                                 ),

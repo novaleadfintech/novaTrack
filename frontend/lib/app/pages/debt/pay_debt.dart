@@ -2,8 +2,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/model/client/client_model.dart';
 import 'package:frontend/model/entreprise/banque.dart';
-import 'package:frontend/model/flux_financier/flux_financier_model.dart';
-import 'package:frontend/model/flux_financier/libelle_flux.dart';
+ import 'package:frontend/model/flux_financier/libelle_flux.dart';
 import 'package:frontend/model/moyen_paiement_model.dart';
 import 'package:frontend/service/banque_service.dart';
 import 'package:frontend/service/client_service.dart';
@@ -22,13 +21,11 @@ import '../../../widget/validate_button.dart';
 import '../../integration/popop_status.dart';
 
 class PayDebt extends StatefulWidget {
-  final FluxFinancierModel flux;
-  final Future<void> Function() refresh;
+   final Future<void> Function() refresh;
   const PayDebt({
     super.key,
     required this.refresh,
-    required this.flux,
-  });
+   });
 
   @override
   State<PayDebt> createState() => _PayDebtState();

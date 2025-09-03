@@ -58,8 +58,7 @@ BuyingManner buyingMannerFromString(String modePayement) {
 
 // Statut des dettes
 enum DebtStatus {
-  pending("En attente"),
-  partial("Partiellement payé"),
+   unpaid("pas payé"),
   paid("Payé");
 
   final String label;

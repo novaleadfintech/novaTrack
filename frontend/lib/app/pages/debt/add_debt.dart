@@ -10,8 +10,7 @@ import '../../../widget/future_dropdown_field.dart';
 import '../../integration/request_frot_behavior.dart';
 import '../../../auth/authentification_token.dart';
 import '../../../helper/date_helper.dart';
-import '../../../model/flux_financier/type_flux_financier.dart';
-import '../../../model/habilitation/user_model.dart';
+ import '../../../model/habilitation/user_model.dart';
 import '../../../widget/date_text_field.dart';
 import '../../../widget/file_field.dart';
 import 'package:gap/gap.dart';
@@ -24,11 +23,9 @@ import '../../integration/popop_status.dart';
 
 class AddDebtPage extends StatefulWidget {
   final Future<void> Function() refresh;
-  final FluxFinancierType type;
   const AddDebtPage({
     super.key,
     required this.refresh,
-    required this.type,
   });
 
   @override
@@ -129,9 +126,7 @@ class _AddDebtPageState extends State<AddDebtPage> {
                   _client = value;
                 });
               },
-              label: widget.type == FluxFinancierType.input
-                  ? "Client"
-                  : "Fournisseur",
+              label: "Fournisseur",
               selectedItem: _client,
               itemsAsString: (l) => l.toStringify(),
             ),
