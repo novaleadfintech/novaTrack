@@ -5,13 +5,11 @@ import { deleteFile, uploadFile } from "../../utils/fichier.js";
 import User from "../habilitation/user.js";
 import Client from "../client/client.js";
 
-import Banque, { locateBanqueFolder } from "../banque.js";
 import path from "path";
-import { stat } from "fs";
 
 const debtCollection = db.collection("debts");
 const userModel = new User();
- const clientModel = new Client();
+const clientModel = new Client();
 
 const DebtStatus = {
   paid: "paid",
@@ -222,7 +220,6 @@ class Debt {
         pieceJustificative: filePath ? filePath.replace(/\\/g, "/") : null,
         userId: userId,
         clientId: clientId,
-        status: DebtStatus.wait,
         dateOperation: dateOperation,
       };
 
@@ -274,7 +271,7 @@ class Debt {
 
         if (referenceFacture !== undefined) {
           const query = await db.query(
-            aql`FOR debt IN ${debtCollection} FILTER debt.referenceFacture == ${referenceFacture} LIMIT 1 RETURN debt`
+            aql`FOR debt IN ${debtCollection} FILTER debt.referenceFacture == ${referenceFacture} AND debt._id != ${key} LIMIT 1 RETURN debt`
           );
 
           if (query.hasNext) {

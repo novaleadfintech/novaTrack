@@ -32,7 +32,7 @@ class DetailDebtPage extends StatelessWidget {
               isbold: true,
             ),
             TabledetailBodyMiddle(
-              valeur: debt.libelle!,
+              valeur: debt.libelle,
             ),
           ],
         ),
@@ -72,6 +72,37 @@ class DetailDebtPage extends StatelessWidget {
               ),
               TabledetailBodyMiddle(
                 valeur: debt.referenceFacture!,
+              ),
+            ],
+          ),
+        ],
+
+        if (debt.user != null) ...[
+          TableRow(
+            decoration: tableDecoration(context),
+            children: [
+              const TabledetailBodyMiddle(
+                valeur: "Enregistré par",
+                isbold: true,
+              ),
+              TabledetailBodyMiddle(
+                valeur: debt.user!.personnel!.toStringify(),
+              ),
+            ],
+          ),
+        ],
+        ...[
+          TableRow(
+            decoration: tableDecoration(context),
+            children: [
+              const TabledetailBodyMiddle(
+                valeur: "Date d'opération",
+                isbold: true,
+              ),
+              TabledetailBodyMiddle(
+                valeur: Responsive.isMobile(context)
+                    ? getShortStringDate(time: debt.dateOperation)
+                    : getStringDate(time: debt.dateOperation),
               ),
             ],
           ),

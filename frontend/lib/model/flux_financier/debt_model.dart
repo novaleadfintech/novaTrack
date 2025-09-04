@@ -4,25 +4,25 @@ import './type_flux_financier.dart';
 
 class DebtModel {
   final String id;
-  final String? libelle;
+  final String libelle;
   final String? referenceFacture;
   final ClientModel? client;
   final DebtStatus? status;
   final double montant;
   final DateTime? dateEnregistrement;
-  final DateTime? dateOperation;
+  final DateTime dateOperation;
   final String? pieceJustificative;
   final UserModel? user;
 
   DebtModel({
     required this.id,
-    this.libelle,
+    required this.libelle,
     required this.montant,
     required this.client,
     this.dateEnregistrement,
     this.pieceJustificative,
     this.referenceFacture,
-    this.dateOperation,
+    required this.dateOperation,
     this.user,
     required this.status,
   });
@@ -30,16 +30,16 @@ class DebtModel {
   factory DebtModel.fromJson(Map<String, dynamic> json) {
     return DebtModel(
       id: json['_id'] as String,
-      libelle: json['libelle'] as String?,
+      libelle: json['libelle'] as String,
+      referenceFacture: json['referenceFacture'] as String?,
       status:
           json['status'] != null ? debtStatusFromString(json['status']) : null,
       montant: (json['montant'] as num?)?.toDouble() ?? 0.0,
       dateEnregistrement: json['dateEnregistrement'] != null
           ? DateTime.fromMillisecondsSinceEpoch(json['dateEnregistrement'])
           : null,
-      dateOperation: json['dateOperation'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(json['dateOperation'])
-          : null,
+      dateOperation: DateTime.fromMillisecondsSinceEpoch(json['dateOperation']),
+        
       pieceJustificative: json['pieceJustificative'],
       client:
           json['client'] != null ? ClientModel.fromJson(json['client']) : null,
@@ -53,7 +53,7 @@ class DebtModel {
       'libelle': libelle,
       'montant': montant,
       'dateEnregistrement': dateEnregistrement?.millisecondsSinceEpoch,
-      'dateOperation': dateOperation?.millisecondsSinceEpoch,
+      'dateOperation': dateOperation.millisecondsSinceEpoch,
       'pieceJustificative': pieceJustificative,
       'referenceFacture': referenceFacture,
       'user': user?.toJson(),

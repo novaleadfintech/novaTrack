@@ -2,13 +2,11 @@ import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
 import '../global/constant/request_management_value.dart';
 import '../model/client/client_model.dart';
-import '../model/entreprise/banque.dart';
 import '../model/flux_financier/debt_model.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:http/http.dart' as http;
 import '../app/integration/popop_status.dart';
 import '../global/config.dart';
-import '../model/moyen_paiement_model.dart';
 import '../model/request_response.dart';
 import 'request_header.dart';
 
@@ -109,12 +107,10 @@ class DebtService {
 
   static Future<RequestResponse> updateDebt({
     required String key,
-    String? libelle,
+    required String? libelle,
     required double? montant,
     required DateTime? dateOperation,
-    required MoyenPaiementModel? moyenPayement,
-    required String? referenceTransaction,
-    required BanqueModel? banque,
+    required String? referenceFacture,
     required ClientModel? client,
     required PlatformFile? file,
   }) async {
@@ -130,17 +126,11 @@ class DebtService {
       if (libelle != null) {
         body += 'libelle: "$libelle",';
       }
-      if (referenceTransaction != null) {
-        body += 'referenceTransaction: "$referenceTransaction",';
+      if (referenceFacture != null) {
+        body += 'referenceFacture: "$referenceFacture",';
       }
       if (montant != null) {
         body += 'montant: $montant,';
-      }
-      if (moyenPayement != null) {
-        body += 'moyenPayement: ${moyenPayement.toJson()},';
-      }
-      if (banque != null) {
-        body += 'bankId: "${banque.id}"';
       }
       if (client != null) {
         body += 'clientId: "${client.id}"';
@@ -161,7 +151,10 @@ class DebtService {
       http.MultipartRequest multipartRequest = http.MultipartRequest(
           'POST', Uri.parse(serverUrl))
         ..fields['operations'] =
-            jsonEncode(<String, Object>{"query": body, "variables": variables});
+            jsonEncode(<String, Object>{
+              "query": body,
+              "variables": variables,
+            });
 
       multipartRequest.fields['map'] = jsonEncode(<String, List<String>>{
         "pieceJustificative": ["variables.pieceJustificative"]

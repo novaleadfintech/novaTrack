@@ -111,8 +111,7 @@ class _DebtPageState extends State<DebtPage> {
   List<DebtModel> filteredOutputData() {
     return fluxFinancierData.where((flux) {
       // Vérification de la recherche
-      bool matchesSearch = flux.libelle != null &&
-          flux.libelle!
+      bool matchesSearch = flux.libelle
               .toLowerCase()
               .contains(searchQuery.toLowerCase().trim());
 

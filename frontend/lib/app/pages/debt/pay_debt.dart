@@ -2,11 +2,16 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/model/client/client_model.dart';
 import 'package:frontend/model/entreprise/banque.dart';
- import 'package:frontend/model/flux_financier/libelle_flux.dart';
+import 'package:frontend/model/flux_financier/debt_model.dart';
+import 'package:frontend/model/flux_financier/type_flux_financier.dart';
 import 'package:frontend/model/moyen_paiement_model.dart';
 import 'package:frontend/service/banque_service.dart';
 import 'package:frontend/service/client_service.dart';
+import 'package:frontend/service/debt_service.dart';
 import 'package:frontend/service/moyen_paiement_service.dart';
+import '../../../model/request_response.dart';
+import '../../../service/flux_financier_service.dart';
+import '../../../widget/file_field.dart';
 import '../../../widget/future_dropdown_field.dart';
 import '../../integration/request_frot_behavior.dart';
 import '../../../auth/authentification_token.dart';
@@ -21,11 +26,13 @@ import '../../../widget/validate_button.dart';
 import '../../integration/popop_status.dart';
 
 class PayDebt extends StatefulWidget {
-   final Future<void> Function() refresh;
+  final DebtModel debt;
+  final Future<void> Function() refresh;
   const PayDebt({
     super.key,
+    required this.debt,
     required this.refresh,
-   });
+  });
 
   @override
   State<PayDebt> createState() => _PayDebtState();
@@ -33,39 +40,37 @@ class PayDebt extends StatefulWidget {
 
 class _PayDebtState extends State<PayDebt> {
   final libelleFieldController = TextEditingController();
-  final amountFieldController = TextEditingController();
   final referenceTransactionFieldController = TextEditingController();
   final montantPayeTextFieldController = TextEditingController();
   final dateFieldController = TextEditingController();
   DateTime? dateOperation;
   MoyenPaiementModel? moyenPayement;
-  PlatformFile? file;
+  PlatformFile? _file;
   late SimpleFontelicoProgressDialog _dialog;
   UserModel? user;
-  LibelleFluxModel? libelleType;
   ClientModel? client;
   BanqueModel? banque;
 
   @override
   void initState() {
     super.initState();
+    client = widget.debt.client;
+    libelleFieldController.text = widget.debt.libelle;
     _dialog = SimpleFontelicoProgressDialog(context: context);
   }
 
   Future<void> addFlux() async {
     if (libelleFieldController.text.isEmpty ||
-        amountFieldController.text.isEmpty ||
+        montantPayeTextFieldController.text.isEmpty ||
         referenceTransactionFieldController.text.isEmpty ||
         moyenPayement == null ||
         banque == null ||
-        client == null ||
-        libelleType == null) {
+        client == null) {
       MutationRequestContextualBehavior.showCustomInformationPopUp(
         message: "Veuiller remplir tous les champs marqués",
       );
       return;
     }
-
     _dialog.show(
       message: "",
       type: SimpleFontelicoProgressDialogType.phoenix,
@@ -81,44 +86,49 @@ class _PayDebtState extends State<PayDebt> {
       );
       return;
     }
-    // RequestResponse result = await FluxFinancierService.createFluxFinancier(
-    //   libelle: "${libelleType!.libelle} : ${libelleFieldController.text}",
-    //   montant: double.parse(amountFieldController.text),
-    //   moyenPayement: moyenPayement!,
-    //   type: widget.type,
-    //   referenceTransaction: referenceTransactionFieldController.text,
-    //   dateOperation: dateOperation,
-    //   client: client!,
-    //   file: file,
-    //   banque: banque!,
-    //   userId: user!.id!,
-    //   modePayement: _modePayement,
-    //   montantPaye: double.tryParse(montantPayeTextFieldController.text),
-    //   tranchePayement: _modePayement != BuyingManner.total
-    //       ? [
-    //           TranchePayementModel(
-    //             datePayement: dateOperation ?? DateTime.now(),
-    //             montantPaye: double.parse(montantPayeTextFieldController.text),
-    //           )
-    //         ]
-    //       : [],
-    // );
-    // _dialog.hide();
-    // if (result.status == PopupStatus.success) {
-    //   MutationRequestContextualBehavior.closePopup();
-    //   MutationRequestContextualBehavior.showPopup(
-    //     status: PopupStatus.success,
-    //     customMessage: widget.type == FluxFinancierType.input
-    //         ? "Entrée enrégistrée avec succès"
-    //         : "Sortie enrégistrée avec succès",
-    //   );
-    //   await widget.refresh();
-    // } else {
-    //   MutationRequestContextualBehavior.showPopup(
-    //     status: result.status,
-    //     customMessage: result.message,
-    //   );
-    // }
+    RequestResponse result = await FluxFinancierService.createFluxFinancier(
+      libelle: libelleFieldController.text,
+      montant: double.parse(montantPayeTextFieldController.text),
+      moyenPayement: moyenPayement!,
+      type: FluxFinancierType.input,
+      referenceTransaction: referenceTransactionFieldController.text,
+      dateOperation: dateOperation,
+      client: client!,
+      file: _file,
+      banque: banque!,
+      userId: user!.id!,
+    );
+    _dialog.hide();
+    if (result.status == PopupStatus.success) {
+      RequestResponse debtUpdateresult = await DebtService.updateDebt(
+        key: widget.debt.id,
+        montant: widget.debt.montant -
+            double.parse(montantPayeTextFieldController.text),
+        referenceFacture: null,
+        client: null,
+        dateOperation: null,
+        file: null,
+        libelle: null,
+      );
+      if (debtUpdateresult.status == PopupStatus.success) {
+        MutationRequestContextualBehavior.closePopup();
+        MutationRequestContextualBehavior.showPopup(
+          status: PopupStatus.success,
+          customMessage: 'Payement enregistré avec succès',
+        );
+        await widget.refresh();
+      } else {
+        MutationRequestContextualBehavior.showPopup(
+          status: result.status,
+          customMessage: result.message,
+        );
+      }
+    } else {
+      MutationRequestContextualBehavior.showPopup(
+        status: result.status,
+        customMessage: result.message,
+      );
+    }
   }
 
   Future<List<BanqueModel>> fetchBanqueItems() async {
@@ -202,6 +212,20 @@ class _PayDebtState extends State<PayDebt> {
                   "Référence de la transaction ${moyenPayement != null ? " (${moyenPayement!.libelle})" : ""}",
               textController: referenceTransactionFieldController,
               keyboardType: TextInputType.text,
+            ),
+            FileField(
+              canTakePhoto: true,
+              label: "Pièce justificative",
+              platformFile: _file,
+              removeFile: () => setState(() {
+                _file = null;
+              }),
+              pickFile: (p0) {
+                setState(() {
+                  _file = p0;
+                });
+              },
+              required: false,
             ),
             const Gap(16),
             Padding(

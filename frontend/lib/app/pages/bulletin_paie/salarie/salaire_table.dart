@@ -319,8 +319,6 @@ class _SalarieTableState extends State<SalarieTable> {
       // final todayMidnight = DateTime(
       //     DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
-      //TODO: je sois revenir voir ce qui dois etre fait en vrai
-      {
         BulletinPaieModel? previousBulletin =
             await BulletinService.getPreviousBulletins(
           salarieId: salarie.id,
@@ -348,7 +346,6 @@ class _SalarieTableState extends State<SalarieTable> {
               );
 
         showAddBulletinPage(titre: titre, contenu: contenu);
-      }
     } catch (e) {
       MutationRequestContextualBehavior.showCustomInformationPopUp(
           message: e.toString());

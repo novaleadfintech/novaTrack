@@ -170,7 +170,7 @@ class DetailFluxPage extends StatelessWidget {
                   ),
                   TabledetailBodyMiddle(
                     valeur:
-                        "${flux.user!.personnel!.nom} ${flux.user!.personnel!.prenom}",
+                        flux.user!.personnel!.toStringify(),
                   ),
                 ],
               ),

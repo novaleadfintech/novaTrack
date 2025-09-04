@@ -1,8 +1,7 @@
 import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
 import 'package:frontend/model/commentaire_model.dart';
-import 'package:frontend/model/flux_financier/tranche_payement_credit.dart';
-import 'package:frontend/model/flux_financier/validate_flux_model.dart';
+ import 'package:frontend/model/flux_financier/validate_flux_model.dart';
 import '../global/constant/request_management_value.dart';
 import '../model/client/client_model.dart';
 import '../model/entreprise/banque.dart';
@@ -24,9 +23,6 @@ class FluxFinancierService {
     required ClientModel client,
     required double montant,
     DateTime? dateOperation,
-    BuyingManner? modePayement,
-    double? montantPaye,
-    List<TranchePayementModel?>? tranchePayement,
     required BanqueModel banque,
     required MoyenPaiementModel moyenPayement,
     required referenceTransaction,

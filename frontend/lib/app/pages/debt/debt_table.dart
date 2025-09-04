@@ -16,6 +16,7 @@ import '../../../widget/table_header.dart';
 import '../../responsitvity/responsivity.dart';
 import '../utils/debt_util.dart';
 import 'detail_debt.dart';
+import 'edit_debt.dart';
 
 class DebtTable extends StatefulWidget {
   final RoleModel role;
@@ -59,6 +60,7 @@ class _DebtTableState extends State<DebtTable> {
     showResponsiveDialog(
       context,
       content: PayDebt(
+        debt: debt,
         refresh: widget.refresh,
       ),
       title: 'Payer la dette',
@@ -72,6 +74,17 @@ class _DebtTableState extends State<DebtTable> {
         debt: debt,
       ),
       title: "Détail de debt financier",
+    );
+  }
+
+  editDebt({required DebtModel debt}) {
+    showResponsiveDialog(
+      context,
+      content: EditDebtPage(
+        debt: debt,
+        refresh: widget.refresh,
+      ),
+      title: "Modifier une dette",
     );
   }
 
@@ -130,7 +143,7 @@ class _DebtTableState extends State<DebtTable> {
                           decoration: tableDecoration(context),
                           children: [
                             TableBodyMiddle(
-                              valeur: debt.libelle!,
+                              valeur: debt.libelle,
                             ),
                             TableBodyMiddle(
                               valeur:
@@ -138,17 +151,25 @@ class _DebtTableState extends State<DebtTable> {
                             ),
                             TableBodyLast(
                               items: [
-                                (
-                                  label: Constant.detail,
-                                  onTap: () {
-                                    detailDebt(debt: debt);
-                                  },
-                                  color: null,
-                                ),
+                               
                                 (
                                   label: Constant.payer,
                                   onTap: () {
                                     _payer(debt: debt);
+                                  },
+                                  color: null,
+                                ),
+                                // (
+                                //   label: Constant.edit,
+                                //   onTap: () {
+                                //     editDebt(debt: debt);
+                                //   },
+                                //   color: null,
+                                // ),
+                                (
+                                  label: Constant.detail,
+                                  onTap: () {
+                                    detailDebt(debt: debt);
                                   },
                                   color: null,
                                 ),
@@ -160,7 +181,7 @@ class _DebtTableState extends State<DebtTable> {
                           decoration: tableDecoration(context),
                           children: [
                             TableBodyMiddle(
-                              valeur: debt.libelle!,
+                              valeur: debt.libelle,
                             ),
                             
                             TableBodyMiddle(
@@ -168,22 +189,30 @@ class _DebtTableState extends State<DebtTable> {
                             ),
                             TableBodyMiddle(
                               valeur: getStringDate(
-                                time: debt.dateOperation!,
+                                time: debt.dateOperation,
                               ),
                             ),
                             TableBodyLast(
                               items: [
-                                (
-                                  label: Constant.detail,
-                                  onTap: () {
-                                    detailDebt(debt: debt);
-                                  },
-                                  color: null,
-                                ),
+                                
                                 (
                                   label: Constant.payer,
                                   onTap: () {
                                     _payer(debt: debt);
+                                  },
+                                  color: null,
+                                ),
+                                // (
+                                //   label: Constant.edit,
+                                //   onTap: () {
+                                //     editDebt(debt: debt);
+                                //   },
+                                //   color: null,
+                                // ),
+                                (
+                                  label: Constant.detail,
+                                  onTap: () {
+                                    detailDebt(debt: debt);
                                   },
                                   color: null,
                                 ),

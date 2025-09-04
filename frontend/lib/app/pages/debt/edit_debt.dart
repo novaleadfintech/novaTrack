@@ -1,16 +1,15 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:frontend/service/debt_service.dart';
+import '../../../service/debt_service.dart';
 import '../../../model/client/client_model.dart';
 import '../../../model/entreprise/banque.dart';
+import '../../../model/flux_financier/debt_model.dart';
 import '../../../model/moyen_paiement_model.dart';
 import '../../../service/client_service.dart';
 import '../../../service/moyen_paiement_service.dart';
 import '../../../widget/future_dropdown_field.dart';
 import '../../integration/request_frot_behavior.dart';
-import '../../../auth/authentification_token.dart';
 import '../../../helper/date_helper.dart';
- import '../../../model/habilitation/user_model.dart';
 import '../../../widget/date_text_field.dart';
 import '../../../widget/file_field.dart';
 import 'package:gap/gap.dart';
@@ -21,18 +20,20 @@ import '../../../widget/validate_button.dart';
 
 import '../../integration/popop_status.dart';
 
-class AddDebtPage extends StatefulWidget {
+class EditDebtPage extends StatefulWidget {
+  final DebtModel debt;
   final Future<void> Function() refresh;
-  const AddDebtPage({
+  const EditDebtPage({
     super.key,
+    required this.debt,
     required this.refresh,
   });
 
   @override
-  State<AddDebtPage> createState() => _AddDebtPageState();
+  State<EditDebtPage> createState() => _EditDebtPageState();
 }
 
-class _AddDebtPageState extends State<AddDebtPage> {
+class _EditDebtPageState extends State<EditDebtPage> {
   final _libelleFieldController = TextEditingController();
   final _amountFieldController = TextEditingController();
   final _referenceTransactionFieldController = TextEditingController();
@@ -40,17 +41,27 @@ class _AddDebtPageState extends State<AddDebtPage> {
   DateTime? _dateOperation;
   PlatformFile? _file;
   late SimpleFontelicoProgressDialog _dialog;
-  UserModel? _user;
   ClientModel? _client;
   BanqueModel? _banque;
 
   @override
   void initState() {
     super.initState();
+    _initData();
     _dialog = SimpleFontelicoProgressDialog(context: context);
   }
 
-  Future<void> addDebt() async {
+  _initData() {
+    _libelleFieldController.text = widget.debt.libelle;
+    _amountFieldController.text = widget.debt.montant.toString();
+    _referenceTransactionFieldController.text =
+        widget.debt.referenceFacture ?? '';
+    _dateOperation = widget.debt.dateOperation;
+    _dateFieldController.text = getStringDate(time: widget.debt.dateOperation);
+    _client = widget.debt.client;
+  }
+
+  Future<void> editDebt() async {
     if (_libelleFieldController.text.isEmpty ||
         _amountFieldController.text.isEmpty ||
         _referenceTransactionFieldController.text.isEmpty ||
@@ -66,31 +77,22 @@ class _AddDebtPageState extends State<AddDebtPage> {
       type: SimpleFontelicoProgressDialogType.phoenix,
       backgroundColor: Colors.transparent,
     );
-    try {
-      _user = await AuthService().decodeToken();
-    } catch (err) {
-      _dialog.hide();
-      MutationRequestContextualBehavior.showPopup(
-        status: PopupStatus.serverError,
-        customMessage: "Enégistrement échoué",
-      );
-      return;
-    }
-    RequestResponse result = await DebtService.createDebt(
+
+    RequestResponse result = await DebtService.updateDebt(
       libelle: _libelleFieldController.text,
       montant: double.parse(_amountFieldController.text),
       referenceFacture: _referenceTransactionFieldController.text,
       dateOperation: _dateOperation,
       client: _client!,
       file: _file,
-      userId: _user!.id!,
+      key: widget.debt.id,
     );
     _dialog.hide();
     if (result.status == PopupStatus.success) {
       MutationRequestContextualBehavior.closePopup();
       MutationRequestContextualBehavior.showPopup(
         status: PopupStatus.success,
-        customMessage: "Dette enrégistrée avec succès",
+        customMessage: "Dette modifiée avec succès",
       );
       await widget.refresh();
     } else {
@@ -170,15 +172,13 @@ class _AddDebtPageState extends State<AddDebtPage> {
               },
               required: false,
             ),
-           
-           
             const Gap(16),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Align(
                 alignment: Alignment.bottomRight,
                 child: ValidateButton(
-                  onPressed: addDebt,
+                  onPressed: editDebt,
                 ),
               ),
             ),
