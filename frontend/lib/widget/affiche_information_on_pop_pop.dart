@@ -36,7 +36,7 @@ class ShowNotificationInformation extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(4.0),
       child: Container(
-        color: AppColor.primaryColor.withOpacity(0.1),
+        color: AppColor.primaryColor.withValues(alpha: 0.1),
         padding: EdgeInsets.all(8),
         child: Align(alignment: Alignment.center, child: Text(message)),
       ),

@@ -34,7 +34,7 @@ class DashboardInfo extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 16,
-                backgroundColor: const Color(0xFF858C94).withOpacity(0.1),
+                backgroundColor: const Color(0xFF858C94).withValues(alpha: 0.1),
                 child: SvgPicture.asset(
                   icon,
                   height: 16,

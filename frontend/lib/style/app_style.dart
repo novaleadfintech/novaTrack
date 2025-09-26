@@ -111,7 +111,7 @@ BoxDecoration checkPermissionTableDecoration(BuildContext context) => BoxDecorat
           width: 2,
         ),
       ),
-      color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
     );
 
 BoxDecoration checkNotPermissionTableDecoration(BuildContext context) => BoxDecoration(
@@ -121,7 +121,7 @@ BoxDecoration checkNotPermissionTableDecoration(BuildContext context) => BoxDeco
           width: 2,
         ),
       ),
-      color: Theme.of(context).colorScheme.error.withOpacity(0.1),
+      color: Theme.of(context).colorScheme.error.withValues(alpha: 0.1),
     );
 
 BoxDecoration rejectFluxTableDecoration(BuildContext context) => BoxDecoration(
@@ -131,7 +131,7 @@ BoxDecoration rejectFluxTableDecoration(BuildContext context) => BoxDecoration(
           width: 2,
         ),
       ),
-      color: Theme.of(context).colorScheme.error.withOpacity(0.1),
+      color: Theme.of(context).colorScheme.error.withValues(alpha: 0.1),
     );
 
 BoxDecoration validatedFluxTableDecoration(BuildContext context) =>
@@ -142,5 +142,5 @@ BoxDecoration validatedFluxTableDecoration(BuildContext context) =>
           width: 2,
         ),
       ),
-      color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
     );

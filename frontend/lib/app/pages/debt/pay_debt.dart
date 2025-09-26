@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/helper/amout_formatter.dart';
 import 'package:frontend/model/client/client_model.dart';
 import 'package:frontend/model/entreprise/banque.dart';
 import 'package:frontend/model/flux_financier/debt_model.dart';
@@ -9,6 +10,7 @@ import 'package:frontend/service/banque_service.dart';
 import 'package:frontend/service/client_service.dart';
 import 'package:frontend/service/debt_service.dart';
 import 'package:frontend/service/moyen_paiement_service.dart';
+import 'package:frontend/widget/affiche_information_on_pop_pop.dart';
 import '../../../model/request_response.dart';
 import '../../../service/flux_financier_service.dart';
 import '../../../widget/file_field.dart';
@@ -71,6 +73,14 @@ class _PayDebtState extends State<PayDebt> {
       );
       return;
     }
+    if (double.parse(montantPayeTextFieldController.text) >
+        widget.debt.montant) {
+      MutationRequestContextualBehavior.showCustomInformationPopUp(
+        message:
+            "Le montant payé doit être inférieur ou égal au montant dû (${widget.debt.montant})",
+      );
+      return;
+    }
     _dialog.show(
       message: "",
       type: SimpleFontelicoProgressDialogType.phoenix,
@@ -106,6 +116,10 @@ class _PayDebtState extends State<PayDebt> {
             double.parse(montantPayeTextFieldController.text),
         referenceFacture: null,
         client: null,
+        status: double.parse(montantPayeTextFieldController.text) >=
+                widget.debt.montant
+            ? DebtStatus.paid
+            : null,
         dateOperation: null,
         file: null,
         libelle: null,
@@ -162,6 +176,14 @@ class _PayDebtState extends State<PayDebt> {
         //key: UniqueKey(),
         child: Column(
           children: [
+            ShowInformation(
+              content: widget.debt.libelle,
+              libelle: "Dette",
+            ),
+            ShowInformation(
+              content: Formatter.formatAmount(widget.debt.montant),
+              libelle: "Montant dû",
+            ),
             SimpleTextField(
               label: "Montant payé",
               textController: montantPayeTextFieldController,

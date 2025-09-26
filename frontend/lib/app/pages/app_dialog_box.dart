@@ -81,7 +81,7 @@ class ResponsiveDialogBox extends StatelessWidget {
                                             Theme.of(context)
                                                 .colorScheme
                                                 .primary
-                                                .withOpacity(0.1),
+                                                .withValues(alpha: 0.1),
                                           ),
                                         ),
                                         padding: EdgeInsets.zero,
@@ -167,7 +167,7 @@ class ResponsiveDialogBox extends StatelessWidget {
                                           Theme.of(context)
                                               .colorScheme
                                               .primary
-                                              .withOpacity(0.1),
+                                              .withValues(alpha: 0.1),
                                         ),
                                       ),
                                       padding: EdgeInsets.zero,

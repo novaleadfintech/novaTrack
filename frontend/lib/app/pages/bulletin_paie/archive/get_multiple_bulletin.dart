@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/helper/date_helper.dart';
 import 'package:gap/gap.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 
@@ -134,7 +135,13 @@ class _MultipleBulletnPageState extends State<MultipleBulletnPage> {
                   ...filteredData.map((bulletin) {
                     return TableRow(children: [
                       ListTile(
-                        title: Text(bulletin.salarie.personnel.toStringify()),
+                        title: Text(
+                          bulletin.salarie.personnel.toStringify() +
+                              (" - ${getShortStringDate(time: bulletin.debutPeriodePaie)} à ${getShortStringDate(time: bulletin.finPeriodePaie)}"),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.onSurface),
+                        ),
                         selected: selectedBulletins.contains(bulletin),
                         trailing: Checkbox(
                           value: selectedBulletins.contains(bulletin),

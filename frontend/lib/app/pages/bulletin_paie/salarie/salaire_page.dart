@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart' show SvgPicture;
 import 'package:frontend/app/pages/bulletin_paie/salarie/add_salarie.dart';
 import 'package:frontend/app/pages/bulletin_paie/salarie/salaire_table.dart';
 import 'package:frontend/model/personnel/enum_personnel.dart';
 import 'package:frontend/service/salarie_service.dart';
+import 'package:frontend/widget/app_action_button.dart';
 
 import 'package:gap/gap.dart';
 
 import '../../../../auth/authentification_token.dart';
 import '../../../../global/constant/permission_alias.dart';
 import '../../../../global/global_value.dart';
+import '../../../../helper/assets/asset_icon.dart';
 import '../../../../helper/paginate_data.dart';
 import '../../../../helper/user_helper.dart';
 import '../../../../model/bulletin_paie/salarie_model.dart';
@@ -138,34 +141,81 @@ class _PersonnelPageState extends State<SalariePage> {
               hintText: "Rechercher par nom, poste",
               controller: _researchController,
             ),
-            FutureBuilder<void>(
-              future: _futureRoles,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                } else if (snapshot.hasError) {
-                  return const SizedBox();
-                } else {
-                  if (hasPermission(
-                      role: role,
-                      permission: PermissionAlias.createSalarie.label)) {
-                    return Container(
-                      alignment: Alignment.centerRight,
-                      child: AddElementButton(
-                        addElement: onClickAddPersonnelButton,
-                        icon: Icons.add_outlined,
-                        label: "Ajouter un salarié",
-                      ),
-                    );
-                  } else {
-                    return const SizedBox();
-                  }
-                }
-              },
-            ),
+            Row(
+              children: [
+                AppActionButton(
+                  onPressed: () {
+                    // onEditBulletin(salarie: salarie); TODO: logique à implementer plus tard après la réunion le vendredi.
+                  },
+                  child: SvgPicture.asset(
+                    AssetsIcons.validInvoice,
+                    height: 20,
+                    colorFilter: ColorFilter.mode(
+                      Theme.of(context).colorScheme.onPrimary,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                ),
+                // FilledButton(
+                //     onPressed: () {
+                //       onEditBulletin(salarie: salarie);
+                //     },
+                //     style: const ButtonStyle(
+                //       padding: WidgetStatePropertyAll(EdgeInsets.zero),
+                //       shape: WidgetStatePropertyAll(
+                //         RoundedRectangleBorder(
+                //           borderRadius: BorderRadius.all(
+                //             Radius.circular(4),
+                //           ),
+                //         ),
+                //       ),
+                //       textStyle: WidgetStatePropertyAll(
+                //         TextStyle(
+                //           fontWeight: FontWeight.w600,
+                //           color: Colors.white,
+                //           fontSize: 16,
+                //         ),
+                //       ),
+                //     ),
+                //     child: SvgPicture.asset(
+                //       AssetsIcons.validInvoice,
+                //       height: 20,
+                //       colorFilter: ColorFilter.mode(
+                //         Theme.of(context).colorScheme.onPrimary,
+                //         BlendMode.srcIn,
+                //       ),
+                //     )),
 
+                FutureBuilder<void>(
+                  future: _futureRoles,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else if (snapshot.hasError) {
+                      return const SizedBox();
+                    } else {
+                      if (hasPermission(
+                          role: role,
+                          permission: PermissionAlias.createSalarie.label)) {
+                        return Container(
+                          alignment: Alignment.centerRight,
+                          child: AddElementButton(
+                            addElement: onClickAddPersonnelButton,
+                            icon: Icons.add_outlined,
+                            label: "Ajouter un salarié",
+                          ),
+                        );
+                      } else {
+                        return const SizedBox();
+                      }
+                    }
+                  },
+                ),
+              ],
+            ),
+            
             // FilterBar(
             //   label:
             //       selectedFilter == null ? "Filtrer par sexe" : selectedFilter!,

@@ -11,11 +11,9 @@ import 'package:frontend/service/bulletin_service.dart';
 import 'package:gap/gap.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 import '../../../../auth/authentification_token.dart';
-import '../../../../helper/date_helper.dart';
 import '../../../../model/bulletin_paie/etat_bulletin.dart';
 import '../../../../model/request_response.dart';
 import '../../../../widget/confirmation_dialog_box.dart';
-import '../../../../widget/date_text_field.dart';
 import '../../../../widget/enum_selector_radio.dart';
 import '../../../../widget/simple_text_field.dart';
 import '../../../../widget/validate_button.dart';
@@ -39,7 +37,7 @@ class _ValidateCurrentBulletintPageState
   late SimpleFontelicoProgressDialog _dialog;
   UserModel? user;
   EtatBulletin? etatBulletin;
-  final TextEditingController _datePayementController = TextEditingController();
+  // final TextEditingController _datePayementController = TextEditingController();
   final TextEditingController _commentaireController = TextEditingController();
   DateTime? datePayement;
   Future<List<BanqueModel>> fetchItems() async {
@@ -102,18 +100,18 @@ class _ValidateCurrentBulletintPageState
             ],
           ),
         ),
-        if (etatBulletin == EtatBulletin.valid)
-          DateField(
-            firstDate: widget.currentBulletin.dateEdition,
-          onCompleteDate: (value) {
-            setState(() {
-              datePayement = value!;
-              _datePayementController.text = getStringDate(time: value);
-            });
-          },
-            label: "Date de paiement",
-          dateController: _datePayementController,
-          ), 
+        // if (etatBulletin == EtatBulletin.valid)
+        //   DateField(
+        //     firstDate: widget.currentBulletin.dateEdition,
+        //   onCompleteDate: (value) {
+        //     setState(() {
+        //       datePayement = value!;
+        //       _datePayementController.text = getStringDate(time: value);
+        //     });
+        //   },
+        //     label: "Date probable de paiement",
+        //   dateController: _datePayementController,
+        //   ), 
         const Gap(16),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),

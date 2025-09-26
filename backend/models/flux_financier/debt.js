@@ -45,7 +45,7 @@ class Debt {
       const query = await db.query(
         aql`FOR debt IN ${debtCollection} 
        ${filtreStatus}
-      SORT debt.dateEnregistrement DESC 
+      SORT debt.dateOperation DESC 
       ${limit} 
       RETURN debt`
       );
@@ -251,6 +251,7 @@ class Debt {
     referenceFacture,
     pieceJustificative,
     dateOperation,
+    status,
   }) => {
     const updateField = {};
     const session = await db.beginTransaction({
@@ -327,6 +328,7 @@ class Debt {
           }
           updateField.pieceJustificative = filePath;
         }
+        updateField.status = status;
         await debtCollection.update(key, updateField);
       });
 

@@ -37,6 +37,7 @@ const debtResolvers = {
     montant,
     dateOperation,
     referenceFacture,
+    status,
     pieceJustificative,
     clientId,
   }) => {
@@ -46,6 +47,7 @@ const debtResolvers = {
       montant,
       dateOperation,
       referenceFacture,
+      status: status,
       pieceJustificative,
       clientId,
     });

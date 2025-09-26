@@ -41,6 +41,7 @@ const mutation = `#graphql
          montant:Float,
         dateOperation:Float,
         referenceFacture: String
+        status: DebtStatus,
          pieceJustificative:Upload,
          clientId: String,
     ):String!

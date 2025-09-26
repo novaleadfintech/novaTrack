@@ -163,7 +163,8 @@ Future<List<MoyenPaiementModel>> fetchMoyenPaiementItems() async {
           children: [
             Container(
               padding: const EdgeInsets.all(8),
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+              color:
+                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -181,7 +182,8 @@ Future<List<MoyenPaiementModel>> fetchMoyenPaiementItems() async {
             ),
             const Gap(4),
             Container(
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+              color:
+                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
               padding: const EdgeInsets.all(8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -200,7 +202,8 @@ Future<List<MoyenPaiementModel>> fetchMoyenPaiementItems() async {
             ),
             const Gap(4),
             Container(
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+              color:
+                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
               padding: const EdgeInsets.all(8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -218,7 +221,8 @@ Future<List<MoyenPaiementModel>> fetchMoyenPaiementItems() async {
               ),
             ),
             Container(
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+              color:
+                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
               padding: const EdgeInsets.all(8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -236,7 +240,8 @@ Future<List<MoyenPaiementModel>> fetchMoyenPaiementItems() async {
               ),
             ),
             Container(
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+              color:
+                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
               padding: const EdgeInsets.all(8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

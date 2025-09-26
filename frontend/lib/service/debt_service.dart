@@ -7,6 +7,7 @@ import 'package:http_parser/http_parser.dart';
 import 'package:http/http.dart' as http;
 import '../app/integration/popop_status.dart';
 import '../global/config.dart';
+import '../model/flux_financier/type_flux_financier.dart';
 import '../model/request_response.dart';
 import 'request_header.dart';
 
@@ -110,6 +111,7 @@ class DebtService {
     required String? libelle,
     required double? montant,
     required DateTime? dateOperation,
+    DebtStatus? status,
     required String? referenceFacture,
     required ClientModel? client,
     required PlatformFile? file,
@@ -134,6 +136,9 @@ class DebtService {
       }
       if (client != null) {
         body += 'clientId: "${client.id}"';
+      }
+      if (status != null) {
+        body += 'status: ${debtStatusToString(status)},';
       }
       body += 'pieceJustificative: \$pieceJustificative';
 

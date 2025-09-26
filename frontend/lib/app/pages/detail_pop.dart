@@ -70,7 +70,7 @@ class DetailDialogBox extends StatelessWidget {
                                       Theme.of(context)
                                           .colorScheme
                                           .primary
-                                          .withOpacity(0.1),
+                                          .withValues(alpha: 0.1),
                                     ),
                                   ),
                                   padding: EdgeInsets.zero,
@@ -153,7 +153,7 @@ class DetailDialogBox extends StatelessWidget {
                                       Theme.of(context)
                                           .colorScheme
                                           .primary
-                                          .withOpacity(0.1),
+                                          .withValues(alpha: 0.1),
                                     ),
                                   ),
                                   padding: EdgeInsets.zero,
