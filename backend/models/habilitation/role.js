@@ -51,7 +51,9 @@ class Role {
         }),
       };
     } catch (err) {
-      throw new Error("Ce rôle est introuvable > " + err.message);
+      console.error(err);
+
+      throw new Error("Ce rôle est introuvable");
     }
   };
 
@@ -88,6 +90,8 @@ class Role {
         await rolePermissionEdges.save(rolePermission);
         return "OK";
       } catch (err) {
+        console.error(err);
+
         throw new Error("Erreur lors de l'attribution de la permission");
       }
     }
@@ -105,7 +109,9 @@ class Role {
       }
       return "OK";
     } catch (err) {
-      throw new Error("Erreur lors du retrait" + err);
+      console.error(err);
+
+      throw new Error("Erreur lors du retrait");
     }
   };
 
@@ -125,6 +131,8 @@ class Role {
       await roleCollection.update(key, updateField);
       return "OK";
     } catch (err) {
+      console.error(err);
+
       throw new Error("Erreur lors de la mise à jour");
     }
   };
@@ -136,12 +144,16 @@ class Role {
         throw new Error("Suppression impossible");
       }
     } catch (err) {
-      throw new Error(err);
+      console.error(err);
+
+      throw new Error("Erreur lors de la suppression");
     }
     try {
       await roleCollection.remove(key);
       return "OK";
     } catch (err) {
+      console.error(err);
+
       throw new Error("Erreur lors de la suppression");
     }
   };

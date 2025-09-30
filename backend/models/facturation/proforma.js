@@ -165,9 +165,9 @@ class Proforma {
         montant: montantTotal,
       };
     } catch (err) {
-      throw new Error(
-        "Une erreur s'est produite lors de la récupération : " + err.message
-      );
+      console.error(err);
+
+      throw new Error("Une erreur s'est produite lors de la récupération");
     }
   };
 
@@ -313,9 +313,11 @@ class Proforma {
       await session.commit();
       return "OK";
     } catch (err) {
+      console.error(err);
+
       await session.abort();
       throw new Error(
-        "Une erreur s'est produite lors de la création du proforma.\n" + err
+        "Une erreur s'est produite lors de la création du proforma."
       );
     }
   };
@@ -429,10 +431,11 @@ class Proforma {
       await session.commit();
       return "OK";
     } catch (err) {
+      console.error(err);
+
       await session.abort();
       throw new Error(
-        "Une erreur s'est produite lors de la validation de la Proforma : " +
-          err.message
+        "Une erreur s'est produite lors de la validation de la Proforma"
       );
     }
   };
@@ -499,6 +502,8 @@ class Proforma {
       await proformaCollection.update(key, updateField);
       return "OK";
     } catch (err) {
+      console.error(err);
+
       throw new Error(
         "Une erreur s'est produite lors de la mise à jour de la proforma"
       );
@@ -532,6 +537,8 @@ class Proforma {
       await proformaCollection.remove(key);
       return "OK";
     } catch (err) {
+      console.error(err);
+
       throw new Error("Une erreur s'est produite lors la suppression");
     }
   };
@@ -601,7 +608,8 @@ class Proforma {
   //         ligneProformaCollection.update(ligneProforma._id, updatedData);
   //       })
   //     );
-  //   } catch (e) {}
+  //   } catch (e) {
+      // console.error(e);}
   // };
 
   autoArchiveProforma = async () => {
@@ -624,7 +632,8 @@ class Proforma {
         })
       );
     } catch (e) {
-      console.error("Erreur lors de la mise à jour des proformas :", e);
+      console.error(e);
+       console.error("Erreur lors de la mise à jour des proformas.");
     }
   };
 

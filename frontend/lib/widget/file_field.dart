@@ -95,14 +95,13 @@ Future<void> pickFileWithPermission(Function(PlatformFile) pickFile) async {
       }
     } catch (e) {
       debugPrint("Erreur lors de la sélection du fichier : $e");
-      throw Exception("Erreur lors de la sélection du fichier : $e");
+      throw "Erreur lors de la sélection du fichier";
     }
   } else if (status.isDenied) {
-    throw Exception("Permission refusée par l'utilisateur.");
+    throw "Permission refusée par l'utilisateur.";
   } else if (status.isPermanentlyDenied) {
     openAppSettings();
-    throw Exception(
-        "Permission définitivement refusée, active-la dans les paramètres.");
+    throw "Permission définitivement refusée, active-la dans les paramètres.";
   }
 }
 

@@ -203,7 +203,7 @@ Future<List<MoyenPaiementModel>> fetchMoyenPaiementItems() async {
     try {
       user = await AuthService().decodeToken();
     } catch (err) {
-      _dialog.hide();
+       _dialog.hide();
       MutationRequestContextualBehavior.showPopup(
         status: PopupStatus.serverError,
         customMessage: "Enégistrement échoué",
@@ -239,6 +239,7 @@ Future<List<MoyenPaiementModel>> fetchMoyenPaiementItems() async {
       );
     }
     } catch (err) {
+ 
       _dialog.hide();
       MutationRequestContextualBehavior.showPopup(
         status: PopupStatus.customError,

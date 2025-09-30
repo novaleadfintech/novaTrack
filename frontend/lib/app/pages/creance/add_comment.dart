@@ -137,6 +137,7 @@ class _AddCommentPageState extends State<AddCommentPage> {
     try {
       user = await AuthService().decodeToken();
     } catch (err) {
+ 
       _dialog.hide();
       MutationRequestContextualBehavior.showPopup(
         status: PopupStatus.serverError,

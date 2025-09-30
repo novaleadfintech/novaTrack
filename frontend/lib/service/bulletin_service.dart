@@ -967,11 +967,11 @@ class BulletinService {
       headers: getHeaders(),
     )
         .catchError((onError) {
-      throw Exception(RequestMessage.failgettingDataMessage);
+      throw RequestMessage.failgettingDataMessage;
     }).timeout(
       const Duration(seconds: reqTimeout),
       onTimeout: () {
-        throw Exception(RequestMessage.failgettingDataMessage);
+        throw RequestMessage.failgettingDataMessage;
       },
     );
     if (response.statusCode == 200) {
@@ -984,7 +984,7 @@ class BulletinService {
         }
       }
     } else {
-      throw Exception(jsonDecode(response.body)['errors'][0]['message']);
+      throw jsonDecode(response.body)['errors'][0]['message'];
     }
     return bulletins;
   }

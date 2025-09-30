@@ -109,7 +109,9 @@ class Permission {
 
       return modulesWithPermissions;
     } catch (err) {
-      console.error("Erreur lors de la récupération des permissions :", err);
+      console.error(err);
+
+      console.error("Erreur lors de la récupération des permission");
       return [];
     }
   };
@@ -177,6 +179,8 @@ class Permission {
       await permissionCollection.update(key, updateField);
       return "OK";
     } catch (err) {
+      console.error(err);
+
       throw new Error("Erreur lors de la mise à jour");
     }
   };
@@ -188,12 +192,16 @@ class Permission {
         throw new Error("Suppression impossible");
       }
     } catch (err) {
-      throw new Error(err);
+      console.error(err);
+
+      throw new Error("Suppression impossible");
     }
     try {
       await permissionCollection.remove(key);
       return "OK";
     } catch (err) {
+      console.error(err);
+
       throw new Error("Erreur lors de la suppression");
     }
   };

@@ -1,5 +1,26 @@
+import { subtle } from "crypto";
 import FormData from "form-data";
 import Mailgun from "mailgun.js";
+const sendMail = async ({ from, to, subject, content }) => {
+  const mailgun = new Mailgun(FormData);
+  const mg = mailgun.client({
+    username: "api",
+    key: process.env.EMAIL_API_KEY,
+    // url: process.env.EMAIL_URL,
+  });
+  try {
+    const data = await mg.messages.create(process.env.EMAIL_SOUS_DOMAIME, {
+      from: from,
+      to: to,
+      subject: subject,
+      html: content,
+    });
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Erreur lord de l'envoi du mail");
+  }
+};
 
 export const sendRoleAssignmentEmail = async ({
   personnel,
@@ -42,23 +63,12 @@ export const sendRoleAssignmentEmail = async ({
 </body>
 </html>`;
 
-  const mailgun = new Mailgun(FormData);
-  const mg = mailgun.client({
-    username: "api",
-    key: process.env.EMAIL_API_KEY,
-    // url: process.env.EMAIL_URL,
+  return await sendMail({
+    from: `NOVALEAD <${process.env.EMAIL_FROM}>`,
+    to: personnel.email,
+    subject: `Informations de connexion`,
+    content: htmlMessage,
   });
-  try {
-    const data = await mg.messages.create(process.env.EMAIL_SOUS_DOMAIME, {
-      from: `NOVALEAD <${process.env.EMAIL_FROM}>`,
-      to: personnel.email,
-      subject: `Informations de connexion`,
-      html: htmlMessage,
-    });
-    return data;
-  } catch (error) {
-    console.error(error);
-  }
 };
 
 export const stopServiceEmail = async ({ facture }) => {
@@ -113,24 +123,12 @@ export const stopServiceEmail = async ({ facture }) => {
 </body>
 </html>`;
 
-  const mailgun = new Mailgun(FormData);
-  const mg = mailgun.client({
-    username: "api",
-    key: process.env.EMAIL_API_KEY,
-    // url: process.env.EMAIL_URL,
+  return await sendMail({
+    from: `NOVALEAD <${process.env.EMAIL_FROM}>`,
+    to: process.env.EMAIL_FROM,
+    subject: `Demande d'arrêt de service`,
+    html: htmlMessage,
   });
-  try {
-    const data = await mg.messages.create(process.env.EMAIL_SOUS_DOMAIME, {
-      from: `NOVALEAD <${process.env.EMAIL_FROM}>`,
-      to: process.env.EMAIL_FROM,
-      subject: `Demande d'arrêt de service`,
-      html: htmlMessage,
-    });
-
-    return data;
-  } catch (error) {
-    console.error(error);
-  }
 };
 
 export const reccurentInvoiceReadyEmail = async ({ facture }) => {
@@ -203,18 +201,13 @@ export const reccurentInvoiceReadyEmail = async ({ facture }) => {
     key: process.env.EMAIL_API_KEY,
     // url: process.env.EMAIL_URL,
   });
-  try {
-    const data = await mg.messages.create(process.env.EMAIL_SOUS_DOMAIME, {
-      from: `NOVALEAD <${process.env.EMAIL_FROM}>`,
-      to: facture.client.email,
-      subject: `Nouvelle facture disponible`,
-      html: htmlMessage,
-    });
 
-    return data;
-  } catch (error) {
-    console.error(error);
-  }
+  return await sendMail({
+    from: `NOVALEAD <${process.env.EMAIL_FROM}>`,
+    to: facture.client.email,
+    subject: `Nouvelle facture disponible`,
+    html: htmlMessage,
+  });
 };
 
 export const sendresetLoginEmail = async ({ personnel, password }) => {
@@ -252,23 +245,10 @@ export const sendresetLoginEmail = async ({ personnel, password }) => {
     </div>
 </body>
 </html>`;
-
-  const mailgun = new Mailgun(FormData);
-  const mg = mailgun.client({
-    username: "api",
-    key: process.env.EMAIL_API_KEY,
-    // url: process.env.EMAIL_URL,
+  return await sendMail({
+    from: `NOVALEAD <${process.env.EMAIL_FROM}>`,
+    to: personnel.email,
+    subject: `Réinitialisation des paramètres de connexion`,
+    html: htmlMessage,
   });
-  try {
-    const data = await mg.messages.create(process.env.EMAIL_SOUS_DOMAIME, {
-      from: `NOVALEAD <${process.env.EMAIL_FROM}>`,
-      to: personnel.email,
-      subject: `Réinitialisation des paramètres de connexion`,
-      html: htmlMessage,
-    });
-
-    return data;
-  } catch (error) {
-    console.error(error);
-  }
 };

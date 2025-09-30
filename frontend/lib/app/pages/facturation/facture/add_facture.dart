@@ -210,6 +210,8 @@ class _AddFactureState extends State<AddFacture> {
 
       return filteredClients;
     } catch (err) {
+       
+
       MutationRequestContextualBehavior.showPopup(
         status: PopupStatus.customError,
         customMessage: err.toString(),

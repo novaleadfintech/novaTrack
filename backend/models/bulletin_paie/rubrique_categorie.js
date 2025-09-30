@@ -48,9 +48,10 @@ class RubriqueCategorie {
         const tB = b.rubrique?.timeStamp ?? 0;
         return tA - tB;
       });
-       return result;
+      return result;
     } catch (e) {
-       throw new Error(e);
+      console.error(e);
+      throw new Error("Erreur lors de la récupération des données");
     }
   };
 
@@ -86,7 +87,8 @@ class RubriqueCategorie {
       });
       return result;
     } catch (e) {
-      throw new Error(e);
+      console.error(e);
+      throw new Error("Erreur lors de la récupération des données");
     }
   };
 
@@ -111,7 +113,8 @@ class RubriqueCategorie {
       }
       return "OK";
     } catch (e) {
-      throw new Error(e);
+      console.error(e);
+      throw new Error("Erreur lors de l'enrégistrement");
     }
   };
 
@@ -139,7 +142,8 @@ class RubriqueCategorie {
       }
       return "OK";
     } catch (e) {
-      throw new Error(e);
+      console.error(e);
+      throw new Error("Erreur lors de la modification des données");
     }
   };
 
@@ -154,7 +158,8 @@ class RubriqueCategorie {
       }
       return "OK";
     } catch (e) {
-      throw new Error(e);
+      console.error(e);
+      throw new Error("Erreur lors de la suppression");
     }
   };
 }

@@ -1,21 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart' show SvgPicture;
 import 'package:frontend/model/personnel/personnel_model.dart';
 import '../../../../auth/authentification_token.dart';
 import '../../../../global/constant/constant.dart';
 import '../../../../global/constant/permission_alias.dart';
+import '../../../../helper/assets/asset_icon.dart';
+import '../../../../helper/date_helper.dart';
+import '../../../../helper/get_bulletin_period.dart';
 import '../../../../helper/user_helper.dart';
+import '../../../../model/bulletin_paie/bulletin_model.dart';
 import '../../../../model/bulletin_paie/salarie_model.dart';
 import '../../../../model/habilitation/role_model.dart';
 import '../../../../model/habilitation/user_model.dart';
 import '../../../../model/personnel/enum_personnel.dart';
+import '../../../../service/bulletin_service.dart' show BulletinService;
 import '../../../../style/app_style.dart';
 import '../../../../widget/table_body_last.dart';
 import '../../../../widget/table_body_middle.dart';
 import '../../../../widget/table_header.dart';
+import '../../../integration/request_frot_behavior.dart';
 import '../../../responsitvity/responsivity.dart';
 import '../../app_dialog_box.dart';
 import '../../detail_pop.dart';
 import '../../utils/personnel_util.dart';
+import '../bulletin/add_bulletin.dart';
 import 'detail_salarie.dart';
 import 'edit_salarie.dart';
 
@@ -95,7 +103,7 @@ class _SalarieTableState extends State<SalarieTable> {
           children: [
             Table(
               columnWidths: {
-                4: const FixedColumnWidth(50),
+                4: const FixedColumnWidth(100),
                 2: Responsive.isMobile(context)
                     ? const FixedColumnWidth(50)
                     : const FlexColumnWidth(),
@@ -190,7 +198,10 @@ class _SalarieTableState extends State<SalarieTable> {
                       )
                     : Table(
                         columnWidths: {
-                          4: const FixedColumnWidth(50),
+                          4: const FixedColumnWidth(100),
+                          2: Responsive.isMobile(context)
+                              ? const FixedColumnWidth(50)
+                              : const FlexColumnWidth(),
                         },
                         children: widget.paginatedPersonnelData.map((salarie) {
                           PersonnelModel personnel = salarie.personnel;
@@ -219,38 +230,38 @@ class _SalarieTableState extends State<SalarieTable> {
                                         permission: PermissionAlias
                                             .createBulletin.label,
                                       ))
-                                    // FilledButton(
-                                    //     onPressed: () {
-                                    //       onEditBulletin(salarie: salarie);
-                                    //     },
-                                    //     style: const ButtonStyle(
-                                    //       padding: WidgetStatePropertyAll(
-                                    //           EdgeInsets.zero),
-                                    //       shape: WidgetStatePropertyAll(
-                                    //         RoundedRectangleBorder(
-                                    //           borderRadius: BorderRadius.all(
-                                    //             Radius.circular(4),
-                                    //           ),
-                                    //         ),
-                                    //       ),
-                                    //       textStyle: WidgetStatePropertyAll(
-                                    //         TextStyle(
-                                    //           fontWeight: FontWeight.w600,
-                                    //           color: Colors.white,
-                                    //           fontSize: 16,
-                                    //         ),
-                                    //       ),
-                                    //     ),
-                                    //     child: SvgPicture.asset(
-                                    //       AssetsIcons.validInvoice,
-                                    //       height: 20,
-                                    //       colorFilter: ColorFilter.mode(
-                                    //         Theme.of(context)
-                                    //             .colorScheme
-                                    //             .onPrimary,
-                                    //         BlendMode.srcIn,
-                                    //       ),
-                                    //     )),
+                                    FilledButton(
+                                        onPressed: () {
+                                          onEditBulletin(salarie: salarie);
+                                        },
+                                        style: const ButtonStyle(
+                                          padding: WidgetStatePropertyAll(
+                                              EdgeInsets.zero),
+                                          shape: WidgetStatePropertyAll(
+                                            RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                Radius.circular(4),
+                                              ),
+                                            ),
+                                          ),
+                                          textStyle: WidgetStatePropertyAll(
+                                            TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.white,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ),
+                                        child: SvgPicture.asset(
+                                          AssetsIcons.validInvoice,
+                                          height: 20,
+                                          colorFilter: ColorFilter.mode(
+                                            Theme.of(context)
+                                                .colorScheme
+                                                .onPrimary,
+                                            BlendMode.srcIn,
+                                          ),
+                                        )),
                                   
                                   TableBodyLast(
                                     items: [
@@ -304,44 +315,44 @@ class _SalarieTableState extends State<SalarieTable> {
     );
   }
 // TODO: Came back in order todo it as my chef said it
-  // void onEditBulletin({required SalarieModel salarie}) async {
-  //   try {
-  //     // final todayMidnight = DateTime(
-  //     //     DateTime.now().year, DateTime.now().month, DateTime.now().day);
+  void onEditBulletin({required SalarieModel salarie}) async {
+    try {
+      // final todayMidnight = DateTime(
+      //     DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
-  //       BulletinPaieModel? previousBulletin =
-  //           await BulletinService.getPreviousBulletins(
-  //         salarieId: salarie.id,
-  //       );
+      BulletinPaieModel? previousBulletin =
+          await BulletinService.getPreviousBulletins(
+        salarieId: salarie.id,
+      );
 
-  //       List<DateTime>? periode = getCurrentBulletinPeriod(
-  //           salarie: salarie,
-  //           debutOldPeriodePaie: previousBulletin?.debutPeriodePaie,
-  //       finOldPeriodePaie: previousBulletin?.finPeriodePaie,
-  //     );
+      List<DateTime>? periode = getCurrentBulletinPeriod(
+        salarie: salarie,
+        debutOldPeriodePaie: previousBulletin?.debutPeriodePaie,
+        finOldPeriodePaie: previousBulletin?.finPeriodePaie,
+      );
 
-  //       final String titre = periode == null
-  //           ? "Edition du bulletin de paie - ${salarie.personnel.toStringify()}"
-  //           : "Edition du bulletin de paie - ${salarie.personnel.toStringify()} - du ${getStringDate(time: periode.first)} au ${getStringDate(time: periode.last)}";
+      final String titre = periode == null
+          ? "Edition du bulletin de paie - ${salarie.personnel.toStringify()}"
+          : "Edition du bulletin de paie - ${salarie.personnel.toStringify()} - du ${getStringDate(time: periode.first)} au ${getStringDate(time: periode.last)}";
 
-  //       final Widget contenu = periode == null
-  //           ? AddBulletinPage(
-  //               salarie: salarie,
-  //               debutPeriodePaie: null,
-  //               finPeriodePaie: null,
-  //             )
-  //           : AddBulletinPage(
-  //               salarie: salarie,
-  //               debutPeriodePaie: periode.first,
-  //               finPeriodePaie: periode.last,
-  //             );
+      final Widget contenu = periode == null
+          ? AddBulletinPage(
+              salarie: salarie,
+              debutPeriodePaie: null,
+              finPeriodePaie: null,
+            )
+          : AddBulletinPage(
+              salarie: salarie,
+              debutPeriodePaie: periode.first,
+              finPeriodePaie: periode.last,
+            );
 
-  //       showAddBulletinPage(titre: titre, contenu: contenu);
-  //   } catch (e) {
-  //     MutationRequestContextualBehavior.showCustomInformationPopUp(
-  //         message: e.toString());
-  //   }
-  // }
+      showAddBulletinPage(titre: titre, contenu: contenu);
+    } catch (e) {
+      MutationRequestContextualBehavior.showCustomInformationPopUp(
+          message: e.toString());
+    }
+  }
 
   showAddBulletinPage({required String titre, required Widget contenu}) {
     showResponsiveDialog(

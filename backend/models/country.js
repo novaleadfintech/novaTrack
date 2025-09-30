@@ -96,9 +96,8 @@ class CountryModel {
       await countryCollection.update(key, updateField);
       return "OK";
     } catch (err) {
-      throw new Error(
-        "Une erreur s'est produite lors de la mise à jour > " + err
-      );
+     console.error(err);
+     throw new Error("Une erreur s'est produite lors de la mise à jour");
     }
   }
 

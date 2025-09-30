@@ -47,9 +47,11 @@ class ModulePermissionService {
           return [];
         }
       } else {
-        throw Exception(jsonDecode(response.body)['errors'][0]['message']);
+        throw jsonDecode(response.body)['errors'][0]['message'];
       }
     } catch (err) {
+       
+
       rethrow;
     }
   }

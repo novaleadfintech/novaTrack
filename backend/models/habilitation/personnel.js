@@ -64,7 +64,8 @@ class Personnel {
       const personnel = await personnelCollection.document(key);
       return personnel;
     } catch (e) {
-      throw new Error(`Ce personnel est inexistant` + e.message);
+      console.error(e);
+      throw new Error(`Ce personnel est inexistant`);
     }
   };
 
@@ -161,9 +162,9 @@ class Personnel {
       await personnelCollection.save(personnel);
       return "OK";
     } catch (err) {
-      throw new Error(
-        `Une erreur s'est produite lors de l'enregistrement : ${err.message}`
-      );
+      console.error(err);
+
+      throw new Error(`Une erreur s'est produite lors de l'enregistrement `);
     }
   };
 
@@ -208,7 +209,6 @@ class Personnel {
       updateField.dateDebut = dateDebut;
     }
 
-    
     if (typePersonnel !== undefined) {
       updateField.typePersonnel = typePersonnel;
     }
@@ -285,9 +285,9 @@ class Personnel {
       await personnelCollection.update(key, updateField);
       return "OK";
     } catch (err) {
-      throw new Error(
-        "Une erreur s'est produite lors de la mise à jour : " + err
-      );
+      console.error(err);
+
+      throw new Error("Une erreur s'est produite lors de la mise à jour");
     }
   };
 
@@ -309,9 +309,11 @@ class Personnel {
       await trx.commit();
       return "OK";
     } catch (err) {
+      console.error(err);
+
       await trx.abort();
       throw new Error(
-        `Une erreur s'est produite lors de l'archivage du personnel et de la mise à jour des bulletins : ${err.message}`
+        `Une erreur s'est produite lors de l'archivage du personnel et de la mise à jour des bulletins`
       );
     }
   };
@@ -335,6 +337,8 @@ class Personnel {
       await trx.commit();
       return "OK";
     } catch (err) {
+      console.error(err);
+
       await trx.abort();
       throw new Error(
         `Une erreur s'est produite lors du désarchivage du personnel et de la mise à jour des bulletins`

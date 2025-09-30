@@ -40,7 +40,8 @@ class MoyenPaiement {
       const moyen = await moyenPaiementCollection.document(key);
       return moyen;
     } catch (err) {
-      throw new Error(`Cet moyen de paiement est introuvable`);
+    console.error(err);
+       throw new Error(`Cet moyen de paiement est introuvable`);
     }
   }
 
@@ -49,7 +50,8 @@ class MoyenPaiement {
       await moyenPaiementCollection.documentExists(key);
       return true;
     } catch (err) {
-      throw new Error(`Cet moyen de paiement est introuvable`);
+           console.error(err);
+       throw new Error(`Cet moyen de paiement est introuvable`);
     }
   }
 
@@ -80,8 +82,10 @@ class MoyenPaiement {
       const result = await moyenPaiementCollection.save(moyen);
       return "OK";
     } catch (error) {
+    console.error(error);
+
       throw new Error(
-        `Erreur lors de la création du moyen de paiement : ${error}`
+        `Erreur lors de la création du moyen de paiement`
       );
     }
   }
@@ -123,8 +127,9 @@ class MoyenPaiement {
       await moyenPaiementCollection.update(key, updateField);
       return "OK";
     } catch (e) {
+      console.error(e);
       throw new Error(
-        `Une erreur s'est produite lors de la mise à jour du moyen de paiement : ${e}`
+        `Une erreur s'est produite lors de la mise à jour du moyen de paiement`
       );
     }
   }
@@ -135,8 +140,10 @@ class MoyenPaiement {
       await moyenPaiementCollection.remove(key);
       return "OK";
     } catch (error) {
+    console.error(error);
+
       throw new Error(
-        `Erreur lors de la suppression du moyen de paiement : ${error}`
+        `Erreur lors de la suppression du moyen de paiement`
       );
     }
   }

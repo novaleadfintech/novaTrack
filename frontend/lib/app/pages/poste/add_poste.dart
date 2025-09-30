@@ -91,6 +91,8 @@ class _AddPosteState extends State<AddPoste> {
         );
       }
     } catch (err) {
+       
+
       _dialog.hide();
       MutationRequestContextualBehavior.showPopup(
         status: PopupStatus.customError,

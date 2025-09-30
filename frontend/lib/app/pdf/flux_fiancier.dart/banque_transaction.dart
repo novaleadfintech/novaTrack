@@ -82,6 +82,8 @@ class TransactionPdfGenerator {
       PdfDownloadHelper.downloadPdf(bytes: bytes, fileName: fileName);
       return RequestResponse(status: PopupStatus.success);
     } catch (err) {
+       
+
       return RequestResponse(
         status: PopupStatus.customError,
         message: err.toString(),

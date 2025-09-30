@@ -189,8 +189,8 @@ console.log("filePath", filePath);
     if (cleRIB !== undefined) {
       updateField.cleRIB = cleRIB;
     }
-     isValidValue({ value: updateField });
-     if (logo == null) {
+    isValidValue({ value: updateField });
+    if (logo == null) {
       updateField.logo = null;
     } else if (
       logo !== undefined &&
@@ -203,6 +203,8 @@ console.log("filePath", filePath);
       try {
         resolvedLogo = await logo;
       } catch (err) {
+        console.error(err);
+
         resolvedLogo = null;
       }
 
@@ -241,6 +243,8 @@ console.log("filePath", filePath);
       await banqueCollection.update(key, updateField);
       return "OK";
     } catch (error) {
+      console.error(error);
+
       throw new Error("Une erreur s'est produite lors de la mise à jour");
     }
   };
@@ -257,9 +261,9 @@ console.log("filePath", filePath);
       await banqueCollection.update(key, updateField);
       return "OK";
     } catch (e) {
+      console.error(e);
       throw new Error(
-        "Une erreur s'est produite lors de la réinitiation du solde bancaire > " +
-          e.message
+        "Une erreur s'est produite lors de la réinitiation du solde bancaire"
       );
     }
   };

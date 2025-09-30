@@ -69,7 +69,7 @@ class _AddDebtPageState extends State<AddDebtPage> {
     try {
       _user = await AuthService().decodeToken();
     } catch (err) {
-      _dialog.hide();
+       _dialog.hide();
       MutationRequestContextualBehavior.showPopup(
         status: PopupStatus.serverError,
         customMessage: "Enégistrement échoué",

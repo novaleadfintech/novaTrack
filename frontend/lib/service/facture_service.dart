@@ -678,6 +678,8 @@ status
       }
       return factures;
     } catch (err) {
+       
+
       throw err.toString();
     }
   }

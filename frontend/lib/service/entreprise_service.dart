@@ -49,6 +49,8 @@ headers: getHeaders(),
           try {
             return StrictEntreprise.fromJson(data);
           } catch (err) {
+             
+
             throw "Certaines données de l'entreprise ne sont pas à jour. Veuillez contacter l'administrateur";
           }
         } else {

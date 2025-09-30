@@ -10,7 +10,5 @@ String getOperateurSymbol(Operateur operateur) {
       return "*";
     case Operateur.division:
       return "/";
-    default:
-      return "";
   }
 }

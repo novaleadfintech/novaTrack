@@ -36,7 +36,7 @@ class Client {
     }
   }
 
-  // Récupérer tous les clients avec pagination
+  // Récupérer tous les partenaires avec pagination
   getAllClients = async ({ skip, perPage, etat, nature }) => {
     try {
       let limit = aql``;
@@ -86,7 +86,9 @@ class Client {
         return [];
       }
     } catch (error) {
-      throw new Error("Erreur lors de la récupération des clients");
+      console.error(error);
+
+      throw new Error("Erreur lors de la récupération des partenaires");
     }
   };
 
@@ -135,7 +137,9 @@ class Client {
         return [];
       }
     } catch (error) {
-      throw new Error("Erreur lors de la récupération des clients");
+      console.error(error);
+
+      throw new Error("Erreur lors de la récupération des partenaires");
     }
   };
 
@@ -156,11 +160,13 @@ class Client {
           : null,
       };
     } catch (error) {
-      throw new Error(`Ce client est introuvable > ` + error.message);
+      console.error(error);
+
+      throw new Error(`Ce partenaire est introuvable`);
     }
   };
 
-  // Récupérer tous les clients moraux
+  // Récupérer tous les partenaires moraux
   getClientMoraux = async ({ skip, perPage }) => {
     try {
       let limit = aql``;
@@ -194,7 +200,9 @@ class Client {
         return [];
       }
     } catch (error) {
-      throw new Error("Erreur lors de la récupération des clients");
+      console.error(error);
+
+      throw new Error("Erreur lors de la récupération des partenaires");
     }
   };
   getClientPhysiques = async ({ skip, perPage }) => {
@@ -224,7 +232,9 @@ class Client {
         return [];
       }
     } catch (error) {
-      throw new Error("Erreur lors de la récupération des clients");
+      console.error(error);
+
+      throw new Error("Erreur lors de la récupération des partenaires");
     }
   };
 
@@ -300,7 +310,11 @@ class Client {
       await clientCollection.save(clientMoral);
       return "OK";
     } catch (error) {
-      throw new Error(error);
+      console.error(error);
+
+      throw new Error(
+        "Une erreur s'est produite lors de l'enrégistrement du partenaire"
+      );
     }
   };
 
@@ -343,6 +357,8 @@ class Client {
       await clientCollection.save(ClientPhysique);
       return "OK";
     } catch (error) {
+      console.error(error);
+
       throw new Error("Erreur lors de la création du client");
     }
   };
@@ -454,13 +470,13 @@ class Client {
 
       return "OK";
     } catch (err) {
-      throw new Error(
-        "Erreur lors de la mise à jour du client : " + err.message
-      );
+      console.error(err);
+
+      throw new Error("Erreur lors de la mise à jour du partenaire");
     }
   };
 
-  // Mettre à jour un client existant
+  // Mettre à jour un partenaire existant
   updateClientPhysique = async ({
     key,
     nom,
@@ -513,7 +529,9 @@ class Client {
       await clientCollection.update(key, updateField);
       return "OK";
     } catch (error) {
-      throw new Error("Erreur lors de la mise à jour du client ");
+      console.error(error);
+
+      throw new Error("Erreur lors de la mise à jour du partenaire ");
     }
   };
 
@@ -528,7 +546,7 @@ class Client {
 
     if (query.hasNext) {
       throw new Error(
-        "Ce client à des factures à payer. Il ne peux donc pas être archivé."
+        "Ce partenaire à des factures à payer. Il ne peux donc pas être archivé."
       );
     }
     try {
@@ -536,18 +554,22 @@ class Client {
       await clientCollection.update(key, updateField);
       return "OK";
     } catch (error) {
-      throw new Error("Erreur lors de l'archivage du client");
+      console.error(error);
+
+      throw new Error("Erreur lors de l'archivage du partenaire");
     }
   };
 
-  // Réactiver un client archivé par son ID
+  // Réactiver un partenaire archivé par son ID
   unarchivedClient = async ({ key }) => {
     try {
       const updateField = { etat: EtatClient.unarchived };
       await clientCollection.update(key, updateField);
       return "OK";
     } catch (error) {
-      throw new Error("Erreur lors du désarchivage du client");
+      console.error(error);
+
+      throw new Error("Erreur lors du désarchivage du partenaire");
     }
   };
 

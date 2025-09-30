@@ -61,7 +61,9 @@ class LigneFacture {
         montant: montantLigneFacture,
       };
     } catch (err) {
-      throw new Error(`Document introuvable : ` + err.message);
+      console.error(err);
+
+      throw new Error(`Document introuvable`);
     }
   };
 
@@ -111,9 +113,9 @@ class LigneFacture {
           })
       );
     } catch (err) {
-      throw new Error(
-        "Erreur lors de la récupération des lignes de service : " + err.message
-      );
+      console.error(err);
+
+      throw new Error("Erreur lors de la récupération des lignes de service");
     }
   };
 
@@ -192,7 +194,9 @@ class LigneFacture {
       await ligneFactureCollection.save(newLigneFacture);
       return "OK";
     } catch (err) {
-      throw new Error("Erreur lors du traitement" + err);
+      console.error(err);
+
+      throw new Error("Erreur lors du traitement");
     }
   };
 
@@ -290,8 +294,10 @@ class LigneFacture {
       await session.commit();
       return "OK";
     } catch (err) {
+      console.error(err);
+
       await session.abort();
-      throw new Error("Erreur lors du traitement : " + err.message);
+      throw new Error("Erreur lors du traitement");
     }
   };
 
@@ -316,6 +322,8 @@ class LigneFacture {
       try {
         await ligneFactureCollection.remove(key);
       } catch (err) {
+        console.error(err);
+
         throw new Error("Erreur lors de la suppression");
       }
     }
@@ -333,6 +341,8 @@ class LigneFacture {
       await ligneFactureCollection.removeAll(ligneFactures.edges);
       return "OK";
     } catch (err) {
+      console.error(err);
+
       throw new Error("Erreur lors de la suppression");
     }
   };
@@ -343,6 +353,8 @@ class LigneFacture {
       await ligneFactureCollection.removeAll(ligneFactures.edges);
       return "OK";
     } catch (err) {
+      console.error(err);
+
       throw new Error("Erreur lors de la suppression");
     }
   };

@@ -41,7 +41,9 @@ const getUser = (req) => {
     );
     return decoded;
   } catch (err) {
-    return null;
+    console.error(err);
+
+     return null;
   }
 };
 

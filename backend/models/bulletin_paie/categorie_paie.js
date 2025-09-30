@@ -44,6 +44,7 @@ class CategoriePaie {
       const categorie = await categoriePaieCollection.document(key);
       return categorie;
     } catch (err) {
+      console.error(err);
       throw new Error(`La catégorie de paie est introuvable`);
     }
   }
@@ -53,6 +54,8 @@ class CategoriePaie {
       await categoriePaieCollection.documentExists(key);
       return true;
     } catch (err) {
+      console.error(err);
+
       throw new Error(`La categorie de paie est introuvable`);
     }
   }
@@ -83,9 +86,9 @@ class CategoriePaie {
       const result = await categoriePaieCollection.save(categorie);
       return "OK";
     } catch (error) {
-      throw new Error(
-        `Erreur lors de la création de la catégorie de paie : ${error}`
-      );
+      console.error(error);
+
+      throw new Error(`Erreur lors de la création de la catégorie de paie`);
     }
   }
 
@@ -122,8 +125,9 @@ class CategoriePaie {
       await categoriePaieCollection.update(key, updateField);
       return "OK";
     } catch (e) {
+      console.error(e);
       throw new Error(
-        `Une erreur s'est produite lors de la mise à jour de la catégorie de paie : ${e}`
+        `Une erreur s'est produite lors de la mise à jour de la catégorie de paie`
       );
     }
   }
@@ -148,9 +152,9 @@ class CategoriePaie {
       await categoriePaieCollection.remove(key);
       return "OK";
     } catch (error) {
-      throw new Error(
-        `Erreur lors de la suppression de la catégorie de paie : ${error}`
-      );
+      console.error(error);
+
+      throw new Error(`Erreur lors de la suppression de la catégorie de paie`);
     }
   }
 }

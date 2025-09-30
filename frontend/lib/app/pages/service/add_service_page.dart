@@ -176,6 +176,8 @@ class _AddServicePageState extends State<AddServicePage> {
       );
     }
     } catch (err) {
+       
+
       _dialog.hide();
       MutationRequestContextualBehavior.showPopup(
         status: PopupStatus.customError,

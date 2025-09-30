@@ -80,6 +80,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
         (total, creance) => total + creance.montantRestant.toDouble(),
       ));
     } catch (err) {
+ 
       setState(() {
         errMessage = err.toString();
       });
@@ -93,6 +94,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
           (await ClientService.getUnarchivedClients());
       return Formatter.formatAmount(clientData.length.toDouble());
     } catch (err) {
+ 
       setState(() {
         errMessage = err.toString();
       });
@@ -106,7 +108,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
           await FactureService.getUnPaidFacturesForDashboard();
       return Formatter.formatAmount(factureData.length.toDouble());
     } catch (err) {
-      setState(() {
+       setState(() {
         errMessage = err.toString();
       });
       return "0";
@@ -119,7 +121,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
           (await ProformaService.getProformasAttente());
       return Formatter.formatAmount(factureData.length.toDouble());
     } catch (err) {
-      setState(() {
+       setState(() {
         errMessage = err.toString();
       });
       return "0";

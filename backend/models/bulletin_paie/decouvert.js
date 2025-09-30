@@ -68,6 +68,7 @@ class Decouverte {
         // }),
       };
     } catch (e) {
+      console.error(e);
       throw new Error(`Ce decouvert est introuvable`);
     }
   };
@@ -140,6 +141,7 @@ class Decouverte {
         decouvertId: decouvertResult.new._id,
       });
     } catch (e) {
+      console.error(e);
       throw new Error("Une erreur s'est produite lors de la création");
     }
 
@@ -236,7 +238,8 @@ class Decouverte {
       }
       return "OK";
     } catch (e) {
-      throw new Error("Une erreur s'est produite lors de la mise à jour." + e);
+      console.error(e);
+      throw new Error("Une erreur s'est produite lors de la mise à jour.");
     }
   };
 

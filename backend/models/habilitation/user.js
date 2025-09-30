@@ -192,9 +192,8 @@ class User {
         roles: roles,
       };
     } catch (e) {
-      throw new Error(
-        "Erreur lors de la récupération de l'utilisateur " + e.message
-      );
+      console.error(e);
+      throw new Error("Erreur lors de la récupération de l'utilisateur");
     }
   };
 
@@ -241,7 +240,8 @@ class User {
         });
         return "OK";
       } catch (e) {
-        throw new Error(e);
+        console.error(e);
+        throw new Error("Erreur lors de l'attribution du rôle au personnel");
       }
     }
 
@@ -285,16 +285,17 @@ class User {
         role: role,
         user: newUser,
       }).catch((error) => {
-        throw new Error(error);
+        throw new Error(error.message);
       });
 
       await trx.commit();
 
       return "OK";
     } catch (error) {
+      console.error(error);
       await trx.abort();
       throw new Error(
-        "Une erreur s'est produite lors de l'attribution du rôle." + error
+        "Une erreur s'est produite lors de l'attribution du rôle."
       );
     }
   };
@@ -307,11 +308,10 @@ class User {
         authorizer: userId,
         authorizeTime: Date.now(),
       });
-       return "OK";
+      return "OK";
     } catch (error) {
-      throw new Error(
-        `Une erreur s'est produite lors du traitement > ${error.message}`
-      );
+      console.error(error);
+      throw new Error(`Une erreur s'est produite lors du traitement`);
     }
   };
 
@@ -332,6 +332,8 @@ class User {
       await userRoleCollection.save({ _from: userId, _to: roleId });
       return "OK";
     } catch (err) {
+      console.error(err);
+
       throw new Error(
         "Une erreur s'est produite lors de l'attribution du role."
       );
@@ -347,6 +349,8 @@ class User {
         return "OK";
       }
     } catch (err) {
+      console.error(err);
+
       throw new Error("Une erreur s'est produite lors de l'opération'.");
     }
   };
@@ -360,6 +364,8 @@ class User {
         return "OK";
       }
     } catch (err) {
+    console.error(err);
+
       throw new Error("Une erreur s'est produite lors de l'opération'.");
     }
   }; */
@@ -404,6 +410,8 @@ class User {
       });
       return "OK";
     } catch (err) {
+      console.error(err);
+
       throw new Error(
         "Une erreur s'est produite lors de la mise à jour des paramètre de connexion."
       );
@@ -411,7 +419,7 @@ class User {
   };
 
   seConnecter = async ({ login, password }) => {
-     isValidValue({ value: [login, password] });
+    isValidValue({ value: [login, password] });
     var existingUser = null;
     try {
       existingUser = await db.query(
@@ -510,10 +518,10 @@ class User {
       await trx.commit();
       return "OK";
     } catch (error) {
+      console.error(error);
       await trx.abort();
-
       throw new Error(
-        `Une erreur s'est produite lors de la réinitialisation du paramètre de connexion de ${user.personnel.nom} ${user.personnel.prenom} : ${error.message}`
+        `Une erreur s'est produite lors de la réinitialisation du paramètre de connexion de ${user.personnel.nom} ${user.personnel.prenom}`
       );
     }
   };

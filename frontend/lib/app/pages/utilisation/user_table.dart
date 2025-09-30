@@ -182,6 +182,8 @@ class _UserTableState extends State<UserTable> {
               customMessage:
                   "$determinant ${user.personnel?.prenom ?? ''} ${user.personnel?.nom ?? ''} a été defini comme ${role.libelle}");
         } catch (err) {
+           
+
           MutationRequestContextualBehavior.showPopup(
             status: PopupStatus.serverError,
             customMessage: "",
@@ -237,6 +239,8 @@ class _UserTableState extends State<UserTable> {
         );
       }
     } catch (err) {
+       
+
       MutationRequestContextualBehavior.showPopup(
         status: PopupStatus.serverError,
         customMessage: err.toString(),

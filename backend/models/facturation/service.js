@@ -189,6 +189,7 @@ class Service {
       await serviceCollection.update(key, updateField);
       return "OK";
     } catch (error) {
+    console.error(error);
       throw new Error("Une erreur s'est produite lors de la mise à jour");
     }
   };

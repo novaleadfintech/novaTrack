@@ -131,6 +131,7 @@ class _InitialLigneSpaceState extends State<InitialLigneSpace> {
                       showResponsiveDialog(
                         context,
                         content: AddInitialLigne(
+                          // ton formulaire d'ajout
                           controllers: widget.controllers,
                           type: widget.type,
                           refresh: () {

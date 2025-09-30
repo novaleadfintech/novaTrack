@@ -38,9 +38,11 @@ class RoleService {
           return [];
         }
       } else {
-        throw Exception(jsonDecode(response.body)['errors'][0]['message']);
+        throw jsonDecode(response.body)['errors'][0]['message'];
       }
     } catch (err) {
+       
+
       return [];
     }
   }

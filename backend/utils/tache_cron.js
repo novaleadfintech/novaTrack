@@ -20,7 +20,9 @@ const tachCron = () => {
     // console.log("Vérification des service à mettre à jour...");
     try {
       await ProformaModel.autoArchiveProforma();
-    } catch (err) {}
+    } catch (err) {
+      console.error(err);
+    }
   });
   cron.schedule("* * * * *", async () => {
     // console.log("Vérification des bulletins à dupliquer...");

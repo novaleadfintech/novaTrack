@@ -91,7 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } catch (e) {
       _dialog.hide();
       MutationRequestContextualBehavior.showPopup(
-        customMessage: "Échec de la connexion : $e",
+        customMessage: "Échec de connexion ${e.toString()}",
         status: PopupStatus.serverError,
       );
     }

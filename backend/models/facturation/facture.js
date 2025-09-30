@@ -565,13 +565,13 @@ class Facture {
 
   getFacture = async ({ key }) => {
     try {
-       const facture = await factureCollection.document(key);
- 
+      const facture = await factureCollection.document(key);
+
       // Récupérer les lignes de services associées à la facture
       const ligneFactures = await ligneFactureModel.getLigneFactureByFacture({
         factureId: facture._id,
       });
- 
+
       const montantTotal = utils.calculerMontantTotal({
         lignes: ligneFactures,
         reduction: facture.reduction || 0,
@@ -587,9 +587,9 @@ class Facture {
         montant: montantTotal,
       };
     } catch (err) {
-      throw new Error(
-        "Une erreur s'est produite lors de la récupération : " + err.message
-      );
+      console.error(err);
+
+      throw new Error("Une erreur s'est produite lors de la récupération");
     }
   };
 
@@ -770,8 +770,12 @@ class Facture {
       await session.commit();
       return "OK";
     } catch (err) {
+      console.error(err);
+
       await session.abort();
-      throw err;
+      throw new Error(
+        "Une erreur s'est produite lors de la création de la facture."
+      );
     }
   };
 
@@ -949,7 +953,7 @@ class Facture {
     }
 
     isValidValue({ value: updateField });
-     try {
+    try {
       await factureCollection.update(key, updateField);
       return "OK";
     } catch {
@@ -968,7 +972,7 @@ class Facture {
   };
 
   calculerMontantPaye = ({ payements, montantactuelle = 0 }) => {
-     return payements
+    return payements
 
       .map((payement) => payement.montant)
       .reduce((total, montant) => total + montant, montantactuelle);
@@ -990,13 +994,17 @@ class Facture {
         throw new Error("Cette facture a une fois été payée");
       }
     } catch (err) {
-      throw new Error("Suppression impossible" + err);
+      console.error(err);
+
+      throw new Error("Suppression impossible");
     }
     try {
       await ligneFactureModel.deleteAllByFactureByForce({ factureId: key });
       await factureCollection.remove(key);
       return "OK";
     } catch (err) {
+      console.error(err);
+
       throw new Error("Une erreur s'est produite lors la suppression");
     }
   };
@@ -1219,8 +1227,10 @@ class Facture {
       await transaction.commit();
       return "OK";
     } catch (err) {
+      console.error(err);
+
       await transaction.abort();
-      throw new Error(`Erreur lors du traitement du paiement > ${err.message}`);
+      throw new Error(`Erreur lors du traitement du paiement`);
     }
   };
 
@@ -1309,8 +1319,10 @@ class Facture {
       await session.commit();
       return "OK";
     } catch (err) {
+    console.error(err);
+
       await session.abort();
-      throw new Error(err.message);
+      throw new Error(err.message || "Une erreur s'est produite lors de la validation du flux financier.");
     }
   }
 
@@ -1648,8 +1660,9 @@ class Facture {
       }
       return "OK";
     } catch (e) {
+      console.error(e);
       throw new Error(
-        "La regeneration de cette facture n'a pas pu etre activé!" + e
+        "La regeneration de cette facture n'a pas pu etre activé!"
       );
     }
   };
@@ -1711,7 +1724,7 @@ class Facture {
         await this.blockerService({ secretekey: facture.secreteKey });
       }
      } catch (e) {
-      console.error(e);
+       console.error(e);
     }
   };
 
@@ -1818,8 +1831,8 @@ class Facture {
         throw new Error("Échec d'envoi d'e-mail");
       });
      } catch (error) {
-      await session.abort();
-      console.error("Erreur lors de la régénération des factures :", error);
+       await session.abort();
+      console.error("Erreur lors de la régénération des factures", error);
     }
   };
 

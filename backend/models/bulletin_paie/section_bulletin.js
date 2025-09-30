@@ -39,7 +39,9 @@ class SectionBulletin {
         return [];
       }
     } catch (err) {
-      throw new Error("Erreur lors de la récupération" + err);
+      console.error(err);
+
+      throw new Error("Erreur lors de la récupération");
     }
   };
 
@@ -47,9 +49,9 @@ class SectionBulletin {
     try {
       return await sectionBulletinCollection.document(key);
     } catch (err) {
-      throw new Error(
-        "La section bulletin que vous recherchez n'existe pas! " + err
-      );
+      console.error(err);
+
+      throw new Error("La section bulletin que vous recherchez n'existe pas!");
     }
   };
 
@@ -64,6 +66,8 @@ class SectionBulletin {
       await sectionBulletinCollection.save(newSectionBulletin);
       return "OK";
     } catch (err) {
+      console.error(err);
+
       throw new Error(
         "Une erreur s'est produite lors de l'enregistrement du section"
       );
@@ -81,6 +85,8 @@ class SectionBulletin {
       await sectionBulletinCollection.update(key, updateField);
       return "OK";
     } catch (err) {
+      console.error(err);
+
       throw new Error(
         "Une erreur s'est produite lors de la mise à jour du section"
       );
@@ -111,9 +117,11 @@ class SectionBulletin {
       await sectionBulletinCollection.remove(key);
       return "OK";
     } catch (err) {
+      console.error(err);
+
       throw new Error(
-        err.message ||
-          "Une erreur s'est produite lors de la suppression de la section"
+        // err.message ||
+        "Une erreur s'est produite lors de la suppression de la section"
       );
     }
   };

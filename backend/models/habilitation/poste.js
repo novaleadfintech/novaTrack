@@ -35,7 +35,9 @@ class Poste {
         return [];
       }
     } catch (err) {
-      throw new Error("Erreur lors de la récupération" + err);
+      console.error(err);
+
+      throw new Error("Erreur lors de la récupération");
     }
   };
 
@@ -43,9 +45,9 @@ class Poste {
     try {
       return await posteCollection.document(key);
     } catch (err) {
-      throw new Error(
-        "La poste bulletin que vous recherchez n'existe pas! " + err
-      );
+      console.error(err);
+
+      throw new Error("La poste bulletin que vous recherchez n'existe pas! ");
     }
   };
 
@@ -60,6 +62,8 @@ class Poste {
       await posteCollection.save(newPoste);
       return "OK";
     } catch (err) {
+      console.error(err);
+
       throw new Error(
         "Une erreur s'est produite lors de l'enregistrement du poste"
       );
@@ -77,6 +81,8 @@ class Poste {
       await posteCollection.update(key, updateField);
       return "OK";
     } catch (err) {
+      console.error(err);
+
       throw new Error(
         "Une erreur s'est produite lors de la mise à jour du poste"
       );
@@ -89,6 +95,8 @@ class Poste {
       await posteCollection.remove(key);
       return "OK";
     } catch (err) {
+      console.error(err);
+
       throw new Error(
         err.message ||
           "Une erreur s'est produite lors de la suppression de la poste"

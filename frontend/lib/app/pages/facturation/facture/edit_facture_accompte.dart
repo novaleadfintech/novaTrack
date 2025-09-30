@@ -280,6 +280,8 @@ class _EditFactureAccompteState extends State<EditFactureAccompte> {
     try {
       user = await AuthService().decodeToken();
     } catch (err) {
+       
+
       _dialog.hide();
       MutationRequestContextualBehavior.showPopup(
         status: PopupStatus.serverError,

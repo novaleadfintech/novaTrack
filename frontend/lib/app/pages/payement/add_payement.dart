@@ -99,6 +99,8 @@ class _AddFluxPageState extends State<AddPayement> {
     try {
       user = await AuthService().decodeToken();
     } catch (err) {
+         
+
       _dialog.hide();
       MutationRequestContextualBehavior.showPopup(
         status: PopupStatus.serverError,

@@ -39,7 +39,7 @@ class PdfDownloadHelper {
         // Ouvrir le fichier temporaire (pour Android/iOS)
         await OpenFile.open(tempFilePath);
       } else {
-        throw Exception("Plateforme non supportée.");
+        throw "Plateforme non supportée.";
       }
     } catch (e) {
       throw "Erreur lors du téléchargement : $e";
@@ -70,7 +70,7 @@ class PdfDownloadHelper {
     } else if (Platform.isWindows) {
       await _downloadPdfForWindows(bytes, fileName); // Windows
     } else {
-      throw Exception("Plateforme non supportée.");
+      throw "Plateforme non supportée.";
     }
   }
 }

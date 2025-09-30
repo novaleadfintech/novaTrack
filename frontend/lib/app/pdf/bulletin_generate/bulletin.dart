@@ -73,6 +73,8 @@ class BulletinPdfGenerator {
     PdfDownloadHelper.downloadPdf(bytes: bytes, fileName: fileName);
     return RequestResponse(status: PopupStatus.success);
     } catch (err) {
+       
+
       throw err.toString();
     }
   }
@@ -133,6 +135,8 @@ class BulletinPdfGenerator {
       PdfDownloadHelper.downloadPdf(bytes: bytes, fileName: fileName);
       return RequestResponse(status: PopupStatus.success);
     } catch (err) {
+       
+
       throw err.toString();
     }
   }

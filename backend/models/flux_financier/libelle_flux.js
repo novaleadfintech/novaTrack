@@ -42,7 +42,9 @@ class LibelleFlux {
         return [];
       }
     } catch (err) {
-      throw new Error("Erreur lors de la récupération" + err);
+      console.error(err);
+
+      throw new Error("Erreur lors de la récupération");
     }
   };
 
@@ -50,6 +52,8 @@ class LibelleFlux {
     try {
       return await libelleFluxCollection.document(key);
     } catch (err) {
+    console.error(err);
+
       throw new Error(
         "Une erreur s'est produite lors de la récupération du libellé"
       );
@@ -68,6 +72,8 @@ class LibelleFlux {
       await libelleFluxCollection.save(newLibelleFlux);
       return "OK";
     } catch (err) {
+      console.error(err);
+
       throw new Error(
         "Une erreur s'est produite lors de l'enregistrement du libellé"
       );
@@ -87,6 +93,8 @@ class LibelleFlux {
       await libelleFluxCollection.update(key, updateField);
       return "OK";
     } catch (err) {
+      console.error(err);
+
       throw new Error(
         "Une erreur s'est produite lors de la mise à jour du libellé"
       );
@@ -98,6 +106,8 @@ class LibelleFlux {
       await libelleFluxCollection.remove(key);
       return "OK";
     } catch (err) {
+      console.error(err);
+
       throw new Error(
         "Une erreur s'est produite lors de la suppression du libellé"
       );

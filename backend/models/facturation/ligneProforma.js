@@ -68,8 +68,10 @@ class LigneProforma {
         montant: montantLigneProforma,
       };
     } catch (err) {
+      console.error(err);
+
       throw new Error(
-        `Erreur lors de la récupération de la ligne de proforma : ${err.message}`
+        `Erreur lors de la récupération de la ligne de proforma.`
       );
     }
   };
@@ -115,9 +117,9 @@ class LigneProforma {
           })
       );
     } catch (err) {
-      throw new Error(
-        "Erreur lors de la récupération des lignes de proforma : " + err.message
-      );
+      console.error(err);
+
+      throw new Error("Erreur lors de la récupération des lignes de proforma");
     }
   };
 
@@ -196,7 +198,9 @@ class LigneProforma {
       await ligneProformaCollection.save(newLigneProforma);
       return "OK";
     } catch (err) {
-      throw new Error("Erreur lors du traitement" + err);
+      console.error(err);
+
+      throw new Error("Erreur lors du traitement");
     }
   };
 
@@ -300,8 +304,10 @@ class LigneProforma {
       await session.commit();
       return "OK";
     } catch (err) {
+      console.error(err);
+
       await session.abort();
-      throw new Error("Erreur lors du traitement " + err);
+      throw new Error("Erreur lors du traitement");
     }
   };
   //une methode à utiliser pour la tache cron
@@ -327,6 +333,8 @@ class LigneProforma {
       try {
         await ligneProformaCollection.remove(key);
       } catch (err) {
+        console.error(err);
+
         throw new Error("Erreur lors de la suppression");
       }
     }
@@ -339,6 +347,8 @@ class LigneProforma {
       await ligneProformaCollection.removeAll(ligneProformas.edges);
       return "OK";
     } catch (err) {
+      console.error(err);
+
       throw new Error("Erreur lors de la suppression");
     }
   };

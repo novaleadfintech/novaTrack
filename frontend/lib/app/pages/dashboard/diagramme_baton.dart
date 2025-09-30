@@ -327,7 +327,7 @@ class FinancialBarChartState extends State<FinancialBarChart> {
         nombreSubdivision: 4,
       );
     } catch (err) {
-      rethrow;
+       rethrow;
     }
   }
 

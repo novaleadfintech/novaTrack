@@ -248,6 +248,7 @@ class BulletinPaie {
         rubriques: rubriquesResolues,
       };
     } catch (err) {
+      console.error(err);
       throw new Error(`Ce bulletin est introuvable`);
     }
   }
@@ -291,6 +292,7 @@ class BulletinPaie {
         };
       }
     } catch (err) {
+      console.error(err);
       throw new Error(`Ce bulletin est introuvable`);
     }
   }
@@ -362,6 +364,8 @@ class BulletinPaie {
         validate,
       };
     } catch (err) {
+      console.error(err);
+
       throw new Error(
         err.message || "Erreur lors de la récupération du bulletin."
       );
@@ -504,8 +508,10 @@ class BulletinPaie {
       await session.commit();
       return "OK";
     } catch (error) {
+      console.error(error);
+
       await session.abort();
-      throw new Error(`Erreur lors de la création du bulletin : ${error}`);
+      throw new Error(`Erreur lors de la création du bulletin`);
     }
   }
 
@@ -580,6 +586,7 @@ class BulletinPaie {
       await bulletinCollection.update(key, updateField);
       return "OK";
     } catch (e) {
+      console.error(e);
       throw new Error(`Une erreur s'est produite lors de la mise à jour`);
     }
   }
@@ -608,9 +615,11 @@ class BulletinPaie {
   //       }
   //       await session.commit();
   //     } catch (error) {
+  // console.error(error);
+
   //       await session.abort();
   //       throw new Error(
-  //         `Erreur lors de la duplication des bulletins : ${error}`
+  //         `Erreur lors de la duplication des bulletins`
   //       );
   //     }
   //   }
@@ -633,6 +642,7 @@ class BulletinPaie {
   //     }
   //     return bulletins;
   //   } catch (err) {
+
   //     throw err;
   //   }
   // }
@@ -741,14 +751,18 @@ class BulletinPaie {
       await session.commit();
       return "OK";
     } catch (error) {
+      console.error(error);
+
       await session.abort();
 
       // Re-lancer l'erreur spécifique de validation
       if (error.message === "Ce bulletin a déjà été validé") {
-        throw error;
+        throw error.message;
       }
 
-      throw new Error(error);
+      throw new Error(
+        "Une erreur s'est produite lors de la validation du bulletin"
+      );
     }
   }
 

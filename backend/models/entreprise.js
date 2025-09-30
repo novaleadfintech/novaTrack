@@ -211,7 +211,8 @@ class Entreprise {
         }
       }
     } catch (e) {
-      throw error;
+      console.error(e);
+       throw "Erreur lors de la modification des données";
     }
 
     if (tamponSignature?.file !== undefined) {

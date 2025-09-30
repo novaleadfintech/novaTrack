@@ -110,7 +110,9 @@ class RubriqueBulletin {
         return [];
       }
     } catch (err) {
-      throw new Error("Erreur lors de la récupération" + err);
+      console.error(err);
+
+      throw new Error("Erreur lors de la récupération");
     }
   };
 
@@ -160,8 +162,10 @@ class RubriqueBulletin {
           : null,
       };
     } catch (err) {
+      console.error(err);
+
       throw new Error(
-        "Une erreur s'est produite lors de la récupération du rubrique" + err
+        "Une erreur s'est produite lors de la récupération du rubrique"
       );
     }
   };
@@ -183,8 +187,10 @@ class RubriqueBulletin {
         };
       }
     } catch (err) {
+      console.error(err);
+
       throw new Error(
-        "Une erreur s'est produite lors de la récupération du rubrique" + err
+        "Une erreur s'est produite lors de la récupération du rubrique"
       );
     }
   };
@@ -207,10 +213,10 @@ class RubriqueBulletin {
       value: [rubrique, code, nature],
     });
 
-     if (rubriqueRole != RubriqueRole.variable) {
+    if (rubriqueRole != RubriqueRole.variable) {
       isValidValue({ value: type });
     }
- 
+
     if (nature == NatureRubrique.taux) {
       isValidValue({ value: taux });
     } else {
@@ -262,6 +268,8 @@ class RubriqueBulletin {
       await rubriqueBulletinCollection.save(newRubriqueBulletin);
       return "OK";
     } catch (err) {
+      console.error(err);
+
       throw new Error(
         "Une erreur s'est produite lors de l'enregistrement du rubrique"
       );
@@ -283,7 +291,7 @@ class RubriqueBulletin {
     nature,
     bareme,
   }) => {
-     const updateField = {};
+    const updateField = {};
     if (rubrique != undefined) {
       updateField.rubrique = rubrique;
     }
@@ -356,6 +364,8 @@ class RubriqueBulletin {
       await rubriqueBulletinCollection.update(key, updateField);
       return "OK";
     } catch (err) {
+      console.error(err);
+
       throw new Error(
         "Une erreur s'est produite lors de la mise à jour du rubrique"
       );
@@ -367,6 +377,8 @@ class RubriqueBulletin {
       await rubriqueBulletinCollection.remove(key);
       return "OK";
     } catch (err) {
+      console.error(err);
+
       throw new Error(
         "Une erreur s'est produite lors de la suppression du rubrique"
       );

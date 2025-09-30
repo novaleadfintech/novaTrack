@@ -75,15 +75,20 @@ class _ValidateDetailPageState extends State<ValidateDetailPage> {
                       ),
                       ...(widget.flux.isFromSystem!
                               ? [
-                                  FluxFinancierStatus.wait,
+                                  // FluxFinancierStatus.wait,
                                   FluxFinancierStatus.valid
                                 ]
-                              : FluxFinancierStatus.values)
+                              : [
+                                  FluxFinancierStatus.valid,
+                                  FluxFinancierStatus.reject,
+                                  FluxFinancierStatus.returne,
+                                ])
                           .map(
                         (status) => Row(
                           children: [
                             Radio<FluxFinancierStatus>(
                               value: status,
+                              
                               groupValue: selectedValue,
                               onChanged: (value) {
                                 setState(() {
@@ -179,6 +184,8 @@ bool confirmed = await handleOperationButtonPress(
       );
       }
     } catch (err) {
+       
+
       _dialog.hide();
       MutationRequestContextualBehavior.showPopup(
         status: PopupStatus.customError,

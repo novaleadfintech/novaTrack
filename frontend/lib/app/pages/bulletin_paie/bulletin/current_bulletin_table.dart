@@ -2,15 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:frontend/app/pages/app_dialog_box.dart';
 import 'package:frontend/app/pages/utils/bulletin_util.dart';
 import 'package:frontend/model/bulletin_paie/bulletin_model.dart';
+import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 import '../../../../../widget/table_header.dart';
 import '../../../../global/constant/constant.dart';
 import '../../../../global/constant/permission_alias.dart';
 import '../../../../helper/date_helper.dart';
 import '../../../../helper/user_helper.dart';
 import '../../../../model/habilitation/role_model.dart';
+import '../../../../model/request_response.dart';
 import '../../../../style/app_style.dart';
 import '../../../../widget/table_body_last.dart';
 import '../../../../widget/table_body_middle.dart';
+import '../../../integration/popop_status.dart';
+import '../../../integration/request_frot_behavior.dart';
+import '../../../pdf/bulletin_generate/bulletin.dart';
 import '../../../responsitvity/responsivity.dart';
 import '../../detail_pop.dart';
 import '../detail_bulletin.dart';
@@ -34,7 +39,7 @@ class CurrentBulletinTable extends StatefulWidget {
 }
 
 class _CurrentBulletinTableState extends State<CurrentBulletinTable> {
-  // late SimpleFontelicoProgressDialog _dialog;
+  late SimpleFontelicoProgressDialog _dialog;
 
   onShowDetail({required BulletinPaieModel bulletin}) {
     showDetailDialog(
@@ -144,48 +149,48 @@ class _CurrentBulletinTableState extends State<CurrentBulletinTable> {
   //   );
   // }
 // TODO: la fonction de visualisation de bulletin à mettre à quelque part d'autre
-  // downloadcurrentBulletin({
-  //   required BulletinPaieModel currentBulletin,
-  // }) async {
-  //   try {
-  //     _dialog.show(
-  //       message: '',
-  //       type: SimpleFontelicoProgressDialogType.phoenix,
-  //       backgroundColor: Colors.transparent,
-  //     );
+  downloadcurrentBulletin({
+    required BulletinPaieModel currentBulletin,
+  }) async {
+    try {
+      _dialog.show(
+        message: '',
+        type: SimpleFontelicoProgressDialogType.phoenix,
+        backgroundColor: Colors.transparent,
+      );
 
-  //     RequestResponse? result =
-  //         await BulletinPdfGenerator.generateAndDownloadPdf(
-  //       bulletin: currentBulletin,
-  //     );
+      RequestResponse? result =
+          await BulletinPdfGenerator.generateAndDownloadPdf(
+        bulletin: currentBulletin,
+      );
 
-  //     _dialog.hide();
-  //     if (result!.status == PopupStatus.success) {
-  //       MutationRequestContextualBehavior.showPopup(
-  //         status: result.status,
-  //         customMessage:
-  //             "Bulletin de ${currentBulletin.salarie.personnel.toStringify()} téléchargé avec succès.",
-  //       );
-  //     } else {
-  //       MutationRequestContextualBehavior.showPopup(
-  //         status: result.status,
-  //         customMessage: "result.message",
-  //       );
-  //       return;
-  //     }
-  //   } catch (e) {
-  //     _dialog.hide();
-  //     MutationRequestContextualBehavior.showPopup(
-  //       status: PopupStatus.customError,
-  //       customMessage: "Erreur lors du téléchargement ${e.toString()}",
-  //     );
-  //     return;
-  //   }
-  // }
+      _dialog.hide();
+      if (result!.status == PopupStatus.success) {
+        MutationRequestContextualBehavior.showPopup(
+          status: result.status,
+          customMessage:
+              "Bulletin de ${currentBulletin.salarie.personnel.toStringify()} téléchargé avec succès.",
+        );
+      } else {
+        MutationRequestContextualBehavior.showPopup(
+          status: result.status,
+          customMessage: "result.message",
+        );
+        return;
+      }
+    } catch (e) {
+      _dialog.hide();
+      MutationRequestContextualBehavior.showPopup(
+        status: PopupStatus.customError,
+        customMessage: "Erreur lors du téléchargement ${e.toString()}",
+      );
+      return;
+    }
+  }
 
   @override
   void initState() {
-    // _dialog = SimpleFontelicoProgressDialog(context: context);
+    _dialog = SimpleFontelicoProgressDialog(context: context);
     super.initState();
   }
 
@@ -262,14 +267,14 @@ class _CurrentBulletinTableState extends State<CurrentBulletinTable> {
                                   },
                                   color: null, // couleur null
                                 ),
-                                // (
-                                //   label: Constant.download,
-                                //   onTap: () {
-                                //     downloadcurrentBulletin(
-                                //         currentBulletin: bulletin);
-                                //   },
-                                //   color: null, // couleur null
-                                // ),
+                                (
+                                  label: Constant.download,
+                                  onTap: () {
+                                    downloadcurrentBulletin(
+                                        currentBulletin: bulletin);
+                                  },
+                                  color: null, // couleur null
+                                ),
                                 if (hasPermission(
                                   role: widget.role,
                                   permission:
@@ -359,14 +364,14 @@ class _CurrentBulletinTableState extends State<CurrentBulletinTable> {
                                       },
                                       color: null, // couleur null
                                     ),
-                                    // (
-                                    //   label: Constant.download,
-                                    //   onTap: () {
-                                    //     downloadcurrentBulletin(
-                                    //         currentBulletin: bulletin);
-                                    //   },
-                                    //   color: null, // couleur null
-                                    // ),
+                                    (
+                                      label: Constant.download,
+                                      onTap: () {
+                                        downloadcurrentBulletin(
+                                            currentBulletin: bulletin);
+                                      },
+                                      color: null, // couleur null
+                                    ),
                                     if (hasPermission(
                                       role: widget.role,
                                       permission:

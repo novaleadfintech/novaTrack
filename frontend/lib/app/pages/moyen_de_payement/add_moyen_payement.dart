@@ -109,6 +109,8 @@ class _AddMoyenPayementState extends State<AddMoyenPayement> {
         );
       }
     } catch (err) {
+       
+
       _dialog.hide();
       MutationRequestContextualBehavior.showPopup(
         status: PopupStatus.customError,

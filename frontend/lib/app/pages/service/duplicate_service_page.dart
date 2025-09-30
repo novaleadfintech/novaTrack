@@ -210,6 +210,8 @@ class _DuplicateServicePageState extends State<DuplicateServicePage> {
         );
       }
     } catch (err) {
+       
+
       _dialog.hide();
 
       MutationRequestContextualBehavior.showPopup(

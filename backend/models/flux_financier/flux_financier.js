@@ -100,6 +100,8 @@ class FluxFinancier {
         })
       );
     } catch (err) {
+    console.error(err);
+
       return [];
     }
   };
@@ -151,6 +153,8 @@ class FluxFinancier {
         })
       );
     } catch (err) {
+    console.error(err);
+
       return [];
     }
   };
@@ -209,6 +213,8 @@ class FluxFinancier {
         })
       );
     } catch (err) {
+      console.error(err);
+
       return [];
     }
   };
@@ -268,6 +274,8 @@ class FluxFinancier {
         })
       );
     } catch (err) {
+      console.error(err);
+
       return [];
     }
   };
@@ -316,9 +324,7 @@ class FluxFinancier {
         })
       );
     } catch (err) {
-      console.error(
-        `Erreur lors de la récupération des flux financiers: ${err.message}`
-      );
+      console.error(`Erreur lors de la récupération des flux financiers`, err);
       return [];
     }
   };
@@ -372,6 +378,8 @@ class FluxFinancier {
         })
       );
     } catch (err) {
+      console.error(err);
+
       return [];
     }
   };
@@ -404,6 +412,7 @@ class FluxFinancier {
             : null,
       };
     } catch (e) {
+      console.error(e);
       throw new Error("Cette opération financière est inexistante");
     }
   };
@@ -655,10 +664,10 @@ class FluxFinancier {
       await session.commit();
       return "OK";
     } catch (err) {
+      console.error(err);
+
       await session.abort();
-      throw new Error(
-        "Une erreur s'est produite lors de l'enregistrement : " + err.message
-      );
+      throw new Error("Une erreur s'est produite lors de l'enregistrement");
     }
   };
 
@@ -819,8 +828,10 @@ class FluxFinancier {
       await session.commit();
       return "OK";
     } catch (err) {
+      console.error(err);
+
       await session.abort();
-      throw new Error("Erreur lors de la mise à jour > " + err.message);
+      throw new Error("Erreur lors de la mise à jour");
     }
   };
 
@@ -849,10 +860,10 @@ class FluxFinancier {
       await session.commit();
       return "OK";
     } catch (err) {
+      console.error(err);
+
       await session.abort();
-      throw new Error(
-        "Une erreur s'est produite lors de la suppression : " + err.message
-      );
+      throw new Error("Une erreur s'est produite lors de la suppression");
     }
   };
 
@@ -899,6 +910,8 @@ class FluxFinancier {
       await fluxFinancierCollection.remove(key);
       return "OK";
     } catch (err) {
+    console.error(err);
+
       throw new Error("Une erreur s'est produite lors de la suppression");
     }
   };
@@ -936,7 +949,9 @@ class FluxFinancier {
         fluxFinanciers,
       };
     } catch (err) {
-      throw new Error("Erreur lors du calcul du bilan financier" + err.message);
+    console.error(err);
+
+      throw new Error("Erreur lors du calcul du bilan financier");
     }
   };
 
@@ -968,7 +983,9 @@ class FluxFinancier {
       const yearResult = await cursor.all();
       return yearResult;
     } catch (err) {
-      throw new Error(`Erreur lors de la récupération du bilan` + err.message);
+    console.error(err);
+
+      throw new Error(`Erreur lors de la récupération du bilan`);
     }
   };
 

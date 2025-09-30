@@ -60,7 +60,9 @@ class Salarie {
         return [];
       }
     } catch (err) {
-      throw new Error("Erreur lors de la récupération des salariés: " + err);
+      console.error(err);
+
+      throw new Error("Erreur lors de la récupération des salariés: ");
     }
   };
 
@@ -79,8 +81,10 @@ class Salarie {
         categoriePaie: categoriePaie,
       };
     } catch (err) {
+      console.error(err);
+
       throw new Error(
-        "Une erreur s'est produite lors de la récupération du salaire" + err
+        "Une erreur s'est produite lors de la récupération du salaire"
       );
     }
   };
@@ -118,7 +122,9 @@ class Salarie {
       await salarieCollection.save(newSalarie);
       return "OK";
     } catch (err) {
-      throw new Error("Erreur lors de la création du salarie : " + err);
+      console.error(err);
+
+      throw new Error("Erreur lors de la création du salarie");
     }
   };
 
@@ -152,7 +158,9 @@ class Salarie {
       await salarieCollection.update(key, updateField);
       return "OK";
     } catch (err) {
-      throw new Error("Erreur lors de la mise à jour du salarie: " + err);
+      console.error(err);
+
+      throw new Error("Erreur lors de la mise à jour du salarie");
     }
   };
 
@@ -161,7 +169,9 @@ class Salarie {
       await salarieCollection.remove(key);
       return "OK";
     } catch (err) {
-      throw new Error("Erreur lors de la suppression du salarie: " + err);
+      console.error(err);
+
+      throw new Error("Erreur lors de la suppression du salarie");
     }
   };
 

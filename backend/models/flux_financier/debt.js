@@ -74,6 +74,8 @@ class Debt {
         })
       );
     } catch (err) {
+      console.error(err);
+
       return [];
     }
   };
@@ -121,6 +123,8 @@ class Debt {
         })
       );
     } catch (err) {
+      console.error(err);
+
       return [];
     }
   };
@@ -143,6 +147,7 @@ class Debt {
             : null,
       };
     } catch (e) {
+      console.error(e);
       throw new Error("Cette opération financière est inexistante");
     }
   };
@@ -236,10 +241,10 @@ class Debt {
       await session.commit();
       return "OK";
     } catch (err) {
+      console.error(err);
+
       await session.abort();
-      throw new Error(
-        "Une erreur s'est produite lors de l'enregistrement : " + err.message
-      );
+      throw new Error("Une erreur s'est produite lors de l'enregistrement");
     }
   };
 
@@ -335,8 +340,10 @@ class Debt {
       await session.commit();
       return "OK";
     } catch (err) {
+      console.error(err);
+
       await session.abort();
-      throw new Error("Erreur lors de la mise à jour > " + err.message);
+      throw new Error("Erreur lors de la mise à jour");
     }
   };
 
@@ -358,10 +365,10 @@ class Debt {
       await session.commit();
       return "OK";
     } catch (err) {
+      console.error(err);
+
       await session.abort();
-      throw new Error(
-        "Une erreur s'est produite lors de la suppression : " + err.message
-      );
+      throw new Error("Une erreur s'est produite lors de la suppression");
     }
   };
 }

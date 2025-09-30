@@ -91,6 +91,8 @@ class _AddSectionState extends State<AddSection> {
         );
       }
     } catch (err) {
+       
+
       _dialog.hide();
       MutationRequestContextualBehavior.showPopup(
         status: PopupStatus.customError,

@@ -4,10 +4,7 @@ import 'package:frontend/app/pages/bulletin_paie/salarie/add_salarie.dart';
 import 'package:frontend/app/pages/bulletin_paie/salarie/salaire_table.dart';
 import 'package:frontend/model/personnel/enum_personnel.dart';
 import 'package:frontend/service/salarie_service.dart';
-import 'package:frontend/widget/app_action_button.dart';
-
 import 'package:gap/gap.dart';
-
 import '../../../../auth/authentification_token.dart';
 import '../../../../global/constant/permission_alias.dart';
 import '../../../../global/global_value.dart';
@@ -143,22 +140,22 @@ class _PersonnelPageState extends State<SalariePage> {
             ),
             Row(
               children: [
-                AppActionButton(
-                  onPressed: () {
-                    // onEditBulletin(salarie: salarie); TODO: logique à implementer plus tard après la réunion le vendredi.
-                  },
-                  child: SvgPicture.asset(
-                    AssetsIcons.validInvoice,
-                    height: 20,
-                    colorFilter: ColorFilter.mode(
-                      Theme.of(context).colorScheme.onPrimary,
-                      BlendMode.srcIn,
-                    ),
-                  ),
-                ),
+                // AppActionButton(
+                //   onPressed: () {
+                //     // onEditBulletin(salarie: salarie); TODO: logique à implementer plus tard après la réunion le vendredi.
+                //   },
+                //   child: SvgPicture.asset(
+                //     AssetsIcons.validInvoice,
+                //     height: 20,
+                //     colorFilter: ColorFilter.mode(
+                //       Theme.of(context).colorScheme.onPrimary,
+                //       BlendMode.srcIn,
+                //     ),
+                //   ),
+                // ),
                 // FilledButton(
                 //     onPressed: () {
-                //       onEditBulletin(salarie: salarie);
+                //       // onEditBulletin(salarie: salarie);
                 //     },
                 //     style: const ButtonStyle(
                 //       padding: WidgetStatePropertyAll(EdgeInsets.zero),
@@ -185,7 +182,8 @@ class _PersonnelPageState extends State<SalariePage> {
                 //         BlendMode.srcIn,
                 //       ),
                 //     )),
-
+               
+                // Gap(8),
                 FutureBuilder<void>(
                   future: _futureRoles,
                   builder: (context, snapshot) {

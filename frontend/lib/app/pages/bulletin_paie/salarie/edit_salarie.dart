@@ -170,6 +170,7 @@ class _EditSalariePageState extends State<EditSalariePage> {
         );
       }
     } catch (err) {
+ 
       _dialog.hide();
       MutationRequestContextualBehavior.showPopup(
         status: PopupStatus.customError,

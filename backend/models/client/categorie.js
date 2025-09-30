@@ -30,6 +30,8 @@ class Categorie {
         return [];
       }
     } catch (err) {
+      console.error(err);
+
       throw new Error("Erreur lors de la récupération");
     }
   };
@@ -38,6 +40,8 @@ class Categorie {
     try {
       return await categorieCollection.document(key);
     } catch (err) {
+      console.error(err);
+
       throw new Error(
         "Une erreur s'est produite lors de la récupération du catégorie"
       );
@@ -51,6 +55,8 @@ class Categorie {
       await categorieCollection.save(newCategorie);
       return "OK";
     } catch (err) {
+      console.error(err);
+
       throw new Error(
         "Une erreur s'est produite lors de l'a création de cette catégorie'"
       );
@@ -64,6 +70,8 @@ class Categorie {
       await categorieCollection.update(key, updateField);
       return "OK";
     } catch (err) {
+      console.error(err);
+
       throw new Error(
         "Une erreur s'est produite lors de la mise à jour de cette catégorie"
       );
@@ -75,6 +83,8 @@ class Categorie {
       await categorieCollection.remove(key);
       return "OK";
     } catch (err) {
+      console.error(err);
+
       throw new Error(
         "Une erreur s'est produite lors de la suppression de cette catégorie"
       );

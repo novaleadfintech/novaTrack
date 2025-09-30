@@ -231,6 +231,8 @@ class _UpdateLigneProformaState extends State<UpdateLigneProforma> {
       );
     }
     } catch (err) {
+       
+
       _dialog.hide();
       MutationRequestContextualBehavior.showPopup(
         status: PopupStatus.customError,

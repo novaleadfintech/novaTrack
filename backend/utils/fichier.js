@@ -51,7 +51,9 @@ const deleteFile = ({ filePath }) => {
   try {
     fs.unlinkSync(filePath);
   } catch (err) {
-    console.error("Erreur lors de la suppression de l'ancien fichier :", err);
+    console.error(err);
+
+    console.error("Erreur lors de la suppression de l'ancien fichier");
   }
 };
 

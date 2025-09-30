@@ -330,6 +330,7 @@ class _EntreprisePageState extends State<EntreprisePage> {
         );
       }
     } catch (err) {
+ 
       _dialog.hide();
       MutationRequestContextualBehavior.showPopup(
         status: PopupStatus.customError,

@@ -89,7 +89,7 @@ class _PayDebtState extends State<PayDebt> {
     try {
       user = await AuthService().decodeToken();
     } catch (err) {
-      _dialog.hide();
+       _dialog.hide();
       MutationRequestContextualBehavior.showPopup(
         status: PopupStatus.serverError,
         customMessage: "Enégistrement échoué",

@@ -64,7 +64,7 @@ class _ValidateCurrentBulletintPageState
         Container(
           padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.error.withOpacity(0.2),
+            color: Theme.of(context).colorScheme.error.withValues(alpha: 0.2),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -77,9 +77,11 @@ class _ValidateCurrentBulletintPageState
                 ),
               ),
               EnumRadioSelector<EtatBulletin>(
-                title: "Sélectionnez un type",
+                title: "Sélectionnez une option",
                 selectedValue: etatBulletin,
-                values: EtatBulletin.values,
+                values: EtatBulletin.values
+                    .where((e) => e != EtatBulletin.wait)
+                    .toList(),
                 getLabel: (value) => value.label,
                 onChanged: (value) {
                   setState(() {
