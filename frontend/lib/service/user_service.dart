@@ -153,10 +153,12 @@ class UserService {
         onTimeout: () {
           throw RequestMessage.timeoutMessage;
         },
-      );
+      ).catchError((error) {
+        throw RequestMessage.serverCatchErrorMessage;
+      });
+    
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
-
         var data = jsonData['data']['seConnecter'];
         return UserModel.fromJson(data);
       } else {

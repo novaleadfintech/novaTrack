@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart' show SvgPicture;
 import 'package:frontend/app/pages/bulletin_paie/salarie/add_salarie.dart';
 import 'package:frontend/app/pages/bulletin_paie/salarie/salaire_table.dart';
 import 'package:frontend/model/personnel/enum_personnel.dart';
@@ -8,7 +7,6 @@ import 'package:gap/gap.dart';
 import '../../../../auth/authentification_token.dart';
 import '../../../../global/constant/permission_alias.dart';
 import '../../../../global/global_value.dart';
-import '../../../../helper/assets/asset_icon.dart';
 import '../../../../helper/paginate_data.dart';
 import '../../../../helper/user_helper.dart';
 import '../../../../model/bulletin_paie/salarie_model.dart';

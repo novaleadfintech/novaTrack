@@ -19,4 +19,6 @@ class RequestMessage {
   static String failgettingDataMessage =
       "Erreur lors de la recupération des données, réessayez donc plus tard";
   static String forbidenMessage = "Vous n'êtes pas autorisés à ";
+
+  static String serverCatchErrorMessage = "Echec de connexion au serveur";
 }

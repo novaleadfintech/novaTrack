@@ -37,7 +37,7 @@ class CustomPopPop extends StatelessWidget {
           ),
           insetPadding: isMobile
               ? EdgeInsets.zero
-              : const EdgeInsets.symmetric(horizontal: 300.0, vertical: 50.0),
+              : const EdgeInsets.symmetric(horizontal: 100.0, vertical: 50.0),
           child: IntrinsicWidth(
             child: IntrinsicHeight(
               child: Padding(
