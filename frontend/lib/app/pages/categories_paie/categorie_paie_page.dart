@@ -14,7 +14,7 @@ import '../error_page.dart';
 import '../no_data_page.dart';
 import '../../../auth/authentification_token.dart';
 import '../../../model/habilitation/role_model.dart';
- import 'add_categorie_paie.dart';
+import 'add_categorie_paie.dart';
 import 'categorie_paie_table.dart';
 
 class CategoriePaiePage extends StatefulWidget {

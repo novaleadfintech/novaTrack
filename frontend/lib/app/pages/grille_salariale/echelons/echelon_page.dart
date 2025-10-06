@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
-
-import 'package:flutter/material.dart';
-import 'package:frontend/app/pages/no_data_page.dart';
-import 'package:frontend/global/constant/permission_alias.dart';
-import 'package:frontend/helper/paginate_data.dart';
+  import 'package:frontend/global/constant/permission_alias.dart';
 import 'package:frontend/helper/user_helper.dart';
 import 'package:frontend/model/personnel/poste_model.dart';
 import 'package:gap/gap.dart';
 import '../../../../global/global_value.dart';
 import '../../../../service/poste_service.dart';
 import '../../../../widget/add_element_button.dart';
-import '../../../../widget/pagination.dart';
-import '../../../../widget/research_bar.dart';
+ import '../../../../widget/research_bar.dart';
 import '../../../../auth/authentification_token.dart';
 import '../../../../model/habilitation/role_model.dart';
 import '../../app_dialog_box.dart';
@@ -89,10 +84,10 @@ class _EchelonPageState extends State<EchelonPage> {
   void onClickAddFluxButton() {
     showResponsiveDialog(
       context,
-      title: "Nouveau poste",
+      title: "Nouveau échelon",
       content: AddEchelon(
-          // refresh: _loadEchelon,
-          ),
+        refresh: _loadEchelon,
+      ),
     );
   }
 
@@ -144,24 +139,19 @@ class _EchelonPageState extends State<EchelonPage> {
           ),
           const Gap(4),
           if (isLoading)
-            const Expanded(
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
+            Center(
+              child: CircularProgressIndicator(),
             )
           else if (hasError)
-            Expanded(
-              child: ErrorPage(
-                message:
-                    errorMessage ?? "Erreur lors du chargement des données.",
-                onPressed: () async {
-                  setState(() {
-                    isLoading = true;
-                    hasError = false;
-                  });
-                  await _loadEchelon();
-                },
-              ),
+            ErrorPage(
+              message: errorMessage ?? "Erreur lors du chargement des données.",
+              onPressed: () async {
+                setState(() {
+                  isLoading = true;
+                  hasError = false;
+                });
+                await _loadEchelon();
+              },
             )
           // else
           //   Expanded(
@@ -175,7 +165,9 @@ class _EchelonPageState extends State<EchelonPage> {
           //               Expanded(
           //                 child: Container(
           //                     color: Theme.of(context).colorScheme.surface,
-          //                     child: Container()
+          //                     child: Column(
+          //                       children: [],
+          //                     )
           //                     //  EchelonTable(
           //                     //   poste: getPaginatedData(
           //                     //       data: filteredData, currentPage: currentPage),

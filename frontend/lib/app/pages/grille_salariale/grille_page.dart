@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/app/pages/categories/add_categorie.dart';
+import 'package:frontend/app/pages/grille_salariale/add_categorie_paie.dart';
 import 'package:frontend/app/pages/custom_popup.dart';
 import 'package:frontend/app/pages/grille_salariale/grille_parameter_page.dart';
 import 'package:frontend/widget/app_action_button.dart';
@@ -83,8 +83,8 @@ class _GrillePageState extends State<GrillePage> {
   void onClickAddCategorieButton() {
     showResponsiveDialog(
       context,
-      title: "Nouvelle section",
-      content: AddCategoriePage(
+      title: "Nouvelle catégorie de paie",
+      content: AddCategoriePaiePage(
         refresh: _loadGrille,
       ),
     );
