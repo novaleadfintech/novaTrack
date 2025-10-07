@@ -34,6 +34,9 @@ import rubriqueCategorieSchema from "./rubrique_categorie_schema.js";
 import clientFactureGlobalValueSchema from "./client_facture_global_value_schema.js";
 import posteSchema from "./poste_schema.js";
 import debtSchema from "./debt_schema.js";  
+import classeSchema from "./classe_schema.js";
+import echelonSchema from "./echelon_schema.js";
+import grilleSalarialeSchema from "./grille_salariale_schema.js";
 
 const types = [];
 const queries = [];
@@ -75,6 +78,9 @@ const schemas = [
   clientFactureGlobalValueSchema,
   posteSchema,
   debtSchema,
+  classeSchema,
+  echelonSchema,
+  grilleSalarialeSchema,
 ];
 
 schemas.forEach((schema) => {

@@ -87,13 +87,18 @@ class _AddClassCategorieSpaceState extends State<AddClassCategorieSpace> {
                       ),
                       Gap(8),
                       IconButton(
-                        icon: Icon(Icons.delete,
+                        icon: Icon(Icons.edit,
                             color: Theme.of(context).colorScheme.primary),
                         onPressed: () {
                           setState(() {
                             showResponsiveDialog(
                               context,
-                              content: FillIndice(classe: classe),
+                              content: FillIndice(
+                                classe: classe,
+                                refresh: () {
+                                  setState(() {});
+                                },
+                              ),
                               title: "Remplir les indices",
                             );
                           });
