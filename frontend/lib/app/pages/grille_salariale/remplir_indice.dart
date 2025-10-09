@@ -27,7 +27,7 @@ class _FillIndiceState extends State<FillIndice> {
   @override
   void initState() {
     super.initState();
-    for (var echelon in widget.classe.echelons!) {
+    for (var echelon in widget.classe.echelonIndiciaires!) {
       _controllers[echelon.echelon.libelle] =
           TextEditingController(text: echelon.indice?.toString() ?? "");
     }
@@ -53,7 +53,7 @@ class _FillIndiceState extends State<FillIndice> {
             style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 8),
-          ...widget.classe.echelons!.map((echelon) {
+          ...widget.classe.echelonIndiciaires!.map((echelon) {
             final controller = _controllers[echelon.echelon.libelle]!;
             return Padding(
               padding: const EdgeInsets.symmetric(vertical: 6.0),
@@ -82,7 +82,7 @@ class _FillIndiceState extends State<FillIndice> {
   }
 
   void _onValidatePressed() {
-    for (var echelon in widget.classe.echelons!) {
+    for (var echelon in widget.classe.echelonIndiciaires!) {
       final controller = _controllers[echelon.echelon.libelle];
       final newIndice = double.tryParse(controller?.text ?? "");
       if (newIndice != null) {
@@ -101,7 +101,7 @@ class _FillIndiceState extends State<FillIndice> {
         ClasseModel(
           id: widget.classe.id,
           libelle: widget.classe.libelle,
-          echelons: widget.classe.echelons!,
+          echelonIndiciaires: widget.classe.echelonIndiciaires!,
         ),
       );
     }

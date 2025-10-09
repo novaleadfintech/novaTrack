@@ -27,7 +27,7 @@ class Echelon {
 
     const query = await db.query(
       aql`FOR echelon IN ${echelonCollection} 
-          SORT echelon.timeStamp DESC ${limit} 
+          SORT echelon.libelle ASC ${limit} 
           RETURN echelon`,
       { fullCount: true }
     );

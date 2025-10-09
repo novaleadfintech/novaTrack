@@ -89,7 +89,7 @@ class Classe {
     // Création de la classe
     const classe = {
       libelle: libelle,
-      echelonIndices: echelonIndices,
+      echelonIndiciaires: echelonIndices,
       timeStamp: Date.now(),
     };
 

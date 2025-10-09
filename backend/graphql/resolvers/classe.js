@@ -4,12 +4,15 @@ const classeModel = new Classe();
 
 const classeResolvers = {
   classes: async ({ perPage, skip }) =>
-    classeModel.getClasses({ skip: skip, perPage: perPage }),
+    classeModel.getAllClasse({ skip: skip, perPage: perPage }),
 
   classe: async ({ key }) => classeModel.getClasse({ key: key }),
 
-  createClasse: async ({ libelle }) =>
-    classeModel.createClasse({ libelle: libelle }),
+  createClasse: async ({ libelle, echelonIndiciciare }) =>
+    classeModel.createClasse({
+      libelle: libelle,
+      echelonIndiciciares: echelonIndiciciare,
+    }),
 
   updateClasse: async ({ key, libelle }) =>
     classeModel.updateClasse({ key: key, libelle: libelle }),

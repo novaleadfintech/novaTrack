@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/model/grille_salariale/echelon_indice_model.dart';
+import 'package:frontend/model/grille_salariale/echelon_model.dart';
+import 'package:frontend/service/echelon_service.dart';
 import 'package:gap/gap.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
+import '../../../../service/classe_service.dart';
 import '../../../../widget/multi_check_box.dart';
 import '../../../../widget/simple_text_field.dart';
 import '../../../../widget/validate_button.dart';
@@ -18,12 +22,39 @@ class AddClasse extends StatefulWidget {
 
 class _AddClasseState extends State<AddClasse> {
   final _libelleController = TextEditingController();
+  List<EchelonIndiceModel> selectedEchelonsIciciare = [];
+  List<EchelonModel> selectedEchelons = [];
   late SimpleFontelicoProgressDialog _dialog;
+  List<EchelonModel> echelonOptions = [];
+  bool isLoadingEchelons = true;
 
   @override
   void initState() {
     super.initState();
     _dialog = SimpleFontelicoProgressDialog(context: context);
+    _loadEchelons();
+  }
+
+  Future<void> _loadEchelons() async {
+    try {
+      final echelons = await EchelonService.getEchelons();
+      setState(() {
+        echelonOptions = echelons;
+        isLoadingEchelons = false;
+      });
+    } catch (e) {
+      debugPrint('Erreur lors du chargement des échelons: $e');
+      setState(() {
+        echelonOptions = [];
+        isLoadingEchelons = false;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _libelleController.dispose();
+    super.dispose();
   }
 
   @override
@@ -36,12 +67,37 @@ class _AddClasseState extends State<AddClasse> {
             textController: _libelleController,
             keyboardType: TextInputType.text,
           ),
-          //pour les vrai donne TODO
-          MultiCheckBox(
-            label: "Selectionnez les échelons",
-            initialSelectedValues: [1, 2, 3, 4],
-            options: [2, 4, 7],
-          ),
+          const Gap(16),
+          isLoadingEchelons
+              ? const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: CircularProgressIndicator(),
+                  ),
+                )
+              : echelonOptions.isEmpty
+                  ? const Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Text(
+                        "Aucun échelon disponible",
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    )
+                  : MultiCheckBox<EchelonModel>(
+                      label: "Sélectionnez les échelons",
+                      initialSelectedValues: selectedEchelons,
+                      options: echelonOptions,
+                      onChanged: (selected) {
+                        setState(() {
+                          selectedEchelonsIciciare = selected
+                              .map((e) => EchelonIndiceModel(
+                                    echelon: e,
+                                    indice: null,
+                                  ))
+                              .toList();
+                        });
+                      },
+                    ),
           const Gap(16),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -59,8 +115,11 @@ class _AddClasseState extends State<AddClasse> {
 
   void addClasse() async {
     String? errMessage;
-    if (_libelleController.text.isEmpty) {
-      errMessage = "Veuillez remplir tous les champs marqués.";
+
+    if (_libelleController.text.trim().isEmpty) {
+      errMessage = "Le libellé est requis.";
+    } else if (selectedEchelonsIciciare.isEmpty) {
+      errMessage = "Veuillez sélectionner au moins un échelon.";
     }
 
     if (errMessage != null) {
@@ -71,37 +130,44 @@ class _AddClasseState extends State<AddClasse> {
     }
 
     _dialog.show(
-      message: "",
+      message: "Création en cours...",
       type: SimpleFontelicoProgressDialogType.phoenix,
       backgroundColor: Colors.transparent,
     );
 
     try {
-      // var result = await ClasseService.createClasse(
-      //   section:
-      //       capitalizeFirstLetter(word: _libelleController.text.toLowerCase()),
-      // );
+      var result = await ClasseService.createClasse(
+        libelle: _libelleController.text.trim(),
+        echelonIndiciaires: selectedEchelonsIciciare,
+      );
 
-      // _dialog.hide();
+      _dialog.hide();
 
-      // if (result.status == PopupStatus.success) {
-      //   MutationRequestContextualBehavior.closePopup();
-      //   MutationRequestContextualBehavior.showPopup(
-      //       status: PopupStatus.success,
-      //       customMessage: "Classe créée avec succès");
-      //   await widget.refresh();
-      // } else {
-      //   MutationRequestContextualBehavior.showPopup(
-      //     status: result.status,
-      //     customMessage: result.message,
-      //   );
-      // }
+      if (result.status == PopupStatus.success) {
+        if (mounted) {
+          MutationRequestContextualBehavior.closePopup();
+          MutationRequestContextualBehavior.showPopup(
+            status: PopupStatus.success,
+            customMessage: "Classe créée avec succès",
+          );
+          await widget.refresh();
+        }
+      } else {
+        if (mounted) {
+          MutationRequestContextualBehavior.showPopup(
+            status: result.status,
+            customMessage: result.message,
+          );
+        }
+      }
     } catch (err) {
       _dialog.hide();
-      MutationRequestContextualBehavior.showPopup(
-        status: PopupStatus.customError,
-        customMessage: "Erreur lors de la création du moyen de paiement: $err",
-      );
+      if (mounted) {
+        MutationRequestContextualBehavior.showPopup(
+          status: PopupStatus.customError,
+          customMessage: "Erreur lors de la création de la classe: $err",
+        );
+      }
     }
   }
 }

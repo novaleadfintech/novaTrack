@@ -4,6 +4,11 @@ const typeDef = `#graphql
     echelon: Echelon!    
     indice: Int   
   }
+  input EchelonIndiceInput {
+    _id: ID!
+    echelon: EchelonInput!    
+    indice: Int   
+  }
   type Classe{
     _id:ID!
     libelle:String!
@@ -22,8 +27,8 @@ const mutation = `#graphql
 #   createEchelonIndice(echelonId: ID!, indice: Int!): String!
 #   updateEchelonIndice(key: ID!, echelonId: ID, indice: Int): String!
 #   deleteEchelonIndice(key: ID!): String!
-createClasse(libelle: String!): String!
-updateClasse(key: ID!, libelle: String): String!
+createClasse(libelle: String!, echelonIndiciciare:EchelonIndiceInput!): String!
+updateClasse(key: ID!, libelle: String, echelonIndiciciares:[EchelonIndiceInput]): String!
 deleteClasse(key: ID!): String!
 `;
 

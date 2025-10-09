@@ -18,7 +18,7 @@ class _AddClassCategorieSpaceState extends State<AddClassCategorieSpace> {
     ClasseModel(
       id: "id",
       libelle: "libelle",
-      echelons: [
+      echelonIndiciaires: [
         EchelonIndiceModel(
           echelon: EchelonModel(id: "id", libelle: "1er échelon"),
           indice: 3355,
@@ -40,7 +40,7 @@ class _AddClassCategorieSpaceState extends State<AddClassCategorieSpace> {
     ClasseModel(
       id: "id",
       libelle: "libelle",
-      echelons: [
+      echelonIndiciaires: [
         EchelonIndiceModel(
           echelon: EchelonModel(id: "id", libelle: "libelle"),
           indice: 3355,
@@ -50,7 +50,7 @@ class _AddClassCategorieSpaceState extends State<AddClassCategorieSpace> {
     ClasseModel(
       id: "id",
       libelle: "libelle",
-      echelons: [
+      echelonIndiciaires: [
         EchelonIndiceModel(
           echelon: EchelonModel(id: "id", libelle: "libelle"),
           indice: 3355,
@@ -107,7 +107,7 @@ class _AddClassCategorieSpaceState extends State<AddClassCategorieSpace> {
                     ],
                   ),
                   const SizedBox(height: 8.0),
-                  ...?classe.echelons?.map((echelonIndice) {
+                  ...?classe.echelonIndiciaires?.map((echelonIndice) {
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4.0),
                       child: Row(

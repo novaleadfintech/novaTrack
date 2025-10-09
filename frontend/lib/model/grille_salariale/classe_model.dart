@@ -3,21 +3,22 @@ import 'package:frontend/model/grille_salariale/echelon_indice_model.dart';
 class ClasseModel {
   final String id;
   final String libelle;
-  final List<EchelonIndiceModel>? echelons;
+  final List<EchelonIndiceModel>? echelonIndiciaires;
 
   ClasseModel({
     required this.id,
     required this.libelle,
-    required this.echelons,
+    required this.echelonIndiciaires,
   });
 
   factory ClasseModel.fromJson(Map<String, dynamic> json) {
     return ClasseModel(
       id: json['_id'],
       libelle: json['libelle'],
-      echelons: json['echelons'] != null
+      echelonIndiciaires: json['echelonIndiciaires'] != null
           ? List<EchelonIndiceModel>.from(
-              json['echelons'].map((e) => EchelonIndiceModel.fromJson(e)))
+              json['echelonIndiciaires']
+              .map((e) => EchelonIndiceModel.fromJson(e)))
           : null,
     );
   }
@@ -26,8 +27,8 @@ class ClasseModel {
     return {
       "_id": "\"$id\"",
       "libelle": "\"$libelle\"",
-      "echelons": echelons != null
-          ? List<dynamic>.from(echelons!.map((e) => e.toJson()))
+      "echelonIndiciaires": echelonIndiciaires != null
+          ? List<dynamic>.from(echelonIndiciaires!.map((e) => e.toJson()))
           : null,
     };
   }

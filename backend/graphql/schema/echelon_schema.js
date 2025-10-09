@@ -3,10 +3,14 @@ type Echelon{
     _id:ID!
     libelle:String!
 }
+input EchelonInput{
+    _id:ID!
+    libelle:String!
+}
 `;
 
 const query = `#graphql
-    ehelons(perPage:Int, skip:Int):[Echelon]!
+    echelons(perPage:Int, skip:Int):[Echelon]!
     echelon(key:ID!):Echelon!
 `;
 

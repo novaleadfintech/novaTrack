@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
-  import 'package:frontend/global/constant/permission_alias.dart';
-import 'package:frontend/helper/user_helper.dart';
-import 'package:frontend/model/personnel/poste_model.dart';
+import 'package:frontend/model/grille_salariale/echelon_model.dart';
+import 'package:frontend/service/echelon_service.dart';
 import 'package:gap/gap.dart';
 import '../../../../global/global_value.dart';
-import '../../../../service/poste_service.dart';
+import '../../../../helper/paginate_data.dart';
 import '../../../../widget/add_element_button.dart';
- import '../../../../widget/research_bar.dart';
+import '../../../../widget/pagination.dart';
+import '../../../../widget/research_bar.dart';
 import '../../../../auth/authentification_token.dart';
 import '../../../../model/habilitation/role_model.dart';
 import '../../app_dialog_box.dart';
 import '../../error_page.dart';
+import '../../no_data_page.dart';
 import 'add_echelon.dart';
+import 'elon_table.dart';
 
 class EchelonPage extends StatefulWidget {
   const EchelonPage({
@@ -25,7 +27,7 @@ class EchelonPage extends StatefulWidget {
 class _EchelonPageState extends State<EchelonPage> {
   final TextEditingController _researchController = TextEditingController();
   int currentPage = GlobalValue.currentPage;
-  List<PosteModel> posteData = [];
+  List<EchelonModel> echelonData = [];
   bool isLoading = true;
   bool hasError = false;
   String searchQuery = "";
@@ -53,8 +55,9 @@ class _EchelonPageState extends State<EchelonPage> {
 
   Future<void> _loadEchelon() async {
     try {
-      posteData = await PosteService.getPostes();
+      echelonData = await EchelonService.getEchelons();
     } catch (error) {
+      debugPrint(error.toString());
       setState(() {
         errorMessage = error.toString();
 
@@ -67,8 +70,8 @@ class _EchelonPageState extends State<EchelonPage> {
     });
   }
 
-  List<PosteModel> filterPoste() {
-    return posteData.where((poste) {
+  List<EchelonModel> filterEchelon() {
+    return echelonData.where((poste) {
       return poste.libelle
           .toLowerCase()
           .contains(searchQuery.toLowerCase().trim());
@@ -93,7 +96,7 @@ class _EchelonPageState extends State<EchelonPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<PosteModel> filteredData = filterPoste();
+    List<EchelonModel> filteredData = filterEchelon();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8).copyWith(top: 4),
@@ -110,10 +113,10 @@ class _EchelonPageState extends State<EchelonPage> {
               } else if (snapshot.hasError) {
                 return const SizedBox();
               } else {
-                var canCreate = hasPermission(
-                  role: role,
-                  permission: PermissionAlias.createPoste.label,
-                );
+                // var canCreate = hasPermission(
+                //   role: role,
+                //   permission: PermissionAlias.createEchelon.label,
+                // );
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -129,7 +132,7 @@ class _EchelonPageState extends State<EchelonPage> {
                         addElement: onClickAddFluxButton,
                         icon: Icons.add_outlined,
                         isSmall: true,
-                        label: "Ajouter un libellé",
+                        label: "Ajouter un échelon",
                       ),
                     ),
                   ],
@@ -138,52 +141,48 @@ class _EchelonPageState extends State<EchelonPage> {
             },
           ),
           const Gap(4),
-          if (isLoading)
-            Center(
-              child: CircularProgressIndicator(),
-            )
-          else if (hasError)
-            ErrorPage(
-              message: errorMessage ?? "Erreur lors du chargement des données.",
-              onPressed: () async {
-                setState(() {
-                  isLoading = true;
-                  hasError = false;
-                });
-                await _loadEchelon();
-              },
-            )
-          // else
-          //   Expanded(
-          //     child: filteredData.isEmpty
-          //         ? NoDataPage(
-          //             data: filteredData,
-          //             message: "Aucun",
-          //           )
-          //         : Column(
-          //             children: [
-          //               Expanded(
-          //                 child: Container(
-          //                     color: Theme.of(context).colorScheme.surface,
-          //                     child: Column(
-          //                       children: [],
-          //                     )
-          //                     //  EchelonTable(
-          //                     //   poste: getPaginatedData(
-          //                     //       data: filteredData, currentPage: currentPage),
-          //                     //   refresh: _loadEchelon,
-          //                     // ),
-          //                     ),
-          //               ),
-          //               if (filteredData.isNotEmpty)
-          //                 PaginationSpace(
-          //                   currentPage: currentPage,
-          //                   onPageChanged: updateCurrentPage,
-          //                   filterDataCount: filteredData.length,
-          //                 ),
-          //             ],
-          //           ),
-          //   ),
+          Expanded(
+            child: isLoading
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : hasError
+                    ? ErrorPage(
+                        message: errorMessage ??
+                            "Erreur lors du chargement des données.",
+                        onPressed: () async {
+                          setState(() {
+                            isLoading = true;
+                            hasError = false;
+                          });
+                          await _loadEchelon();
+                        },
+                      )
+                    : filteredData.isEmpty
+                        ? NoDataPage(
+                            data: filteredData,
+                            message: "Aucun echelon trouvé",
+                          )
+                        : Column(
+                            children: [
+                              Expanded(
+                                child: EchelonTable(
+                                  echelons: getPaginatedData(
+                                    data: filteredData,
+                                    currentPage: currentPage,
+                                  ),
+                                  refresh: _loadEchelon,
+                                ),
+                              ),
+                              if (filteredData.isNotEmpty)
+                                PaginationSpace(
+                                  currentPage: currentPage,
+                                  onPageChanged: updateCurrentPage,
+                                  filterDataCount: filteredData.length,
+                                ),
+                            ],
+                          ),
+          ),
         ],
       ),
     );

@@ -24,4 +24,9 @@ class EchelonModel {
   bool equalTo({required EchelonModel echelon}) {
     return echelon.id == id;
   }
+
+  @override
+  String toString() {
+    return libelle;
+  }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
+import '../../../../helper/string_helper.dart';
+import '../../../../service/echelon_service.dart';
 import '../../../../widget/simple_text_field.dart';
 import '../../../../widget/validate_button.dart';
 import '../../../integration/popop_status.dart';
@@ -68,25 +70,26 @@ class _AddEchelonState extends State<AddEchelon> {
     );
 
     try {
-      // var result = await EchelonService.createEchelon(
-      //   section:
-      //       capitalizeFirstLetter(word: _libelleController.text.toLowerCase()),
-      // );
+      var result = await EchelonService.createEchelon(
+        libelle:
+            capitalizeFirstLetter(word: _libelleController.text.toLowerCase()),
+      );
 
-      // _dialog.hide();
+      _dialog.hide();
 
-      // if (result.status == PopupStatus.success) {
-      //   MutationRequestContextualBehavior.closePopup();
-      //   MutationRequestContextualBehavior.showPopup(
-      //       status: PopupStatus.success,
-      //       customMessage: "Echelon créée avec succès");
-      //   await widget.refresh();
-      // } else {
-      //   MutationRequestContextualBehavior.showPopup(
-      //     status: result.status,
-      //     customMessage: result.message,
-      //   );
-      // }
+      if (result.status == PopupStatus.success) {
+        MutationRequestContextualBehavior.closePopup();
+        MutationRequestContextualBehavior.showPopup(
+          status: PopupStatus.success,
+          customMessage: "Echelon créé avec succès",
+        );
+        await widget.refresh();
+      } else {
+        MutationRequestContextualBehavior.showPopup(
+          status: result.status,
+          customMessage: result.message,
+        );
+      }
     } catch (err) {
       _dialog.hide();
       MutationRequestContextualBehavior.showPopup(
