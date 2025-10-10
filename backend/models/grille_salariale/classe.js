@@ -28,7 +28,7 @@ class Classe {
 
     const query = await db.query(
       aql`FOR classe IN ${classeCollection} 
-          SORT classe.timeStamp DESC ${limit} 
+          SORT classe.libelle ASC ${limit} 
           RETURN classe`,
       { fullCount: true }
     );
@@ -61,35 +61,37 @@ class Classe {
     }
   }
 
-  async createClasse({ libelle, echelonIndices }) {
+  async createClasse({ libelle, echelonIndiciciaires }) {
     isValidValue({ value: libelle });
-    isValidValue({ value: echelonIndices });
+    // isValidValue({ value: echelonIndices });
 
-    for (const echelon of echelonIndices) {
-      const exists = await EchelonModel.isExistEchelon({ key: echelon.id });
+    for (const echelonIndiciciaire of echelonIndiciciaires) {
+      const exists = await EchelonModel.isExistEchelon({
+        key: echelonIndiciciaire.echelon._id,
+      });
       if (!exists) {
         throw new Error(
-          `L'échelon avec l'ID ${echelon.echelonId} n'existe pas`
+          `L'échelon avec le libellé ${echelonIndiciciaire.echelon.libelle} n'existe pas`
         );
       }
     }
 
     // Vérification que la classe n'existe pas déjà
-    const existingCategorie = await db.query(aql`
+    const existingClasse = await db.query(aql`
       FOR classe IN ${classeCollection}
       FILTER classe.libelle == ${libelle}
       LIMIT 1
       RETURN classe
     `);
 
-    if (existingCategorie.hasNext) {
+    if (existingClasse.hasNext) {
       throw new Error(`Une classe avec ce nom existe déjà.`);
     }
 
     // Création de la classe
     const classe = {
       libelle: libelle,
-      echelonIndiciaires: echelonIndices,
+      echelonIndiciciaires: echelonIndiciciaires,
       timeStamp: Date.now(),
     };
 
@@ -111,7 +113,7 @@ class Classe {
 
     if (libelle !== undefined) {
       // Vérification que le nouveau nom n'existe pas déjà
-      const existingCategorie = await db.query(aql`
+      const existingClasse = await db.query(aql`
         FOR classe IN ${classeCollection}
         FILTER classe.libelle == ${libelle}
         AND classe._key != ${key}
@@ -119,7 +121,7 @@ class Classe {
         RETURN classe
       `);
 
-      if (existingCategorie.hasNext) {
+      if (existingClasse.hasNext) {
         throw new Error(`Une classe avec ce nom existe déjà.`);
       }
 
@@ -158,7 +160,7 @@ class Classe {
     try {
       await this.isExistClasse({ key });
 
-      const existingCategorie = await db.query(aql`
+      const existingClasse = await db.query(aql`
         FOR categorie IN ${categoriePaieGrilleCollection}
             FOR classe IN categorie.classes
                 FILTER classe._id == ${key}
@@ -166,7 +168,7 @@ class Classe {
         RETURN categorie
       `);
 
-      if (existingCategorie.hasNext) {
+      if (existingClasse.hasNext) {
         throw new Error(`impossible de supprimer cette classe`);
       }
       await classeCollection.remove(key);

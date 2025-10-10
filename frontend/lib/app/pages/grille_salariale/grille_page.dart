@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/app/pages/grille_salariale/add_categorie_paie.dart';
 import 'package:frontend/app/pages/custom_popup.dart';
 import 'package:frontend/app/pages/grille_salariale/grille_parameter_page.dart';
+import 'package:frontend/model/grille_salariale/categorie_paie.dart';
 import 'package:frontend/widget/app_action_button.dart';
 import 'package:gap/gap.dart';
 import '../../../../global/global_value.dart';
@@ -9,22 +10,28 @@ import '../../../../widget/add_element_button.dart';
 import '../../../../widget/research_bar.dart';
 import '../../../../auth/authentification_token.dart';
 import '../../../../model/habilitation/role_model.dart';
+import '../../../helper/paginate_data.dart';
+import '../../../service/grille_categorie_paie_service.dart';
+import '../../../widget/pagination.dart';
 import '../app_dialog_box.dart';
 import '../error_page.dart';
+import '../no_data_page.dart';
+import 'grille_categorie_paie_table.dart';
 
-class GrillePage extends StatefulWidget {
-  const GrillePage({
+class GrilleCategoriePaiePage extends StatefulWidget {
+  const GrilleCategoriePaiePage({
     super.key,
   });
 
   @override
-  State<GrillePage> createState() => _GrillePageState();
+  State<GrilleCategoriePaiePage> createState() =>
+      _GrilleCategoriePaiePageState();
 }
 
-class _GrillePageState extends State<GrillePage> {
+class _GrilleCategoriePaiePageState extends State<GrilleCategoriePaiePage> {
   final TextEditingController _researchController = TextEditingController();
   int currentPage = GlobalValue.currentPage;
-  // List<GrilleBulletin> sectionData = [];
+  List<GrilleCategoriePaieModel> grilleCategoriePaieData = [];
   bool isLoading = true;
   bool hasError = false;
   String searchQuery = "";
@@ -37,7 +44,7 @@ class _GrillePageState extends State<GrillePage> {
     super.initState();
     _researchController.addListener(_onSearchChanged);
     _futureRoles = getRole();
-    _loadGrille();
+    _loadGrilleCategoriePaie();
   }
 
   Future<void> getRole() async {
@@ -50,9 +57,10 @@ class _GrillePageState extends State<GrillePage> {
     });
   }
 
-  Future<void> _loadGrille() async {
+  Future<void> _loadGrilleCategoriePaie() async {
     try {
-      // sectionData = await GrilleService.getGrilles();
+      grilleCategoriePaieData =
+          await GrilleCategoriePaieService.getGrilleCategoriePaies();
     } catch (error) {
       setState(() {
         errorMessage = error.toString();
@@ -66,13 +74,13 @@ class _GrillePageState extends State<GrillePage> {
     });
   }
 
-  // List<GrilleBulletin> filterGrille() {
-  //   return sectionData.where((section) {
-  //     return section.section
-  //         .toLowerCase()
-  //         .contains(searchQuery.toLowerCase().trim());
-  //   }).toList();
-  // }
+  List<GrilleCategoriePaieModel> filterGrilleCategoriePaie() {
+    return grilleCategoriePaieData.where((grilleCategoriePaie) {
+      return grilleCategoriePaie.libelle
+          .toLowerCase()
+          .contains(searchQuery.toLowerCase().trim());
+    }).toList();
+  }
 
   void updateCurrentPage(int page) {
     setState(() {
@@ -85,14 +93,14 @@ class _GrillePageState extends State<GrillePage> {
       context,
       title: "Nouvelle catégorie de paie",
       content: AddCategoriePaiePage(
-        refresh: _loadGrille,
+        refresh: _loadGrilleCategoriePaie,
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    // List<GrilleBulletin> filteredData = filterGrille();
+    List<GrilleCategoriePaieModel> filteredData = filterGrilleCategoriePaie();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8).copyWith(top: 4),
@@ -111,7 +119,7 @@ class _GrillePageState extends State<GrillePage> {
               } else {
                 // var canCreate = hasPermission(
                 //   role: role,
-                //   permission: PermissionAlias.createBulletinGrille.label,
+                //   permission: PermissionAlias.createBulletinGrilleCategoriePaieCategoriePaie.label,
                 // );
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -153,15 +161,13 @@ class _GrillePageState extends State<GrillePage> {
             },
           ),
           const Gap(4),
-          if (isLoading)
-            const Expanded(
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
-            )
-          else if (hasError)
-            Expanded(
-              child: ErrorPage(
+          Expanded(
+            child: (isLoading)
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : (hasError)
+                    ? ErrorPage(
                 message:
                     errorMessage ?? "Erreur lors du chargement des données.",
                 onPressed: () async {
@@ -169,38 +175,34 @@ class _GrillePageState extends State<GrillePage> {
                     isLoading = true;
                     hasError = false;
                   });
-                  await _loadGrille();
+                          await _loadGrilleCategoriePaie();
                 },
-              ),
-            )
-          // else
-          // Expanded(
-          //   child: filteredData.isEmpty
-          //       ? NoDataPage(
-          //           data: filteredData,
-          //           message: "Aucun libellé",
-          //         )
-          //       : Column(
-          //           children: [
-          //             Expanded(
-          //               child: Container(
-          //                 color: Theme.of(context).colorScheme.surface,
-          //                 child: GrilleTable(
-          //                   section: getPaginatedData(
-          //                       data: filteredData, currentPage: currentPage),
-          //                   refresh: _loadGrille,
-          //                 ),
-          //               ),
-          //             ),
-          //             if (filteredData.isNotEmpty)
-          //               PaginationSpace(
-          //                 currentPage: currentPage,
-          //                 onPageChanged: updateCurrentPage,
-          //                 filterDataCount: filteredData.length,
-          //               ),
-          //           ],
-          //         ),
-          // ),
+                      )
+                    : filteredData.isEmpty
+                        ? NoDataPage(
+                            data: filteredData,
+                            message: "Aucune catégorie de paie.",
+                          )
+                        : Column(
+                            children: [
+                              Container(
+                                color: Theme.of(context).colorScheme.surface,
+                                child: GrilleCategoriePaieTable(
+                                  grilleCategoriePaie: getPaginatedData(
+                                      data: filteredData,
+                                      currentPage: currentPage),
+                                  refresh: _loadGrilleCategoriePaie,
+                                ),
+                              ),
+                              if (filteredData.isNotEmpty)
+                                PaginationSpace(
+                                  currentPage: currentPage,
+                                  onPageChanged: updateCurrentPage,
+                                  filterDataCount: filteredData.length,
+                                ),
+                            ],
+                          ),
+          ),
         ],
       ),
     );

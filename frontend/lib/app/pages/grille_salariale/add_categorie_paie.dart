@@ -80,8 +80,13 @@ class _AddCategoriePaiePageState extends State<AddCategoriePaiePage> {
         SimpleTextField(
           label: "Libellé",
           textController: _libelleController,
+          onChanged: (_) {
+            setState(() {});
+          },
         ),
-        AddClassCategorieSpace(),
+        AddClassCategorieSpace(
+          categorieName: _libelleController.text,
+        ),
         const Gap(16),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),

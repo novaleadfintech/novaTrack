@@ -31,6 +31,21 @@ class _DetailClassePageState extends State<DetailClassePage> {
             ),
           ],
         ),
+        TableRow(
+          decoration: tableDecoration(context),
+          children: [
+            const TabledetailBodyMiddle(
+              valeur: "les échelons",
+              isbold: true,
+            ),
+            Column(
+              children: [
+                ...widget.classe.echelonIndiciciaires!.map(
+                    (e) => TabledetailBodyMiddle(valeur: e.echelon.libelle))
+              ],
+            )
+          ],
+        ),
       ],
     );
   }

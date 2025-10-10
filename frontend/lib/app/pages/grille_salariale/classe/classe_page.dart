@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/app/pages/grille_salariale/classe/add_classe.dart';
-import 'package:frontend/global/constant/permission_alias.dart';
-import 'package:frontend/helper/user_helper.dart';
-import 'package:frontend/model/personnel/poste_model.dart';
 import 'package:gap/gap.dart';
 import '../../../../global/global_value.dart';
-import '../../../../service/poste_service.dart';
+import '../../../../helper/paginate_data.dart';
+import '../../../../model/grille_salariale/classe_model.dart';
+import '../../../../service/classe_service.dart';
 import '../../../../widget/add_element_button.dart';
+import '../../../../widget/pagination.dart';
 import '../../../../widget/research_bar.dart';
 import '../../../../auth/authentification_token.dart';
 import '../../../../model/habilitation/role_model.dart';
 import '../../app_dialog_box.dart';
 import '../../error_page.dart';
+import '../../no_data_page.dart';
+import 'classe_table.dart';
  
 class ClassePage extends StatefulWidget {
   const ClassePage({
@@ -25,7 +27,7 @@ class ClassePage extends StatefulWidget {
 class _ClassePageState extends State<ClassePage> {
   final TextEditingController _researchController = TextEditingController();
   int currentPage = GlobalValue.currentPage;
-  List<PosteModel> posteData = [];
+  List<ClasseModel> classeData = [];
   bool isLoading = true;
   bool hasError = false;
   String searchQuery = "";
@@ -53,7 +55,7 @@ class _ClassePageState extends State<ClassePage> {
 
   Future<void> _loadClasse() async {
     try {
-      posteData = await PosteService.getPostes();
+      classeData = await ClasseService.getClasses();
     } catch (error) {
       setState(() {
         errorMessage = error.toString();
@@ -67,9 +69,9 @@ class _ClassePageState extends State<ClassePage> {
     });
   }
 
-  List<PosteModel> filterPoste() {
-    return posteData.where((poste) {
-      return poste.libelle
+  List<ClasseModel> filterClasse() {
+    return classeData.where((classe) {
+      return classe.libelle
           .toLowerCase()
           .contains(searchQuery.toLowerCase().trim());
     }).toList();
@@ -93,8 +95,7 @@ class _ClassePageState extends State<ClassePage> {
 
   @override
   Widget build(BuildContext context) {
-    List<PosteModel> filteredData = filterPoste();
-
+    List<ClasseModel> filteredData = filterClasse();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8).copyWith(top: 4),
       child: Column(
@@ -110,10 +111,10 @@ class _ClassePageState extends State<ClassePage> {
               } else if (snapshot.hasError) {
                 return const SizedBox();
               } else {
-                var canCreate = hasPermission(
-                  role: role,
-                  permission: PermissionAlias.createPoste.label,
-                );
+                // var canCreate = hasPermission(
+                //   role: role,
+                //   permission: PermissionAlias.createClasse.label,
+                // );
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -138,52 +139,51 @@ class _ClassePageState extends State<ClassePage> {
             },
           ),
           const Gap(4),
-          if (isLoading)
-            Center(
-              child: CircularProgressIndicator(),
-            )
-          else if (hasError)
-            ErrorPage(
-              message: errorMessage ?? "Erreur lors du chargement des données.",
-              onPressed: () async {
-                setState(() {
-                  isLoading = true;
-                  hasError = false;
-                });
-                await _loadClasse();
-              },
-            )
-          // else
-          //   Expanded(
-          //     child: filteredData.isEmpty
-          //         ? NoDataPage(
-          //             data: filteredData,
-          //             message: "Aucun",
-          //           )
-          //         : Column(
-          //             children: [
-          //               Expanded(
-          //                 child: Container(
-          //                     color: Theme.of(context).colorScheme.surface,
-          //                     child: Column(
-          //                       children: [],
-          //                     )
-          //                     //  ClasseTable(
-          //                     //   poste: getPaginatedData(
-          //                     //       data: filteredData, currentPage: currentPage),
-          //                     //   refresh: _loadClasse,
-          //                     // ),
-          //                     ),
-          //               ),
-          //               if (filteredData.isNotEmpty)
-          //                 PaginationSpace(
-          //                   currentPage: currentPage,
-          //                   onPageChanged: updateCurrentPage,
-          //                   filterDataCount: filteredData.length,
-          //                 ),
-          //             ],
-          //           ),
-          //   ),
+          Expanded(
+            child: (isLoading)
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : (hasError)
+                    ? ErrorPage(
+                        message: errorMessage ??
+                            "Erreur lors du chargement des données.",
+                        onPressed: () async {
+                          setState(() {
+                            isLoading = true;
+                            hasError = false;
+                          });
+                          await _loadClasse();
+                        },
+                      )
+                    : filteredData.isEmpty
+                        ? NoDataPage(
+                            data: filteredData,
+                            message: "Aucune classe de grille salariale.",
+                          )
+                        : Column(
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  color: Theme.of(context).colorScheme.surface,
+                                  child: ClasseTable(
+                                    classe: getPaginatedData(
+                                      data: filteredData,
+                                      currentPage: currentPage,
+                                    ),
+                                    refresh: _loadClasse,
+                                  ),
+                                ),
+                              ),
+                              if (filteredData.isNotEmpty)
+                                PaginationSpace(
+                                  currentPage: currentPage,
+                                  onPageChanged: updateCurrentPage,
+                                  filterDataCount: filteredData.length,
+                                ),
+                            ],
+                          ),
+          ),
         ],
       ),
     );

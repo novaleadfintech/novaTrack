@@ -138,7 +138,7 @@ class _AddClasseState extends State<AddClasse> {
     try {
       var result = await ClasseService.createClasse(
         libelle: _libelleController.text.trim(),
-        echelonIndiciaires: selectedEchelonsIciciare,
+        echelonIndiciciaires: selectedEchelonsIciciare,
       );
 
       _dialog.hide();

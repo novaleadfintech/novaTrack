@@ -1,25 +1,27 @@
 import 'package:flutter/material.dart';
 import '../../../helper/string_helper.dart';
+import '../../../service/categorie_paie_service.dart';
 import '../../integration/popop_status.dart';
 import '../../integration/request_frot_behavior.dart';
-import '../../../service/categorie_service.dart';
 import '../../../widget/simple_text_field.dart';
 import '../../../widget/validate_button.dart';
 import 'package:gap/gap.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 
-class AddCategoriePage extends StatefulWidget {
+import 'add_class_categorie_space.dart';
+
+class EditGrilleCategoriePaiePage extends StatefulWidget {
   final Future<void> Function() refresh;
-  const AddCategoriePage({
+  const EditGrilleCategoriePaiePage({
     super.key,
     required this.refresh,
   });
 
   @override
-  State<AddCategoriePage> createState() => _AddCategoriePageState();
+  State<EditGrilleCategoriePaiePage> createState() => _EditGrilleCategoriePaiePageState();
 }
 
-class _AddCategoriePageState extends State<AddCategoriePage> {
+class _EditGrilleCategoriePaiePageState extends State<EditGrilleCategoriePaiePage> {
   final TextEditingController _libelleController = TextEditingController();
 
   late SimpleFontelicoProgressDialog _dialog;
@@ -30,7 +32,7 @@ class _AddCategoriePageState extends State<AddCategoriePage> {
     _dialog = SimpleFontelicoProgressDialog(context: context);
   }
 
-  Future<void> _addCategorie() async {
+  Future<void> _addCategoriePaie() async {
     String? errMessage;
     if (_libelleController.text.isEmpty) {
       errMessage = "Veuillez remplir tous les champs marqués.";
@@ -49,8 +51,8 @@ class _AddCategoriePageState extends State<AddCategoriePage> {
       backgroundColor: Colors.transparent,
     );
 
-    var result = await CategorieService.createCategorie(
-      libelle:
+    var result = await CategoriePaieService.createCategoriePaie(
+      categoriePaie:
           capitalizeFirstLetter(word: _libelleController.text.toLowerCase()),
     );
 
@@ -60,8 +62,7 @@ class _AddCategoriePageState extends State<AddCategoriePage> {
       MutationRequestContextualBehavior.closePopup();
       MutationRequestContextualBehavior.showPopup(
           status: PopupStatus.success,
-        customMessage: "Catégorie crée avec succès",
-      );
+          customMessage: "Catégorie de paie crée avec succès");
       await widget.refresh();
     } else {
       MutationRequestContextualBehavior.showPopup(
@@ -74,26 +75,31 @@ class _AddCategoriePageState extends State<AddCategoriePage> {
   @override
   Widget build(BuildContext context) {
     return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SimpleTextField(
-            label: "Libellé",
-            textController: _libelleController,
-          ),
-          const Gap(16),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Align(
-              alignment: Alignment.bottomRight,
-              child: ValidateButton(
-                onPressed: () async {
-                  await _addCategorie();
-                },
-              ),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SimpleTextField(
+          label: "Libellé",
+          textController: _libelleController,
+          onChanged: (_) {
+            setState(() {});
+          },
+        ),
+        AddClassCategorieSpace(
+          categorieName: _libelleController.text,
+        ),
+        const Gap(16),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Align(
+            alignment: Alignment.bottomRight,
+            child: ValidateButton(
+              onPressed: () async {
+                await _addCategoriePaie();
+              },
             ),
           ),
-        ],
-      
+        ),
+      ],
     );
   }
 }

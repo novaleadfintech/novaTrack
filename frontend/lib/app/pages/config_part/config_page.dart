@@ -254,7 +254,7 @@ class _ConfigPageState extends State<ConfigPage> {
                                 showResponsiveConfigPageDialogBox(
                                   context,
                                   title: "Grille salariale",
-                                  content: GrillePage(),
+                                  content: GrilleCategoriePaiePage(),
                                 );
                               },
                             ),

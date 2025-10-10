@@ -7,13 +7,11 @@ import '../../integration/request_frot_behavior.dart';
 
 class FillIndice extends StatefulWidget {
   final ClasseModel classe;
-  final void Function(ClasseModel updatedClasse)? onChanged;
   final VoidCallback refresh;
 
   const FillIndice({
     super.key,
     required this.classe,
-    this.onChanged,
     required this.refresh,
   });
 
@@ -27,7 +25,7 @@ class _FillIndiceState extends State<FillIndice> {
   @override
   void initState() {
     super.initState();
-    for (var echelon in widget.classe.echelonIndiciaires!) {
+    for (var echelon in widget.classe.echelonIndiciciaires!) {
       _controllers[echelon.echelon.libelle] =
           TextEditingController(text: echelon.indice?.toString() ?? "");
     }
@@ -53,7 +51,7 @@ class _FillIndiceState extends State<FillIndice> {
             style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 8),
-          ...widget.classe.echelonIndiciaires!.map((echelon) {
+          ...widget.classe.echelonIndiciciaires!.map((echelon) {
             final controller = _controllers[echelon.echelon.libelle]!;
             return Padding(
               padding: const EdgeInsets.symmetric(vertical: 6.0),
@@ -82,11 +80,13 @@ class _FillIndiceState extends State<FillIndice> {
   }
 
   void _onValidatePressed() {
-    for (var echelon in widget.classe.echelonIndiciaires!) {
+    for (var echelon in widget.classe.echelonIndiciciaires!) {
       final controller = _controllers[echelon.echelon.libelle];
       final newIndice = double.tryParse(controller?.text ?? "");
+      print(echelon.indice);      
       if (newIndice != null) {
         echelon.setIndice(newIndice.toInt());
+        print(echelon.indice);
       } else {
         MutationRequestContextualBehavior.showCustomInformationPopUp(
           message:
@@ -96,15 +96,6 @@ class _FillIndiceState extends State<FillIndice> {
       }
     }
 
-    if (widget.onChanged != null) {
-      widget.onChanged!(
-        ClasseModel(
-          id: widget.classe.id,
-          libelle: widget.classe.libelle,
-          echelonIndiciaires: widget.classe.echelonIndiciaires!,
-        ),
-      );
-    }
     widget.refresh();
     MutationRequestContextualBehavior.closePopup();
   }

@@ -2,7 +2,7 @@ const typeDef = `#graphql
   type CategoriePaieGrille {
     _id: ID!
     libelle: String!
-    classes: [Classe]     # Relation vers les classes de la catégorie
+    classes: [Classe]      
   }
 `;
 
@@ -12,7 +12,7 @@ const query = `#graphql
 `;
 
 const mutation = `#graphql
-  createCategoriePaieGrille(libelle: String!): String!
+  createCategoriePaieGrille(libelle: String!, classes: [ClasseInput]! ): String!
   updateCategoriePaieGrille(key: ID!, libelle: String): String!
   deleteCategoriePaieGrille(key: ID!): String!
 `;

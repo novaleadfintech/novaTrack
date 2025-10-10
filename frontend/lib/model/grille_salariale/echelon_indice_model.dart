@@ -19,7 +19,7 @@ class EchelonIndiceModel {
   Map<String, dynamic> toJson() {
     return {
       "echelon": echelon.toJson(),
-      "indice": "\"$indice\"",
+      "indice": indice,
     };
   }
 

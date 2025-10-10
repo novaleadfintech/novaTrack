@@ -8,10 +8,10 @@ const classeResolvers = {
 
   classe: async ({ key }) => classeModel.getClasse({ key: key }),
 
-  createClasse: async ({ libelle, echelonIndiciciare }) =>
+  createClasse: async ({ libelle, echelonIndiciciaires }) =>
     classeModel.createClasse({
       libelle: libelle,
-      echelonIndiciciares: echelonIndiciciare,
+      echelonIndiciciaires: echelonIndiciciaires,
     }),
 
   updateClasse: async ({ key, libelle }) =>

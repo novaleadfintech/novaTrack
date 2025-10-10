@@ -1,18 +1,18 @@
 import 'package:frontend/model/grille_salariale/classe_model.dart';
 
-class CategoriePaieModelModel {
+class GrilleCategoriePaieModel {
   final String id;
   final String libelle;
   final List<ClasseModel>? classes;
 
-  CategoriePaieModelModel({
+  GrilleCategoriePaieModel({
     required this.id,
     required this.libelle,
     required this.classes,
   });
 
-  factory CategoriePaieModelModel.fromJson(Map<String, dynamic> json) {
-    return CategoriePaieModelModel(
+  factory GrilleCategoriePaieModel.fromJson(Map<String, dynamic> json) {
+    return GrilleCategoriePaieModel(
       id: json['_id'],
       libelle: json['libelle'],
       classes: json['classes'] != null
@@ -32,7 +32,7 @@ class CategoriePaieModelModel {
     };
   }
 
-  bool equalTo({required CategoriePaieModelModel poste}) {
-    return poste.id == id;
+  bool equalTo({required GrilleCategoriePaieModel grilleCategoriePaie}) {
+    return grilleCategoriePaie.id == id;
   }
 }

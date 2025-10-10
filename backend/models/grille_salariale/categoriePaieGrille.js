@@ -2,7 +2,7 @@ import { aql } from "arangojs";
 import db from "../../db/database_connection.js";
 import { isValidValue } from "../../utils/util.js";
 
-const categoriePaieGrilleCollection = db.collection("categoriePaieGrilles");
+const categoriePaieGrilleCollection = db.collection("grilleCategoriePaies");
 
 class CategoriePaieGrille {
   constructor() {
@@ -13,10 +13,8 @@ class CategoriePaieGrille {
     if (!(await categoriePaieGrilleCollection.exists())) {
       categoriePaieGrilleCollection.create();
     }
-    if (!(await categoriePaieGrilleCollection.exists())) {
-      categoriePaieGrilleCollection.create();
-    }
   }
+
   async getAllCategoriePaieGrille({ perPage, skip }) {
     let limit = aql``;
 
@@ -26,11 +24,10 @@ class CategoriePaieGrille {
 
     const query = await db.query(
       aql`FOR categorie IN ${categoriePaieGrilleCollection} 
-          SORT categorie.timeStamp DESC ${limit} 
+          SORT categorie.libelle ASC ${limit} 
           RETURN categorie`,
       { fullCount: true }
     );
-
     if (query.hasNext) {
       return await query.all();
     } else {
@@ -59,25 +56,29 @@ class CategoriePaieGrille {
     }
   }
 
-  async createCategoriePaieGrille({ categoriePaieGrille }) {
+  async createCategoriePaieGrille({ libelle, classes }) {
+    console.log(classes);
+    console.log(libelle);
     // Validation des données
-    isValidValue({ value: [categoriePaieGrille] });
+    isValidValue({ value: libelle });
+    isValidValue({ value: classes });
 
     // Vérification que la catégorie n'existe pas déjà
     const existingCategorie = await db.query(aql`
       FOR categorie IN ${categoriePaieGrilleCollection}
-      FILTER categorie.categoriePaieGrille == ${categoriePaieGrille}
+      FILTER categorie.libelle == ${libelle}
       LIMIT 1
       RETURN categorie
     `);
-
+    console.log(existingCategorie);
     if (existingCategorie.hasNext) {
       throw new Error(`Une catégorie de paie avec ce nom existe déjà.`);
     }
 
     // Création de la catégorie
     const categorie = {
-      categoriePaieGrille,
+      libelle: libelle,
+      classes: classes,
       timeStamp: Date.now(),
     };
 

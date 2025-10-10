@@ -1,30 +1,34 @@
 import 'dart:convert';
-import 'package:frontend/model/grille_salariale/echelon_indice_model.dart';
-
-import '../app/integration/popop_status.dart';
+ import 'package:frontend/model/grille_salariale/classe_model.dart';
+ import '../app/integration/popop_status.dart';
 import '../global/config.dart';
 import '../global/constant/request_management_value.dart';
-import '../model/grille_salariale/classe_model.dart';
+import '../model/grille_salariale/categorie_paie.dart';
 import '../model/request_response.dart';
 import 'package:http/http.dart' as http;
 import 'request_header.dart';
 
-class ClasseService {
-  static Future<List<ClasseModel>> getClasses() async {
+class GrilleCategoriePaieService {
+  static Future<List<GrilleCategoriePaieModel>>
+      getGrilleCategoriePaies() async {
     var body = '''
-      query Classes {
+      query CategoriesPaieGrille {
+    categoriesPaieGrille {
+        _id
+        libelle
         classes {
-          _id
-          libelle
-          echelonIndiciciaires {
-            echelon {
-              _id
-              libelle
+            _id
+            libelle
+            echelonIndiciciaires {
+                indice
+                echelon {
+                    _id
+                    libelle
+                }
             }
-            indice
-          }
         }
-      }
+    }
+}
     ''';
     var response = await http
         .post(
@@ -41,14 +45,15 @@ class ClasseService {
       },
     );
 
-    List<ClasseModel> classes = [];
+    List<GrilleCategoriePaieModel> grilleCategoriePaies = [];
 
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
-      var data = jsonData['data']['classes'];
+      var data = jsonData['data']['categoriesPaieGrille'];
       if (data != null) {
-        for (var classe in data) {
-          classes.add(ClasseModel.fromJson(classe));
+        for (var grilleCategoriePaie in data) {
+          grilleCategoriePaies
+              .add(GrilleCategoriePaieModel.fromJson(grilleCategoriePaie));
         }
       } else {
         throw RequestMessage.failgettingDataMessage;
@@ -56,16 +61,16 @@ class ClasseService {
     } else {
       throw jsonDecode(response.body)['errors'][0]['message'];
     }
-    return classes;
+    return grilleCategoriePaies;
   }
 
-  static Future<RequestResponse> createClasse({
+  static Future<RequestResponse> createGrilleCategoriePaie({
     required String libelle,
-    required List<EchelonIndiceModel> echelonIndiciciaires,
+    required List<ClasseModel> classes,
   }) async {
     var body = '''
-    mutation CreateClasse {
-    createClasse(libelle: "$libelle", echelonIndiciciaires: ${echelonIndiciciaires.map((e) => e.toJson()).toList().toString().replaceAll("'", "")}
+    mutation CreateCategoriePaieGrille {
+    createCategoriePaieGrille(libelle: "$libelle", classes: ${classes.map((e) => e.toJson()).toList().toString().replaceAll("'", "")}
     , )
 }
     ''';
@@ -82,7 +87,7 @@ class ClasseService {
 
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
-        var data = jsonData['data']['createClasse'];
+        var data = jsonData['data']['createGrilleCategoriePaie'];
         if (data == RequestMessage.success) {
           return RequestResponse(
             message: RequestMessage.successMessage,
@@ -99,13 +104,13 @@ class ClasseService {
     }
   }
 
-  static Future<RequestResponse> updateClasse({
+  static Future<RequestResponse> updateGrilleCategoriePaie({
     required String key,
-    required String classe,
+    required String grilleCategoriePaie,
   }) async {
     var body = '''
-     mutation UpdateClasse {
-    updateClasse(key: "$key", classe: "$classe")
+     mutation UpdateGrilleCategoriePaie {
+    updateGrilleCategoriePaie(key: "$key", grilleCategoriePaie: "$grilleCategoriePaie")
 }
 
     ''';
@@ -123,7 +128,7 @@ class ClasseService {
 
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
-        var data = jsonData['data']['updateClasse'];
+        var data = jsonData['data']['updateGrilleCategoriePaie'];
         if (data == RequestMessage.success) {
           return RequestResponse(
             message: RequestMessage.successMessage,
@@ -140,12 +145,12 @@ class ClasseService {
     }
   }
 
-  static Future<RequestResponse> deleteClasse({
+  static Future<RequestResponse> deleteGrilleCategoriePaie({
     required String key,
   }) async {
     var body = '''
-     mutation DeleteClasse {
-    deleteClasse(key: "$key")
+     mutation DeleteGrilleCategoriePaie {
+    deleteGrilleCategoriePaie(key: "$key")
 }
 
     ''';
@@ -163,7 +168,7 @@ class ClasseService {
 
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
-        var data = jsonData['data']['deleteClasse'];
+        var data = jsonData['data']['deleteGrilleCategoriePaie'];
         if (data == RequestMessage.success) {
           return RequestResponse(
             message: RequestMessage.successMessage,
