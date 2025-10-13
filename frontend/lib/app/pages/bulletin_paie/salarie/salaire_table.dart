@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart' show SvgPicture;
 import 'package:frontend/model/personnel/personnel_model.dart';
 import '../../../../auth/authentification_token.dart';
 import '../../../../global/constant/constant.dart';
 import '../../../../global/constant/permission_alias.dart';
-import '../../../../helper/assets/asset_icon.dart';
 import '../../../../helper/date_helper.dart';
 import '../../../../helper/get_bulletin_period.dart';
 import '../../../../helper/user_helper.dart';
@@ -103,7 +101,7 @@ class _SalarieTableState extends State<SalarieTable> {
           children: [
             Table(
               columnWidths: {
-                4: const FixedColumnWidth(100),
+                4: const FixedColumnWidth(50),
                 2: Responsive.isMobile(context)
                     ? const FixedColumnWidth(50)
                     : const FlexColumnWidth(),
@@ -198,7 +196,7 @@ class _SalarieTableState extends State<SalarieTable> {
                       )
                     : Table(
                         columnWidths: {
-                          4: const FixedColumnWidth(100),
+                          4: const FixedColumnWidth(50),
                           2: Responsive.isMobile(context)
                               ? const FixedColumnWidth(50)
                               : const FlexColumnWidth(),
@@ -223,45 +221,45 @@ class _SalarieTableState extends State<SalarieTable> {
                               ),
                               Row(
                                 children: [
-                                  if (personnel.etat !=
-                                          EtatPersonnel.archived &&
-                                      hasPermission(
-                                        role: role,
-                                        permission: PermissionAlias
-                                            .createBulletin.label,
-                                      ))
-                                    FilledButton(
-                                        onPressed: () {
-                                          onEditBulletin(salarie: salarie);
-                                        },
-                                        style: const ButtonStyle(
-                                          padding: WidgetStatePropertyAll(
-                                              EdgeInsets.zero),
-                                          shape: WidgetStatePropertyAll(
-                                            RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.all(
-                                                Radius.circular(4),
-                                              ),
-                                            ),
-                                          ),
-                                          textStyle: WidgetStatePropertyAll(
-                                            TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              color: Colors.white,
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                        ),
-                                        child: SvgPicture.asset(
-                                          AssetsIcons.validInvoice,
-                                          height: 20,
-                                          colorFilter: ColorFilter.mode(
-                                            Theme.of(context)
-                                                .colorScheme
-                                                .onPrimary,
-                                            BlendMode.srcIn,
-                                          ),
-                                        )),
+                                  // if (personnel.etat !=
+                                  //         EtatPersonnel.archived &&
+                                  //     hasPermission(
+                                  //       role: role,
+                                  //       permission: PermissionAlias
+                                  //           .createBulletin.label,
+                                  //     ))
+                                  //   FilledButton(
+                                  //       onPressed: () {
+                                  //         onEditBulletin(salarie: salarie);
+                                  //       },
+                                  //       style: const ButtonStyle(
+                                  //         padding: WidgetStatePropertyAll(
+                                  //             EdgeInsets.zero),
+                                  //         shape: WidgetStatePropertyAll(
+                                  //           RoundedRectangleBorder(
+                                  //             borderRadius: BorderRadius.all(
+                                  //               Radius.circular(4),
+                                  //             ),
+                                  //           ),
+                                  //         ),
+                                  //         textStyle: WidgetStatePropertyAll(
+                                  //           TextStyle(
+                                  //             fontWeight: FontWeight.w600,
+                                  //             color: Colors.white,
+                                  //             fontSize: 16,
+                                  //           ),
+                                  //         ),
+                                  //       ),
+                                  //       child: SvgPicture.asset(
+                                  //         AssetsIcons.validInvoice,
+                                  //         height: 20,
+                                  //         colorFilter: ColorFilter.mode(
+                                  //           Theme.of(context)
+                                  //               .colorScheme
+                                  //               .onPrimary,
+                                  //           BlendMode.srcIn,
+                                  //         ),
+                                  //       )),
                                   
                                   TableBodyLast(
                                     items: [
@@ -314,6 +312,7 @@ class _SalarieTableState extends State<SalarieTable> {
       },
     );
   }
+
 // TODO: Came back in order todo it as my chef said it
   void onEditBulletin({required SalarieModel salarie}) async {
     try {

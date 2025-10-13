@@ -3,6 +3,9 @@ const typeDef = `#graphql
         _id:ID!
         personnel: Personnel!
         categoriePaie: CategoriePaie!
+        classe: Classe
+        echelon: Echelon
+        GrilleCategoriePaie: CategoriePaieGrille
         dateEnregistrement: Float!
         periodPaie: Float
         paieManner: PaieManner
@@ -32,6 +35,9 @@ const mutation = `#graphql
             categoriePaieId: String!
             periodPaie: Float
             paieManner: PaieManner!
+            classeId: String!
+            echelonId: String!
+            GrilleCategoriePaieId: S
         ):String!,
 
         updateSalarie(
