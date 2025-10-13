@@ -8,14 +8,19 @@ import 'package:gap/gap.dart';
 
 class AddClassCategorieSpace extends StatefulWidget {
   final String categorieName;
-  const AddClassCategorieSpace({super.key, required this.categorieName});
+  final List<ClasseModel> classes;
+  const AddClassCategorieSpace({
+    super.key,
+    required this.categorieName,
+    required this.classes,
+  });
 
   @override
   State<AddClassCategorieSpace> createState() => _AddClassCategorieSpaceState();
 }
 
 class _AddClassCategorieSpaceState extends State<AddClassCategorieSpace> {
-  List<ClasseModel> selectedClasses = [];
+  // List<ClasseModel> selectedClasses = [];
   bool isLoading = true;
   bool hasError = false;
   String? errorMessage;
@@ -35,7 +40,7 @@ class _AddClassCategorieSpaceState extends State<AddClassCategorieSpace> {
     try {
       final classes = await ClasseService.getClasses();
       setState(() {
-        selectedClasses = classes;
+        widget.classes.addAll(classes);
         isLoading = false;
       });
     } catch (e) {
@@ -85,7 +90,7 @@ class _AddClassCategorieSpaceState extends State<AddClassCategorieSpace> {
                 ),
               ),
             )
-          else if (selectedClasses.isEmpty)
+          else if (widget.classes.isEmpty)
             const Center(
               child: Padding(
                 padding: EdgeInsets.all(32.0),
@@ -105,7 +110,7 @@ class _AddClassCategorieSpaceState extends State<AddClassCategorieSpace> {
               ),
             )
           else
-            ...selectedClasses.map((classe) {
+            ...widget.classes.map((classe) {
               return Container(
                 margin: const EdgeInsets.only(bottom: 8.0),
                 padding: const EdgeInsets.all(8.0),

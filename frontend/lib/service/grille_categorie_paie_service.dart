@@ -1,6 +1,6 @@
 import 'dart:convert';
- import 'package:frontend/model/grille_salariale/classe_model.dart';
- import '../app/integration/popop_status.dart';
+import 'package:frontend/model/grille_salariale/classe_model.dart';
+import '../app/integration/popop_status.dart';
 import '../global/config.dart';
 import '../global/constant/request_management_value.dart';
 import '../model/grille_salariale/categorie_paie.dart';
@@ -74,6 +74,7 @@ class GrilleCategoriePaieService {
     , )
 }
     ''';
+    print(body);
     try {
       var response = await http
           .post(

@@ -15,7 +15,7 @@ const typeDef = `#graphql
   input ClasseInput{
     _id:ID!
     libelle:String!
-    classes:[EchelonIndiceInput]!
+    echelonIndiciciaires:[EchelonIndiceInput]!
   }
 `;
 

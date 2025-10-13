@@ -64,7 +64,6 @@ class _GrilleCategoriePaiePageState extends State<GrilleCategoriePaiePage> {
     } catch (error) {
       setState(() {
         errorMessage = error.toString();
-
         hasError = true;
         isLoading = false;
       });
@@ -92,7 +91,7 @@ class _GrilleCategoriePaiePageState extends State<GrilleCategoriePaiePage> {
     showResponsiveDialog(
       context,
       title: "Nouvelle catégorie de paie",
-      content: AddCategoriePaiePage(
+      content: AddGrilleCategoriePaiePage(
         refresh: _loadGrilleCategoriePaie,
       ),
     );
@@ -168,15 +167,15 @@ class _GrilleCategoriePaiePageState extends State<GrilleCategoriePaiePage> {
                   )
                 : (hasError)
                     ? ErrorPage(
-                message:
-                    errorMessage ?? "Erreur lors du chargement des données.",
-                onPressed: () async {
-                  setState(() {
-                    isLoading = true;
-                    hasError = false;
-                  });
+                        message: errorMessage ??
+                            "Erreur lors du chargement des données.",
+                        onPressed: () async {
+                          setState(() {
+                            isLoading = true;
+                            hasError = false;
+                          });
                           await _loadGrilleCategoriePaie();
-                },
+                        },
                       )
                     : filteredData.isEmpty
                         ? NoDataPage(
@@ -185,8 +184,7 @@ class _GrilleCategoriePaiePageState extends State<GrilleCategoriePaiePage> {
                           )
                         : Column(
                             children: [
-                              Container(
-                                color: Theme.of(context).colorScheme.surface,
+                              Expanded(
                                 child: GrilleCategoriePaieTable(
                                   grilleCategoriePaie: getPaginatedData(
                                       data: filteredData,

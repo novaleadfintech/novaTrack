@@ -86,6 +86,7 @@ class _EditGrilleCategoriePaiePageState extends State<EditGrilleCategoriePaiePag
         ),
         AddClassCategorieSpace(
           categorieName: _libelleController.text,
+          classes: [],
         ),
         const Gap(16),
         Padding(

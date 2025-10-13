@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../helper/string_helper.dart';
-import '../../../service/categorie_paie_service.dart';
+import '../../../model/grille_salariale/classe_model.dart';
+import '../../../service/grille_categorie_paie_service.dart';
 import '../../integration/popop_status.dart';
 import '../../integration/request_frot_behavior.dart';
 import '../../../widget/simple_text_field.dart';
@@ -10,19 +11,22 @@ import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 
 import 'add_class_categorie_space.dart';
 
-class AddCategoriePaiePage extends StatefulWidget {
+class AddGrilleCategoriePaiePage extends StatefulWidget {
   final Future<void> Function() refresh;
-  const AddCategoriePaiePage({
+  const AddGrilleCategoriePaiePage({
     super.key,
     required this.refresh,
   });
 
   @override
-  State<AddCategoriePaiePage> createState() => _AddCategoriePaiePageState();
+  State<AddGrilleCategoriePaiePage> createState() =>
+      _AddGrilleCategoriePaiePageState();
 }
 
-class _AddCategoriePaiePageState extends State<AddCategoriePaiePage> {
+class _AddGrilleCategoriePaiePageState
+    extends State<AddGrilleCategoriePaiePage> {
   final TextEditingController _libelleController = TextEditingController();
+  final List<ClasseModel> classes = [];
 
   late SimpleFontelicoProgressDialog _dialog;
 
@@ -32,42 +36,51 @@ class _AddCategoriePaiePageState extends State<AddCategoriePaiePage> {
     _dialog = SimpleFontelicoProgressDialog(context: context);
   }
 
-  Future<void> _addCategoriePaie() async {
-    String? errMessage;
-    if (_libelleController.text.isEmpty) {
-      errMessage = "Veuillez remplir tous les champs marqués.";
-    }
+  Future<void> _addGrilleCategoriePaie() async {
+    try {
+      String? errMessage;
+      if (_libelleController.text.isEmpty) {
+        errMessage = "Veuillez remplir tous les champs marqués.";
+      }
 
-    if (errMessage != null) {
-      MutationRequestContextualBehavior.showCustomInformationPopUp(
-        message: errMessage,
+      if (errMessage != null) {
+        MutationRequestContextualBehavior.showCustomInformationPopUp(
+          message: errMessage,
+        );
+        return;
+      }
+
+      _dialog.show(
+        message: "",
+        type: SimpleFontelicoProgressDialogType.phoenix,
+        backgroundColor: Colors.transparent,
       );
-      return;
-    }
 
-    _dialog.show(
-      message: "",
-      type: SimpleFontelicoProgressDialogType.phoenix,
-      backgroundColor: Colors.transparent,
-    );
+      var result = await GrilleCategoriePaieService.createGrilleCategoriePaie(
+        libelle:
+            capitalizeFirstLetter(word: _libelleController.text.toLowerCase()),
+        classes: classes,
+      );
 
-    var result = await CategoriePaieService.createCategoriePaie(
-      categoriePaie:
-          capitalizeFirstLetter(word: _libelleController.text.toLowerCase()),
-    );
+      _dialog.hide();
 
-    _dialog.hide();
-
-    if (result.status == PopupStatus.success) {
-      MutationRequestContextualBehavior.closePopup();
+      if (result.status == PopupStatus.success) {
+        MutationRequestContextualBehavior.closePopup();
+        MutationRequestContextualBehavior.showPopup(
+            status: PopupStatus.success,
+            customMessage: "Catégorie de paie crée avec succès");
+        await widget.refresh();
+      } else {
+        MutationRequestContextualBehavior.showPopup(
+          status: result.status,
+          customMessage: result.message,
+        );
+      }
+    } catch (e) {
+      _dialog.hide();
       MutationRequestContextualBehavior.showPopup(
-          status: PopupStatus.success,
-          customMessage: "Catégorie de paie crée avec succès");
-      await widget.refresh();
-    } else {
-      MutationRequestContextualBehavior.showPopup(
-        status: result.status,
-        customMessage: result.message,
+        status: PopupStatus.customError,
+        customMessage: e.toString(),
       );
     }
   }
@@ -86,6 +99,7 @@ class _AddCategoriePaiePageState extends State<AddCategoriePaiePage> {
         ),
         AddClassCategorieSpace(
           categorieName: _libelleController.text,
+          classes: classes,
         ),
         const Gap(16),
         Padding(
@@ -94,7 +108,7 @@ class _AddCategoriePaiePageState extends State<AddCategoriePaiePage> {
             alignment: Alignment.bottomRight,
             child: ValidateButton(
               onPressed: () async {
-                await _addCategoriePaie();
+                await _addGrilleCategoriePaie();
               },
             ),
           ),

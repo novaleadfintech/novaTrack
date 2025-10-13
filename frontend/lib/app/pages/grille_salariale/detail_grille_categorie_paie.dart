@@ -38,7 +38,7 @@ class _DetailGrilleCategoriePaiePageState
           decoration: tableDecoration(context),
           children: [
             const TabledetailBodyMiddle(
-              valeur: "les classes",
+              valeur: "Les classes",
               isbold: true,
             ),
             Column(

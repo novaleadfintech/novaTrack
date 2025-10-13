@@ -69,7 +69,7 @@ class Echelon {
     `);
 
     if (existingEchelon.hasNext) {
-      throw new Error(`Une catégorie de paie avec ce nom existe déjà.`);
+      throw new Error(`Un échelon avec ce nom existe déjà.`);
     }
 
     // Création de la catégorie

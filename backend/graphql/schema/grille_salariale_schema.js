@@ -13,7 +13,7 @@ const query = `#graphql
 
 const mutation = `#graphql
   createCategoriePaieGrille(libelle: String!, classes: [ClasseInput]! ): String!
-  updateCategoriePaieGrille(key: ID!, libelle: String): String!
+  updateCategoriePaieGrille(key: ID!, libelle: String, classes: [ClasseInput]): String!
   deleteCategoriePaieGrille(key: ID!): String!
 `;
 

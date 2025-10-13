@@ -12,7 +12,7 @@ const categoriePaieGrilleResolvers = {
   categoriePaieGrille: async ({ key }) =>
     categoriePaieGrilleModel.getCategoriePaieGrille({ key: key }),
 
-  createCategoriePaieGrille: async ({ libelle }) =>
+  createCategoriePaieGrille: async ({ libelle, classes }) =>
     categoriePaieGrilleModel.createCategoriePaieGrille({
       libelle: libelle,
       classes: classes,
