@@ -51,11 +51,50 @@ class DetailSalariePage extends StatelessWidget {
           decoration: tableDecoration(context),
           children: [
             const TabledetailBodyMiddle(
-              valeur: "Catégorie de paie",
+              valeur: "Catégorie de bulletin de  paie",
               isbold: true,
             ),
             TabledetailBodyMiddle(
               valeur: salarie.categoriePaie.categoriePaie,
+            ),
+          ],
+        ),
+        if (salarie.grilleCategoriePaie != null)
+          TableRow(
+            decoration: tableDecoration(context),
+            children: [
+              const TabledetailBodyMiddle(
+                valeur: "Catégorie de paie",
+                isbold: true,
+              ),
+              TabledetailBodyMiddle(
+                valeur: salarie.grilleCategoriePaie!.libelle,
+              ),
+            ],
+          ),
+        if (salarie.classe != null)
+          TableRow(
+            decoration: tableDecoration(context),
+            children: [
+              const TabledetailBodyMiddle(
+                valeur: "classe de paie",
+                isbold: true,
+              ),
+              TabledetailBodyMiddle(
+                valeur: salarie.classe!.libelle,
+              ),
+            ],
+          ),
+        if (salarie.echelon != null)
+          TableRow(
+            decoration: tableDecoration(context),
+            children: [
+              const TabledetailBodyMiddle(
+                valeur: "Echelon",
+                isbold: true,
+              ),
+              TabledetailBodyMiddle(
+                valeur: salarie.echelon!.libelle,
             ),
           ],
         ),

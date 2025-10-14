@@ -17,12 +17,18 @@ const salarieResolvers = {
     categoriePaieId,
     paieManner,
     periodPaie,
+    classeId,
+    echelonId,
+    grilleCategoriePaieId,
   }) =>
     await salarieModel.createSalarie({
       personnelId: personnelId,
       categoriePaieId: categoriePaieId,
       periodPaie: periodPaie,
       paieManner: paieManner,
+      classeId: classeId,
+      echelonId: echelonId,
+      grilleCategoriePaieId: grilleCategoriePaieId,
     }),
 
   updateSalarie: async ({

@@ -1,3 +1,7 @@
+import 'package:frontend/model/grille_salariale/categorie_paie.dart';
+import 'package:frontend/model/grille_salariale/classe_model.dart';
+import 'package:frontend/model/grille_salariale/echelon_model.dart';
+
 import '../personnel/personnel_model.dart';
 import 'categorie_paie.dart';
 import 'tranche_model.dart';
@@ -8,6 +12,9 @@ class SalarieModel {
   final CategoriePaieModel categoriePaie;
   final double dateEnregistrement;
   final int? periodPaie;
+  final EchelonModel? echelon;
+  final ClasseModel? classe;
+  final GrilleCategoriePaieModel? grilleCategoriePaie;
   final PaieManner? paieManner;
 
   final int? fullCount;
@@ -18,6 +25,9 @@ class SalarieModel {
     required this.categoriePaie,
     required this.dateEnregistrement,
     required this.periodPaie,
+    this.echelon,
+    this.classe,
+    this.grilleCategoriePaie,
     this.paieManner = PaieManner.finMois,
     this.fullCount,
   });
@@ -30,6 +40,14 @@ class SalarieModel {
       dateEnregistrement: json['dateEnregistrement']?.toDouble() ?? 0.0,
       periodPaie: json['periodPaie']?.toInt(),
       paieManner: paieMannerFromJson(json['paieManner']),
+      echelon: json['echelon'] != null
+          ? EchelonModel.fromJson(json['echelon'])
+          : null,
+      classe:
+          json['classe'] != null ? ClasseModel.fromJson(json['classe']) : null,
+      grilleCategoriePaie: json['grilleCategoriePaie'] != null
+          ? GrilleCategoriePaieModel.fromJson(json['grilleCategoriePaie'])
+          : null,
       fullCount: json['fullCount'],
     );
   }
@@ -41,6 +59,9 @@ class SalarieModel {
       'categoriePaie': categoriePaie.toJson(),
       'dateEnregistrement': dateEnregistrement,
       'periodPaie': periodPaie,
+      'echelon': echelon?.toJson(),
+      'classe': classe?.toJson(),
+      'grilleCategoriePaie': grilleCategoriePaie?.toJson(),
       'paieManner': paieMannerToString(paieManner!),
       'fullCount': fullCount,
     };

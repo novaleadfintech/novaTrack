@@ -106,6 +106,9 @@ class _AddSalariePageState extends State<AddSalariePage> {
             ? (periodPaieCompteur! * unitMultipliers[periodPaieUnit]!)
             : null,
         paieManner: paieManner!,
+        classe: classe!,
+        echelon: echelon!,
+        grilleCategoriePaie: grilleCategoriePaie!,
       );
 
       _dialog.hide();
@@ -229,7 +232,6 @@ class _AddSalariePageState extends State<AddSalariePage> {
               required: false,
             ),
           ],
-          Divider(),
           FutureCustomDropDownField<GrilleCategoriePaieModel>(
             label: "Categorie de paie",
             selectedItem: grilleCategoriePaie,

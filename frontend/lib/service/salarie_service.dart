@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'package:frontend/global/config.dart';
+import 'package:frontend/model/grille_salariale/classe_model.dart';
 import 'package:http/http.dart' as http;
 
 import '../app/integration/popop_status.dart';
 import '../global/constant/request_management_value.dart';
 import '../model/bulletin_paie/salarie_model.dart';
 import '../model/bulletin_paie/tranche_model.dart';
+import '../model/grille_salariale/categorie_paie.dart';
+import '../model/grille_salariale/echelon_model.dart';
 import '../model/request_response.dart';
 import 'request_header.dart';
 
@@ -62,6 +65,18 @@ class SalarieService {
             _id
             categoriePaie
         }
+        classe {
+            _id
+            libelle
+        }
+        echelon {
+            _id
+            libelle
+        }
+        grilleCategoriePaie {
+            _id
+            libelle
+        }
         periodPaie
         
     }
@@ -82,8 +97,10 @@ class SalarieService {
 
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
-      var data = jsonData['data']['salaries'];
-       if (data != null) {
+      var data = jsonData['data']['salaries'];  
+      print(data); 
+
+      if (data != null) {
         return (data as List)
             .map((json) => SalarieModel.fromJson(json))
             .toList();
@@ -147,6 +164,18 @@ class SalarieService {
         periodPaie
         typePaie
         salaire
+        classe {
+            _id
+            libelle
+        }
+        echelon {
+            _id
+            libelle
+        }
+        grilleCategoriePaie {
+            _id
+            libelle
+        }
         RubriqueBulletin {
             _id
             rubrique
@@ -156,8 +185,6 @@ class SalarieService {
         }
     }
 }
-
-
     ''';
 
     var response = await http
@@ -185,6 +212,9 @@ class SalarieService {
     required String categoriePaieId,
     required int? periodPaie,
     required PaieManner paieManner,
+    required ClasseModel classe,
+    required EchelonModel echelon,
+    required GrilleCategoriePaieModel grilleCategoriePaie,
   }) async {
     var body = '''
       mutation CreateSalarie {
@@ -193,6 +223,9 @@ class SalarieService {
               categoriePaieId: "$categoriePaieId"
               periodPaie: $periodPaie
               paieManner: ${paieMannerToString(paieManner)}
+              classeId: "${classe.id}"
+              echelonId: "${echelon.id}"
+              grilleCategoriePaieId: "${grilleCategoriePaie.id}"
           )
       }
     ''';

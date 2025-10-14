@@ -41,7 +41,8 @@ class CategoriePaieGrille {
       return categorie;
     } catch (err) {
       console.error(err);
-      throw new Error(`La catégorie de paie est introuvable`);
+      return null;
+      // throw new Error(`La catégorie de paie est introuvable`);
     }
   }
 
