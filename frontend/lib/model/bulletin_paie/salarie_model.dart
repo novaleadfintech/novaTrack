@@ -12,6 +12,7 @@ class SalarieModel {
   final CategoriePaieModel categoriePaie;
   final double dateEnregistrement;
   final int? periodPaie;
+  final String? numeroMatricule;
   final EchelonModel? echelon;
   final ClasseModel? classe;
   final GrilleCategoriePaieModel? grilleCategoriePaie;
@@ -28,6 +29,7 @@ class SalarieModel {
     this.echelon,
     this.classe,
     this.grilleCategoriePaie,
+    this.numeroMatricule,
     this.paieManner = PaieManner.finMois,
     this.fullCount,
   });
@@ -43,6 +45,7 @@ class SalarieModel {
       echelon: json['echelon'] != null
           ? EchelonModel.fromJson(json['echelon'])
           : null,
+      numeroMatricule: json['numeroMatricule'],
       classe:
           json['classe'] != null ? ClasseModel.fromJson(json['classe']) : null,
       grilleCategoriePaie: json['grilleCategoriePaie'] != null
@@ -60,6 +63,7 @@ class SalarieModel {
       'dateEnregistrement': dateEnregistrement,
       'periodPaie': periodPaie,
       'echelon': echelon?.toJson(),
+      'numeroMatricule': numeroMatricule,
       'classe': classe?.toJson(),
       'grilleCategoriePaie': grilleCategoriePaie?.toJson(),
       'paieManner': paieMannerToString(paieManner!),

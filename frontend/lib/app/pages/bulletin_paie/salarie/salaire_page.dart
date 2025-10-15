@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:frontend/app/pages/bulletin_paie/salarie/add_salarie.dart';
 import 'package:frontend/app/pages/bulletin_paie/salarie/salaire_table.dart';
 import 'package:frontend/model/personnel/enum_personnel.dart';
@@ -8,13 +7,11 @@ import 'package:gap/gap.dart';
 import '../../../../auth/authentification_token.dart';
 import '../../../../global/constant/permission_alias.dart';
 import '../../../../global/global_value.dart';
-import '../../../../helper/assets/asset_icon.dart';
 import '../../../../helper/paginate_data.dart';
 import '../../../../helper/user_helper.dart';
 import '../../../../model/bulletin_paie/salarie_model.dart';
 import '../../../../model/habilitation/role_model.dart';
 import '../../../../widget/add_element_button.dart';
-import '../../../../widget/app_action_button.dart';
 import '../../../../widget/pagination.dart';
 import '../../../../widget/research_bar.dart';
 import '../../app_dialog_box.dart';
@@ -141,19 +138,7 @@ class _PersonnelPageState extends State<SalariePage> {
             ),
             Row(
               children: [
-                AppActionButton(
-                  onPressed: () {
-                    // onEditBulletin(salarie: salarie); TODO: logique à implementer plus tard après la réunion le vendredi.
-                  },
-                  child: SvgPicture.asset(
-                    AssetsIcons.validInvoice,
-                    height: 20,
-                    colorFilter: ColorFilter.mode(
-                      Theme.of(context).colorScheme.onPrimary,
-                      BlendMode.srcIn,
-                    ),
-                  ),
-                ),
+                
                 // FilledButton(
                 //     onPressed: () {
                 //       // onEditBulletin(salarie: salarie);

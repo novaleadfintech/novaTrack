@@ -3,6 +3,7 @@ import 'package:frontend/model/grille_salariale/categorie_paie.dart';
 import 'package:frontend/model/grille_salariale/echelon_model.dart';
 import 'package:frontend/service/grille_categorie_paie_service.dart';
 import 'package:frontend/widget/drop_down_text_field.dart';
+import 'package:frontend/widget/simple_text_field.dart';
 import '../../../../model/bulletin_paie/categorie_paie.dart';
 import '../../../../model/bulletin_paie/nature_rubrique.dart';
 import '../../../../model/bulletin_paie/rubrique.dart';
@@ -40,6 +41,8 @@ class AddSalariePage extends StatefulWidget {
 class _AddSalariePageState extends State<AddSalariePage> {
   late SimpleFontelicoProgressDialog _dialog;
   final TextEditingController _compterController = TextEditingController();
+  final TextEditingController _numeroMatriculeController =
+      TextEditingController();
 
   PersonnelModel? personnel;
   CategoriePaieModel? categoriePaieBulletiin;
@@ -74,6 +77,9 @@ class _AddSalariePageState extends State<AddSalariePage> {
       if (paieManner == null) {
         errorMessage = "Veuillez sélectionner une modalité de paiement.";
       }
+      if (_numeroMatriculeController.text.isEmpty) {
+        errorMessage = "Veuillez renseignez le numéro matricule.";
+      }
       if (paieManner == PaieManner.finMois ||
           paieManner == PaieManner.finPeriod) {
         if (_compterController.text.isEmpty || periodPaieUnit == null) {
@@ -106,6 +112,7 @@ class _AddSalariePageState extends State<AddSalariePage> {
             ? (periodPaieCompteur! * unitMultipliers[periodPaieUnit]!)
             : null,
         paieManner: paieManner!,
+        numeroMatricule: _numeroMatriculeController.text.trim(),
         classe: classe!,
         echelon: echelon!,
         grilleCategoriePaie: grilleCategoriePaie!,
@@ -187,6 +194,10 @@ class _AddSalariePageState extends State<AddSalariePage> {
               });
             },
             itemsAsString: (p) => "${p.nom} ${p.prenom}",
+          ),
+          SimpleTextField(
+            label: "Numéro matricule",
+            textController: _numeroMatriculeController,
           ),
           FutureCustomDropDownField<CategoriePaieModel>(
             label: "Categorie de bulletin de paie",

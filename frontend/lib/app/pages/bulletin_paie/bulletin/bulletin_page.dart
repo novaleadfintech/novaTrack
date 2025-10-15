@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:frontend/app/pages/bulletin_paie/bulletin/preparation_bulletin.dart';
+import 'package:frontend/app/pages/configure_page_dialog.dart';
 import 'package:frontend/model/habilitation/role_model.dart';
 import 'package:frontend/service/bulletin_service.dart';
 import 'package:gap/gap.dart';
-
 import '../../../../auth/authentification_token.dart';
 import '../../../../global/global_value.dart';
+import '../../../../helper/assets/asset_icon.dart';
 import '../../../../helper/paginate_data.dart';
 import '../../../../model/bulletin_paie/bulletin_model.dart';
+import '../../../../widget/app_action_button.dart';
 import '../../../../widget/pagination.dart';
 import '../../../../widget/research_bar.dart';
 import '../../error_page.dart';
@@ -61,6 +65,19 @@ class _ArchiveBulletinState extends State<BulletinPage> {
             ResearchBar(
               hintText: "Rechercher par nom",
               controller: _researchController,
+            ),
+            AppActionButton(
+              onPressed: () {
+                onEditBulletin();
+              },
+              child: SvgPicture.asset(
+                AssetsIcons.validInvoice,
+                height: 20,
+                colorFilter: ColorFilter.mode(
+                  Theme.of(context).colorScheme.onPrimary,
+                  BlendMode.srcIn,
+                ),
+              ),
             ),
           ],
         ),
@@ -123,6 +140,14 @@ class _ArchiveBulletinState extends State<BulletinPage> {
           ),
         ),
       ],
+    );
+  }
+
+  void onEditBulletin() {
+    showResponsiveConfigPageDialogBox(
+      context,
+      content: PreparationBulletinPage(),
+      title: "Préparation des bulletin",
     );
   }
 }

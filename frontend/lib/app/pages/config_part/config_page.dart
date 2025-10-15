@@ -253,7 +253,7 @@ class _ConfigPageState extends State<ConfigPage> {
                               onTap: () {
                                 showResponsiveConfigPageDialogBox(
                                   context,
-                                  title: "Grille salariale",
+                                  title: "Catégorie de paie",
                                   content: GrilleCategoriePaiePage(),
                                 );
                               },

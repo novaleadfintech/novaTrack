@@ -502,6 +502,251 @@ class BulletinService {
     return bulletins;
   }
 
+
+static Future<List<BulletinPaieModel>> getReadyBulletins() async {
+    List<BulletinPaieModel> bulletins = [];
+    var body = '''
+              query CrrentValidateBulletin {
+    currentValidateBulletin {
+        _id
+        etat
+        moyenPayement{
+          _id
+          libelle
+        }
+        datePayement
+        debutPeriodePaie
+        finPeriodePaie
+        referencePaie
+        dateEdition
+        banque {
+            _id
+            name
+            codeGuichet
+            codeBanque
+            cleRIB
+            codeBIC
+            numCompte
+            logo
+            soldeTheorique
+            soldeReel
+            country {
+                _id
+                name
+                code
+            }
+        }
+        salarie {
+            _id
+            dateEnregistrement
+            periodPaie
+            paieManner
+            fullCount
+            personnel {
+                _id
+                nom
+                prenom
+                email
+                telephone
+                adresse
+                sexe
+                poste{_id, libelle}
+                situationMatrimoniale
+                commentaire
+                etat
+                dateEnregistrement
+                dateNaissance
+                dateDebut
+                dateFin
+                nombreEnfant
+                nombrePersonneCharge
+                dureeEssai
+                typePersonnel
+                typeContrat
+                fullCount
+                pays {
+                    _id
+                    name
+                    code
+                    tauxTVA
+                    phoneNumber
+                    initiauxPays
+                }
+                personnePrevenir {
+                    nom
+                    lien
+                    telephone1
+                    telephone2
+                }
+            }
+            categoriePaie {
+                _id
+                categoriePaie
+            }
+        }
+        validate {
+            validateStatus
+            date
+            commentaire
+            validater {
+                _id
+                login
+                password
+                canLogin
+                _token
+                dateEnregistrement
+                personnel {
+                    _id
+                    nom
+                    prenom
+                    email
+                    telephone
+                    adresse
+                    sexe
+                    poste{_id, libelle}
+                    situationMatrimoniale
+                    commentaire
+                    etat
+                    dateEnregistrement
+                    dateNaissance
+                    dateDebut
+                    dateFin
+                    nombreEnfant
+                    nombrePersonneCharge
+                    dureeEssai
+                    typePersonnel
+                    typeContrat
+                    fullCount
+                }
+            }
+        }
+        rubriques {
+            value
+            rubrique {
+                _id
+                rubrique
+                code
+                type
+                nature
+                rubriqueRole
+                rubriqueIdentity
+                portee
+                section {
+                    _id
+                    section
+                }
+                calcul {
+                    operateur
+                    elements {
+                        type
+                        valeur
+                        rubrique {
+                            _id
+                            rubrique
+                            code
+                            type
+                            nature
+                            portee
+                            rubriqueIdentity
+                        }
+                    }
+                }
+                sommeRubrique {
+                    operateur
+                    elements {
+                        type
+                        valeur
+                        rubrique {
+                            _id
+                            rubrique
+                            code
+                            type
+                            nature
+                            portee
+                            rubriqueIdentity
+                        }
+                    }
+                }
+                taux {
+                    taux
+                    base {
+                        _id
+                        rubrique
+                        code
+                        type
+                        nature
+                        portee
+                        rubriqueIdentity
+                    }
+                }
+                bareme {
+                    reference {
+                        _id
+                        rubrique
+                        code
+                        type
+                        nature
+                        portee
+                        rubriqueIdentity
+                    }
+                    tranches {
+                        min
+                        max
+                        value {
+                            type
+                            valeur
+                            taux {
+                                taux
+                                base {
+                                    _id
+                                    rubrique
+                                    code
+                                    type
+                                    nature
+                                    portee
+                                    rubriqueIdentity
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+            ''';
+    var response = await http
+        .post(
+      Uri.parse(serverUrl),
+      body: json.encode({
+        'query': body,
+      }),
+      headers: getHeaders(),
+    )
+        .catchError((onError) {
+      throw (RequestMessage.failgettingDataMessage);
+    }).timeout(
+      const Duration(seconds: reqTimeout),
+      onTimeout: () {
+        throw (RequestMessage.failgettingDataMessage);
+      },
+    );
+    if (response.statusCode == 200) {
+      var jsonData = jsonDecode(response.body);
+      var data = jsonData['data']['currentValidateBulletin'];
+
+      if (data != null) {
+        for (var bulletin in data) {
+          bulletins.add(BulletinPaieModel.fromJson(bulletin));
+        }
+      }
+    } else {
+      throw (jsonDecode(response.body)['errors'][0]['message']);
+    }
+    return bulletins;
+  }
+
+
   static Future<BulletinPaieModel?> getPreviousBulletins(
       {required String salarieId}) async {
     var body = '''

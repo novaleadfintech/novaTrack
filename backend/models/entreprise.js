@@ -39,12 +39,23 @@ class Entreprise {
     return null;
   };
 
+  getValeurIndiciaire = async () => {
+    try {
+      const entreprise = await this.getEntreprise();
+      return entreprise ? entreprise.valeurIndiciaire : null;
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
+  };
+
   createEntreprise = async ({
     logo,
     adresse,
     email,
     telephone,
     ville,
+    valeurIndiciaire,
     tamponSignature,
     nomDG,
     pays,
@@ -58,6 +69,8 @@ class Entreprise {
     }
 
     if (telephone !== undefined) newEntreprise.telephone = telephone;
+    if (valeurIndiciaire !== undefined)
+      newEntreprise.valeurIndiciaire = valeurIndiciaire;
     if (nomDG !== undefined) newEntreprise.nomDG = nomDG;
     if (raisonSociale !== undefined)
       newEntreprise.raisonSociale = raisonSociale;
@@ -123,6 +136,7 @@ class Entreprise {
     ville,
     telephone,
     tamponSignature,
+    valeurIndiciaire,
     nomDG,
     pays,
     raisonSociale,
@@ -135,6 +149,8 @@ class Entreprise {
         adresse: adresse,
         email: email,
         logo: logo,
+        valeurIndiciaire: valeurIndiciaire,
+        ville: ville,
         nomDG: nomDG,
         tamponSignature: tamponSignature,
         telephone: telephone,
@@ -165,7 +181,9 @@ class Entreprise {
     if (raisonSociale !== undefined) {
       updateField.raisonSociale = raisonSociale;
     }
-
+    if (valeurIndiciaire !== undefined) {
+      updateField.valeurIndiciaire = valeurIndiciaire;
+    }
     // Gestion de l'update du logo
     try {
       if (logo?.file !== undefined) {
@@ -210,60 +228,60 @@ class Entreprise {
           }
         }
       }
-    } catch (e) {
-      console.error(e);
-       throw "Erreur lors de la modification des données";
-    }
 
-    if (tamponSignature?.file !== undefined) {
-      const { createReadStream, filename, mimetype } =
-        await tamponSignature.file;
-      if (filename) {
-        const oldTampon = entreprise.tamponSignature;
-        let uniquefilename;
+      if (tamponSignature?.file !== undefined) {
+        const { createReadStream, filename, mimetype } =
+          await tamponSignature.file;
+        if (filename) {
+          const oldTampon = entreprise.tamponSignature;
+          let uniquefilename;
 
-        if (oldTampon) {
-          const oldFilePath = oldTampon;
-          const oldFileExtension = path.extname(oldFilePath);
-          const newFileExtension = path.extname(filename);
-          const trueOldFilePath = oldFilePath.replace(
-            process.env.FILE_PREFIX,
-            ""
-          );
+          if (oldTampon) {
+            const oldFilePath = oldTampon;
+            const oldFileExtension = path.extname(oldFilePath);
+            const newFileExtension = path.extname(filename);
+            const trueOldFilePath = oldFilePath.replace(
+              process.env.FILE_PREFIX,
+              ""
+            );
 
-          if (newFileExtension !== oldFileExtension) {
-            deleteFile({
-              filePath: oldFilePath.replace(process.env.FILE_PREFIX, ""),
-            });
+            if (newFileExtension !== oldFileExtension) {
+              deleteFile({
+                filePath: oldFilePath.replace(process.env.FILE_PREFIX, ""),
+              });
+            }
+            uniquefilename = trueOldFilePath.replace(
+              oldFileExtension,
+              newFileExtension
+            );
+          } else {
+            const valid_name = "signature".replace(/ /g, "_");
+            const extension = path.extname(filename);
+            uniquefilename = `${valid_name}${extension}`;
           }
-          uniquefilename = trueOldFilePath.replace(
-            oldFileExtension,
-            newFileExtension
-          );
-        } else {
-          const valid_name = "signature".replace(/ /g, "_");
-          const extension = path.extname(filename);
-          uniquefilename = `${valid_name}${extension}`;
-        }
 
-        updateField.tamponSignature = await uploadFile({
-          createReadStream: createReadStream,
-          locateFolder: locateEntrepriseFolder,
-          mimetype: mimetype,
-          uniquefilename: uniquefilename,
-        });
+          updateField.tamponSignature = await uploadFile({
+            createReadStream: createReadStream,
+            locateFolder: locateEntrepriseFolder,
+            mimetype: mimetype,
+            uniquefilename: uniquefilename,
+          });
 
-        if (!updateField.tamponSignature) {
-          throw new Error("Échec de l'upload de la signature.");
+          if (!updateField.tamponSignature) {
+            throw new Error("Échec de l'upload de la signature.");
+          }
         }
       }
-    }
-    isValidValue({
-      value: updateField,
-    });
 
-    await entreprise.update(key, updateField);
-    return "OK";
+      isValidValue({
+        value: updateField,
+      });
+      await entreprise.update(key ?? entre._id, updateField);
+      return "OK";
+    } catch (e) {
+      console.error(e);
+      throw "Erreur lors de la modification des données";
+    }
   };
 }
 

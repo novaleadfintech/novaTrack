@@ -24,6 +24,7 @@ class SalarieService {
         dateEnregistrement
         paieManner
         fullCount
+        numeroMatricule
         personnel {
             _id
             nom
@@ -98,8 +99,7 @@ class SalarieService {
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
       var data = jsonData['data']['salaries'];  
-      print(data); 
-
+ 
       if (data != null) {
         return (data as List)
             .map((json) => SalarieModel.fromJson(json))
@@ -120,6 +120,7 @@ class SalarieService {
         dateEnregistrement
         fullCount
         paieManner
+        numeroMatricule
         personnel {
             _id
             nom
@@ -213,6 +214,7 @@ class SalarieService {
     required int? periodPaie,
     required PaieManner paieManner,
     required ClasseModel classe,
+    required String numeroMatricule,
     required EchelonModel echelon,
     required GrilleCategoriePaieModel grilleCategoriePaie,
   }) async {
@@ -224,6 +226,7 @@ class SalarieService {
               periodPaie: $periodPaie
               paieManner: ${paieMannerToString(paieManner)}
               classeId: "${classe.id}"
+              numeroMatricule: "$numeroMatricule"
               echelonId: "${echelon.id}"
               grilleCategoriePaieId: "${grilleCategoriePaie.id}"
           )
@@ -261,6 +264,7 @@ class SalarieService {
     required String? personnelId,
     required String? categoriePaieId,
     required int? periodPaie,
+    // required String? numeroMatricule,
     required PaieManner? paieManner,
   }) async {
     String body = '''
@@ -280,6 +284,9 @@ class SalarieService {
     if (paieManner != null) {
       body += "paieManner: ${paieMannerToString(paieManner)},";
     }
+    // if (numeroMatricule != null) {
+    //   body += 'numeroMatricule: "$numeroMatricule",';
+    // }
 
     body += '''
     )

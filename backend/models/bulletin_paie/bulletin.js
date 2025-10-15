@@ -164,6 +164,8 @@ class BulletinPaie {
     }
   }
 
+  getReadyBulletins() {}
+
   async getAllArchiveBulletins({ perPage, skip, etat }) {
     let limit = aql``;
     let filter = aql``;

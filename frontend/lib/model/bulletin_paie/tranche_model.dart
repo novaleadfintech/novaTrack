@@ -20,6 +20,7 @@ TrancheValueType trancheValueTypeFromJson(String value) {
 enum RubriqueIdentity {
   anciennete("Ancienneté"),
   avanceSurSalaire("Avance sur salaire"),
+  primeExceptionnellz("Prime exeptionnelle"),
   nombrePersonneCharge("Nombre de personnes à charge"),
   netPayer("Net à payer");
 

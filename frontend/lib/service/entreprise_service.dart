@@ -36,11 +36,13 @@ class EntrepriseService {
   ''';
 
     try {
-      final response = await http.post(
-        Uri.parse(serverUrl),
-        body: jsonEncode({'query': query}),
-headers: getHeaders(),
-      ).timeout(const Duration(seconds: reqTimeout));
+      final response = await http
+          .post(
+            Uri.parse(serverUrl),
+            body: jsonEncode({'query': query}),
+            headers: getHeaders(),
+          )
+          .timeout(const Duration(seconds: reqTimeout));
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
@@ -49,8 +51,6 @@ headers: getHeaders(),
           try {
             return StrictEntreprise.fromJson(data);
           } catch (err) {
-             
-
             throw "Certaines données de l'entreprise ne sont pas à jour. Veuillez contacter l'administrateur";
           }
         } else {
@@ -90,11 +90,13 @@ headers: getHeaders(),
   ''';
 
     try {
-      final response = await http.post(
-        Uri.parse(serverUrl),
-        body: jsonEncode({'query': query}),
-   headers: getHeaders(),
-      ).timeout(const Duration(seconds: reqTimeout));
+      final response = await http
+          .post(
+            Uri.parse(serverUrl),
+            body: jsonEncode({'query': query}),
+            headers: getHeaders(),
+          )
+          .timeout(const Duration(seconds: reqTimeout));
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
@@ -108,6 +110,7 @@ headers: getHeaders(),
             logo: null,
             ville: null,
             adresse: null,
+            valeurIndiciaire: null,
             email: null,
             telephone: null,
             tamponSignature: null,
@@ -123,12 +126,45 @@ headers: getHeaders(),
     }
   }
 
+  static Future<int?> getindiceInciciaire() async {
+    const String query = '''
+    query GetValeurIndiciaire {
+    getValeurIndiciaire
+}
+  ''';
+
+    try {
+      final response = await http
+          .post(
+            Uri.parse(serverUrl),
+            body: jsonEncode({'query': query}),
+            headers: getHeaders(),
+          )
+          .timeout(const Duration(seconds: reqTimeout));
+
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body);
+        final data = jsonData['data']['getValeurIndiciaire'];
+        if (data != null) {
+           return data;
+        } else {
+          return null;
+        }
+      } else {
+        throw jsonDecode(response.body)['errors'][0]['message'];
+      }
+    } catch (error) {
+      throw error.toString();
+    }
+  }
+
   static Future<RequestResponse> updateEntreprise({
     String? key,
     String? nomDG,
     String? ville,
     String? email,
     int? telephone,
+    int? valeurIndiciaire,
     String? raisonSociale,
     PaysModel? pays,
     String? adresse,
@@ -164,7 +200,9 @@ headers: getHeaders(),
       if (pays != null) {
         body += 'pays: "${pays.id!}",';
       }
-
+      if (valeurIndiciaire != null) {
+        body += 'valeurIndiciaire: $valeurIndiciaire,';
+      }
       body += 'logo: \$logo,';
       body += 'tamponSignature: \$tamponSignature';
 
@@ -211,9 +249,7 @@ headers: getHeaders(),
         );
       }
 
-      multipartRequest.headers.addAll({
-       ...getHeaders()
-      });
+      multipartRequest.headers.addAll({...getHeaders()});
 
       var streamedResponse = await multipartRequest.send().timeout(
         const Duration(seconds: reqTimeout),

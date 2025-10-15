@@ -55,16 +55,16 @@ class Salarie {
             const categoriePaie = await CategoriePaieModel.getCategoriePaie({
               key: salarie.categoriePaieId,
             });
-            const grilleGategoriePaie =
+            const grilleCategoriePaie =
               await CategoriePaieGrilleModel.getCategoriePaieGrille({
                 key: salarie.grilleCategoriePaieId,
               });
             let classe;
             let echelon;
-            if (grilleGategoriePaie != null) {
-              if (grilleGategoriePaie.classes) {
-                console.log(grilleGategoriePaie.classes);
-                classe = grilleGategoriePaie.classes.find(
+            if (grilleCategoriePaie != null) {
+              if (grilleCategoriePaie.classes) {
+                console.log(grilleCategoriePaie.classes);
+                classe = grilleCategoriePaie.classes.find(
                   (c) => c && c._id == salarie.classeId
                 );
               }
@@ -83,7 +83,7 @@ class Salarie {
               ...salarie,
               personnel: personnel,
               categoriePaie: categoriePaie,
-              grilleGategoriePaie: grilleGategoriePaie,
+              grilleCategoriePaie: grilleCategoriePaie,
               classe: classe,
               echelon: echelon,
             };
@@ -126,6 +126,7 @@ class Salarie {
     categoriePaieId,
     periodPaie,
     paieManner,
+    numeroMatricule,
     classeId,
     echelonId,
     grilleCategoriePaieId,
@@ -136,6 +137,7 @@ class Salarie {
         categoriePaieId,
         paieManner,
         classeId,
+        numeroMatricule,
         echelonId,
         grilleCategoriePaieId,
       ],
@@ -164,6 +166,7 @@ class Salarie {
       paieManner: paieManner,
       periodPaie: periodPaie,
       classeId: classeId,
+      numeroMatricule: numeroMatricule,
       echelonId: echelonId,
       grilleCategoriePaieId: grilleCategoriePaieId,
       timeStamp: Date.now(),

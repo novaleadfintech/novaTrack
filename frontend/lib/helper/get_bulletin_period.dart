@@ -309,6 +309,7 @@ List<List<DateTime>> getBulletinPeriods({required SalarieModel salarie}) {
   return periods;
 }
 
+
 int countValidPeriodsRestant({required SalarieModel salarie}) {
   final List<List<DateTime>> periods = getBulletinPeriods(salarie: salarie);
   if (periods.isEmpty) return 0;

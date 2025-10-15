@@ -6,6 +6,7 @@ const typeDef = `#graphql
         adresse:String
         ville:String
         email:String
+        valeurIndiciaire:Int
         raisonSociale: String
         pays: Country
         telephone:Int
@@ -15,6 +16,7 @@ const typeDef = `#graphql
 `;
 const query = `#graphql
     entreprise: Entreprise
+    getValeurIndiciaire: Int
 `;
 
 const mutation = `#graphql
@@ -24,6 +26,7 @@ const mutation = `#graphql
         raisonSociale: String,
         pays: String,
         email:String,
+        valeurIndiciaire:Int
         ville: String,
         telephone:Int,
         tamponSignature:Upload,
@@ -37,6 +40,7 @@ const mutation = `#graphql
         email:String,
         ville:String,
         pays: String,
+        valeurIndiciaire:Int
         raisonSociale: String,
         telephone:Int,
         tamponSignature:Upload,

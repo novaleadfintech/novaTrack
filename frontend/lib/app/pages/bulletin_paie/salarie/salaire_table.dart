@@ -66,19 +66,14 @@ class _SalarieTableState extends State<SalarieTable> {
 
   @override
   void initState() {
-    
     _futureRoles = getInitialDatas();
     super.initState();
   }
-
-
-
 
   Future<void> getInitialDatas() async {
     role = await AuthService().getRole();
     setState(() {});
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -203,7 +198,6 @@ class _SalarieTableState extends State<SalarieTable> {
                         },
                         children: widget.paginatedPersonnelData.map((salarie) {
                           PersonnelModel personnel = salarie.personnel;
-
                           // bool isCurrentUser =
                           //     personnel.id == currentUser!.personnel!.id;
                           return TableRow(
@@ -228,6 +222,7 @@ class _SalarieTableState extends State<SalarieTable> {
                                   //       permission: PermissionAlias
                                   //           .createBulletin.label,
                                   //     ))
+
                                   //   FilledButton(
                                   //       onPressed: () {
                                   //         onEditBulletin(salarie: salarie);
@@ -318,7 +313,6 @@ class _SalarieTableState extends State<SalarieTable> {
     try {
       // final todayMidnight = DateTime(
       //     DateTime.now().year, DateTime.now().month, DateTime.now().day);
-
       BulletinPaieModel? previousBulletin =
           await BulletinService.getPreviousBulletins(
         salarieId: salarie.id,

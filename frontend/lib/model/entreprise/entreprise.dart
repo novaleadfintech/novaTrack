@@ -7,6 +7,7 @@ class Entreprise {
   final String? adresse;
   final String? email;
   final String? ville;
+  final int? valeurIndiciaire;
   final int? telephone;
   final String? tamponSignature;
   final String? nomDG;
@@ -21,6 +22,7 @@ class Entreprise {
     required this.telephone,
     required this.tamponSignature,
     required this.nomDG,
+    required this.valeurIndiciaire,
     required this.ville,
     required this.pays,
   });
@@ -33,6 +35,7 @@ class Entreprise {
       'logo': logo,
       'adresse': adresse,
       'email': email,
+      'valeurIndiciaire': valeurIndiciaire,
       'telephone': telephone,
       'tamponSignature': tamponSignature,
       'ville': ville,
@@ -45,15 +48,15 @@ class Entreprise {
     return Entreprise(
         id: json["_id"],
         raisonSociale: json['raisonSociale'],
-      logo: json['logo'],
-      adresse: json['adresse'],
-      email: json['email'],
-      telephone: json['telephone'],
+        logo: json['logo'],
+        adresse: json['adresse'],
+        email: json['email'],
+        valeurIndiciaire: json['valeurIndiciaire'],
+        telephone: json['telephone'],
         ville: json['ville'],
-      tamponSignature: json['tamponSignature'],
-      nomDG: json['nomDG'],
-        pays: json['pays'] != null ? PaysModel.fromJson(json['pays']) : null
-    );
+        tamponSignature: json['tamponSignature'],
+        nomDG: json['nomDG'],
+        pays: json['pays'] != null ? PaysModel.fromJson(json['pays']) : null);
   }
 }
 
@@ -94,7 +97,7 @@ class StrictEntreprise {
       'tamponSignature': tamponSignature,
       'nomDG': nomDG,
       'ville': ville,
-      'pays': pays.toJson(), 
+      'pays': pays.toJson(),
     };
   }
 
