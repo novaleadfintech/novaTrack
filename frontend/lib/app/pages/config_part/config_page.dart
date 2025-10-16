@@ -258,6 +258,18 @@ class _ConfigPageState extends State<ConfigPage> {
                                 );
                               },
                             ),
+                            InkWell(
+                              child: ResponsiveCard(
+                                label: "Calendrier de paie",
+                              ),
+                              onTap: () {
+                                showResponsiveConfigPageDialogBox(
+                                  context,
+                                  title: "Calendrier de paie",
+                                  content: GrilleCategoriePaiePage(),
+                                );
+                              },
+                            ),
                           ]),
                     ),
                   ),

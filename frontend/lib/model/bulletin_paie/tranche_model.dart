@@ -56,7 +56,7 @@ RubriqueRole rubriqueRoleFromJson(String rubriqueRole) {
 enum PaieManner {
   finMois("Paiement à la fin du mois"),
   termeEchu("Paiement à terme échu"),
-  finPeriod("Paiement à la fin de la période");
+  finPeriod("Paiement à la fin d'une période");
 
   final String label;
   const PaieManner(this.label);
