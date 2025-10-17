@@ -37,6 +37,7 @@ import debtSchema from "./debt_schema.js";
 import classeSchema from "./classe_schema.js";
 import echelonSchema from "./echelon_schema.js";
 import grilleSalarialeSchema from "./grille_salariale_schema.js";
+import payCalendarSchema from "./pay_calender_schema.js";
 
 const types = [];
 const queries = [];
@@ -81,6 +82,7 @@ const schemas = [
   classeSchema,
   echelonSchema,
   grilleSalarialeSchema,
+  payCalendarSchema,
 ];
 
 schemas.forEach((schema) => {

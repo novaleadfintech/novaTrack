@@ -29,6 +29,7 @@ import debtResolvers from "./debt.js";
 import classeResolvers from "./classe.js";
 import echelonResolvers from "./echelon.js";
 import grilleSalarialeResolvers from "./grille_salariale.js";
+import payCalendarResolvers from "./pay_calendar.js";
 
 const graphQlResolvers = {
   ...serviceResolvers,
@@ -63,6 +64,7 @@ const graphQlResolvers = {
   ...classeResolvers,
   ...echelonResolvers,
   ...grilleSalarialeResolvers,
+  ...payCalendarResolvers,
 };
 
 export default graphQlResolvers;

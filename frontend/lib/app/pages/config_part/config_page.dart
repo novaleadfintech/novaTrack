@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+ import 'package:frontend/app/pages/bulletin_paie/paid_calendar/paid_calendar_page.dart';
 import 'package:frontend/app/pages/categories_paie/categorie_paie_page.dart';
 import 'package:frontend/app/pages/configure_page_dialog.dart';
 import 'package:frontend/app/pages/entreprise/entreprise_page.dart';
@@ -266,7 +267,7 @@ class _ConfigPageState extends State<ConfigPage> {
                                 showResponsiveConfigPageDialogBox(
                                   context,
                                   title: "Calendrier de paie",
-                                  content: GrilleCategoriePaiePage(),
+                                  content: PayCalendarPage(role: role),
                                 );
                               },
                             ),
