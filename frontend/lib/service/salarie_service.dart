@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:frontend/global/config.dart';
+import 'package:frontend/model/entreprise/banque.dart';
 import 'package:frontend/model/grille_salariale/classe_model.dart';
+import 'package:frontend/model/moyen_paiement_model.dart';
 import 'package:http/http.dart' as http;
 
 import '../app/integration/popop_status.dart';
@@ -24,6 +26,16 @@ class SalarieService {
         dateEnregistrement
         paieManner
         fullCount
+        numeroCompte
+        paiementPlace {
+            _id
+            name
+        }
+        moyenPaiement{
+          _id
+          libelle
+          type
+        }
         numeroMatricule
         personnel {
             _id
@@ -98,8 +110,8 @@ class SalarieService {
 
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
-      var data = jsonData['data']['salaries'];  
- 
+      var data = jsonData['data']['salaries'];
+
       if (data != null) {
         return (data as List)
             .map((json) => SalarieModel.fromJson(json))
@@ -120,6 +132,11 @@ class SalarieService {
         dateEnregistrement
         fullCount
         paieManner
+        moyenPaiement{
+          _id
+          libelle
+          type
+        }
         numeroMatricule
         personnel {
             _id
@@ -215,8 +232,11 @@ class SalarieService {
     required PaieManner paieManner,
     required ClasseModel classe,
     required String numeroMatricule,
+    required MoyenPaiementModel moyenPaiement,
+    required BanqueModel paiementPlace,
     required EchelonModel echelon,
     required GrilleCategoriePaieModel grilleCategoriePaie,
+    required String? numeroCompte,
   }) async {
     var body = '''
       mutation CreateSalarie {
@@ -226,7 +246,10 @@ class SalarieService {
               periodPaie: $periodPaie
               paieManner: ${paieMannerToString(paieManner)}
               classeId: "${classe.id}"
+              moyenPaiement: ${moyenPaiement.toJson()}
               numeroMatricule: "$numeroMatricule"
+              paiementPlaceId: "${paiementPlace.id}"
+              numeroCompte:${numeroCompte != null ? "\"$numeroCompte\"" : null}
               echelonId: "${echelon.id}"
               grilleCategoriePaieId: "${grilleCategoriePaie.id}"
           )
@@ -264,6 +287,7 @@ class SalarieService {
     required String? personnelId,
     required String? categoriePaieId,
     required int? periodPaie,
+    required MoyenPaiementModel? moyenPaiement,
     // required String? numeroMatricule,
     required PaieManner? paieManner,
   }) async {
@@ -283,6 +307,9 @@ class SalarieService {
 
     if (paieManner != null) {
       body += "paieManner: ${paieMannerToString(paieManner)},";
+    }
+    if (moyenPaiement != null) {
+      body += "moyenPaiement: ${moyenPaiement.toJson()},";
     }
     // if (numeroMatricule != null) {
     //   body += 'numeroMatricule: "$numeroMatricule",';

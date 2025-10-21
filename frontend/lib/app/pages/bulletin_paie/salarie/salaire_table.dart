@@ -309,49 +309,49 @@ class _SalarieTableState extends State<SalarieTable> {
   }
 
 // TODO: Came back in order todo it as my chef said it
-  void onEditBulletin({required SalarieModel salarie}) async {
-    try {
-      // final todayMidnight = DateTime(
-      //     DateTime.now().year, DateTime.now().month, DateTime.now().day);
-      BulletinPaieModel? previousBulletin =
-          await BulletinService.getPreviousBulletins(
-        salarieId: salarie.id,
-      );
+  // void onEditBulletin({required SalarieModel salarie}) async {
+  //   try {
+  //     // final todayMidnight = DateTime(
+  //     //     DateTime.now().year, DateTime.now().month, DateTime.now().day);
+  //     BulletinPaieModel? previousBulletin =
+  //         await BulletinService.getPreviousBulletins(
+  //       salarieId: salarie.id,
+  //     );
 
-      List<DateTime>? periode = getCurrentBulletinPeriod(
-        salarie: salarie,
-        debutOldPeriodePaie: previousBulletin?.debutPeriodePaie,
-        finOldPeriodePaie: previousBulletin?.finPeriodePaie,
-      );
+  //     List<DateTime>? periode = getCurrentBulletinPeriod(
+  //       salarie: salarie,
+  //       debutOldPeriodePaie: previousBulletin?.debutPeriodePaie,
+  //       finOldPeriodePaie: previousBulletin?.finPeriodePaie,
+  //     );
 
-      final String titre = periode == null
-          ? "Edition du bulletin de paie - ${salarie.personnel.toStringify()}"
-          : "Edition du bulletin de paie - ${salarie.personnel.toStringify()} - du ${getStringDate(time: periode.first)} au ${getStringDate(time: periode.last)}";
+  //     final String titre = periode == null
+  //         ? "Edition du bulletin de paie - ${salarie.personnel.toStringify()}"
+  //         : "Edition du bulletin de paie - ${salarie.personnel.toStringify()} - du ${getStringDate(time: periode.first)} au ${getStringDate(time: periode.last)}";
 
-      final Widget contenu = periode == null
-          ? AddBulletinPage(
-              salarie: salarie,
-              debutPeriodePaie: null,
-              finPeriodePaie: null,
-            )
-          : AddBulletinPage(
-              salarie: salarie,
-              debutPeriodePaie: periode.first,
-              finPeriodePaie: periode.last,
-            );
+  //     final Widget contenu = periode == null
+  //         ? AddBulletinPage(
+  //             salarie: salarie,
+  //             debutPeriodePaie: null,
+  //             finPeriodePaie: null,
+  //           )
+  //         : AddBulletinPage(
+  //             salarie: salarie,
+  //             debutPeriodePaie: periode.first,
+  //             finPeriodePaie: periode.last,
+  //           );
 
-      showAddBulletinPage(titre: titre, contenu: contenu);
-    } catch (e) {
-      MutationRequestContextualBehavior.showCustomInformationPopUp(
-          message: e.toString());
-    }
-  }
+  //     showAddBulletinPage(titre: titre, contenu: contenu);
+  //   } catch (e) {
+  //     MutationRequestContextualBehavior.showCustomInformationPopUp(
+  //         message: e.toString());
+  //   }
+  // }
 
-  showAddBulletinPage({required String titre, required Widget contenu}) {
-    showResponsiveDialog(
-      context,
-      title: titre,
-      content: contenu,
-    );
-  }
+  // showAddBulletinPage({required String titre, required Widget contenu}) {
+  //   showResponsiveDialog(
+  //     context,
+  //     title: titre,
+  //     content: contenu,
+  //   );
+  // }
 }

@@ -81,15 +81,15 @@ class _EditDecouvertePageState extends State<EditDecouvertePage> {
       if (salarie!.personnel.dateDebut != null &&
           salarie!.personnel.dateFin != null) {
         (salarie: salarie!);
-        if (int.parse(_dureeReversementController.text) >
-            countValidPeriodsRestant(salarie: salarie!)) {
-          MutationRequestContextualBehavior.showPopup(
-            customMessage:
-                "Vous ne pouvez pas payer votre avance en ${int.parse(_dureeReversementController.text)} temps",
-            status: PopupStatus.information,
-          );
-          return;
-        }
+        // if (int.parse(_dureeReversementController.text) >
+        //     countValidPeriodsRestant(salarie: salarie!)) {
+        //   MutationRequestContextualBehavior.showPopup(
+        //     customMessage:
+        //         "Vous ne pouvez pas payer votre avance en ${int.parse(_dureeReversementController.text)} temps",
+        //     status: PopupStatus.information,
+        //   );
+        //   return;
+        // } TODO; recorrigé la fonctio ou chercher une autre maniere de verier cette condition
       }
     }
 

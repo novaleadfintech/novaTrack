@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/helper/string_helper.dart' show capitalizeFirstLetter;
-import 'package:frontend/model/bulletin_paie/pay_Calendar_model.dart';
-import 'package:gap/gap.dart';
+ import 'package:frontend/model/bulletin_paie/calendar_model.dart';
+ import 'package:gap/gap.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
-
 import '../../../../widget/simple_text_field.dart';
 import '../../../../widget/validate_button.dart';
-import '../../../integration/popop_status.dart';
-import '../../../integration/request_frot_behavior.dart';
+ import '../../../integration/request_frot_behavior.dart';
 
 class EditPayCalendar extends StatefulWidget {
   final Future<void> Function() refresh;

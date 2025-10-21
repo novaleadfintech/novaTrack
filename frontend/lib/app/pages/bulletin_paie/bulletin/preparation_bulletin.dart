@@ -21,13 +21,13 @@ class _PreparationBulletinPagState extends State<PreparationBulletinPage> {
   final TextEditingController _researchController = TextEditingController();
   late SimpleFontelicoProgressDialog _dialog;
 
-  Future<List<BulletinPaieModel>> _loadBulletinData() async {
-    try {
-      return await BulletinService.getCurrentBulletins();
-    } catch (error) {
-      throw error.toString();
-    }
-  }
+  // Future<List<BulletinPaieModel>> _loadBulletinData() async {
+  //   try {
+  //     return await BulletinService.getCurrentBulletins();
+  //   } catch (error) {
+  //     throw error.toString();
+  //   }
+  // }
 
   @override
   void initState() {

@@ -1,3 +1,4 @@
+import 'package:frontend/model/entreprise/banque.dart';
 import 'package:frontend/model/grille_salariale/categorie_paie.dart';
 import 'package:frontend/model/grille_salariale/classe_model.dart';
 import 'package:frontend/model/grille_salariale/echelon_model.dart';
@@ -14,6 +15,8 @@ class SalarieModel {
   final int? periodPaie;
   final String? numeroMatricule;
   final EchelonModel? echelon;
+  final String? numeroCompte;
+  final BanqueModel? paiementPlace;
   final ClasseModel? classe;
   final GrilleCategoriePaieModel? grilleCategoriePaie;
   final PaieManner? paieManner;
@@ -28,6 +31,8 @@ class SalarieModel {
     required this.periodPaie,
     this.echelon,
     this.classe,
+    this.numeroCompte,
+    this.paiementPlace,
     this.grilleCategoriePaie,
     this.numeroMatricule,
     this.paieManner = PaieManner.finMois,
@@ -46,6 +51,7 @@ class SalarieModel {
           ? EchelonModel.fromJson(json['echelon'])
           : null,
       numeroMatricule: json['numeroMatricule'],
+      //TODO: à continuer Mapper les deux nouvelles données
       classe:
           json['classe'] != null ? ClasseModel.fromJson(json['classe']) : null,
       grilleCategoriePaie: json['grilleCategoriePaie'] != null

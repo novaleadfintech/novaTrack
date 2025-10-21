@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/model/grille_salariale/categorie_paie.dart';
 import 'package:frontend/model/grille_salariale/echelon_model.dart';
+import 'package:frontend/model/moyen_paiement_model.dart';
+import 'package:frontend/service/banque_service.dart';
 import 'package:frontend/service/grille_categorie_paie_service.dart';
 import 'package:frontend/widget/drop_down_text_field.dart';
 import 'package:frontend/widget/simple_text_field.dart';
@@ -8,9 +10,11 @@ import '../../../../model/bulletin_paie/categorie_paie.dart';
 import '../../../../model/bulletin_paie/nature_rubrique.dart';
 import '../../../../model/bulletin_paie/rubrique.dart';
 import '../../../../model/bulletin_paie/rubrique_paie.dart';
+import '../../../../model/entreprise/banque.dart';
 import '../../../../model/grille_salariale/classe_model.dart' show ClasseModel;
 import '../../../../model/habilitation/user_model.dart';
 import '../../../../service/categorie_paie_service.dart';
+import '../../../../service/moyen_paiement_service.dart';
 import '../../../../service/rubrique_categorie_conf_service.dart';
 import 'package:gap/gap.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
@@ -20,7 +24,6 @@ import '../../../../model/bulletin_paie/tranche_model.dart';
 import '../../../../model/personnel/personnel_model.dart';
 import '../../../../service/personnel_service.dart';
 import '../../../../service/salarie_service.dart';
-import '../../../../widget/duration_field.dart';
 import '../../../../widget/enum_selector_radio.dart';
 import '../../../../widget/future_dropdown_field.dart';
 import '../../../../widget/validate_button.dart';
@@ -41,6 +44,8 @@ class AddSalariePage extends StatefulWidget {
 class _AddSalariePageState extends State<AddSalariePage> {
   late SimpleFontelicoProgressDialog _dialog;
   final TextEditingController _compterController = TextEditingController();
+  final TextEditingController _numeroDeCompteController =
+      TextEditingController();
   final TextEditingController _numeroMatriculeController =
       TextEditingController();
 
@@ -53,12 +58,15 @@ class _AddSalariePageState extends State<AddSalariePage> {
   String? periodPaieUnit;
   int? periodPaieCompteur;
   PaieManner? paieManner;
+  MoyenPaiementModel? moyenPaiement;
+  BanqueModel? paiementPlace;
 
   @override
   void initState() {
-    super.initState();
+    paieManner = PaieManner.finMois;
     _dialog = SimpleFontelicoProgressDialog(context: context);
     _loadCurrentUser();
+    super.initState();
   }
 
   Future<void> _loadCurrentUser() async {
@@ -74,22 +82,32 @@ class _AddSalariePageState extends State<AddSalariePage> {
   }) async {
     try {
       String? errorMessage;
-      if (paieManner == null) {
-        errorMessage = "Veuillez sélectionner une modalité de paiement.";
+      if (paieManner == null ||
+          moyenPaiement == null ||
+          paiementPlace == null) {
+        errorMessage = "Veuillez renseigner les champs marqués *";
       }
-      if (_numeroMatriculeController.text.isEmpty) {
-        errorMessage = "Veuillez renseignez le numéro matricule.";
-      }
-      if (paieManner == PaieManner.finMois ||
-          paieManner == PaieManner.finPeriod) {
-        if (_compterController.text.isEmpty || periodPaieUnit == null) {
-          errorMessage = "Veuillez remplir les deux champs de durée de paie.";
-        }
-        periodPaieCompteur = int.tryParse(_compterController.text);
-        if (periodPaieCompteur == null) {
-          errorMessage =
-              "Le compteur de période de paie doit être un nombre entier.";
-        }
+
+      // if (_numeroMatriculeController.text.isEmpty) {
+      //   errorMessage = "Veuillez renseignez le numéro de compte.";
+      // }
+      // if (paieManner == PaieManner.finMois // ||
+      //     // paieManner == PaieManner.finPeriod
+      //     ) {
+      //   if (_compterController.text.isEmpty || periodPaieUnit == null) {
+      //     errorMessage = "Veuillez remplir les deux champs de durée de paie.";
+      //   }
+      //   periodPaieCompteur = int.tryParse(_compterController.text);
+      //   if (periodPaieCompteur == null) {
+      //     errorMessage =
+      //         "Le compteur de période de paie doit être un nombre entier.";
+      //   }
+      // }
+      if (paieManner == PaieManner.finMois // ||
+          // paieManner == PaieManner.finPeriod
+          ) {
+        periodPaieCompteur = 1;
+        periodPaieUnit = "Mois";
       }
       if (errorMessage != null) {
         MutationRequestContextualBehavior.showPopup(
@@ -113,6 +131,11 @@ class _AddSalariePageState extends State<AddSalariePage> {
             : null,
         paieManner: paieManner!,
         numeroMatricule: _numeroMatriculeController.text.trim(),
+        moyenPaiement: moyenPaiement!,
+        numeroCompte: _numeroDeCompteController.text.isNotEmpty
+            ? _numeroDeCompteController.text.trim()
+            : null,
+        paiementPlace: paiementPlace!,
         classe: classe!,
         echelon: echelon!,
         grilleCategoriePaie: grilleCategoriePaie!,
@@ -164,7 +187,7 @@ class _AddSalariePageState extends State<AddSalariePage> {
   }
 
   onvalidate() {
-    if (personnel != null && categoriePaieBulletiin != null ) {
+    if (personnel != null && categoriePaieBulletiin != null) {
       createSalarie(
         personnel: personnel!,
         categoriePaieBulletiin: categoriePaieBulletiin!,
@@ -176,6 +199,22 @@ class _AddSalariePageState extends State<AddSalariePage> {
             "Veuillez sélectionner un personnel et une catégorie de paie.",
       );
     }
+  }
+
+  Future<List<BanqueModel>> fetchBanqueItems() async {
+    return moyenPaiement == null
+        ? await BanqueService.getAllBanques()
+        : (await BanqueService.getAllBanques())
+            .where((b) => b.type == moyenPaiement!.type)
+            .toList();
+  }
+
+  Future<List<MoyenPaiementModel>> fetchMoyenPaiementItems() async {
+    return paiementPlace == null
+        ? await MoyenPaiementService.getMoyenPaiements()
+        : (await MoyenPaiementService.getMoyenPaiements())
+            .where((m) => m.type == paiementPlace!.type)
+            .toList();
   }
 
   @override
@@ -218,8 +257,9 @@ class _AddSalariePageState extends State<AddSalariePage> {
             onChanged: (value) {
               setState(() {
                 paieManner = value;
-                if (paieManner != PaieManner.finMois &&
-                    paieManner != PaieManner.finPeriod) {
+                if (paieManner != PaieManner.finMois //&&
+                    // paieManner != PaieManner.finPeriod
+                    ) {
                   _compterController.clear();
                   periodPaieUnit = null;
                 }
@@ -227,22 +267,59 @@ class _AddSalariePageState extends State<AddSalariePage> {
             },
             isRequired: true,
           ),
-          if (paieManner == PaieManner.finMois ||
-              paieManner == PaieManner.finPeriod) ...[
-            DurationField(
-              controller: _compterController,
-              label: "Période de paie",
-              onUnityChanged: (value) {
-                setState(
-                  () {
-                    periodPaieUnit = value;
-                  },
-                );
-              },
-              unitSelectItem: periodPaieUnit,
-              required: false,
-            ),
-          ],
+
+          FutureCustomDropDownField<MoyenPaiementModel>(
+            label: "Moyen de paiement",
+            selectedItem: moyenPaiement,
+            fetchItems: fetchMoyenPaiementItems,
+            onChanged: (MoyenPaiementModel? value) {
+              // if (value != null) {
+              setState(() {
+                moyenPaiement = value;
+              });
+              // }
+            },
+            canClose: true,
+            itemsAsString: (s) => s.libelle,
+          ),
+          FutureCustomDropDownField<BanqueModel>(
+            label: "Compte de payement",
+            showSearchBox: true,
+            selectedItem: paiementPlace,
+            fetchItems: fetchBanqueItems,
+            onChanged: (BanqueModel? value) {
+              // if (value != null) {
+              setState(() {
+                paiementPlace = value;
+              });
+              // }
+            },
+            canClose: true,
+            itemsAsString: (s) => s.name,
+          ),
+          SimpleTextField(
+            label: "Numéro de compte",
+            textController: _numeroDeCompteController,
+            required: false,
+          ),
+          // if (paieManner == PaieManner.finMois
+          //     // ||
+          //     //     paieManner == PaieManner.finPeriod
+          //     ) ...[
+          //   DurationField(
+          //     controller: _compterController,
+          //     label: "Période de paie",
+          //     onUnityChanged: (value) {
+          //       setState(
+          //         () {
+          //           periodPaieUnit = value;
+          //         },
+          //       );
+          //     },
+          //     unitSelectItem: periodPaieUnit,
+          //     required: true,
+          //   ),
+          // ],
           FutureCustomDropDownField<GrilleCategoriePaieModel>(
             label: "Categorie de paie",
             selectedItem: grilleCategoriePaie,

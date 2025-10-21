@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/helper/date_helper.dart' show getStringDate;
-import 'package:frontend/model/bulletin_paie/pay_calendar_model.dart';
-import 'package:frontend/widget/table_body_middle.dart'
+ import 'package:frontend/widget/table_body_middle.dart'
     show TabledetailBodyMiddle;
-  import '../../../../style/app_style.dart';
+  import '../../../../model/bulletin_paie/calendar_model.dart';
+import '../../../../style/app_style.dart';
 
 class DetailPayCalendarPage extends StatefulWidget {
   final PayCalendarModel payCalendar;

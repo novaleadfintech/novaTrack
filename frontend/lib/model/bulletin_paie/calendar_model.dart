@@ -15,8 +15,8 @@ class PayCalendarModel {
     return PayCalendarModel(
       id: json["_id"],
       libelle: json["libelle"] ?? "",
-      dateDebut: DateTime.parse(json["dateDebut"]),
-      dateFin: DateTime.parse(json["dateFin"]),
+      dateDebut: DateTime.fromMillisecondsSinceEpoch(json["dateDebut"]),
+      dateFin: DateTime.fromMillisecondsSinceEpoch(json["dateFin"]),
     );
   }
 

@@ -6,346 +6,346 @@ import '../model/bulletin_paie/nature_rubrique.dart';
 import '../model/bulletin_paie/rubrique_paie.dart';
 import '../model/bulletin_paie/tranche_model.dart';
 
-List<DateTime>? getCurrentBulletinPeriod({
-  required SalarieModel salarie,
-  required DateTime? debutOldPeriodePaie,
-  required DateTime? finOldPeriodePaie,
-}) {
-   final DateTime dateDebut = salarie.personnel.dateDebut!;
-  final DateTime finEssai =
-      dateDebut.add(Duration(milliseconds: salarie.personnel.dureeEssai ?? 0));
-  final DateTime dateFin = salarie.personnel.dateFin ?? DateTime.now();
-  final DateTime now = DateTime.now();
+// List<DateTime>? getCurrentBulletinPeriod({
+//   required SalarieModel salarie,
+//   required DateTime? debutOldPeriodePaie,
+//   required DateTime? finOldPeriodePaie,
+// }) {
+//    final DateTime dateDebut = salarie.personnel.dateDebut!;
+//   final DateTime finEssai =
+//       dateDebut.add(Duration(milliseconds: salarie.personnel.dureeEssai ?? 0));
+//   final DateTime dateFin = salarie.personnel.dateFin ?? DateTime.now();
+//   final DateTime now = DateTime.now();
 
-  final int? frequenceMs = salarie.periodPaie;
+//   final int? frequenceMs = salarie.periodPaie;
 
-  // Aucun paiement périodique
-  if (frequenceMs == null || frequenceMs <= 0) {
-    return null;
-  }
+//   // Aucun paiement périodique
+//   if (frequenceMs == null || frequenceMs <= 0) {
+//     return null;
+//   }
 
-  final int frequenceMois =
-      (frequenceMs / Duration(days: 30).inMilliseconds).round();
-  if (frequenceMois <= 0) return null;
+//   final int frequenceMois =
+//       (frequenceMs / Duration(days: 30).inMilliseconds).round();
+//   if (frequenceMois <= 0) return null;
 
-  final bool isEndOfMonth = salarie.paieManner == PaieManner.finMois;
+//   final bool isEndOfMonth = salarie.paieManner == PaieManner.finMois;
 
-  // Si les anciennes périodes sont nulles, utiliser la logique basée sur la date actuelle
-  if (debutOldPeriodePaie == null || finOldPeriodePaie == null) {
-    return _getCurrentPeriodBasedOnNow(salarie, dateDebut, finEssai, dateFin,
-        now, frequenceMois, isEndOfMonth);
-  }
+//   // Si les anciennes périodes sont nulles, utiliser la logique basée sur la date actuelle
+//   if (debutOldPeriodePaie == null || finOldPeriodePaie == null) {
+//     return _getCurrentPeriodBasedOnNow(salarie, dateDebut, finEssai, dateFin,
+//         now, frequenceMois, isEndOfMonth);
+//   }
 
-  // Calculer la période suivant l'ancienne période
-  DateTime nouvellePeriodeDebut;
-  DateTime nouvellePeriodeFin;
+//   // Calculer la période suivant l'ancienne période
+//   DateTime nouvellePeriodeDebut;
+//   DateTime nouvellePeriodeFin;
 
-  if (isEndOfMonth) {
-    // Mode fin de mois : périodes du 1er au dernier jour du mois
+//   if (isEndOfMonth) {
+//     // Mode fin de mois : périodes du 1er au dernier jour du mois
 
-    // La nouvelle période commence le 1er jour du mois suivant la fin de l'ancienne période
-    nouvellePeriodeDebut = DateTime(
-      finOldPeriodePaie.year,
-      finOldPeriodePaie.month + 1,
-      1,
-    );
+//     // La nouvelle période commence le 1er jour du mois suivant la fin de l'ancienne période
+//     nouvellePeriodeDebut = DateTime(
+//       finOldPeriodePaie.year,
+//       finOldPeriodePaie.month + 1,
+//       1,
+//     );
 
-    // La nouvelle période se termine le dernier jour du mois (en tenant compte de la fréquence)
-    nouvellePeriodeFin = DateTime(
-      nouvellePeriodeDebut.year,
-      nouvellePeriodeDebut.month + frequenceMois,
-      1,
-    ).subtract(const Duration(days: 1));
-  } else if (salarie.paieManner == PaieManner.finPeriod) {
-    // Mode fin de période : même jour du mois que la date de début
-    final int jourDuMois = dateDebut.day;
+//     // La nouvelle période se termine le dernier jour du mois (en tenant compte de la fréquence)
+//     nouvellePeriodeFin = DateTime(
+//       nouvellePeriodeDebut.year,
+//       nouvellePeriodeDebut.month + frequenceMois,
+//       1,
+//     ).subtract(const Duration(days: 1));
+//   } else if (salarie.paieManner == PaieManner.finPeriod) {
+//     // Mode fin de période : même jour du mois que la date de début
+//     final int jourDuMois = dateDebut.day;
 
-    // La nouvelle période commence le jour suivant la fin de l'ancienne période
-    nouvellePeriodeDebut = finOldPeriodePaie.add(const Duration(days: 1));
+//     // La nouvelle période commence le jour suivant la fin de l'ancienne période
+//     nouvellePeriodeDebut = finOldPeriodePaie.add(const Duration(days: 1));
 
-    // Ajuster le début au bon jour du mois si nécessaire
-    if (nouvellePeriodeDebut.day != jourDuMois) {
-      // Aller au prochain occurrence du jour du mois
-      int moisCible = nouvellePeriodeDebut.month;
-      int anneeCible = nouvellePeriodeDebut.year;
+//     // Ajuster le début au bon jour du mois si nécessaire
+//     if (nouvellePeriodeDebut.day != jourDuMois) {
+//       // Aller au prochain occurrence du jour du mois
+//       int moisCible = nouvellePeriodeDebut.month;
+//       int anneeCible = nouvellePeriodeDebut.year;
 
-      // Si le jour est déjà passé dans le mois courant, aller au mois suivant
-      if (nouvellePeriodeDebut.day > jourDuMois) {
-        moisCible++;
-        if (moisCible > 12) {
-          moisCible = 1;
-          anneeCible++;
-        }
-      }
+//       // Si le jour est déjà passé dans le mois courant, aller au mois suivant
+//       if (nouvellePeriodeDebut.day > jourDuMois) {
+//         moisCible++;
+//         if (moisCible > 12) {
+//           moisCible = 1;
+//           anneeCible++;
+//         }
+//       }
 
-      nouvellePeriodeDebut = DateTime(anneeCible, moisCible, jourDuMois);
-    }
+//       nouvellePeriodeDebut = DateTime(anneeCible, moisCible, jourDuMois);
+//     }
 
-    // La nouvelle période se termine avant le même jour du mois suivant (en tenant compte de la fréquence)
-    nouvellePeriodeFin = DateTime(
-      nouvellePeriodeDebut.year,
-      nouvellePeriodeDebut.month + frequenceMois,
-      jourDuMois,
-    ).subtract(const Duration(days: 1));
-  } else {
-    return null;
-  }
+//     // La nouvelle période se termine avant le même jour du mois suivant (en tenant compte de la fréquence)
+//     nouvellePeriodeFin = DateTime(
+//       nouvellePeriodeDebut.year,
+//       nouvellePeriodeDebut.month + frequenceMois,
+//       jourDuMois,
+//     ).subtract(const Duration(days: 1));
+//   } else {
+//     return null;
+//   }
 
-  // Vérifier que la nouvelle période commence après la fin d'essai
-  if (nouvellePeriodeDebut.isBefore(finEssai)) {
-    nouvellePeriodeDebut = finEssai;
-  }
+//   // Vérifier que la nouvelle période commence après la fin d'essai
+//   if (nouvellePeriodeDebut.isBefore(finEssai)) {
+//     nouvellePeriodeDebut = finEssai;
+//   }
 
-  // Vérifier que la nouvelle période ne dépasse pas la date de fin du contrat
-  if (nouvellePeriodeDebut.isAfter(dateFin)) {
-    return null; // Pas de période suivante possible
-  }
+//   // Vérifier que la nouvelle période ne dépasse pas la date de fin du contrat
+//   if (nouvellePeriodeDebut.isAfter(dateFin)) {
+//     return null; // Pas de période suivante possible
+//   }
 
-  // Ajuster la fin de période si elle dépasse la date de fin du contrat
-  if (nouvellePeriodeFin.isAfter(dateFin)) {
-    nouvellePeriodeFin = dateFin;
-  }
+//   // Ajuster la fin de période si elle dépasse la date de fin du contrat
+//   if (nouvellePeriodeFin.isAfter(dateFin)) {
+//     nouvellePeriodeFin = dateFin;
+//   }
 
-  // Vérifier que la nouvelle période ne dépasse pas la date actuelle de manière excessive
-  // (par exemple, ne pas générer une période qui commence dans plus de 2 mois)
-  if (nouvellePeriodeDebut.isAfter(now.add(const Duration(days: 60)))) {
-    return null; // Période trop dans le futur
-  }
+//   // Vérifier que la nouvelle période ne dépasse pas la date actuelle de manière excessive
+//   // (par exemple, ne pas générer une période qui commence dans plus de 2 mois)
+//   if (nouvellePeriodeDebut.isAfter(now.add(const Duration(days: 60)))) {
+//     return null; // Période trop dans le futur
+//   }
 
-  return [nouvellePeriodeDebut, nouvellePeriodeFin];
-}
+//   return [nouvellePeriodeDebut, nouvellePeriodeFin];
+// }
 
 // Fonction helper pour la logique basée sur la date actuelle (logique d'origine)
-List<DateTime>? _getCurrentPeriodBasedOnNow(
-  SalarieModel salarie,
-  DateTime dateDebut,
-  DateTime finEssai,
-  DateTime dateFin,
-  DateTime now,
-  int frequenceMois,
-  bool isEndOfMonth,
-) {
-  if (isEndOfMonth) {
-    // Mode fin de mois : périodes du 1er au dernier jour du mois
+// List<DateTime>? _getCurrentPeriodBasedOnNow(
+//   SalarieModel salarie,
+//   DateTime dateDebut,
+//   DateTime finEssai,
+//   DateTime dateFin,
+//   DateTime now,
+//   int frequenceMois,
+//   bool isEndOfMonth,
+// ) {
+//   if (isEndOfMonth) {
+//     // Mode fin de mois : périodes du 1er au dernier jour du mois
 
-    // Première période : de la fin d'essai jusqu'à la fin du mois
-    DateTime premierePeriodeDebut = finEssai;
-    DateTime premierePeriodeFin = DateTime(finEssai.year, finEssai.month + 1, 1)
-        .subtract(const Duration(days: 1)); // Dernier jour du mois
+//     // Première période : de la fin d'essai jusqu'à la fin du mois
+//     DateTime premierePeriodeDebut = finEssai;
+//     DateTime premierePeriodeFin = DateTime(finEssai.year, finEssai.month + 1, 1)
+//         .subtract(const Duration(days: 1)); // Dernier jour du mois
 
-    // Si on est encore dans la première période
-    if (now.isAfter(premierePeriodeDebut.subtract(const Duration(days: 1))) &&
-        now.isBefore(premierePeriodeFin.add(const Duration(days: 1)))) {
-      return [
-        premierePeriodeDebut,
-        premierePeriodeFin.isAfter(dateFin) ? dateFin : premierePeriodeFin,
-      ];
-    }
+//     // Si on est encore dans la première période
+//     if (now.isAfter(premierePeriodeDebut.subtract(const Duration(days: 1))) &&
+//         now.isBefore(premierePeriodeFin.add(const Duration(days: 1)))) {
+//       return [
+//         premierePeriodeDebut,
+//         premierePeriodeFin.isAfter(dateFin) ? dateFin : premierePeriodeFin,
+//       ];
+//     }
 
-    // Périodes suivantes : du 1er au dernier jour de chaque mois
-    DateTime periodeDebut = DateTime(finEssai.year, finEssai.month + 1, 1);
+//     // Périodes suivantes : du 1er au dernier jour de chaque mois
+//     DateTime periodeDebut = DateTime(finEssai.year, finEssai.month + 1, 1);
 
-    while (periodeDebut.isBefore(dateFin) ||
-        periodeDebut.isAtSameMomentAs(dateFin)) {
-      DateTime periodeFin = DateTime(
-        periodeDebut.year,
-        periodeDebut.month + frequenceMois,
-        1,
-      ).subtract(const Duration(days: 1));
+//     while (periodeDebut.isBefore(dateFin) ||
+//         periodeDebut.isAtSameMomentAs(dateFin)) {
+//       DateTime periodeFin = DateTime(
+//         periodeDebut.year,
+//         periodeDebut.month + frequenceMois,
+//         1,
+//       ).subtract(const Duration(days: 1));
 
-      // Vérifier si on est dans cette période
-      if (now.isAfter(periodeDebut.subtract(const Duration(days: 1))) &&
-          now.isBefore(periodeFin.add(const Duration(days: 1)))) {
-        return [
-          periodeDebut,
-          periodeFin.isAfter(dateFin) ? dateFin : periodeFin,
-        ];
-      }
+//       // Vérifier si on est dans cette période
+//       if (now.isAfter(periodeDebut.subtract(const Duration(days: 1))) &&
+//           now.isBefore(periodeFin.add(const Duration(days: 1)))) {
+//         return [
+//           periodeDebut,
+//           periodeFin.isAfter(dateFin) ? dateFin : periodeFin,
+//         ];
+//       }
 
-      // Avancer à la période suivante
-      periodeDebut = DateTime(
-        periodeDebut.year,
-        periodeDebut.month + frequenceMois,
-        1,
-      );
-    }
-  } else if (salarie.paieManner == PaieManner.finPeriod) {
-    // Mode fin de période : même jour du mois que la date de début
-    final int jourDuMois = dateDebut.day;
+//       // Avancer à la période suivante
+//       periodeDebut = DateTime(
+//         periodeDebut.year,
+//         periodeDebut.month + frequenceMois,
+//         1,
+//       );
+//     }
+//   } else if (salarie.paieManner == PaieManner.finPeriod) {
+//     // Mode fin de période : même jour du mois que la date de début
+//     final int jourDuMois = dateDebut.day;
 
-    DateTime currentStart = finEssai;
+//     DateTime currentStart = finEssai;
 
-    while (currentStart.isBefore(dateFin) ||
-        currentStart.isAtSameMomentAs(dateFin)) {
-      DateTime currentEnd = DateTime(
-        currentStart.year,
-        currentStart.month + frequenceMois,
-        jourDuMois,
-      ).subtract(const Duration(days: 1));
+//     while (currentStart.isBefore(dateFin) ||
+//         currentStart.isAtSameMomentAs(dateFin)) {
+//       DateTime currentEnd = DateTime(
+//         currentStart.year,
+//         currentStart.month + frequenceMois,
+//         jourDuMois,
+//       ).subtract(const Duration(days: 1));
 
-      // Vérifier si on est dans cette période
-      if (now.isAfter(currentStart.subtract(const Duration(days: 1))) &&
-          now.isBefore(currentEnd.add(const Duration(days: 1)))) {
-        return [
-          currentStart,
-          currentEnd.isAfter(dateFin) ? dateFin : currentEnd,
-        ];
-      }
+//       // Vérifier si on est dans cette période
+//       if (now.isAfter(currentStart.subtract(const Duration(days: 1))) &&
+//           now.isBefore(currentEnd.add(const Duration(days: 1)))) {
+//         return [
+//           currentStart,
+//           currentEnd.isAfter(dateFin) ? dateFin : currentEnd,
+//         ];
+//       }
 
-      // Avancer à la période suivante
-      currentStart = DateTime(
-        currentStart.year,
-        currentStart.month + frequenceMois,
-        jourDuMois,
-      );
-    }
-  }
+//       // Avancer à la période suivante
+//       currentStart = DateTime(
+//         currentStart.year,
+//         currentStart.month + frequenceMois,
+//         jourDuMois,
+//       );
+//     }
+//   }
 
-  return null;
-}
+//   return null;
+// }
 
-List<List<DateTime>> getBulletinPeriods({required SalarieModel salarie}) {
-  final List<List<DateTime>> periods = [];
+// List<List<DateTime>> getBulletinPeriods({required SalarieModel salarie}) {
+//   final List<List<DateTime>> periods = [];
 
-  final DateTime dateDebut = salarie.personnel.dateDebut!;
-  final DateTime finEssai =
-      dateDebut.add(Duration(milliseconds: salarie.personnel.dureeEssai ?? 0));
-  final DateTime dateFin = salarie.personnel.dateFin ?? DateTime.now();
+//   final DateTime dateDebut = salarie.personnel.dateDebut!;
+//   final DateTime finEssai =
+//       dateDebut.add(Duration(milliseconds: salarie.personnel.dureeEssai ?? 0));
+//   final DateTime dateFin = salarie.personnel.dateFin ?? DateTime.now();
 
-  final int frequenceMs = salarie.periodPaie ?? 0;
+//   final int frequenceMs = salarie.periodPaie ?? 0;
 
-  // Calcul de la fréquence en mois
-  final int frequenceMois =
-      (frequenceMs / Duration(days: 30).inMilliseconds).round();
-  if (frequenceMois <= 0) {
-    throw 'La fréquence de paie doit être supérieure à 0 mois.';
-  }
+//   // Calcul de la fréquence en mois
+//   final int frequenceMois =
+//       (frequenceMs / Duration(days: 30).inMilliseconds).round();
+//   if (frequenceMois <= 0) {
+//     throw 'La fréquence de paie doit être supérieure à 0 mois.';
+//   }
 
-  // Vérification du mode de paiement
-  final bool isEndOfMonth = salarie.paieManner == PaieManner.finMois;
+//   // Vérification du mode de paiement
+//   final bool isEndOfMonth = salarie.paieManner == PaieManner.finMois;
 
-  if (isEndOfMonth) {
-    // ----- Cas 1 : Paiement à la fin du mois -----
+//   if (isEndOfMonth) {
+//     // ----- Cas 1 : Paiement à la fin du mois -----
 
-    // Début de la période = fin de la période d'essai
-    DateTime currentStart = finEssai;
-    // Calcule la fin du premier mois après finEssai (dernier jour du mois)
-    DateTime endOfFirstMonth = DateTime(
-      currentStart.year,
-      currentStart.month + 1,
-    ).subtract(Duration(days: 1));
+//     // Début de la période = fin de la période d'essai
+//     DateTime currentStart = finEssai;
+//     // Calcule la fin du premier mois après finEssai (dernier jour du mois)
+//     DateTime endOfFirstMonth = DateTime(
+//       currentStart.year,
+//       currentStart.month + 1,
+//     ).subtract(Duration(days: 1));
 
-    // Ajoute la première période [finEssai → fin du mois]
-    periods.add([currentStart, endOfFirstMonth]);
+//     // Ajoute la première période [finEssai → fin du mois]
+//     periods.add([currentStart, endOfFirstMonth]);
 
-    // Prépare le début de la prochaine période : premier jour du mois suivant
-    currentStart = DateTime(endOfFirstMonth.year, endOfFirstMonth.month + 1, 1);
-    // saute au mois suivant (sécurité)
+//     // Prépare le début de la prochaine période : premier jour du mois suivant
+//     currentStart = DateTime(endOfFirstMonth.year, endOfFirstMonth.month + 1, 1);
+//     // saute au mois suivant (sécurité)
 
-    // Boucle pour générer les périodes suivantes jusqu'à dateFin
-    while (currentStart.isBefore(dateFin)) {
-      // Calcule la fin de la période courante : dernier jour après `frequenceMois` mois
-      DateTime currentEnd = DateTime(
-        currentStart.year,
-        currentStart.month + frequenceMois,
-        0, // 0 = dernier jour du mois précédent, donc le dernier jour du bon mois
-      );
-      // Si la fin dépasse la date de fin globale, on coupe à dateFin
-      if (currentEnd.isAfter(dateFin)) {
-        currentEnd = dateFin;
-      }
+//     // Boucle pour générer les périodes suivantes jusqu'à dateFin
+//     while (currentStart.isBefore(dateFin)) {
+//       // Calcule la fin de la période courante : dernier jour après `frequenceMois` mois
+//       DateTime currentEnd = DateTime(
+//         currentStart.year,
+//         currentStart.month + frequenceMois,
+//         0, // 0 = dernier jour du mois précédent, donc le dernier jour du bon mois
+//       );
+//       // Si la fin dépasse la date de fin globale, on coupe à dateFin
+//       if (currentEnd.isAfter(dateFin)) {
+//         currentEnd = dateFin;
+//       }
 
-      // Ajoute la pérsiode au tableau
-      periods.add([currentStart, currentEnd]);
+//       // Ajoute la pérsiode au tableau
+//       periods.add([currentStart, currentEnd]);
 
-      // Avance au mois suivant (au 1er jour)
-      currentStart = DateTime(currentEnd.year, currentEnd.month, 1)
-          .add(const Duration(days: 32));
-      currentStart = DateTime(currentStart.year, currentStart.month, 1);
-    }
-  } else if (salarie.paieManner == PaieManner.finPeriod) {
-    final int jourDuMois = dateDebut.day;
+//       // Avance au mois suivant (au 1er jour)
+//       currentStart = DateTime(currentEnd.year, currentEnd.month, 1)
+//           .add(const Duration(days: 32));
+//       currentStart = DateTime(currentStart.year, currentStart.month, 1);
+//     }
+//   } else if (salarie.paieManner == PaieManner.finPeriod) {
+//     final int jourDuMois = dateDebut.day;
 
-    DateTime currentStart = finEssai;
+//     DateTime currentStart = finEssai;
 
-    DateTime nextAlignedEnd = DateTime(
-      currentStart.year,
-      currentStart.month,
-      jourDuMois,
-    );
+//     DateTime nextAlignedEnd = DateTime(
+//       currentStart.year,
+//       currentStart.month,
+//       jourDuMois,
+//     );
 
-    if (nextAlignedEnd.isBefore(currentStart)) {
-      nextAlignedEnd = DateTime(
-        currentStart.year,
-        currentStart.month + 1,
-        jourDuMois,
-      );
-    }
+//     if (nextAlignedEnd.isBefore(currentStart)) {
+//       nextAlignedEnd = DateTime(
+//         currentStart.year,
+//         currentStart.month + 1,
+//         jourDuMois,
+//       );
+//     }
 
-    periods.add(
-      [currentStart, nextAlignedEnd.subtract(const Duration(days: 1))],
-    );
+//     periods.add(
+//       [currentStart, nextAlignedEnd.subtract(const Duration(days: 1))],
+//     );
 
-    currentStart = nextAlignedEnd;
+//     currentStart = nextAlignedEnd;
 
-    while (currentStart.isBefore(dateFin)) {
-      DateTime currentEnd = DateTime(
-        currentStart.year,
-        currentStart.month + frequenceMois,
-        jourDuMois,
-      );
+//     while (currentStart.isBefore(dateFin)) {
+//       DateTime currentEnd = DateTime(
+//         currentStart.year,
+//         currentStart.month + frequenceMois,
+//         jourDuMois,
+//       );
 
-      if (currentEnd.isAfter(dateFin)) {
-        currentEnd = dateFin;
-      }
+//       if (currentEnd.isAfter(dateFin)) {
+//         currentEnd = dateFin;
+//       }
 
-      periods.add(
-        [currentStart, currentEnd.subtract(const Duration(days: 1))],
-      );
-      currentStart = currentEnd;
-    }
-  }
+//       periods.add(
+//         [currentStart, currentEnd.subtract(const Duration(days: 1))],
+//       );
+//       currentStart = currentEnd;
+//     }
+//   }
 
-  return periods;
-}
+//   return periods;
+// }
 
 
-int countValidPeriodsRestant({required SalarieModel salarie}) {
-  final List<List<DateTime>> periods = getBulletinPeriods(salarie: salarie);
-  if (periods.isEmpty) return 0;
-  final int frequenceMs = salarie.periodPaie ?? 0;
-  final DateTime now = DateTime.now();
+// int countValidPeriodsRestant({required SalarieModel salarie}) {
+//   final List<List<DateTime>> periods = getBulletinPeriods(salarie: salarie);
+//   if (periods.isEmpty) return 0;
+//   final int frequenceMs = salarie.periodPaie ?? 0;
+//   final DateTime now = DateTime.now();
 
-  // Trouver l'index de la période contenant la date d'aujourd'hui
-  int startIndex = -1;
+//   // Trouver l'index de la période contenant la date d'aujourd'hui
+//   int startIndex = -1;
 
-  for (int i = 0; i < periods.length; i++) {
-    final start = periods[i][0];
-    final end = periods[i][1];
+//   for (int i = 0; i < periods.length; i++) {
+//     final start = periods[i][0];
+//     final end = periods[i][1];
 
-    if (!now.isBefore(start) && !now.isAfter(end)) {
-      startIndex = i;
-      break;
-    }
-  }
+//     if (!now.isBefore(start) && !now.isAfter(end)) {
+//       startIndex = i;
+//       break;
+//     }
+//   }
 
-  if (startIndex == -1) {
-    return 0;
-  }
+//   if (startIndex == -1) {
+//     return 0;
+//   }
 
-  // Compter les périodes valides (durée exacte) à partir de celle trouvée
-  int count = 0;
-  for (int i = startIndex; i < periods.length; i++) {
-    final start = periods[i][0];
-    final end = periods[i][1];
-    final durationMs =
-        end.millisecondsSinceEpoch - start.millisecondsSinceEpoch;
-    if (durationMs >= frequenceMs) {
-      count++;
-    }
-  }
-  return count;
-}
+//   // Compter les périodes valides (durée exacte) à partir de celle trouvée
+//   int count = 0;
+//   for (int i = startIndex; i < periods.length; i++) {
+//     final start = periods[i][0];
+//     final end = periods[i][1];
+//     final durationMs =
+//         end.millisecondsSinceEpoch - start.millisecondsSinceEpoch;
+//     if (durationMs >= frequenceMs) {
+//       count++;
+//     }
+//   }
+//   return count;
+// }
 
 class RubriqueCalculator {
   // Method to calculate rubriques in the correct dependency order

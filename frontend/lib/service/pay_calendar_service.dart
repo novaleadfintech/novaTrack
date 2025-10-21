@@ -1,5 +1,6 @@
 import 'dart:convert';
-import 'package:frontend/model/bulletin_paie/pay_calendar_model.dart';
+ 
+import 'package:frontend/model/bulletin_paie/calendar_model.dart';
 
 import '../app/integration/popop_status.dart';
 import '../global/config.dart';
@@ -16,6 +17,8 @@ class PayCalendarService {
           payCalendars {
               _id
               libelle
+              dateDebut
+              dateFin
           }
       }
     ''';
@@ -53,10 +56,12 @@ class PayCalendarService {
 
   static Future<RequestResponse> createPayCalendar({
     required String libelle,
+    required DateTime dateDebut,
+    required DateTime dateFin,
   }) async {
     var body = '''
     mutation CreatePayCalendar {
-    createPayCalendar(libelle: "$libelle")
+    createPayCalendar(libelle: "$libelle", dateDebut: ${dateDebut.millisecondsSinceEpoch}, dateFin: ${dateFin.millisecondsSinceEpoch})
 }
     ''';
 
@@ -93,14 +98,19 @@ class PayCalendarService {
   static Future<RequestResponse> updatePayCalendar({
     required String key,
     required String libelle,
+    required DateTime? dateDebut,
+    required DateTime? dateFin,
   }) async {
     var body = '''
      mutation UpdatePayCalendar {
-    updatePayCalendar(key: "$key", libelle: "$libelle")
+    updatePayCalendar(key: "$key", libelle: "$libelle",
+      dateDebut: ${dateDebut?.millisecondsSinceEpoch},
+      dateFin: ${dateFin?.millisecondsSinceEpoch},
+    )
 }
 
     ''';
-
+//TODO : c'est à completer
     try {
       var response = await http
           .post(

@@ -64,7 +64,6 @@ class PayCalendar {
       return "OK";
     } catch (err) {
       console.error(err);
-
       throw new Error(
         "Une erreur s'est produite lors de l'enregistrement de la période de paie"
       );
@@ -92,13 +91,11 @@ class PayCalendar {
 
   deletePayCalendar = async ({ key }) => {
     try {
-      // Suppression de la payCalendar
-      await payCalendarCollection.remove(key);
+       await payCalendarCollection.remove(key);
       return "OK";
     } catch (err) {
       console.error(err);
-
-      throw new Error(
+       throw new Error(
         err.message ||
           "Une erreur s'est produite lors de la suppression du calendrier de paie"
       );

@@ -127,8 +127,11 @@ class Salarie {
     periodPaie,
     paieManner,
     numeroMatricule,
+    numeroCompte,
+    paiementPlaceId,
     classeId,
     echelonId,
+    moyenPaiement,
     grilleCategoriePaieId,
   }) => {
     isValidValue({
@@ -136,12 +139,15 @@ class Salarie {
         personnelId,
         categoriePaieId,
         paieManner,
+        moyenPaiement,
         classeId,
         numeroMatricule,
+        paiementPlaceId,
         echelonId,
         grilleCategoriePaieId,
       ],
     });
+
     await PersonnelModel.isExistPersonnel({ key: personnelId });
     await CategoriePaieModel.isExistCategoriePaie({ key: categoriePaieId });
     await CategoriePaieGrilleModel.isExistCategoriePaieGrille({
@@ -166,7 +172,10 @@ class Salarie {
       paieManner: paieManner,
       periodPaie: periodPaie,
       classeId: classeId,
+      moyenPaiement: moyenPaiement,
       numeroMatricule: numeroMatricule,
+      numeroCompte: numeroCompte,
+      paiementPlaceId: paiementPlaceId,
       echelonId: echelonId,
       grilleCategoriePaieId: grilleCategoriePaieId,
       timeStamp: Date.now(),
@@ -186,6 +195,7 @@ class Salarie {
     personnelId,
     categoriePaieId,
     periodPaie,
+    moyenPaiement,
     paieManner,
   }) => {
     const updateField = {};
@@ -201,6 +211,10 @@ class Salarie {
 
     if (paieManner !== undefined) {
       updateField.paieManner = paieManner;
+    }
+
+    if (moyenPaiement !== undefined) {
+      updateField.moyenPaiement = moyenPaiement;
     }
 
     isValidValue({ value: updateField });

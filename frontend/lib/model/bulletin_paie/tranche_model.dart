@@ -36,6 +36,7 @@ RubriqueIdentity constantIdentityFromJson(String identity) {
   return RubriqueIdentity.values
       .firstWhere((e) => e.toString().split('.').last == identity);
 }
+
 enum RubriqueRole {
   rubrique("Rubrique"),
   variable("Variable de paie");
@@ -54,9 +55,9 @@ RubriqueRole rubriqueRoleFromJson(String rubriqueRole) {
 }
 
 enum PaieManner {
-  finMois("Paiement à la fin du mois"),
-  termeEchu("Paiement à terme échu"),
-  finPeriod("Paiement à la fin d'une période");
+  finMois("Paiement à la fin du mois");
+  // termeEchu("Paiement à terme échu"),
+  // finPeriod("Paiement à la fin d'une période");
 
   final String label;
   const PaieManner(this.label);

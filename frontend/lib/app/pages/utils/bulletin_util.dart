@@ -3,6 +3,14 @@ final List<String> bulletinTableTitles = [
   "PRÉNOMS", "PÉRIODE",
   ""
 ];
+final List<String> payCalendarTableTitlesSmall = [
+  "LIBELLE",
+  "",
+];
+final List<String> payCalendarTableTitles = [
+  "LIBELLE",
+  "",
+];
 
 final List<String> bulletinTableTitlesSmall = [
   "NOM",

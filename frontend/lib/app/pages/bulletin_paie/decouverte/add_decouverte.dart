@@ -8,7 +8,7 @@ import 'package:frontend/service/decouverte_service.dart';
 import 'package:frontend/service/salarie_service.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 import '../../../../auth/authentification_token.dart';
- import '../../../../model/entreprise/banque.dart';
+import '../../../../model/entreprise/banque.dart';
 import '../../../../service/banque_service.dart';
 import '../../../../service/moyen_paiement_service.dart';
 import '../../../integration/popop_status.dart';
@@ -46,7 +46,6 @@ class _AddDecouvertePageState extends State<AddDecouvertePage> {
     return await SalarieService.getSalaries();
   }
 
-  
   Future<List<BanqueModel>> fetchBanqueItems() async {
     return moyenPayement == null
         ? await BanqueService.getAllBanques()
@@ -54,7 +53,8 @@ class _AddDecouvertePageState extends State<AddDecouvertePage> {
             .where((b) => b.type == moyenPayement!.type)
             .toList();
   }
-Future<List<MoyenPaiementModel>> fetchMoyenPaiementItems() async {
+
+  Future<List<MoyenPaiementModel>> fetchMoyenPaiementItems() async {
     return banque == null
         ? await MoyenPaiementService.getMoyenPaiements()
         : (await MoyenPaiementService.getMoyenPaiements())
@@ -183,15 +183,17 @@ Future<List<MoyenPaiementModel>> fetchMoyenPaiementItems() async {
       if (salarie!.personnel.dateDebut != null &&
           salarie!.personnel.dateFin != null) {
         (salarie: salarie!);
-        if (int.parse(_dureeReversementController.text) >
-            countValidPeriodsRestant(salarie: salarie!)) {
-          MutationRequestContextualBehavior.showPopup(
-            customMessage:
-                "Vous ne pouvez pas payer votre avance en ${int.parse(_dureeReversementController.text)} temps",
-            status: PopupStatus.information,
-          );
-          return;
-        }
+        // if (int.parse(_dureeReversementController.text)
+        //  >
+        //     countValidPeriodsRestant(salarie: salarie!)
+        //     ) {
+        //   MutationRequestContextualBehavior.showPopup(
+        //     customMessage:
+        //         "Vous ne pouvez pas payer votre avance en ${int.parse(_dureeReversementController.text)} temps",
+        //     status: PopupStatus.information,
+        //   );
+        //   return;
+        // } TODO; recorrigé la fonctio ou chercher une autre maniere de verier cette condition
       }
     }
 
@@ -203,7 +205,7 @@ Future<List<MoyenPaiementModel>> fetchMoyenPaiementItems() async {
     try {
       user = await AuthService().decodeToken();
     } catch (err) {
-       _dialog.hide();
+      _dialog.hide();
       MutationRequestContextualBehavior.showPopup(
         status: PopupStatus.serverError,
         customMessage: "Enégistrement échoué",
@@ -212,34 +214,32 @@ Future<List<MoyenPaiementModel>> fetchMoyenPaiementItems() async {
     }
     try {
       var result = await DecouverteService.createDecouverte(
-      dureeReversement: int.parse(_dureeReversementController.text),
-      justification: _justificationController.text.trim(),
-      montant: double.parse(_montantController.text),
-      salarieId: salarie!.id,
+        dureeReversement: int.parse(_dureeReversementController.text),
+        justification: _justificationController.text.trim(),
+        montant: double.parse(_montantController.text),
+        salarieId: salarie!.id,
         referenceTransaction: referenceTransactionFieldController.text.trim(),
-
-      userId: user!.id!,
-      moyenPayement: moyenPayement!,
-      banque: banque!,
-    );
-
-    _dialog.hide();
-
-    if (result.status == PopupStatus.success) {
-      MutationRequestContextualBehavior.closePopup();
-      MutationRequestContextualBehavior.showPopup(
-        status: PopupStatus.success,
-        customMessage: "Découvert enrégistrement avec succès",
+        userId: user!.id!,
+        moyenPayement: moyenPayement!,
+        banque: banque!,
       );
-      widget.refresh();
-    } else {
-      MutationRequestContextualBehavior.showPopup(
-        status: result.status,
-        customMessage: result.message,
-      );
-    }
+
+      _dialog.hide();
+
+      if (result.status == PopupStatus.success) {
+        MutationRequestContextualBehavior.closePopup();
+        MutationRequestContextualBehavior.showPopup(
+          status: PopupStatus.success,
+          customMessage: "Découvert enrégistrement avec succès",
+        );
+        widget.refresh();
+      } else {
+        MutationRequestContextualBehavior.showPopup(
+          status: result.status,
+          customMessage: result.message,
+        );
+      }
     } catch (err) {
- 
       _dialog.hide();
       MutationRequestContextualBehavior.showPopup(
         status: PopupStatus.customError,

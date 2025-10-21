@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/app/integration/popop_status.dart';
+import 'package:frontend/helper/string_helper.dart' show capitalizeFirstLetter;
+import 'package:frontend/service/pay_calendar_service.dart';
 import 'package:gap/gap.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 import '../../../../helper/date_helper.dart';
@@ -91,32 +94,35 @@ class _AddPayCalendarState extends State<AddPayCalendar> {
       backgroundColor: Colors.transparent,
     );
 
-    // try {
-    //   var result = await PayCalendarService.createPayCalendar(
-    //     libelle:
-    //         capitalizeFirstLetter(word: _libelleController.text.toLowerCase()),
-    //   );
+    try {
+      var result = await PayCalendarService.createPayCalendar(
+        libelle:
+            capitalizeFirstLetter(word: _libelleController.text.toLowerCase()),
+        dateDebut: _dateDebut!,
+        dateFin: _dateFin!,
+      );
 
-    //   _dialog.hide();
+      _dialog.hide();
 
-    //   if (result.status == PopupStatus.success) {
-    //     MutationRequestContextualBehavior.closePopup();
-    //     MutationRequestContextualBehavior.showPopup(
-    //         status: PopupStatus.success,
-    //         customMessage: "Période de paie enregistrée avec succès");
-    //     await widget.refresh();
-    //   } else {
-    //     MutationRequestContextualBehavior.showPopup(
-    //       status: result.status,
-    //       customMessage: result.message,
-    //     );
-    //   }
-    // } catch (err) {
-    //   _dialog.hide();
-    //   MutationRequestContextualBehavior.showPopup(
-    //     status: PopupStatus.customError,
-    //     customMessage: "Erreur lors de l'enregistrement de la période de paie: $err",
-    //   );
-    // }
+      if (result.status == PopupStatus.success) {
+        MutationRequestContextualBehavior.closePopup();
+        MutationRequestContextualBehavior.showPopup(
+            status: PopupStatus.success,
+            customMessage: "Période de paie enregistrée avec succès");
+        await widget.refresh();
+      } else {
+        MutationRequestContextualBehavior.showPopup(
+          status: result.status,
+          customMessage: result.message,
+        );
+      }
+    } catch (err) {
+      _dialog.hide();
+      MutationRequestContextualBehavior.showPopup(
+        status: PopupStatus.customError,
+        customMessage:
+            "Erreur lors de l'enregistrement de la période de paie: $err",
+      );
+    }
   }
 }

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/app/pages/bulletin_paie/paid_calendar/paid_calendar_table.dart';
+import 'package:frontend/helper/paginate_data.dart';
+import 'package:frontend/service/pay_calendar_service.dart';
 import 'package:gap/gap.dart';
 import '../../../../global/global_value.dart';
-import '../../../../model/bulletin_paie/pay_Calendar_model.dart';
+import '../../../../model/bulletin_paie/calendar_model.dart';
 import '../../../../model/habilitation/role_model.dart';
 import '../../../../widget/add_element_button.dart';
 import '../../../../widget/pagination.dart';
@@ -29,7 +32,6 @@ class _PayCalendarPageState extends State<PayCalendarPage> {
   bool isLoading = true;
   bool hasError = false;
   String searchQuery = "";
-  late Future<void> _futureRoles;
   late RoleModel role;
   String? errorMessage;
 
@@ -49,7 +51,7 @@ class _PayCalendarPageState extends State<PayCalendarPage> {
 
   Future<void> _loadPayCalendar() async {
     try {
-      // payCalendarData = await PayCalendarService.getPayCalendars();
+      payCalendarData = await PayCalendarService.getPayCalendars();
     } catch (error) {
       setState(() {
         errorMessage = error.toString();
@@ -111,7 +113,7 @@ class _PayCalendarPageState extends State<PayCalendarPage> {
                   addElement: onClickAddFluxButton,
                   icon: Icons.add_outlined,
                   isSmall: true,
-                  label: "Ajouter un calendrier de paie",
+                  label: "Ajouter une période de paie",
                 ),
               ),
             ],
@@ -149,11 +151,11 @@ class _PayCalendarPageState extends State<PayCalendarPage> {
                         Expanded(
                           child: Container(
                             color: Theme.of(context).colorScheme.surface,
-                            // child: PayCalendarTable(
-                            //   payCalendar: getPaginatedData(
-                            //       data: filteredData, currentPage: currentPage),
-                            //   refresh: _loadPayCalendar,
-                            // ),
+                            child: PayCalendarTable(
+                              payCalendar: getPaginatedData(
+                                  data: filteredData, currentPage: currentPage),
+                              refresh: _loadPayCalendar,
+                            ),
                           ),
                         ),
                         if (filteredData.isNotEmpty)

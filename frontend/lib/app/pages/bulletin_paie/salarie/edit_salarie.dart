@@ -119,8 +119,10 @@ class _EditSalariePageState extends State<EditSalariePage> {
       if (paieManner == null) {
         errorMessage = "Veuillez sélectionner une modalité de paiement.";
       }
-      if (paieManner == PaieManner.finMois ||
-          paieManner == PaieManner.finPeriod) {
+      if (paieManner == PaieManner.finMois
+          // ||
+          //     paieManner == PaieManner.finPeriod
+          ) {
         if (_compterController.text.isEmpty || periodPaieUnit == null) {
           errorMessage = "Veuillez remplir les deux champs de durée de paie.";
         }
@@ -148,6 +150,8 @@ class _EditSalariePageState extends State<EditSalariePage> {
         personnelId: personnel?.id,
         categoriePaieId: categoriePaie?.id,
         paieManner: paieManner,
+        moyenPaiement:
+            null, //TODO: à revoir et à mettre les les deux donnée en palce
         periodPaie: (periodPaieCompteur != null && periodPaieUnit != null)
             ? (periodPaieCompteur! * unitMultipliers[periodPaieUnit]!)
             : null,
@@ -242,8 +246,10 @@ class _EditSalariePageState extends State<EditSalariePage> {
             onChanged: (value) {
               setState(() {
                 paieManner = value;
-                if (paieManner != PaieManner.finMois &&
-                    paieManner != PaieManner.finPeriod) {
+                if (paieManner != PaieManner.finMois
+                    //  &&
+                    //     paieManner != PaieManner.finPeriod
+                    ) {
                   _compterController.clear();
                   periodPaieUnit = null;
                 }
@@ -251,8 +257,10 @@ class _EditSalariePageState extends State<EditSalariePage> {
             },
             isRequired: true,
           ),
-          if (paieManner == PaieManner.finMois ||
-              paieManner == PaieManner.finPeriod) ...[
+          if (paieManner == PaieManner.finMois
+              // ||
+              //     paieManner == PaieManner.finPeriod
+              ) ...[
             DurationField(
               controller: _compterController,
               label: "Période de paie",

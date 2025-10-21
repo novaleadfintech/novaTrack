@@ -1,9 +1,9 @@
-import PayCalendar from "../../models/pay_Calendar.js";
+import PayCalendar from "../../models/bulletin_paie/pay_calendar.js";
 const payCalendar = new PayCalendar();
 
 const payCalendarResolvers = {
   payCalendars: async ({ perPage, skip }) =>
-    await payCalendar.getAllPayCalendars({
+    await payCalendar.getAllPayCalendar({
       skip: skip,
       perPage: perPage,
     }),

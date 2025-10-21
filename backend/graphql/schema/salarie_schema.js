@@ -8,7 +8,10 @@ const typeDef = `#graphql
         echelon: Echelon
         grilleCategoriePaie: CategoriePaieGrille
         dateEnregistrement: Float!
+        paiementPlace: Banque
+        numeroCompte: String
         periodPaie: Float
+        moyenPaiement: MoyenPaiement
         paieManner: PaieManner
         fullCount:Int
     }
@@ -38,6 +41,9 @@ const mutation = `#graphql
             paieManner: PaieManner!
             numeroMatricule: String!
             classeId: String!
+            paiementPlaceId: String!
+            numeroCompte: String
+            moyenPaiement: MoyenPaiementInput!
             echelonId: String!
             grilleCategoriePaieId: String!
         ):String!,
@@ -47,6 +53,11 @@ const mutation = `#graphql
             personnelId: String
             categoriePaieId: String
             periodPaie: Float
+            numeroMatricule: String
+            classeId: String
+            paiementPlaceId: String
+            numeroCompte: String
+            moyenPaiement: MoyenPaiementInput
             paieManner: PaieManner
         ):String!,
 `;
