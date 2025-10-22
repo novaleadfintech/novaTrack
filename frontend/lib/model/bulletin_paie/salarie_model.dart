@@ -1,8 +1,7 @@
-import 'package:frontend/model/entreprise/banque.dart';
 import 'package:frontend/model/grille_salariale/categorie_paie.dart';
 import 'package:frontend/model/grille_salariale/classe_model.dart';
 import 'package:frontend/model/grille_salariale/echelon_model.dart';
-
+import 'package:frontend/model/moyen_paiement_model.dart';
 import '../personnel/personnel_model.dart';
 import 'categorie_paie.dart';
 import 'tranche_model.dart';
@@ -15,8 +14,9 @@ class SalarieModel {
   final int? periodPaie;
   final String? numeroMatricule;
   final EchelonModel? echelon;
+  final MoyenPaiementModel? moyenPaiement;
   final String? numeroCompte;
-  final BanqueModel? paiementPlace;
+  final String? paiementPlace;
   final ClasseModel? classe;
   final GrilleCategoriePaieModel? grilleCategoriePaie;
   final PaieManner? paieManner;
@@ -33,6 +33,7 @@ class SalarieModel {
     this.classe,
     this.numeroCompte,
     this.paiementPlace,
+    this.moyenPaiement,
     this.grilleCategoriePaie,
     this.numeroMatricule,
     this.paieManner = PaieManner.finMois,
@@ -51,7 +52,11 @@ class SalarieModel {
           ? EchelonModel.fromJson(json['echelon'])
           : null,
       numeroMatricule: json['numeroMatricule'],
-      //TODO: à continuer Mapper les deux nouvelles données
+      numeroCompte: json['numeroCompte'],
+      moyenPaiement: json["moyenPaiement"] == null
+          ? null
+          : MoyenPaiementModel.fromJson(json["moyenPaiement"]),
+      paiementPlace: json['paiementPlace'],
       classe:
           json['classe'] != null ? ClasseModel.fromJson(json['classe']) : null,
       grilleCategoriePaie: json['grilleCategoriePaie'] != null

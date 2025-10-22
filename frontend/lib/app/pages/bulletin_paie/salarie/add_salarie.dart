@@ -44,6 +44,8 @@ class AddSalariePage extends StatefulWidget {
 class _AddSalariePageState extends State<AddSalariePage> {
   late SimpleFontelicoProgressDialog _dialog;
   final TextEditingController _compterController = TextEditingController();
+  final TextEditingController _paiementPlaceController =
+      TextEditingController();
   final TextEditingController _numeroDeCompteController =
       TextEditingController();
   final TextEditingController _numeroMatriculeController =
@@ -59,7 +61,7 @@ class _AddSalariePageState extends State<AddSalariePage> {
   int? periodPaieCompteur;
   PaieManner? paieManner;
   MoyenPaiementModel? moyenPaiement;
-  BanqueModel? paiementPlace;
+
 
   @override
   void initState() {
@@ -84,7 +86,10 @@ class _AddSalariePageState extends State<AddSalariePage> {
       String? errorMessage;
       if (paieManner == null ||
           moyenPaiement == null ||
-          paiementPlace == null) {
+          grilleCategoriePaie == null ||
+          classe == null ||
+          echelon == null ||
+          _paiementPlaceController.text.isEmpty) {
         errorMessage = "Veuillez renseigner les champs marqués *";
       }
 
@@ -107,7 +112,7 @@ class _AddSalariePageState extends State<AddSalariePage> {
           // paieManner == PaieManner.finPeriod
           ) {
         periodPaieCompteur = 1;
-        periodPaieUnit = "Mois";
+        periodPaieUnit = "mois";
       }
       if (errorMessage != null) {
         MutationRequestContextualBehavior.showPopup(
@@ -135,7 +140,7 @@ class _AddSalariePageState extends State<AddSalariePage> {
         numeroCompte: _numeroDeCompteController.text.isNotEmpty
             ? _numeroDeCompteController.text.trim()
             : null,
-        paiementPlace: paiementPlace!,
+        paiementPlace: _paiementPlaceController.text,
         classe: classe!,
         echelon: echelon!,
         grilleCategoriePaie: grilleCategoriePaie!,
@@ -210,11 +215,7 @@ class _AddSalariePageState extends State<AddSalariePage> {
   }
 
   Future<List<MoyenPaiementModel>> fetchMoyenPaiementItems() async {
-    return paiementPlace == null
-        ? await MoyenPaiementService.getMoyenPaiements()
-        : (await MoyenPaiementService.getMoyenPaiements())
-            .where((m) => m.type == paiementPlace!.type)
-            .toList();
+    return await MoyenPaiementService.getMoyenPaiements();
   }
 
   @override
@@ -282,21 +283,9 @@ class _AddSalariePageState extends State<AddSalariePage> {
             canClose: true,
             itemsAsString: (s) => s.libelle,
           ),
-          FutureCustomDropDownField<BanqueModel>(
-            label: "Compte de payement",
-            showSearchBox: true,
-            selectedItem: paiementPlace,
-            fetchItems: fetchBanqueItems,
-            onChanged: (BanqueModel? value) {
-              // if (value != null) {
-              setState(() {
-                paiementPlace = value;
-              });
-              // }
-            },
-            canClose: true,
-            itemsAsString: (s) => s.name,
-          ),
+          SimpleTextField(
+              label: "Lieu de payement",
+              textController: _paiementPlaceController),
           SimpleTextField(
             label: "Numéro de compte",
             textController: _numeroDeCompteController,

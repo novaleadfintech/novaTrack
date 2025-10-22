@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:frontend/global/config.dart';
-import 'package:frontend/model/entreprise/banque.dart';
-import 'package:frontend/model/grille_salariale/classe_model.dart';
+ import 'package:frontend/model/grille_salariale/classe_model.dart';
 import 'package:frontend/model/moyen_paiement_model.dart';
 import 'package:http/http.dart' as http;
 
@@ -27,10 +26,7 @@ class SalarieService {
         paieManner
         fullCount
         numeroCompte
-        paiementPlace {
-            _id
-            name
-        }
+        paiementPlace
         moyenPaiement{
           _id
           libelle
@@ -233,7 +229,7 @@ class SalarieService {
     required ClasseModel classe,
     required String numeroMatricule,
     required MoyenPaiementModel moyenPaiement,
-    required BanqueModel paiementPlace,
+    required String paiementPlace,
     required EchelonModel echelon,
     required GrilleCategoriePaieModel grilleCategoriePaie,
     required String? numeroCompte,
@@ -248,7 +244,7 @@ class SalarieService {
               classeId: "${classe.id}"
               moyenPaiement: ${moyenPaiement.toJson()}
               numeroMatricule: "$numeroMatricule"
-              paiementPlaceId: "${paiementPlace.id}"
+              paiementPlace: "$paiementPlace"
               numeroCompte:${numeroCompte != null ? "\"$numeroCompte\"" : null}
               echelonId: "${echelon.id}"
               grilleCategoriePaieId: "${grilleCategoriePaie.id}"

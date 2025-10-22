@@ -11,8 +11,11 @@ const bulletinPaieResolvers = {
     });
   },
 
-  getReadyBulletins: async () => {
-    return await bulletinPaieModel.getReadyBulletins();
+  getReadyBulletins: async ({ dateDebut, dateFin }) => {
+    return await bulletinPaieModel.getReadyBulletins({
+      dateDebut: dateDebut,
+      dateFin: dateFin,
+    });
   },
 
   currentValidateBulletin: async ({ perPage, skip }) => {

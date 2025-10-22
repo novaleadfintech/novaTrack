@@ -47,11 +47,24 @@ class DetailSalariePage extends StatelessWidget {
             ),
           ],
         ),
+        if (salarie.numeroMatricule != null)
+          TableRow(
+            decoration: tableDecoration(context),
+            children: [
+              const TabledetailBodyMiddle(
+                valeur: "Numéro matricule",
+                isbold: true,
+              ),
+              TabledetailBodyMiddle(
+                valeur: salarie.numeroMatricule!,
+              ),
+            ],
+          ),
         TableRow(
           decoration: tableDecoration(context),
           children: [
             const TabledetailBodyMiddle(
-              valeur: "Catégorie de bulletin de  paie",
+              valeur: "Catégorie de bulletin de paie",
               isbold: true,
             ),
             TabledetailBodyMiddle(
@@ -77,7 +90,7 @@ class DetailSalariePage extends StatelessWidget {
             decoration: tableDecoration(context),
             children: [
               const TabledetailBodyMiddle(
-                valeur: "classe de paie",
+                valeur: "Classe de paie",
                 isbold: true,
               ),
               TabledetailBodyMiddle(
@@ -98,7 +111,32 @@ class DetailSalariePage extends StatelessWidget {
             ),
           ],
         ),
-        
+        if (salarie.moyenPaiement != null)
+          TableRow(
+            decoration: tableDecoration(context),
+            children: [
+              const TabledetailBodyMiddle(
+                valeur: "Moyen de paiement",
+                isbold: true,
+              ),
+              TabledetailBodyMiddle(
+                valeur: salarie.moyenPaiement!.libelle,
+              ),
+            ],
+          ),
+        if (salarie.numeroCompte != null)
+          TableRow(
+            decoration: tableDecoration(context),
+            children: [
+              const TabledetailBodyMiddle(
+                valeur: "Numéro de compte",
+                isbold: true,
+              ),
+              TabledetailBodyMiddle(
+                valeur: salarie.numeroCompte!,
+              ),
+            ],
+          ),
         TableRow(
           decoration: tableDecoration(context),
           children: [

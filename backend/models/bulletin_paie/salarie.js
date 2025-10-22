@@ -98,6 +98,106 @@ class Salarie {
     }
   };
 
+  getAllActiveSalarieByPeriod = async ({
+    skip,
+    perPage,
+    dateDebut,
+    dateFin,
+  }) => {
+    try {
+      let limit = aql``;
+      if (perPage !== undefined && skip !== undefined) {
+        limit = aql`LIMIT ${skip}, ${perPage}`;
+      }
+
+      // 🔹 Récupération des salariés actifs
+      const query = await db.query(aql`
+      FOR salarie IN ${salarieCollection}
+         SORT salarie.timeStamp DESC
+        ${limit}
+        RETURN salarie
+    `);
+
+      if (!query.hasNext) {
+        return [];
+      }
+
+      const salaries = await query.all();
+
+      const result = await Promise.all(
+        salaries.map(async (salarie) => {
+          try {
+            // 🔹 Récupération du personnel lié
+            const personnel = await PersonnelModel.getPersonnel({
+              key: salarie.personnelId,
+            });
+
+            // 🔹 Si on a des dates de période, filtrer ici
+            if (dateDebut && dateFin && personnel) {
+              const debut = personnel.dateDebut ?? personnel.dateEmbauche;
+              const fin = personnel.dateFin ?? Date.now();
+
+              if (debut < dateDebut || fin > dateFin) {
+                // En dehors de la période → on ignore ce salarié
+                return null;
+              }
+            }
+
+            const categoriePaie = await CategoriePaieModel.getCategoriePaie({
+              key: salarie.categoriePaieId,
+            });
+
+            const grilleCategoriePaie =
+              await CategoriePaieGrilleModel.getCategoriePaieGrille({
+                key: salarie.grilleCategoriePaieId,
+              });
+
+            let classe = null;
+            let echelon = null;
+
+            if (
+              grilleCategoriePaie &&
+              Array.isArray(grilleCategoriePaie.classes)
+            ) {
+              classe = grilleCategoriePaie.classes.find(
+                (c) => c && c._id === salarie.classeId
+              );
+
+              if (classe && Array.isArray(classe.echelonIndiciciaires)) {
+                const foundEchelon = classe.echelonIndiciciaires.find(
+                  (e) => e && e.echelon && e.echelon._id === salarie.echelonId
+                );
+                echelon = foundEchelon ? foundEchelon.echelon : null;
+              }
+            }
+
+            return {
+              ...salarie,
+              personnel: personnel ?? null,
+              categoriePaie: categoriePaie ?? null,
+              grilleCategoriePaie: grilleCategoriePaie ?? null,
+              classe: classe ?? null,
+              echelon: echelon ?? null,
+            };
+          } catch (innerError) {
+            console.error(
+              `Erreur lors de l'enrichissement du salarié ${salarie._key}:`,
+              innerError
+            );
+            return null;
+          }
+        })
+      );
+
+      return result.filter((r) => r !== null);
+    } catch (err) {
+      console.error("Erreur lors de la récupération des salariés:", err);
+      throw new Error(
+        "Une erreur est survenue lors du chargement des salariés actifs."
+      );
+    }
+  };
+
   getSalarie = async ({ key }) => {
     try {
       const salarie = await salarieCollection.document(key);
@@ -128,7 +228,7 @@ class Salarie {
     paieManner,
     numeroMatricule,
     numeroCompte,
-    paiementPlaceId,
+    paiementPlace,
     classeId,
     echelonId,
     moyenPaiement,
@@ -142,7 +242,7 @@ class Salarie {
         moyenPaiement,
         classeId,
         numeroMatricule,
-        paiementPlaceId,
+        paiementPlace,
         echelonId,
         grilleCategoriePaieId,
       ],
@@ -175,7 +275,7 @@ class Salarie {
       moyenPaiement: moyenPaiement,
       numeroMatricule: numeroMatricule,
       numeroCompte: numeroCompte,
-      paiementPlaceId: paiementPlaceId,
+      paiementPlace: paiementPlace,
       echelonId: echelonId,
       grilleCategoriePaieId: grilleCategoriePaieId,
       timeStamp: Date.now(),

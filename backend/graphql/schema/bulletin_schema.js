@@ -57,7 +57,7 @@ const mutation = `#graphql
         rubriques: [RubriqueBulletinInput!]!
     ): String!
 
-    getReadyBulletins: [BulletinPaie]!
+    getReadyBulletins(dateDebut: Float!, dateFin: Float!): [BulletinPaie]!
     
     updateBulletinPaie(
         key: ID!,

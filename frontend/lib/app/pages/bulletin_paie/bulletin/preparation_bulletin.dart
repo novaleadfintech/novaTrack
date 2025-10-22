@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/app/pages/app_dialog_box.dart';
+import 'package:frontend/app/pages/bulletin_paie/bulletin/choose_period_page.dart';
 import 'package:frontend/app/pages/no_data_page.dart';
 import 'package:frontend/widget/app_action_button.dart';
 import 'package:gap/gap.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
-
-import '../../../../model/bulletin_paie/bulletin_model.dart';
-import '../../../../service/bulletin_service.dart';
-import '../../../../widget/confirmation_dialog_box.dart';
 import '../../../../widget/research_bar.dart';
 
 class PreparationBulletinPage extends StatefulWidget {
@@ -74,21 +72,10 @@ class _PreparationBulletinPagState extends State<PreparationBulletinPage> {
   }
 
   void preparerBulletin() async {
-    bool confirmed = await handleOperationButtonPress(
+    showResponsiveDialog(
       context,
-      content: "Vous êtes sur le point de préparer le bulletin du mois courant",
+      content: ChoosePeriodPage(),
+      title: "Choisir la période de paie",
     );
-    if (confirmed) {
-      _dialog.show(
-        message: 'Edition du bulletin en cours',
-        type: SimpleFontelicoProgressDialogType.bullets,
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        indicatorColor: Theme.of(context).colorScheme.primary,
-        width: 250,
-      );
-      Future.delayed(Duration(seconds: 5), () async {
-        _dialog.hide();
-      });
-    }
   }
 }

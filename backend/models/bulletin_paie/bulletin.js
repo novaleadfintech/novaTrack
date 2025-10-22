@@ -164,7 +164,43 @@ class BulletinPaie {
     }
   }
 
-  getReadyBulletins() {}
+  async getReadyBulletins({ dateDebut, dateFin }) {
+    const salaires = await SalarieModel.getAllActiveSalarieByPeriod({
+      dateDebut: dateDebut,
+      dateFin: dateFin,
+    });
+    for (const salarie of salaires) {
+      if (
+        await this.verifySingleFutureBulletin({
+          dateDebut: dateDebut,
+          dateFin: dateFin,
+          salarieId: salarie._id,
+        })
+      ) {
+        throw new Error(salarie.personnel);
+      }
+    }
+  }
+
+  async verifySingleFutureBulletin({ dateDebut, dateFin, salarieId }) {
+    try {
+      // Vérifie s’il existe déjà un bulletin pour ce salarié dans la période donnée
+      const query = await db.query(aql`
+      FOR b IN ${bulletinCollection}
+        FILTER b.salarieId == ${salarieId}
+        AND (
+          (b.dateDebut <= ${dateFin} AND b.dateFin >= ${dateDebut})
+        )
+        LIMIT 1
+        RETURN b
+    `);
+
+      return !query.hasNext;
+    } catch (error) {
+      console.error("Erreur lors de la vérification du duplicata :", error);
+      throw new Error("Erreur interne lors de la vérification du bulletin.");
+    }
+  }
 
   async getAllArchiveBulletins({ perPage, skip, etat }) {
     let limit = aql``;

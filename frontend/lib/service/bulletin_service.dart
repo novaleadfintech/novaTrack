@@ -502,12 +502,17 @@ class BulletinService {
     return bulletins;
   }
 
-
-static Future<List<BulletinPaieModel>> getReadyBulletins() async {
+  static Future<List<BulletinPaieModel>> getReadyBulletins({
+    required DateTime dateDebut,
+    required DateTime dateFin,
+  }) async {
     List<BulletinPaieModel> bulletins = [];
     var body = '''
-              query CrrentValidateBulletin {
-    currentValidateBulletin {
+    mutation GetReadyBulletins {
+      getReadyBulletins(
+      dateDebut: ${dateDebut.millisecondsSinceEpoch}
+      dateFin: ${dateFin.millisecondsSinceEpoch}
+      ) {
         _id
         etat
         moyenPayement{
@@ -733,7 +738,7 @@ static Future<List<BulletinPaieModel>> getReadyBulletins() async {
     );
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
-      var data = jsonData['data']['currentValidateBulletin'];
+      var data = jsonData['data']['getReadyBulletins'];
 
       if (data != null) {
         for (var bulletin in data) {
@@ -745,7 +750,6 @@ static Future<List<BulletinPaieModel>> getReadyBulletins() async {
     }
     return bulletins;
   }
-
 
   static Future<BulletinPaieModel?> getPreviousBulletins(
       {required String salarieId}) async {
