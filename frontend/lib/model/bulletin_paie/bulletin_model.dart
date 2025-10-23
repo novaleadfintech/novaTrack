@@ -20,7 +20,6 @@ class BulletinPaieModel {
   final List<RubriqueOnBulletinModel> rubriques;
   final List<ValidateBulletinModel>? validated;
 
-
   BulletinPaieModel({
     required this.id,
     required this.etat,
@@ -40,10 +39,9 @@ class BulletinPaieModel {
     return BulletinPaieModel(
       id: json['_id'],
       etat: etatBulletinFromJson(json['etat']),
-moyenPayement: json['moyenPayement'] != null
+      moyenPayement: json['moyenPayement'] != null
           ? MoyenPaiementModel.fromJson(json["moyenPayement"])
           : null,
-          
       debutPeriodePaie:
           DateTime.fromMillisecondsSinceEpoch(json['debutPeriodePaie']),
       finPeriodePaie:
@@ -74,7 +72,7 @@ moyenPayement: json['moyenPayement'] != null
       'moyenPayement': moyenPayement?.toJson(),
       'debutPeriodePaie': debutPeriodePaie,
       'finPeriodePaie': finPeriodePaie,
-      'referencePaie': referencePaie, 
+      'referencePaie': referencePaie,
       'banque': banque?.toJson(),
       'datePayement': datePayement?.millisecondsSinceEpoch,
       'dateEdition': dateEdition,

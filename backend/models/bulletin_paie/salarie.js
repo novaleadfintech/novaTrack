@@ -127,19 +127,16 @@ class Salarie {
       const result = await Promise.all(
         salaries.map(async (salarie) => {
           try {
-            // 🔹 Récupération du personnel lié
             const personnel = await PersonnelModel.getPersonnel({
               key: salarie.personnelId,
             });
-
-            // 🔹 Si on a des dates de période, filtrer ici
             if (dateDebut && dateFin && personnel) {
-              const debut = personnel.dateDebut ?? personnel.dateEmbauche;
-              const fin = personnel.dateFin ?? Date.now();
-
-              if (debut < dateDebut || fin > dateFin) {
-                // En dehors de la période → on ignore ce salarié
-                return null;
+              const debut = personnel.dateDebut;
+              const fin = personnel.dateFin;
+              if (fin != null) {
+                if (debut > dateDebut || fin < dateFin) {
+                  return null;
+                }
               }
             }
 

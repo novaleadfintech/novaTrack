@@ -9,6 +9,10 @@ const rubriqueBulletinResolvers = {
       perPage: perPage,
     }),
 
+  primesExceptionnelles: async () => {
+    return await rubriqueBulletinModel.getPrimeExceptionnel();
+  },
+
   rubriqueBulletin: async ({ key }) =>
     rubriqueBulletinModel.getRubriqueBulletin({ key: key }),
 

@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/app/pages/bulletin_paie/variable_paie_page.dart';
 import 'package:frontend/model/personnel/personnel_model.dart';
 import '../../../../auth/authentification_token.dart';
 import '../../../../global/constant/constant.dart';
 import '../../../../global/constant/permission_alias.dart';
- import '../../../../helper/user_helper.dart';
- import '../../../../model/bulletin_paie/salarie_model.dart';
+import '../../../../helper/user_helper.dart';
+import '../../../../model/bulletin_paie/salarie_model.dart';
 import '../../../../model/habilitation/role_model.dart';
 import '../../../../model/habilitation/user_model.dart';
 import '../../../../model/personnel/enum_personnel.dart';
- import '../../../../style/app_style.dart';
+import '../../../../style/app_style.dart';
 import '../../../../widget/table_body_last.dart';
 import '../../../../widget/table_body_middle.dart';
 import '../../../../widget/table_header.dart';
- import '../../../responsitvity/responsivity.dart';
+import '../../../responsitvity/responsivity.dart';
 import '../../app_dialog_box.dart';
 import '../../detail_pop.dart';
 import '../../utils/personnel_util.dart';
- import 'detail_salarie.dart';
+import 'detail_salarie.dart';
 import 'edit_salarie.dart';
 
 class SalarieTable extends StatefulWidget {
@@ -131,6 +132,12 @@ class _SalarieTableState extends State<SalarieTable> {
                                   (
                                     label: Constant.detail,
                                     onTap: () => onShowDetail(salarie: salarie),
+                                    color: null,
+                                  ),
+                                  (
+                                    label: Constant.preparerBulletin,
+                                    onTap: () =>
+                                        editVariablePaie(salarie: salarie),
                                     color: null,
                                   ),
 
@@ -249,13 +256,19 @@ class _SalarieTableState extends State<SalarieTable> {
                                   //           BlendMode.srcIn,
                                   //         ),
                                   //       )),
-                                  
+
                                   TableBodyLast(
                                     items: [
                                       (
                                         label: Constant.detail,
                                         onTap: () =>
                                             onShowDetail(salarie: salarie),
+                                        color: null,
+                                      ),
+                                      (
+                                        label: Constant.preparerBulletin,
+                                        onTap: () =>
+                                            editVariablePaie(salarie: salarie),
                                         color: null,
                                       ),
                                       if (personnel.etat !=
@@ -300,6 +313,15 @@ class _SalarieTableState extends State<SalarieTable> {
         );
       },
     );
+  }
+
+  void editVariablePaie({required SalarieModel salarie}) {
+    showResponsiveDialog(context,
+        content: VariablePaiePage(
+          salarie: salarie,
+        ),
+        title:
+            "Préparer les données de bulletin de ${salarie.personnel.toStringify()}");
   }
 
 // TODO: Came back in order todo it as my chef said it

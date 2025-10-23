@@ -115,6 +115,82 @@ class RubriqueBulletin {
       throw new Error("Erreur lors de la récupération");
     }
   };
+  getPrimeExceptionnel = async ({ skip, perPage } = {}) => {
+    let limit = aql``;
+    if (perPage != undefined && skip != undefined) {
+      limit = aql`LIMIT ${skip}, ${perPage}`;
+    }
+    try {
+      const query = await db.query(
+        aql`
+          FOR rubriqueBulletin IN ${rubriqueBulletinCollection}
+          FILTER 
+          SORT rubriqueBulletin.timeStamp ASC
+        ${limit}
+          RETURN rubriqueBulletin
+        `
+      );
+
+      if (query.hasNext) {
+        const rubriques = await query.all();
+
+        return Promise.all(
+          rubriques.map(async (rubrique) => {
+            if (rubrique.taux) {
+              rubrique.taux.base = await this.getRubriqueBulletinByCode({
+                code: rubrique.taux.base,
+              });
+            }
+
+            if (rubrique.calcul) {
+              for (const element of rubrique.calcul.elements) {
+                if (element.type == BaseType.rubrique) {
+                  element.rubrique = await this.getRubriqueBulletinByCode({
+                    code: element.rubrique,
+                  });
+                }
+              }
+            }
+            if (rubrique.sommeRubrique) {
+              for (const element of rubrique.sommeRubrique.elements) {
+                element.rubrique = await this.getRubriqueBulletinByCode({
+                  code: element.rubrique,
+                });
+              }
+            }
+            if (rubrique.bareme) {
+              rubrique.bareme.reference = await this.getRubriqueBulletinByCode({
+                code: rubrique.bareme.reference,
+              });
+              for (const element of rubrique.bareme.tranches) {
+                if (element.value.taux) {
+                  element.value.taux.base =
+                    await this.getRubriqueBulletinByCode({
+                      code: element.value.taux.base,
+                    });
+                }
+              }
+            }
+
+            return {
+              ...rubrique,
+              section: rubrique.sectionId
+                ? await sectionBulletinModel.getSectionBulletin({
+                    key: rubrique.sectionId,
+                  })
+                : null,
+            };
+          })
+        );
+      } else {
+        return [];
+      }
+    } catch (err) {
+      console.error(err);
+
+      throw new Error("Erreur lors de la récupération");
+    }
+  };
 
   getRubriqueBulletin = async ({ key }) => {
     try {

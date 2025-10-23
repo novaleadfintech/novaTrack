@@ -47,6 +47,7 @@ const typeDef = `#graphql
 const query = `#graphql
     rubriquesBulletin(perPage: Int, skip: Int): [RubriqueBulletin]!
     rubriqueBulletin(key: ID!): RubriqueBulletin
+    primesExceptionnelles : [RubriqueBulletin]!
     # rubriqueBulletinBySection(sectionId: Int): RubriqueBulletin
 `;
 

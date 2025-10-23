@@ -134,6 +134,128 @@ class BulletinRubriqueService {
     }
   }
 
+  static Future<List<RubriqueBulletin>> getExceptionnellePrime() async {
+    var body = '''
+      query RubriquesBulletin {
+    rubriquesBulletin {
+        _id
+        rubrique
+        code
+        type
+        nature
+        portee
+        rubriqueRole
+        rubriqueIdentity
+        section {
+            _id
+            section
+        }
+        taux {
+            base {
+                _id
+                rubrique
+                code
+                type
+                nature
+            }
+            taux
+        }
+        sommeRubrique {
+            operateur
+            elements {
+                type
+                valeur
+                rubrique {
+                    _id
+                    rubrique
+                    code
+                    type
+                    nature
+                }
+            }
+        }
+        bareme {
+            reference{
+                _id
+                rubrique
+                code
+                type
+                nature
+            }
+            tranches {
+                min
+                max
+                value {
+                    type
+                    valeur
+                    taux {
+                        base {
+                            _id
+                            rubrique
+                            code
+                            type
+                            nature
+                        }
+                        taux
+                    }
+                }
+            }
+        }
+        calcul {
+            operateur
+            elements {
+                type
+                valeur
+                rubrique {
+                    _id
+                    rubrique
+                    code
+                    type
+                    nature
+                }
+            }
+        }
+    }
+}
+
+    ''';
+
+    var response = await http
+        .post(
+      Uri.parse(serverUrl),
+      body: json.encode({'query': body}),
+      headers: getHeaders(),
+    )
+        .catchError((onError) {
+      throw onError.toString();
+    }).timeout(
+      const Duration(seconds: reqTimeout),
+      onTimeout: () {
+        throw RequestMessage.timeoutMessage;
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var jsonData = jsonDecode(response.body);
+      var data = jsonData['data']['rubriquesBulletin'];
+
+      List<RubriqueBulletin> rubriques = [];
+      if (data != null) {
+        // print(data);
+
+        for (var rubrique in data) {
+          rubriques.add(RubriqueBulletin.fromJson(rubrique));
+        }
+
+        return rubriques;
+      } else {
+        throw RequestMessage.failgettingDataMessage;
+      }
+    } else {
+      throw jsonDecode(response.body)['errors'][0]['message'];
+    }
+  }
+
   static Future<RequestResponse> createBulletinRubrique({
     required String rubrique,
     required String code,

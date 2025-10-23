@@ -169,7 +169,8 @@ class BulletinPaie {
       dateDebut: dateDebut,
       dateFin: dateFin,
     });
-    for (const salarie of salaires) {
+    const readySalaries = [];
+     for (const salarie of salaires) { 
       if (
         await this.verifySingleFutureBulletin({
           dateDebut: dateDebut,
@@ -177,9 +178,10 @@ class BulletinPaie {
           salarieId: salarie._id,
         })
       ) {
-        throw new Error(salarie.personnel);
+        readySalaries.push(salarie);
       }
     }
+    return readySalaries;
   }
 
   async verifySingleFutureBulletin({ dateDebut, dateFin, salarieId }) {
@@ -194,8 +196,7 @@ class BulletinPaie {
         LIMIT 1
         RETURN b
     `);
-
-      return !query.hasNext;
+       return !query.hasNext;
     } catch (error) {
       console.error("Erreur lors de la vérification du duplicata :", error);
       throw new Error("Erreur interne lors de la vérification du bulletin.");

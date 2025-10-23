@@ -8,6 +8,7 @@ class Constant {
   static const String delete = "Supprimer";
   static const String duplicate = "Dupliquer";
   static const String validate = "Valider";
+  static const String preparerBulletin = "Les variables de paie";
   static const String obtain = "Obtenir";
   static const String download = "Visualiser";
   static const String downloadProformat = "Télécharger le proformat";
