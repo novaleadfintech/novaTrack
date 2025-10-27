@@ -153,6 +153,7 @@ class BulletinPaie {
       LET today = ${today}
   
       FOR bulletin IN ${bulletinCollection}
+        FILTER bulletin.etat == ${EtatBulletin.valid}
         SORT bulletin.timeStamp DESC
         ${limit}
         RETURN bulletin
@@ -161,7 +162,6 @@ class BulletinPaie {
     );
     if (query.hasNext) {
       const bulletins = await query.all();
-      //         FILTER bulletin.etat == ${EtatBulletin.valid} AND bulletin.dateDebut <= ${today} AND bulletin.dateFin >= ${today}
 
       return Promise.all(
         bulletins.map(async (bulletin) => {
@@ -202,7 +202,7 @@ class BulletinPaie {
     }
   }
 
-  async getReadyBulletins({ dateDebut, dateFin }) {
+  async getReadySalaries({ dateDebut, dateFin }) {
     const salaires = await SalarieModel.getAllActiveSalarieByPeriod({
       dateDebut: dateDebut,
       dateFin: dateFin,
@@ -212,11 +212,11 @@ class BulletinPaie {
 
     for (const salarie of salaires) {
       if (
-        await this.verifySingleFutureBulletin({
+        (await this.verifySingleFutureBulletin({
           dateDebut: dateDebut,
           dateFin: dateFin,
           salarieId: salarie._id,
-        })
+        })) == true
       ) {
         readySalaries.push(salarie);
       }
@@ -225,11 +225,14 @@ class BulletinPaie {
   }
 
   async generateBulletinsForPeriod({ dateDebut, dateFin }) {
-    // 1. Récupérer les salariés prêts
-    const readySalaries = await this.getReadyBulletins({
+    const readySalaries = await this.getReadySalaries({
       dateDebut,
       dateFin,
     });
+
+    if (readySalaries.length == 0) {
+      throw new Error("Toutes les bulletins on été générés pour cette période");
+    }
 
     const results = [];
 
@@ -246,7 +249,6 @@ class BulletinPaie {
         const valeursTemp = await ValeurRubriqueTemporaireModel.getBySalarieId({
           salarieId: salarie._id,
         });
-        console.log("-------------------------------------------");
 
         // 4. Fusionner : remplacer les null par les valeurs saisies
         const rubriques = rubriquesBase.map((rubrique) => {
@@ -273,23 +275,35 @@ class BulletinPaie {
         throw new Error(error);
       }
     }
-
+    console.log("_______________________________________________");
     return "OK";
   }
 
   async verifySingleFutureBulletin({ dateDebut, dateFin, salarieId }) {
     try {
-      // Vérifie s’il existe déjà un bulletin pour ce salarié dans la période donnée
+      // Vérifie s'il existe déjà un bulletin pour ce salarié dans la période donnée
       const query = await db.query(aql`
-      FOR b IN ${bulletinCollection}
-        FILTER b.salarieId == ${salarieId}
-        AND (
-          (b.dateDebut <= ${dateFin} AND b.dateFin >= ${dateDebut})
+      FOR b IN ${bulletinCollection} 
+        FILTER b.salarie._id == ${salarieId} 
+        AND NOT (
+          b.finPeriodePaie < ${dateDebut} 
+          OR b.debutPeriodePaie > ${dateFin}
         )
-        LIMIT 1
-        RETURN b
+        LIMIT 1 
+        RETURN b 
     `);
-      return !query.hasNext;
+
+      const bulletinExiste = query.hasNext;
+
+      if (bulletinExiste) {
+        console.log("❌ Bulletin existe déjà pour cette période");
+      } else {
+        console.log("✅ Aucun bulletin, création possible");
+      }
+
+      // Retourne true si AUCUN bulletin n'existe (peut créer)
+      // Retourne false si un bulletin existe (ne peut PAS créer)
+      return !bulletinExiste;
     } catch (error) {
       console.error("Erreur lors de la vérification du duplicata :", error);
       throw new Error("Erreur interne lors de la vérification du bulletin.");
@@ -1051,51 +1065,51 @@ class BulletinPaie {
       if (validate.validateStatus === EtatBulletin.valid) {
         if (montant == 0) {
           throw new Error(
-            `Ce bulletin de ${bulletin.salarie.personnel.nom} ${bulletin.salarie.personnel.prenom} n'a pas de net à payer`
+            `Ce bulletin de ${bulletin.salarie.personnel.nom} ${bulletin.salarie.personnel.prenom} n'a pas de net à payer ou son net à payer n'a pas de valeur`
           );
         }
 
-        for (const dec of decouvertes) {
-          const quotien = dec.montant / dec.dureeReversement;
-          const montantRembourse = Math.min(quotien, dec.montantRestant);
+        // for (const dec of decouvertes) {
+        //   const quotien = dec.montant / dec.dureeReversement;
+        //   const montantRembourse = Math.min(quotien, dec.montantRestant);
 
-          if (montantRembourse > 0) {
-            // Flux de remboursement
-            await FluxFinancierModel.createFluxFinancier({
-              libelle: `Remboursement de l'avance sur salaire de ${bulletin.salarie.personnel.nom} ${bulletin.salarie.personnel.prenom}`,
-              montant: montantRembourse,
-              moyenPayement: bulletin.moyenPayement,
-              type: FluxFinancierType.input,
-              bankId: bulletin.banque._id,
-              isFromSystem: true,
-              userId: validate.validater,
-              referenceTransaction: `${bulletin.referencePaie}-1`,
-            });
+        //   if (montantRembourse > 0) {
+        //     // Flux de remboursement
+        //     await FluxFinancierModel.createFluxFinancier({
+        //       libelle: `Remboursement de l'avance sur salaire de ${bulletin.salarie.personnel.nom} ${bulletin.salarie.personnel.prenom}`,
+        //       montant: montantRembourse,
+        //       moyenPayement: bulletin.moyenPayement,
+        //       type: FluxFinancierType.input,
+        //       bankId: bulletin.banque._id,
+        //       isFromSystem: true,
+        //       userId: validate.validater,
+        //       referenceTransaction: `${bulletin.referencePaie}-1`,
+        //     });
 
-            // Mise à jour du découvert
-            const nouveauRestant = dec.montantRestant - montantRembourse;
-            let nouveauStatut = DecouverteStatus.partialpaid;
-            if (nouveauRestant <= 0.0001) {
-              nouveauStatut = DecouverteStatus.paid;
-            }
+        //     // Mise à jour du découvert
+        //     const nouveauRestant = dec.montantRestant - montantRembourse;
+        //     let nouveauStatut = DecouverteStatus.partialpaid;
+        //     if (nouveauRestant <= 0.0001) {
+        //       nouveauStatut = DecouverteStatus.paid;
+        //     }
 
-            await decouverteCollection.update(dec._key, {
-              montantRestant: nouveauRestant,
-              status: nouveauStatut,
-            });
-          }
-        }
-        await FluxFinancierModel.createFluxFinancier({
-          libelle: `Paiement du salaire de ${bulletin.salarie.personnel.nom} ${bulletin.salarie.personnel.prenom}`,
-          montant: montant,
-          moyenPayement: bulletin.moyenPayement,
-          type: FluxFinancierType.output,
-          bankId: bulletin.banque._id,
-          userId: validate.validater,
-          isFromSystem: true,
-          referenceTransaction: `${bulletin.referencePaie}`,
-          bulletinId: bulletin._id,
-        });
+        //     await decouverteCollection.update(dec._key, {
+        //       montantRestant: nouveauRestant,
+        //       status: nouveauStatut,
+        //     });
+        //   }
+        // }
+        // await FluxFinancierModel.createFluxFinancier({
+        //   libelle: `Paiement du salaire de ${bulletin.salarie.personnel.nom} ${bulletin.salarie.personnel.prenom}`,
+        //   montant: montant,
+        //   moyenPayement: bulletin.moyenPayement,
+        //   type: FluxFinancierType.output,
+        //   bankId: bulletin.banque._id,
+        //   userId: validate.validater,
+        //   isFromSystem: true,
+        //   referenceTransaction: `${bulletin.referencePaie}`,
+        //   bulletinId: bulletin._id,
+        // });
       }
       // Mise à jour du bulletin
       let newValidate = Array.isArray(bulletin.validate)
@@ -1120,14 +1134,7 @@ class BulletinPaie {
 
       await session.abort();
 
-      // Re-lancer l'erreur spécifique de validation
-      if (error.message === "Ce bulletin a déjà été validé") {
-        throw error.message;
-      }
-
-      throw new Error(
-        "Une erreur s'est produite lors de la validation du bulletin"
-      );
+      throw new Error(error);
     }
   }
 
@@ -1137,3 +1144,4 @@ class BulletinPaie {
 }
 
 export default BulletinPaie;
+export { NatureRubrique };

@@ -1,11 +1,11 @@
 import 'dart:convert';
- 
+
 import 'package:frontend/model/bulletin_paie/calendar_model.dart';
 
 import '../app/integration/popop_status.dart';
 import '../global/config.dart';
 import '../global/constant/request_management_value.dart';
- import '../model/request_response.dart';
+import '../model/request_response.dart';
 import 'package:http/http.dart' as http;
 
 import 'request_header.dart';
@@ -19,7 +19,7 @@ class PayCalendarService {
               libelle
               dateDebut
               dateFin
-          }
+           }
       }
     ''';
     var response = await http
@@ -58,10 +58,11 @@ class PayCalendarService {
     required String libelle,
     required DateTime dateDebut,
     required DateTime dateFin,
+    //  etat: ${etatPayCalendarToString(EtatPayCalendar.tobeOpen)}
   }) async {
     var body = '''
     mutation CreatePayCalendar {
-    createPayCalendar(libelle: "$libelle", dateDebut: ${dateDebut.millisecondsSinceEpoch}, dateFin: ${dateFin.millisecondsSinceEpoch})
+    createPayCalendar(libelle: "$libelle", dateDebut: ${dateDebut.millisecondsSinceEpoch}, dateFin: ${dateFin.millisecondsSinceEpoch}),
 }
     ''';
 
@@ -100,12 +101,14 @@ class PayCalendarService {
     required String libelle,
     required DateTime? dateDebut,
     required DateTime? dateFin,
+    required EtatPayCalendar? etat,
   }) async {
     var body = '''
      mutation UpdatePayCalendar {
     updatePayCalendar(key: "$key", libelle: "$libelle",
       dateDebut: ${dateDebut?.millisecondsSinceEpoch},
       dateFin: ${dateFin?.millisecondsSinceEpoch},
+      
     )
 }
 

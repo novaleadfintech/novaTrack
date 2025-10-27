@@ -5,7 +5,6 @@ import '../app_tab_bar.dart';
 import '../error_page.dart';
 import 'archive/archive_bulletin_page.dart';
 import 'bulletin/bulletin_page.dart';
-import 'decouverte/decouverte_page.dart';
 import 'salarie/salaire_page.dart';
 
 class BulletinLayout extends StatefulWidget {
@@ -79,13 +78,12 @@ class _BulletinLayoutState extends State<BulletinLayout> {
               tabTitles: [
                 "Salarié",
                 "Bulletin",
-                "Découvert",
                 "Archives",
               ],
               views: [
                 SalariePage(),
-                BulletinPage(),
-                DecouvertePage(role: role),
+                BulletinPage(role: role),
+                // DecouvertePage(role: role),
                 ArchiveBulletinPage(
                   role: role,
                 ),

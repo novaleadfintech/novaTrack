@@ -7,12 +7,16 @@ const rubriqueBulletinResolvers = {
     await rubriqueBulletinModel.getRubriqueBulletinByCategoriePaie({
       categoriePaieId: categoriePaieId,
     }),
-  
-  rubriqueBulletinByCategoriePaieVariablePaie: async ({ categoriePaieId }) =>
+
+  rubriqueBulletinByCategoriePaieVariablePaie: async ({
+    categoriePaieId,
+    salarieId,
+  }) =>
     await rubriqueBulletinModel.getRubriqueBulletinByCategoriePaieVariablePaie({
       categoriePaieId: categoriePaieId,
+      salarieId: salarieId,
     }),
-  
+
   rubriqueBulletinByCategoriePaieForConfiguration: async ({
     categoriePaieId,
   }) =>

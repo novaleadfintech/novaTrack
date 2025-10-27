@@ -70,30 +70,42 @@ class _VariablePaiePageState extends State<VariablePaiePage> {
   }
 
   Future<void> _initRubriques() async {
-    // try {
-     
-    final List<RubriqueOnBulletinModel> rubriquePaieResponse =
-        await RubriqueCategorieConfService
-            .getRubriqueBulletinByCategoriePaieVariablePaie(
-      categorie: widget.salarie.categoriePaie,
-    );
+    try {
+      final List<RubriqueOnBulletinModel> rubriquePaieResponse =
+          await RubriqueCategorieConfService
+              .getRubriqueBulletinByCategoriePaieVariablePaie(
+        categorie: widget.salarie.categoriePaie,
+        salarieId: widget.salarie.id,
+      );
 
-    setState(() {
-      _rubriquesOnBulletin = rubriquePaieResponse;
-      isLoading = false;
-      hasError = false;
-    });
+       for (var rubriqueBulletin in rubriquePaieResponse) {
+        final r = rubriqueBulletin.rubrique;
 
-     
-    
-    // } catch (e) {
-    //   setState(() {
-    //     errorMessage = e.toString();
-    //     isLoading = false;
-    //     hasError = true;
-    //   });
-    // }
+        if (r.nature == NatureRubrique.constant) {
+          final controller = TextEditingController();
+
+          // Si la rubrique a déjà une valeur, on l'affiche dans le champ
+          if (rubriqueBulletin.value != null) {
+            controller.text = rubriqueBulletin.value.toString();
+          }
+
+          valueControllers[r.id] = controller;
+        }
+      }
+
+      setState(() {
+        _rubriquesOnBulletin = rubriquePaieResponse;
+        isLoading = false;
+        hasError = false;
+      });
+    } catch (e) {
+      setState(() {
+        hasError = true;
+        isLoading = false;
+      });
+    }
   }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -105,7 +117,6 @@ class _VariablePaiePageState extends State<VariablePaiePage> {
             //key: UniqueKey(),
             child: Column(
               children: [
-
                 ..._rubriquesOnBulletin.map((rubrique) {
                   final r = rubrique.rubrique;
 
@@ -246,7 +257,7 @@ class _VariablePaiePageState extends State<VariablePaiePage> {
       ),
     );
   }
-  
+
   void _addVariablePaie() async {
     List<RubriqueOnBulletinModel> variablesPaie = [];
     List<String> erreurs = [];
@@ -340,7 +351,7 @@ class _VariablePaiePageState extends State<VariablePaiePage> {
       _dialog.hide();
 
       if (result.status == PopupStatus.success) {
-         setState(() {
+        setState(() {
           primesExceptionnelles.clear();
           for (var rubrique in _rubriquesOnBulletin) {
             rubrique.value = null;
@@ -366,5 +377,4 @@ class _VariablePaiePageState extends State<VariablePaiePage> {
       );
     }
   }
-
 }

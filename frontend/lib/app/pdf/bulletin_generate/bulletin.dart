@@ -135,8 +135,6 @@ class BulletinPdfGenerator {
       PdfDownloadHelper.downloadPdf(bytes: bytes, fileName: fileName);
       return RequestResponse(status: PopupStatus.success);
     } catch (err) {
-       
-
       throw err.toString();
     }
   }
@@ -681,22 +679,23 @@ class BulletinPdfGenerator {
                       ),
                     ),
                   ),
-                  pw.Padding(
-                    padding: const pw.EdgeInsets.all(5),
-                    child: pw.Column(
-                      children: [
-                        pw.Text(
-                          "Par ${bulletin.moyenPayement!.libelle}",
-                        ),
-                        pw.Text(
-                          bulletin.banque!.name,
-                        ),
-                        pw.Text(
-                          "${bulletin.referencePaie}",
-                        ),
-                      ],
-                    ),
-                  ),
+                  // TODO: à remettre à leur place plustard
+                  // pw.Padding(
+                  //   padding: const pw.EdgeInsets.all(5),
+                  //   child: pw.Column(
+                  //     children: [
+                  //       pw.Text(
+                  //         "Par ${bulletin.moyenPayement!.libelle}",
+                  //       ),
+                  //       pw.Text(
+                  //         bulletin.banque!.name,
+                  //       ),
+                  //       pw.Text(
+                  //         "${bulletin.referencePaie}",
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
                 ],
               ),
             ],

@@ -12,17 +12,14 @@ const typeDef = `#graphql
 
 const query = `#graphql
     rubriqueBulletinByCategoriePaie(categoriePaieId: String): [RubriqueOnBulletin]!
-    rubriqueBulletinByCategoriePaieVariablePaie(categoriePaieId: String): [RubriqueOnBulletin]!
+    rubriqueBulletinByCategoriePaieVariablePaie(categoriePaieId: String!, salarieId: String!): [RubriqueOnBulletin]!
     rubriqueBulletinByCategoriePaieForConfiguration(categoriePaieId: String): [CategorieRubrique]!
 `;
 
 const mutation = `#graphql
-    
     createRubriqueCategorie(categorieId:String!, rubriqueId: ID!, value: Float): String!
     updateRubriqueCategorie(categorieId:String,rubriqueId: ID!, value: Float): String!
     deleteRubriqueCategorie(categorieId:String,rubriqueId: ID!): String!
-
-  
 `;
 
 export default {

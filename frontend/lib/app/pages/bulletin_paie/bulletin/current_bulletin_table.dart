@@ -19,7 +19,6 @@ import '../../../pdf/bulletin_generate/bulletin.dart';
 import '../../../responsitvity/responsivity.dart';
 import '../../detail_pop.dart';
 import '../detail_bulletin.dart';
-import 'edit_bulletin.dart';
 import 'validate_current_bulletin.dart';
 
 class CurrentBulletinTable extends StatefulWidget {
@@ -72,16 +71,16 @@ class _CurrentBulletinTableState extends State<CurrentBulletinTable> {
           );
   }
 
-  onEditBulletin({required BulletinPaieModel bulletin}) {
-    showResponsiveDialog(
-      context,
-      content: EditBulletinPage(
-        bulletinPaie: bulletin,
-        refresh: widget.refresh,
-      ),
-      title: "Modifier de bulletin",
-    );
-  }
+  // onEditBulletin({required BulletinPaieModel bulletin}) {
+  //   showResponsiveDialog(
+  //     context,
+  //     content: EditBulletinPage(
+  //       bulletinPaie: bulletin,
+  //       refresh: widget.refresh,
+  //     ),
+  //     title: "Modifier de bulletin",
+  //   );
+  // }
 
   // validateCurrentBulletin({
   //   required BulletinModel bulletin,
@@ -174,7 +173,7 @@ class _CurrentBulletinTableState extends State<CurrentBulletinTable> {
       } else {
         MutationRequestContextualBehavior.showPopup(
           status: result.status,
-          customMessage: "result.message",
+          customMessage: result.message,
         );
         return;
       }
@@ -267,28 +266,15 @@ class _CurrentBulletinTableState extends State<CurrentBulletinTable> {
                                   },
                                   color: null, // couleur null
                                 ),
-                                (
-                                  label: Constant.download,
-                                  onTap: () {
-                                    downloadcurrentBulletin(
-                                        currentBulletin: bulletin);
-                                  },
-                                  color: null, // couleur null
-                                ),
-                                if (hasPermission(
-                                  role: widget.role,
-                                  permission:
-                                      PermissionAlias.updateBulletin.label,
-                                ))
-                                (
-                                  label: Constant.edit,
-                                  onTap: () {
-                                    onEditBulletin(
-                                      bulletin: bulletin,
-                                    );
-                                  },
-                                  color: null, // couleur null
-                                ),
+                                // (
+                                //   label: Constant.download,
+                                //   onTap: () {
+                                //     downloadcurrentBulletin(
+                                //         currentBulletin: bulletin);
+                                //   },
+                                //   color: null, // couleur null
+                                // ),
+                                
                                 // (
                                 //   label: Constant.editer,
                                 //   onTap: () {
@@ -364,28 +350,15 @@ class _CurrentBulletinTableState extends State<CurrentBulletinTable> {
                                       },
                                       color: null, // couleur null
                                     ),
-                                    (
-                                      label: Constant.download,
-                                      onTap: () {
-                                        downloadcurrentBulletin(
-                                            currentBulletin: bulletin);
-                                      },
-                                      color: null, // couleur null
-                                    ),
-                                    if (hasPermission(
-                                      role: widget.role,
-                                      permission:
-                                          PermissionAlias.updateBulletin.label,
-                                    ))
-                                    (
-                                      label: Constant.edit,
-                                      onTap: () {
-                                        onEditBulletin(
-                                          bulletin: bulletin,
-                                        );
-                                      },
-                                      color: null, // couleur null
-                                    ),
+                                    // (
+                                    //   label: Constant.download,
+                                    //   onTap: () {
+                                    //     downloadcurrentBulletin(
+                                    //         currentBulletin: bulletin);
+                                    //   },
+                                    //   color: null, // couleur null
+                                    // ),
+                                    
                                   ],
                                 )
                               ],

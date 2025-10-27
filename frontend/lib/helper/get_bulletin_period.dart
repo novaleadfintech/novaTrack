@@ -1,5 +1,4 @@
 import '../model/bulletin_paie/rubrique.dart';
-import '../model/bulletin_paie/salarie_model.dart';
 import '../model/bulletin_paie/type_rubrique.dart';
 
 import '../model/bulletin_paie/nature_rubrique.dart';

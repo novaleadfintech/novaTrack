@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/model/bulletin_paie/salarie_model.dart';
 import 'package:frontend/service/salarie_service.dart';
-import '../../../../helper/get_bulletin_period.dart';
 import '../../../../model/entreprise/banque.dart';
 import '../../../../model/moyen_paiement_model.dart';
 import '../../../../model/personnel/enum_personnel.dart';

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/helper/get_bulletin_period.dart';
 import 'package:frontend/model/bulletin_paie/salarie_model.dart';
 import 'package:frontend/model/habilitation/user_model.dart';
 import 'package:frontend/model/moyen_paiement_model.dart';

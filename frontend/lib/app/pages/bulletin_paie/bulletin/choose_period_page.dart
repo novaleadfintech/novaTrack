@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/app/integration/popop_status.dart';
 import 'package:frontend/app/integration/request_frot_behavior.dart';
 import 'package:frontend/app/pages/no_data_page.dart';
 import 'package:frontend/model/bulletin_paie/calendar_model.dart';
+import 'package:frontend/model/request_response.dart';
 import 'package:frontend/service/bulletin_service.dart';
 import 'package:frontend/service/pay_calendar_service.dart';
 import 'package:frontend/widget/app_tile_clickable.dart';
@@ -9,7 +11,8 @@ import 'package:frontend/widget/confirmation_dialog_box.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 
 class ChoosePeriodPage extends StatefulWidget {
-  const ChoosePeriodPage({super.key});
+  final VoidCallback refresh;
+  const ChoosePeriodPage({super.key, required this.refresh});
 
   @override
   State<ChoosePeriodPage> createState() => _ChoosePeriodPageState();
@@ -84,28 +87,42 @@ class _ChoosePeriodPageState extends State<ChoosePeriodPage> {
     bool confirmed = await handleOperationButtonPress(
       context,
       content:
-          "Vous êtes sur le point de préparer le bulletin pour la période du ${payCalendar.libelle}",
+          "Vous êtes sur le point de générer le bulletin pour la période du ${payCalendar.libelle}",
     );
     if (confirmed) {
       _dialog.show(
-        message: 'Edition du bulletin en cours',
+        message: 'Génération des bulletins en cours',
         type: SimpleFontelicoProgressDialogType.bullets,
         backgroundColor: Theme.of(context).colorScheme.surface,
         indicatorColor: Theme.of(context).colorScheme.primary,
         width: 250,
       );
       try {
-        await BulletinService.generateBulletinsForPeriod(
+        RequestResponse response =
+            await BulletinService.generateBulletinsForPeriod(
           dateDebut: payCalendar.dateDebut,
           dateFin: payCalendar.dateFin,
         );
-        // Future.delayed(Duration(seconds: 5), () async {
         _dialog.hide();
-        // });
+        if (response.status == PopupStatus.success) {
+          MutationRequestContextualBehavior.closePopup();
+          MutationRequestContextualBehavior.showPopup(
+            customMessage: "Bulletin généré avec succès",
+            status: PopupStatus.success,
+          );
+          widget.refresh();
+        } else {
+          MutationRequestContextualBehavior.showPopup(
+            customMessage: response.message,
+            status: response.status,
+          );
+        }
       } catch (e) {
         _dialog.hide();
-        MutationRequestContextualBehavior.showCustomInformationPopUp(
-            message: e.toString());
+        MutationRequestContextualBehavior.showPopup(
+          customMessage: e.toString(),
+          status: PopupStatus.customError,
+        );
       }
     }
   }

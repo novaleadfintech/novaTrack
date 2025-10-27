@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:frontend/app/integration/popop_status.dart';
 import 'package:frontend/app/integration/request_frot_behavior.dart';
 import 'package:frontend/app/pages/bulletin_paie/detail_bulletin.dart';
+import 'package:frontend/helper/date_helper.dart';
 import 'package:frontend/model/bulletin_paie/bulletin_model.dart';
 import 'package:frontend/model/bulletin_paie/validate_bulletin_model.dart';
 import 'package:frontend/model/entreprise/banque.dart';
 import 'package:frontend/model/habilitation/user_model.dart';
 import 'package:frontend/service/banque_service.dart';
 import 'package:frontend/service/bulletin_service.dart';
+import 'package:frontend/widget/date_text_field.dart';
 import 'package:gap/gap.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 import '../../../../auth/authentification_token.dart';
@@ -37,7 +39,7 @@ class _ValidateCurrentBulletintPageState
   late SimpleFontelicoProgressDialog _dialog;
   UserModel? user;
   EtatBulletin? etatBulletin;
-  // final TextEditingController _datePayementController = TextEditingController();
+  final TextEditingController _datePayementController = TextEditingController();
   final TextEditingController _commentaireController = TextEditingController();
   DateTime? datePayement;
   Future<List<BanqueModel>> fetchItems() async {
@@ -102,18 +104,18 @@ class _ValidateCurrentBulletintPageState
             ],
           ),
         ),
-        // if (etatBulletin == EtatBulletin.valid)
-        //   DateField(
-        //     firstDate: widget.currentBulletin.dateEdition,
-        //   onCompleteDate: (value) {
-        //     setState(() {
-        //       datePayement = value!;
-        //       _datePayementController.text = getStringDate(time: value);
-        //     });
-        //   },
-        //     label: "Date probable de paiement",
-        //   dateController: _datePayementController,
-        //   ), 
+        if (etatBulletin == EtatBulletin.valid)
+          DateField(
+            firstDate: widget.currentBulletin.dateEdition,
+            onCompleteDate: (value) {
+              setState(() {
+                datePayement = value!;
+                _datePayementController.text = getStringDate(time: value);
+              });
+            },
+            label: "Date probable de paiement",
+            dateController: _datePayementController,
+          ), 
         const Gap(16),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),

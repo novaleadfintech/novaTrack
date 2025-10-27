@@ -261,10 +261,11 @@ class RubriqueCategorieConfService {
 
 static Future<List<RubriqueOnBulletinModel>>
       getRubriqueBulletinByCategoriePaieVariablePaie(
-          {required CategoriePaieModel categorie}) async {
+          {required CategoriePaieModel categorie,
+          required String salarieId}) async {
     var body = '''
     query RubriqueBulletinByCategoriePaieVariablePaie {
-    rubriqueBulletinByCategoriePaieVariablePaie(categoriePaieId: "${categorie.id}") {
+    rubriqueBulletinByCategoriePaieVariablePaie(categoriePaieId: "${categorie.id}", salarieId: "$salarieId") {
     value
          rubrique{
            _id

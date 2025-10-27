@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:frontend/app/pages/bulletin_paie/bulletin/preparation_bulletin.dart';
-import 'package:frontend/app/pages/configure_page_dialog.dart';
+import 'package:frontend/app/pages/app_dialog_box.dart';
+import 'package:frontend/app/pages/bulletin_paie/bulletin/choose_period_page.dart';
 import 'package:frontend/model/habilitation/role_model.dart';
 import 'package:frontend/service/bulletin_service.dart';
+import 'package:frontend/widget/add_element_button.dart';
 import 'package:gap/gap.dart';
-import '../../../../auth/authentification_token.dart';
 import '../../../../global/global_value.dart';
-import '../../../../helper/assets/asset_icon.dart';
 import '../../../../helper/paginate_data.dart';
 import '../../../../model/bulletin_paie/bulletin_model.dart';
-import '../../../../widget/app_action_button.dart';
 import '../../../../widget/pagination.dart';
 import '../../../../widget/research_bar.dart';
 import '../../error_page.dart';
@@ -18,7 +15,9 @@ import '../../no_data_page.dart';
 import 'current_bulletin_table.dart';
 
 class BulletinPage extends StatefulWidget {
-  const BulletinPage({super.key});
+  final RoleModel role;
+
+  const BulletinPage({super.key, required this.role});
 
   @override
   State<BulletinPage> createState() => _ArchiveBulletinState();
@@ -32,15 +31,15 @@ class _ArchiveBulletinState extends State<BulletinPage> {
   @override
   void initState() {
     super.initState();
-    getRole();
+    role = widget.role;
   }
 
-  Future<void> getRole() async {
-    role = await AuthService().getRole();
-    setState(() {});
-  }
+  // Future<void> getRole() async {
+  //   role = await AuthService().getRole();
+  //   setState(() {});
+  // }
 
-  Future<List<BulletinPaieModel>> _loadServiceData() async {
+  Future<List<BulletinPaieModel>> _loadBulletinData() async {
     try {
       return await BulletinService.getCurrentBulletins();
     } catch (error) {
@@ -66,25 +65,31 @@ class _ArchiveBulletinState extends State<BulletinPage> {
               hintText: "Rechercher par nom",
               controller: _researchController,
             ),
-            AppActionButton(
-              onPressed: () {
-                onEditBulletin();
-              },
-              child: SvgPicture.asset(
-                AssetsIcons.validInvoice,
-                height: 20,
-                colorFilter: ColorFilter.mode(
-                  Theme.of(context).colorScheme.onPrimary,
-                  BlendMode.srcIn,
-                ),
-              ),
+            AddElementButton(
+              addElement: onEditBulletin,
+              icon: Icons.list,
+              // isSmall: true,
+              label: "Générer les bulletins",
             ),
+            // AppActionButton(
+            //   onPressed: () {
+            //     onEditBulletin();
+            //   },
+            //   child: Row(children:[SvgPicture.asset(
+            //     AssetsIcons.validInvoice,
+            //     height: 20,
+            //     colorFilter: ColorFilter.mode(
+            //       Theme.of(context).colorScheme.onPrimary,
+            //       BlendMode.srcIn,
+            //     ),
+            //   ), Text("Générer les bulletins")])
+            // ),
           ],
         ),
         const Gap(4),
         Expanded(
           child: FutureBuilder<List<BulletinPaieModel>>(
-            future: _loadServiceData(),
+            future: _loadBulletinData(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
@@ -144,10 +149,17 @@ class _ArchiveBulletinState extends State<BulletinPage> {
   }
 
   void onEditBulletin() {
-    showResponsiveConfigPageDialogBox(
+    // showResponsiveConfigPageDialogBox(
+    //   context,
+    //   content: PreparationBulletinPage(),
+    //   title: "Préparation des bulletin",
+    // );
+    showResponsiveDialog(
       context,
-      content: PreparationBulletinPage(),
-      title: "Préparation des bulletin",
+      content: ChoosePeriodPage(
+        refresh: _loadBulletinData,
+      ),
+      title: "Choisir la période de paie",
     );
   }
 }
