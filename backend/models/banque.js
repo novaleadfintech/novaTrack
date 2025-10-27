@@ -99,9 +99,9 @@ class Banque {
       });
     }
     let filePath = null;
-    console.log("logo", logo);
+    // console.log("logo", logo);
     if (logo && logo.file) {
-      console.log("logo file", logo.file);
+      // console.log("logo file", logo.file);
       const { file } = await logo;
       const { filename, createReadStream, mimetype } = file;
       if (filename) {

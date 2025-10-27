@@ -26,7 +26,7 @@ class RubriqueCategorie {
       const rubriqueCategorieEdges = await rubriqueCategorieCollection.edges(
         categoriePaieId
       );
-      const rubriqueConfiforCategorie = rubriqueCategorieEdges.edges;
+       const rubriqueConfiforCategorie = rubriqueCategorieEdges.edges;
 
       // Attendre la récupération des rubriques
       const result = await Promise.all(
@@ -50,8 +50,64 @@ class RubriqueCategorie {
       });
       return result;
     } catch (e) {
-      console.error(e);
+      console.log(e);
       throw new Error("Erreur lors de la récupération des données");
+    }
+  };
+
+  getRubriqueBulletinByCategoriePaieVariablePaie = async ({
+    categoriePaieId,
+  }) => {
+    try {
+      const rubriqueCategorieEdges = await rubriqueCategorieCollection.edges(
+        categoriePaieId
+      );
+      const rubriqueConfiforCategorie = rubriqueCategorieEdges.edges;
+
+      const excludedIdentities = [
+        "anciennete",
+        "avanceSurSalaire",
+        "primeExceptionnelle",
+        "nombrePersonneCharge",
+        "netPayer",
+      ];
+
+      const result = await Promise.all(
+        rubriqueConfiforCategorie.map(async (rubriqueCategorie) => {
+          const rubrique = await rubriqueBulletin.getRubriqueBulletin({
+            key: rubriqueCategorie._from,
+          });
+
+          // Vérifie si la rubrique doit être incluse
+          if (
+            (rubrique?.value === null || rubrique?.value === undefined) &&
+            !excludedIdentities.includes(rubrique?.rubriqueIdentity)
+          ) {
+            return {
+              ...rubriqueCategorie,
+              rubrique,
+            };
+          }
+
+          // Sinon on ignore cette rubrique
+          return null;
+        })
+      );
+
+      // Filtrer les nulls
+      const filteredResult = result.filter((r) => r !== null);
+
+      // Trier par timestamp croissant
+      filteredResult.sort((a, b) => {
+        const tA = a.rubrique?.timeStamp ?? 0;
+        const tB = b.rubrique?.timeStamp ?? 0;
+        return tA - tB;
+      });
+
+      return filteredResult;
+    } catch (e) {
+      console.error(e);
+      throw new Error("Erreur lors de la récupération des rubriques filtrées");
     }
   };
 

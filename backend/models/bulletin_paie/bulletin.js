@@ -8,10 +8,14 @@ import FluxFinancier, {
 import Salarie from "./salarie.js";
 import RubriqueBulletin from "./rubrique_bulletin.js";
 import User from "../habilitation/user.js";
+import ValeurRubriqueTemporaire from "./valeur_rubrique_temporaire.js";
+import RubriqueCategorieConf from "./rubrique_categorie.js";
 
 const FluxFinancierModel = new FluxFinancier();
+const RubriqueCategorieConfModel = new RubriqueCategorieConf();
 const SalarieModel = new Salarie();
 const BanqueModel = new Banque();
+const ValeurRubriqueTemporaireModel = new ValeurRubriqueTemporaire();
 const RubriqueBulletinModel = new RubriqueBulletin();
 const bulletinCollection = db.collection("bulletins");
 const decouverteCollection = db.collection("decouvertes");
@@ -34,6 +38,40 @@ const RubriqueIdentity = {
   nombrePersonneCharge: "nombrePersonneCharge",
   netPayer: "netPayer",
   avanceSurSalaire: "avanceSurSalaire",
+};
+
+const BaseType = {
+  rubrique: "rubrique",
+  valeur: "valeur",
+};
+
+const Operateur = {
+  addition: "addition",
+  soustraction: "soustraction",
+  multiplication: "multiplication",
+  division: "division",
+};
+
+const TypeRubrique = {
+  gain: "gain",
+  retenue: "retenue",
+};
+
+const PorteeRubrique = {
+  individuel: "individuel",
+  commun: "commun",
+};
+
+const TrancheValueType = {
+  valeur: "valeur",
+  taux: "taux",
+};
+const NatureRubrique = {
+  constant: "constant",
+  taux: "taux",
+  calcul: "calcul",
+  sommeRubrique: "sommeRubrique",
+  bareme: "bareme",
 };
 
 class BulletinPaie {
@@ -169,8 +207,10 @@ class BulletinPaie {
       dateDebut: dateDebut,
       dateFin: dateFin,
     });
+
     const readySalaries = [];
-     for (const salarie of salaires) { 
+
+    for (const salarie of salaires) {
       if (
         await this.verifySingleFutureBulletin({
           dateDebut: dateDebut,
@@ -182,6 +222,59 @@ class BulletinPaie {
       }
     }
     return readySalaries;
+  }
+
+  async generateBulletinsForPeriod({ dateDebut, dateFin }) {
+    // 1. Récupérer les salariés prêts
+    const readySalaries = await this.getReadyBulletins({
+      dateDebut,
+      dateFin,
+    });
+
+    const results = [];
+
+    for (const salarie of readySalaries) {
+      try {
+        // 2. Récupérer les rubriques de base (avec valeurs collectives) configurer pour une catégorie
+        const rubriquesBase =
+          await RubriqueCategorieConfModel.getRubriqueBulletinByCategoriePaie({
+            categoriePaieId: salarie.categoriePaie._id,
+          });
+
+        // console.log(rubriquesBase);
+        // 3. Récupérer les valeurs temporaires saisies
+        const valeursTemp = await ValeurRubriqueTemporaireModel.getBySalarieId({
+          salarieId: salarie._id,
+        });
+        console.log("-------------------------------------------");
+
+        // 4. Fusionner : remplacer les null par les valeurs saisies
+        const rubriques = rubriquesBase.map((rubrique) => {
+          // Chercher si une valeur temporaire existe pour cette rubrique
+          const valeurTemp = valeursTemp?.rubriques?.find(
+            (r) => r.rubriqueId === rubrique.rubrique._id
+          );
+          return {
+            rubriqueId: rubrique.rubrique._id,
+            value: valeurTemp?.value ?? rubrique.value ?? 0,
+          };
+        });
+        // 5. Créer le bulletin
+        await this.createBulletin({
+          // moyenPayement,
+          debutPeriodePaie: dateDebut,
+          finPeriodePaie: dateFin,
+          dateEdition: Date.now(),
+          salarieId: salarie._id,
+          rubriques: rubriques,
+        });
+      } catch (error) {
+        console.error(error);
+        throw new Error(error);
+      }
+    }
+
+    return "OK";
   }
 
   async verifySingleFutureBulletin({ dateDebut, dateFin, salarieId }) {
@@ -196,7 +289,7 @@ class BulletinPaie {
         LIMIT 1
         RETURN b
     `);
-       return !query.hasNext;
+      return !query.hasNext;
     } catch (error) {
       console.error("Erreur lors de la vérification du duplicata :", error);
       throw new Error("Erreur interne lors de la vérification du bulletin.");
@@ -299,7 +392,6 @@ class BulletinPaie {
         LIMIT 1
         RETURN bulletin`
       );
-      console.log(query);
       if (query.hasNext) {
         const bulletin = await query.next();
         const rubriquesPromises = bulletin.rubriques.map(async (rubrique) => {
@@ -412,30 +504,19 @@ class BulletinPaie {
   }
 
   async createBulletin({
-    moyenPayement,
     debutPeriodePaie,
     finPeriodePaie,
-    referencePaie,
     dateEdition,
-    banqueId,
     salarieId,
     rubriques,
   }) {
     isValidValue({
-      value: [
-        banqueId,
-        moyenPayement,
-        debutPeriodePaie,
-        finPeriodePaie,
-        referencePaie,
-        dateEdition,
-        salarieId,
-      ],
+      value: [debutPeriodePaie, finPeriodePaie, dateEdition, salarieId],
     });
 
     isValidValue({ value: rubriques });
 
-    // Vérification de chevauchement d’une période de paie
+    // Vérification de chevauchement d'une période de paie
     const existingBulletin = await db.query(aql`
     FOR bulletin IN ${bulletinCollection}
     FILTER bulletin.salarie._id == ${salarieId}
@@ -444,7 +525,7 @@ class BulletinPaie {
     OR bulletin.debutPeriodePaie > ${finPeriodePaie})
     LIMIT 1
     RETURN bulletin
-`);
+  `);
 
     if (existingBulletin.hasNext) {
       throw new Error(
@@ -452,41 +533,18 @@ class BulletinPaie {
       );
     }
 
-    // Vérification de l’unicité de la référence de paie (si fournie)
-    if (referencePaie != null) {
-      const existingReferenceBulletin = await db.query(aql`
-    FOR bulletin IN ${bulletinCollection}
-    FILTER bulletin.referencePaie == ${referencePaie}
-    LIMIT 1
-    RETURN bulletin
-  `);
-
-      if (existingReferenceBulletin.hasNext) {
-        throw new Error(
-          `Un bulletin existe déjà avec cette référence de paie.`
-        );
-      }
-    }
-
     const salarie = await SalarieModel.getSalarie({ key: salarieId });
-    const banque = await BanqueModel.getBanque({ key: banqueId });
-    const { logo, ...otherdata } = banque;
-    if (logo != null) {
-      otherdata.logo = logo.replace(
-        process.env.FILE_PREFIX + `${locateBanqueFolder}/`,
-        ""
-      );
-    }
 
     // Étape 1 : Récupérer les découverts impayés ou partiellement payés
     const decouvertesQuery = await db.query(aql`
-  FOR decouvert IN ${decouverteCollection}
-    FILTER decouvert.salarie._id == ${salarieId}
-    AND (decouvert.status != ${DecouverteStatus.paid})
-    RETURN decouvert
-`);
+    FOR decouvert IN ${decouverteCollection}
+      FILTER decouvert.salarie._id == ${salarieId}
+      AND (decouvert.status != ${DecouverteStatus.paid})
+      RETURN decouvert
+  `);
 
     const decouvertes = await decouvertesQuery.all();
+
     // Étape 2 : Calculer la somme totale à déduire pour avance sur salaire
     let totalAvance = 0;
 
@@ -497,41 +555,38 @@ class BulletinPaie {
       }
     }
 
-    // Étape 3 : Ajouter ou mettre à jour la rubrique "avanceSurSalaire"
-
+    // Étape 3 : Charger les données complètes des rubriques
     for (let i = 0; i < rubriques.length; i++) {
+      // console.log(rubriques[i]);
       const rubriqueData = await RubriqueBulletinModel.getRubriqueBulletin({
         key: rubriques[i].rubriqueId,
       });
       rubriques[i].rubrique = rubriqueData;
     }
+
+    // Étape 4 : Ajouter ou mettre à jour la rubrique "avanceSurSalaire"
     const indexRubriqueAvance = rubriques.findIndex(
       (r) => r.rubrique?.rubriqueIdentity === RubriqueIdentity.avanceSurSalaire
     );
+
     if (indexRubriqueAvance !== -1) {
       rubriques[indexRubriqueAvance].value = totalAvance;
     }
-    // else {
-    //   rubriques.push({
-    //     rubrique: {
-    //       constant: {
-    //         identity: "avanceSurSalaire",
-    //       },
-    //     },
-    //     valeur: totalAvance,
-    //   });
-    // }
 
+    // ✨ ÉTAPE 5 : CALCULER TOUTES LES RUBRIQUES AVEC DÉPENDANCES
+    console.log("Début du calcul des rubriques...");
+    const rubriquesCalculees =
+      this.calculateRubriquesWithDependencies(rubriques);
+    console.log("Calcul des rubriques terminé");
+
+    // Étape 6 : Créer le bulletin avec les rubriques calculées
     const bulletin = {
       salarie: salarie,
       dateEdition: dateEdition,
       etat: EtatBulletin.wait,
-      banque: otherdata,
       debutPeriodePaie: debutPeriodePaie,
       finPeriodePaie: finPeriodePaie,
-      referencePaie: referencePaie,
-      moyenPayement: moyenPayement,
-      rubriques: rubriques,
+      rubriques: rubriquesCalculees,
       timeStamp: Date.now(),
     };
 
@@ -545,13 +600,284 @@ class BulletinPaie {
       });
 
       await session.commit();
+
+      console.log(`Bulletin créé avec succès pour le salarié ${salarieId}`);
       return "OK";
     } catch (error) {
-      console.error(error);
-
+      console.error("Erreur lors de la création du bulletin:", error);
       await session.abort();
-      throw new Error(`Erreur lors de la création du bulletin`);
+      throw new Error(
+        `Erreur lors de la création du bulletin: ${error.message}`
+      );
     }
+  }
+
+  /**
+   * Calcule le montant d'une rubrique selon sa nature
+   * @param {Object} params
+   * @param {Object} params.rubriqueOnBulletin - La rubrique à calculer
+   * @param {Array} params.toutesLesRubriquesSurBulletin - Toutes les rubriques du bulletin
+   * @returns {number} Le montant calculé
+   */
+  calculerMontantRubrique({
+    rubriqueOnBulletin,
+    toutesLesRubriquesSurBulletin,
+  }) {
+    const rubrique = rubriqueOnBulletin.rubrique;
+
+    switch (rubrique.nature) {
+      case NatureRubrique.constant:
+        return rubriqueOnBulletin.value ?? 0;
+
+      case NatureRubrique.taux: {
+        const taux = rubrique.taux.taux;
+
+        const baseRubrique = toutesLesRubriquesSurBulletin.find(
+          (el) => el.rubrique.code === rubrique.taux.base.code
+        ) || { rubrique: rubrique.taux.base, value: 0 };
+
+        const base = baseRubrique.value ?? 0;
+        return (taux * base) / 100;
+      }
+
+      case NatureRubrique.calcul: {
+        const op = rubrique.calcul.operateur;
+        const rubriquesCible = rubrique.calcul.elements;
+
+        const valeurs = rubriquesCible.map((element) => {
+          if (element.type === BaseType.rubrique) {
+            const r = toutesLesRubriquesSurBulletin.find(
+              (toElement) => toElement.rubrique.code === element.rubrique.code
+            ) || { rubrique: element.rubrique, value: 0 };
+            return r.value;
+          } else if (element.type === BaseType.valeur) {
+            return element.valeur;
+          }
+          return 0;
+        });
+
+        if (valeurs.length === 0) return 0;
+
+        let result = valeurs[0];
+
+        switch (op) {
+          case Operateur.addition:
+            result += valeurs[1];
+            break;
+          case Operateur.soustraction:
+            result -= valeurs[1];
+            break;
+          case Operateur.multiplication:
+            result *= valeurs[1];
+            break;
+          case Operateur.division:
+            result /= valeurs[1] === 0 ? 1 : valeurs[1];
+            break;
+        }
+
+        return result;
+      }
+
+      case NatureRubrique.sommeRubrique: {
+        const rubriquesCible = rubrique.sommeRubrique.elements;
+
+        const valeurs = rubriquesCible.map((element) => {
+          if (element.type === BaseType.rubrique) {
+            const match = toutesLesRubriquesSurBulletin.find(
+              (toElement) => toElement.rubrique.code === element.rubrique.code
+            ) || { rubrique: element.rubrique, value: 0 };
+            return match.value;
+          } else if (element.type === BaseType.valeur) {
+            return element.valeur ?? 0;
+          }
+          return 0;
+        });
+
+        if (valeurs.length === 0) return 0;
+
+        const result = valeurs.reduce((a, b) => a + (b ?? 0), 0);
+        return result;
+      }
+
+      case NatureRubrique.bareme: {
+        const bareme = rubriqueOnBulletin.rubrique.bareme;
+
+        const reference = toutesLesRubriquesSurBulletin.find(
+          (el) => el.rubrique.code === bareme.reference.code
+        ) || {
+          rubrique: {
+            id: "id",
+            rubrique: "rubrique",
+            code: "code",
+            type: TypeRubrique.gain,
+            nature: NatureRubrique.constant,
+            portee: null,
+          },
+          value: 0,
+        };
+
+        const referenceValue =
+          rubriqueOnBulletin.rubrique.rubriqueIdentity ===
+          RubriqueIdentity.anciennete
+            ? calculerAncienneteEnAnnees(reference.value)
+            : reference.value;
+
+        const tranche = bareme.tranches.find((tr) => {
+          return (
+            referenceValue >= tr.min &&
+            (tr.max === null || referenceValue <= tr.max)
+          );
+        }) || {
+          min: 0,
+          max: 0,
+          value: {
+            type: TrancheValueType.valeur,
+            valeur: 0,
+          },
+        };
+
+        if (tranche.value.type === TrancheValueType.valeur) {
+          return tranche.value.valeur;
+        } else if (tranche.value.type === TrancheValueType.taux) {
+          const taux = tranche.value.taux.taux;
+
+          const baseRubrique = toutesLesRubriquesSurBulletin.find(
+            (el) => el.rubrique.code === tranche.value.taux.base.code
+          ) || { rubrique: rubrique.taux.base, value: 0 };
+
+          const base = baseRubrique.value ?? 0;
+          return (taux * base) / 100;
+        }
+
+        return 0;
+      }
+
+      default:
+        return 0;
+    }
+  }
+
+  /**
+   * Trouve les dépendances directes d'une rubrique
+   * @param {Object} rubrique - La rubrique à analyser
+   * @param {Array} allRubriques - Toutes les rubriques
+   * @returns {Set<string>} Ensemble des codes de rubriques dépendantes
+   */
+  findDependencies(rubrique, allRubriques) {
+    const dependencies = new Set();
+
+    switch (rubrique.rubrique.nature) {
+      case NatureRubrique.taux:
+        if (rubrique.rubrique.taux?.base) {
+          dependencies.add(rubrique.rubrique.taux.base.code);
+        }
+        break;
+
+      case NatureRubrique.calcul:
+        for (const element of rubrique.rubrique.calcul?.elements || []) {
+          if (element.type === BaseType.rubrique) {
+            dependencies.add(element.rubrique.code);
+          }
+        }
+        break;
+
+      case NatureRubrique.sommeRubrique:
+        for (const element of rubrique.rubrique.sommeRubrique?.elements || []) {
+          if (element.type === BaseType.rubrique) {
+            dependencies.add(element.rubrique.code);
+          }
+        }
+        break;
+
+      case NatureRubrique.bareme:
+        if (rubrique.rubrique.bareme?.reference) {
+          dependencies.add(rubrique.rubrique.bareme.reference.code);
+        }
+        break;
+
+      case NatureRubrique.constant:
+        // Pas de dépendances
+        break;
+    }
+
+    return dependencies;
+  }
+
+  /**
+   * Tri topologique pour résoudre l'ordre de calcul
+   * @param {Map<string, Set<string>>} dependencyMap - Graphe des dépendances
+   * @param {Array} rubriques - Liste des rubriques
+   * @returns {Array} Rubriques triées dans l'ordre de calcul
+   */
+  topologicalSort(dependencyMap, rubriques) {
+    const visited = new Set();
+    const result = [];
+
+    function dfs(rubrique) {
+      const code = rubrique.rubrique.code;
+
+      if (visited.has(code)) return;
+
+      // Traiter d'abord les dépendances
+      const dependencies = dependencyMap[code] || new Set();
+
+      for (const dependency of dependencies) {
+        const depRubrique = rubriques.find(
+          (r) => r.rubrique.code === dependency
+        );
+
+        if (!depRubrique) {
+          throw new Error(`Dépendance manquante: ${dependency}`);
+        }
+
+        if (!visited.has(dependency)) {
+          dfs(depRubrique);
+        }
+      }
+
+      // Marquer comme visité et ajouter au résultat
+      visited.add(code);
+      result.push(rubrique);
+    }
+
+    // Traiter chaque rubrique non visitée
+    for (const rubrique of rubriques) {
+      if (!visited.has(rubrique.rubrique.code)) {
+        dfs(rubrique);
+      }
+    }
+
+    return result;
+  }
+  /**
+   * Calcule toutes les rubriques dans le bon ordre de dépendances
+   * @param {Array} rubriques - Liste des rubriques à calculer
+   * @returns {Array} Rubriques avec valeurs calculées
+   */
+  calculateRubriquesWithDependencies(rubriques) {
+    console.log(rubriques);
+    // Créer le graphe des dépendances
+    const dependencyMap = new Map();
+
+    for (const rubrique of rubriques) {
+      dependencyMap.set(
+        rubrique.rubrique.code,
+        this.findDependencies(rubrique, rubriques)
+      );
+    }
+
+    // Tri topologique pour obtenir l'ordre de calcul
+    const orderedRubriques = this.topologicalSort(dependencyMap, rubriques);
+
+    // Calculer les valeurs dans l'ordre
+    for (const rubrique of orderedRubriques) {
+      rubrique.value = this.calculerMontantRubrique({
+        rubriqueOnBulletin: rubrique,
+        toutesLesRubriquesSurBulletin: rubriques,
+      });
+    }
+    console.log(rubriques);
+    return rubriques;
   }
 
   async updateBulletin({

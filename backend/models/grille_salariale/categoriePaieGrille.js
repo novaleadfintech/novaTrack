@@ -58,9 +58,7 @@ class CategoriePaieGrille {
   }
 
   async createCategoriePaieGrille({ libelle, classes }) {
-    console.log(classes);
-    console.log(libelle);
-    // Validation des données
+     // Validation des données
     isValidValue({ value: libelle });
     isValidValue({ value: classes });
 
@@ -71,8 +69,7 @@ class CategoriePaieGrille {
       LIMIT 1
       RETURN categorie
     `);
-    console.log(existingCategorie);
-    if (existingCategorie.hasNext) {
+     if (existingCategorie.hasNext) {
       throw new Error(`Une catégorie de paie avec ce nom existe déjà.`);
     }
 

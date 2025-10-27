@@ -9,7 +9,7 @@ type ValeurRubriqueTemporaire {
 input ValeurRubriqueTemporaireInput {
   id: Int
   salarieId: ID!
-  rubriques: [RubriqueOnBulletinInput!]!
+  rubriques: [RubriqueBulletinInput!]!
 }
 
 `;
@@ -18,8 +18,8 @@ const query = `#graphql
 `;
 
 const mutation = `#graphql
-    createValeurRubriqueTemporaire(input: ValeurRubriqueTemporaireInput!): ValeurRubriqueTemporaire!
-    updateValeurRubriqueTemporaire(id: ID!, input: ValeurRubriqueTemporaireInput!): ValeurRubriqueTemporaire!
+    createValeurRubriqueTemporaire(salarieId: ID!, rubriques: [RubriqueBulletinInput!]!): String!
+    updateValeurRubriqueTemporaire(id: ID!, input: ValeurRubriqueTemporaireInput!): String!
     deleteValeurRubriqueTemporaire(id: ID!): Boolean!
 `;
 

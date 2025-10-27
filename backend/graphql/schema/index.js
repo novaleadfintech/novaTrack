@@ -38,6 +38,7 @@ import classeSchema from "./classe_schema.js";
 import echelonSchema from "./echelon_schema.js";
 import grilleSalarialeSchema from "./grille_salariale_schema.js";
 import payCalendarSchema from "./pay_calender_schema.js";
+import variablesPaieSchema from "./valeur_rubrique_temporaire_schema.js";
 
 const types = [];
 const queries = [];
@@ -83,6 +84,7 @@ const schemas = [
   echelonSchema,
   grilleSalarialeSchema,
   payCalendarSchema,
+  variablesPaieSchema,
 ];
 
 schemas.forEach((schema) => {

@@ -1,6 +1,7 @@
-import { db, aql } from "../../config/database.js";
+import { aql } from "arangojs";
+import db from "../../db/database_connection.js";
 
-const collection = db.collection("variablePaie");
+const variablePaieCollection = db.collection("variablePaies");
 
 class valeurRubriqueTemporaire {
   constructor() {
@@ -8,14 +9,14 @@ class valeurRubriqueTemporaire {
   }
 
   async initializeCollections() {
-    if (!(await salarieCollection.exists())) {
-      salarieCollection.create();
+    if (!(await variablePaieCollection.exists())) {
+      variablePaieCollection.create();
     }
   }
 
   async getAll() {
     const cursor = await db.query(aql`
-      FOR v IN ${collection}
+      FOR v IN ${variablePaieCollection}
       SORT v._key DESC
       RETURN v
     `);
@@ -25,9 +26,9 @@ class valeurRubriqueTemporaire {
   /**
    * 🔍 Récupérer les valeurs rubriques d’un salarié
    */
-  async getBySalarieId(salarieId) {
+  async getBySalarieId({ salarieId }) {
     const cursor = await db.query(aql`
-      FOR v IN ${collection}
+      FOR v IN ${variablePaieCollection}
         FILTER v.salarieId == ${salarieId}
         RETURN v
     `);
@@ -41,7 +42,7 @@ class valeurRubriqueTemporaire {
   async existsForSalarie(salarieId) {
     const cursor = await db.query(aql`
       RETURN LENGTH(
-        FOR v IN ${collection}
+        FOR v IN ${variablePaieCollection}
           FILTER v.salarieId == ${salarieId}
           RETURN 1
       ) > 0
@@ -53,7 +54,7 @@ class valeurRubriqueTemporaire {
   /**
    * ➕ Créer une valeur rubrique temporaire
    */
-  async create({ salarieId, rubriques }) {
+  async createVariablesPaies({ salarieId, rubriques }) {
     // Vérifie si déjà existant pour éviter doublon
     const exists = await this.existsForSalarie(salarieId);
     if (exists) {
@@ -68,8 +69,8 @@ class valeurRubriqueTemporaire {
       createdAt: Date.now(),
     };
 
-    const meta = await collection.save(doc);
-    return { ...doc, _id: meta._id, _key: meta._key };
+    await variablePaieCollection.save(doc);
+    return "OK";
   }
 
   async updateBySalarieId(salarieId, rubriques) {

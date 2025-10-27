@@ -19,6 +19,10 @@ const RubriqueRole = {
   variable: "variable",
 };
 
+const RubriqueIdentity = {
+  primeExceptionnelle: "primeExceptionnelle",
+};
+
 const BaseType = {
   valeur: "valeur",
   rubrique: "rubrique",
@@ -49,8 +53,9 @@ class RubriqueBulletin {
       const query = await db.query(
         aql`
           FOR rubriqueBulletin IN ${rubriqueBulletinCollection}
+          FILTER rubriqueBulletin.rubriqueIdentity != ${RubriqueIdentity.primeExceptionnelle} 
           SORT rubriqueBulletin.timeStamp ASC
-        ${limit}
+          ${limit}
           RETURN rubriqueBulletin
         `
       );
@@ -115,6 +120,7 @@ class RubriqueBulletin {
       throw new Error("Erreur lors de la récupération");
     }
   };
+
   getPrimeExceptionnel = async ({ skip, perPage } = {}) => {
     let limit = aql``;
     if (perPage != undefined && skip != undefined) {
@@ -124,7 +130,7 @@ class RubriqueBulletin {
       const query = await db.query(
         aql`
           FOR rubriqueBulletin IN ${rubriqueBulletinCollection}
-          FILTER 
+          FILTER rubriqueBulletin.rubriqueIdentity == ${RubriqueIdentity.primeExceptionnelle}
           SORT rubriqueBulletin.timeStamp ASC
         ${limit}
           RETURN rubriqueBulletin
@@ -187,7 +193,6 @@ class RubriqueBulletin {
       }
     } catch (err) {
       console.error(err);
-
       throw new Error("Erreur lors de la récupération");
     }
   };

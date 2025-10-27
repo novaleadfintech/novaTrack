@@ -30,6 +30,7 @@ import classeResolvers from "./classe.js";
 import echelonResolvers from "./echelon.js";
 import grilleSalarialeResolvers from "./grille_salariale.js";
 import payCalendarResolvers from "./pay_calendar.js";
+import valeurRubriqueTemporaireResolvers from "./valeur_rubrique_temporaire.js";
 
 const graphQlResolvers = {
   ...serviceResolvers,
@@ -65,6 +66,7 @@ const graphQlResolvers = {
   ...echelonResolvers,
   ...grilleSalarialeResolvers,
   ...payCalendarResolvers,
+  ...valeurRubriqueTemporaireResolvers,
 };
 
 export default graphQlResolvers;

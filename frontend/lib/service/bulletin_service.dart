@@ -22,32 +22,9 @@ class BulletinService {
     currentBulletinsPaie {
         _id
         etat
-        moyenPayement{
-          _id
-          libelle
-        }
-        datePayement
         debutPeriodePaie
         finPeriodePaie
-        referencePaie
         dateEdition
-        banque {
-            _id
-            name
-            codeGuichet
-            codeBanque
-            cleRIB
-            codeBIC
-            numCompte
-            logo
-            soldeTheorique
-            soldeReel
-            country {
-                _id
-                name
-                code
-            }
-        }
         salarie {
             _id
             dateEnregistrement
@@ -62,7 +39,10 @@ class BulletinService {
                 telephone
                 adresse
                 sexe
-                poste{_id, libelle}
+                poste {
+                    _id
+                    libelle
+                }
                 situationMatrimoniale
                 commentaire
                 etat
@@ -115,7 +95,10 @@ class BulletinService {
                     telephone
                     adresse
                     sexe
-                    poste{_id, libelle}
+                    poste {
+                        _id
+                        libelle
+                    }
                     situationMatrimoniale
                     commentaire
                     etat
@@ -226,6 +209,7 @@ class BulletinService {
         }
     }
 }
+
             ''';
     var response = await http
         .post(
@@ -502,222 +486,14 @@ class BulletinService {
     return bulletins;
   }
 
-  static Future<List<BulletinPaieModel>> getReadyBulletins({
+  static Future<List<BulletinPaieModel>> generateBulletinsForPeriod({
     required DateTime dateDebut,
     required DateTime dateFin,
   }) async {
     List<BulletinPaieModel> bulletins = [];
     var body = '''
-    mutation GetReadyBulletins {
-      getReadyBulletins(
-      dateDebut: ${dateDebut.millisecondsSinceEpoch}
-      dateFin: ${dateFin.millisecondsSinceEpoch}
-      ) {
-        _id
-        etat
-        moyenPayement{
-          _id
-          libelle
-        }
-        datePayement
-        debutPeriodePaie
-        finPeriodePaie
-        referencePaie
-        dateEdition
-        banque {
-            _id
-            name
-            codeGuichet
-            codeBanque
-            cleRIB
-            codeBIC
-            numCompte
-            logo
-            soldeTheorique
-            soldeReel
-            country {
-                _id
-                name
-                code
-            }
-        }
-        salarie {
-            _id
-            dateEnregistrement
-            periodPaie
-            paieManner
-            fullCount
-            personnel {
-                _id
-                nom
-                prenom
-                email
-                telephone
-                adresse
-                sexe
-                poste{_id, libelle}
-                situationMatrimoniale
-                commentaire
-                etat
-                dateEnregistrement
-                dateNaissance
-                dateDebut
-                dateFin
-                nombreEnfant
-                nombrePersonneCharge
-                dureeEssai
-                typePersonnel
-                typeContrat
-                fullCount
-                pays {
-                    _id
-                    name
-                    code
-                    tauxTVA
-                    phoneNumber
-                    initiauxPays
-                }
-                personnePrevenir {
-                    nom
-                    lien
-                    telephone1
-                    telephone2
-                }
-            }
-            categoriePaie {
-                _id
-                categoriePaie
-            }
-        }
-        validate {
-            validateStatus
-            date
-            commentaire
-            validater {
-                _id
-                login
-                password
-                canLogin
-                _token
-                dateEnregistrement
-                personnel {
-                    _id
-                    nom
-                    prenom
-                    email
-                    telephone
-                    adresse
-                    sexe
-                    poste{_id, libelle}
-                    situationMatrimoniale
-                    commentaire
-                    etat
-                    dateEnregistrement
-                    dateNaissance
-                    dateDebut
-                    dateFin
-                    nombreEnfant
-                    nombrePersonneCharge
-                    dureeEssai
-                    typePersonnel
-                    typeContrat
-                    fullCount
-                }
-            }
-        }
-        rubriques {
-            value
-            rubrique {
-                _id
-                rubrique
-                code
-                type
-                nature
-                rubriqueRole
-                rubriqueIdentity
-                portee
-                section {
-                    _id
-                    section
-                }
-                calcul {
-                    operateur
-                    elements {
-                        type
-                        valeur
-                        rubrique {
-                            _id
-                            rubrique
-                            code
-                            type
-                            nature
-                            portee
-                            rubriqueIdentity
-                        }
-                    }
-                }
-                sommeRubrique {
-                    operateur
-                    elements {
-                        type
-                        valeur
-                        rubrique {
-                            _id
-                            rubrique
-                            code
-                            type
-                            nature
-                            portee
-                            rubriqueIdentity
-                        }
-                    }
-                }
-                taux {
-                    taux
-                    base {
-                        _id
-                        rubrique
-                        code
-                        type
-                        nature
-                        portee
-                        rubriqueIdentity
-                    }
-                }
-                bareme {
-                    reference {
-                        _id
-                        rubrique
-                        code
-                        type
-                        nature
-                        portee
-                        rubriqueIdentity
-                    }
-                    tranches {
-                        min
-                        max
-                        value {
-                            type
-                            valeur
-                            taux {
-                                taux
-                                base {
-                                    _id
-                                    rubrique
-                                    code
-                                    type
-                                    nature
-                                    portee
-                                    rubriqueIdentity
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+    mutation GenerateBulletinsForPeriod {
+    generateBulletinsForPeriod(dateDebut: ${dateDebut.millisecondsSinceEpoch}, dateFin: ${dateFin.millisecondsSinceEpoch})
 }
             ''';
     var response = await http
@@ -738,7 +514,7 @@ class BulletinService {
     );
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
-      var data = jsonData['data']['getReadyBulletins'];
+      var data = jsonData['data']['generateBulletinsForPeriod'];
 
       if (data != null) {
         for (var bulletin in data) {

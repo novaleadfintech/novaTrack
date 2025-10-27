@@ -1,26 +1,24 @@
-import valeurRubriqueTemporaireService from "../../services/valeur_rubrique_temporaire_service.js";
-
+import ValeurRubriqueTemporaireService from "../../models/bulletin_paie/valeur_rubrique_temporaire.js";
+const valeurRubriqueTemporaireModel = new ValeurRubriqueTemporaireService();
 const valeurRubriqueTemporaireResolvers = {
   valeurRubriqueTemporaireBySalarie: async ({ salarieId }) =>
-    await valeurRubriqueTemporaireService.getBySalarieId(salarieId),
+    await valeurRubriqueTemporaireModel.getBySalarieId(salarieId),
 
-  createValeurRubriqueTemporaire: async ({ salarieId, rubriques }) =>
-    await valeurRubriqueTemporaireService.createValeurRubriqueTemporaire({
+  createValeurRubriqueTemporaire: async ({ salarieId, rubriques }) => {
+     return await valeurRubriqueTemporaireModel.createVariablesPaies({
       salarieId,
       rubriques,
-    }),
+    });
+  },
 
   updateValeurRubriqueTemporaire: async ({ salarieId, rubriques }) =>
-    await valeurRubriqueTemporaireService.updateBySalarieId(
-      salarieId,
-      rubriques
-    ),
+    await valeurRubriqueTemporaireModel.updateBySalarieId(salarieId, rubriques),
 
   deleteValeurRubriqueTemporaire: async ({ salarieId }) =>
-    await valeurRubriqueTemporaireService.deleteBySalarieId(salarieId),
+    await valeurRubriqueTemporaireModel.deleteBySalarieId(salarieId),
 
   valeurTemporaireExists: async ({ salarieId }) =>
-    await valeurRubriqueTemporaireService.existsForSalarie(salarieId),
+    await valeurRubriqueTemporaireModel.existsForSalarie(salarieId),
 };
 
 export default valeurRubriqueTemporaireResolvers;

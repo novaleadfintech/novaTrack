@@ -74,8 +74,7 @@ class Salarie {
                 )?.echelon;
               }
             }
-            console.log(echelon);
-            // const RubriqueModel = new Rubrique();
+             // const RubriqueModel = new Rubrique();
             // const rubrique = await RubriqueModel.getRubriqueBulletin({
             //   key: salarie.rubriqueId,
             // });
@@ -143,11 +142,13 @@ class Salarie {
             const categoriePaie = await CategoriePaieModel.getCategoriePaie({
               key: salarie.categoriePaieId,
             });
-
-            const grilleCategoriePaie =
-              await CategoriePaieGrilleModel.getCategoriePaieGrille({
-                key: salarie.grilleCategoriePaieId,
-              });
+            let grilleCategoriePaie;
+            if (salarie.grilleCategoriePaieId) {
+              grilleCategoriePaie =
+                await CategoriePaieGrilleModel.getCategoriePaieGrille({
+                  key: salarie.grilleCategoriePaieId,
+                });
+            }
 
             let classe = null;
             let echelon = null;

@@ -24,12 +24,12 @@ type ValidateBulletin{
 type BulletinPaie {
     _id: ID!
     etat: EtatBulletin!
-    moyenPayement: MoyenPaiement
+    # moyenPayement: MoyenPaiement
     debutPeriodePaie: Float!
     finPeriodePaie: Float!
-    referencePaie: String
-    banque: Banque!
-    datePayement: Float
+    # referencePaie: String
+    # banque: Banque!
+    # datePayement: Float
     dateEdition: Float!
     salarie: Salarie!
     validate: [ValidateBulletin]
@@ -57,7 +57,7 @@ const mutation = `#graphql
         rubriques: [RubriqueBulletinInput!]!
     ): String!
 
-    getReadyBulletins(dateDebut: Float!, dateFin: Float!): [BulletinPaie]
+    generateBulletinsForPeriod(dateDebut: Float!, dateFin: Float!): String!
     
     updateBulletinPaie(
         key: ID!,

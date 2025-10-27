@@ -95,7 +95,7 @@ class _ChoosePeriodPageState extends State<ChoosePeriodPage> {
         width: 250,
       );
       try {
-        await BulletinService.getReadyBulletins(
+        await BulletinService.generateBulletinsForPeriod(
           dateDebut: payCalendar.dateDebut,
           dateFin: payCalendar.dateFin,
         );

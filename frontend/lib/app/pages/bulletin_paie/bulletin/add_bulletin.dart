@@ -292,6 +292,8 @@ class _AddBulletinState extends State<AddBulletinPage> {
           ],
         ),
       ),
+    
+    
     );
   }
 

@@ -51,8 +51,7 @@ class Debt {
       );
 
       const debts = await query.all();
-      console.log(debts);
-      return Promise.all(
+       return Promise.all(
         debts.map(async (debt) => {
           return {
             ...debt,

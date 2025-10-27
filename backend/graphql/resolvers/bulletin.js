@@ -11,8 +11,8 @@ const bulletinPaieResolvers = {
     });
   },
 
-  getReadyBulletins: async ({ dateDebut, dateFin }) => {
-    return await bulletinPaieModel.getReadyBulletins({
+  generateBulletinsForPeriod: async ({ dateDebut, dateFin }) => {
+    return await bulletinPaieModel.generateBulletinsForPeriod({
       dateDebut: dateDebut,
       dateFin: dateFin,
     });
