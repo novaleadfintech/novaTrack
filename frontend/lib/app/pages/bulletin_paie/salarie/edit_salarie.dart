@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/model/bulletin_paie/categorie_paie.dart';
+import 'package:frontend/model/bulletin_paie/operateur_model.dart';
+import 'package:frontend/model/grille_salariale/classe_model.dart';
+import 'package:frontend/model/grille_salariale/echelon_indice_model.dart';
 import 'package:frontend/model/habilitation/user_model.dart';
 import 'package:frontend/service/categorie_paie_service.dart';
 import 'package:gap/gap.dart';
+import 'package:frontend/model/grille_salariale/categorie_paie.dart';
+import 'package:frontend/model/grille_salariale/echelon_model.dart';
+import 'package:frontend/model/moyen_paiement_model.dart';
+import 'package:frontend/service/grille_categorie_paie_service.dart';
+import 'package:frontend/service/moyen_paiement_service.dart';
+import 'package:frontend/widget/drop_down_text_field.dart';
+import 'package:frontend/widget/simple_text_field.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 import '../../../../auth/authentification_token.dart';
 import '../../../../helper/date_helper.dart';
@@ -12,11 +22,10 @@ import '../../../../model/bulletin_paie/salarie_model.dart';
 import '../../../../model/bulletin_paie/tranche_model.dart';
 import '../../../../model/personnel/personnel_model.dart';
 import '../../../../model/request_response.dart';
+import '../../../../service/operateur_service.dart';
 import '../../../../service/personnel_service.dart';
 import '../../../../service/rubrique_categorie_conf_service.dart';
 import '../../../../service/salarie_service.dart';
-import '../../../../widget/duration_field.dart';
-import '../../../../widget/enum_selector_radio.dart';
 import '../../../../widget/future_dropdown_field.dart';
 import '../../../../widget/validate_button.dart';
 import '../../../integration/popop_status.dart';
@@ -51,6 +60,18 @@ class _EditSalariePageState extends State<EditSalariePage> {
 
   RubriqueBulletin? salaireRubrique;
 
+  // Nouveaux champs/contrôleurs ajoutés
+  final TextEditingController _numeroDeCompteController =
+      TextEditingController();
+  final TextEditingController _numeroMatriculeController =
+      TextEditingController();
+  MoyenPaiementModel? moyenPaiement;
+  GrilleCategoriePaieModel? grilleCategoriePaie;
+  ClasseModel? classe;
+  EchelonModel? echelon;
+  EchelonIndiceModel? echelonIndiciciaires;
+  OperateurModel? _operateur;
+
   @override
   void initState() {
     super.initState();
@@ -67,13 +88,17 @@ class _EditSalariePageState extends State<EditSalariePage> {
   }
 
   void _initializeSelectedValues() async {
-    final fetchedPersonnel = (widget.salarie.personnel);
+    final fetchedPersonnel = widget.salarie.personnel;
     final fetchedCategorie = widget.salarie.categoriePaie;
+    final List<GrilleCategoriePaieModel> categorie =
+        await GrilleCategoriePaieService.getGrilleCategoriePaies();
 
     setState(() {
       personnel = fetchedPersonnel;
       categoriePaie = fetchedCategorie;
       paieManner = widget.salarie.paieManner;
+
+      // pré-remplissage période
       if (widget.salarie.periodPaie != null) {
         _compterController.text = convertDuration(
           durationMs: widget.salarie.periodPaie!,
@@ -85,39 +110,94 @@ class _EditSalariePageState extends State<EditSalariePage> {
         _compterController.text = '';
         periodPaieUnit = null;
       }
+
+      // pré-remplissage des nouveaux champs
+      _numeroDeCompteController.text = widget.salarie.numeroCompte ?? '';
+      _numeroMatriculeController.text = widget.salarie.numeroMatricule ?? '';
+      moyenPaiement = widget.salarie.moyenPaiement;
+      _operateur = widget.salarie.operateur;
+
+      // Trouver la grille complète correspondant à celle du salarié (si présente)
+      if (widget.salarie.grilleCategoriePaie != null) {
+        final matches = categorie
+            .where(
+                (grille) => grille.id == widget.salarie.grilleCategoriePaie!.id)
+            .toList();
+        grilleCategoriePaie = matches.isNotEmpty
+            ? matches.first
+            : widget.salarie.grilleCategoriePaie;
+      } else {
+        grilleCategoriePaie = null;
+      }
+
+      if (widget.salarie.classe != null) {
+        final matches = grilleCategoriePaie!.classes!
+            .where((classe) => classe.id == widget.salarie.classe!.id)
+            .toList();
+        classe = matches.isNotEmpty ? matches.first : widget.salarie.classe;
+      } else {
+        classe = null;
+      }
+
+      if (widget.salarie.echelon != null) {
+        final matches = classe!.echelonIndiciciaires!
+            .where((echelonIndiciciaire) =>
+                echelonIndiciciaire.echelon.id == widget.salarie.echelon!.id)
+            .toList();
+        echelon =
+            matches.isNotEmpty ? matches.first.echelon : widget.salarie.echelon;
+      } else {
+        echelon = null;
+      }
+
+      echelonIndiciciaires = echelon != null
+          ? EchelonIndiceModel(echelon: widget.salarie.echelon!, indice: 0)
+          : null;
     });
+  }
+
+  Future<List<OperateurModel>> fetchOperateurItems() async {
+    return await OperateurService.getOperateurs();
   }
 
   Future<void> updateSalarieData() async {
     try {
       if (personnel == null || categoriePaie == null) {
-      MutationRequestContextualBehavior.showPopup(
-        status: PopupStatus.information,
-        customMessage:
-            "Veuillez sélectionner un personnel et une catégorie de paie.",
-      );
-    }
-    if (personnel!.equalTo(personnel: widget.salarie.personnel) &&
-          categoriePaie!.equalTo(categoriePaie: widget.salarie.categoriePaie) &&
-          paieManner == widget.salarie.paieManner &&
-          _compterController.text ==
-              convertDuration(
-                durationMs: widget.salarie.periodPaie ?? 0,
-              ).compteur.toString() &&
-          periodPaieUnit ==
-              convertDuration(
-                durationMs: widget.salarie.periodPaie ?? 0,
-              ).unite) {
-      MutationRequestContextualBehavior.showPopup(
-        status: PopupStatus.information,
-          customMessage: "Aucune information n'est modifiée",
-      );
+        MutationRequestContextualBehavior.showPopup(
+          status: PopupStatus.information,
+          customMessage:
+              "Veuillez sélectionner un personnel et une catégorie de paie.",
+        );
         return;
       }
+      // if (personnel!.equalTo(personnel: widget.salarie.personnel) &&
+      //     categoriePaie!.equalTo(categoriePaie: widget.salarie.categoriePaie) &&
+      //     paieManner == widget.salarie.paieManner &&
+      //     _compterController.text ==
+      //         convertDuration(
+      //           durationMs: widget.salarie.periodPaie ?? 0,
+      //         ).compteur.toString() &&
+      //     periodPaieUnit ==
+      //         convertDuration(
+      //           durationMs: widget.salarie.periodPaie ?? 0,
+      //         ).unite) {
+      //   MutationRequestContextualBehavior.showPopup(
+      //     status: PopupStatus.information,
+      //     customMessage: "Aucune information n'est modifiée",
+      //   );
+      //   return;
+      // }
 
       String? errorMessage;
       if (paieManner == null) {
         errorMessage = "Veuillez sélectionner une modalité de paiement.";
+      }
+      // Validation du moyen de paiement et lieu
+      if (moyenPaiement == null) {
+        errorMessage = "Veuillez sélectionner un moyen de paiement.";
+      }
+      if (_operateur == null) {
+        errorMessage = "Veuillez renseigner l'opérateur.";
       }
       if (paieManner == PaieManner.finMois
           // ||
@@ -132,26 +212,45 @@ class _EditSalariePageState extends State<EditSalariePage> {
               "Le compteur de période de paie doit être un nombre entier.";
         }
       }
+
+      if (paieManner == null ||
+          moyenPaiement == null ||
+          grilleCategoriePaie == null ||
+          classe == null ||
+          echelon == null ||
+          _operateur == null) {
+        errorMessage = "Veuillez renseigner les champs marqués *";
+      }
+
       if (errorMessage != null) {
         MutationRequestContextualBehavior.showPopup(
           status: PopupStatus.information,
           customMessage: errorMessage,
         );
         return;
-    }
-    _dialog.show(
-      message: '',
-      type: SimpleFontelicoProgressDialogType.phoenix,
-      backgroundColor: Colors.transparent,
-    );
+      }
+      _dialog.show(
+        message: '',
+        type: SimpleFontelicoProgressDialogType.phoenix,
+        backgroundColor: Colors.transparent,
+      );
 
       RequestResponse result = await SalarieService.updateSalarie(
         key: widget.salarie.id,
         personnelId: personnel?.id,
         categoriePaieId: categoriePaie?.id,
         paieManner: paieManner,
-        moyenPaiement:
-            null, //TODO: à revoir et à mettre les les deux donnée en palce
+        moyenPaiement: moyenPaiement,
+        numeroMatricule: _numeroMatriculeController.text.isNotEmpty
+            ? _numeroMatriculeController.text.trim()
+            : null,
+        operateur: _operateur,
+        numeroCompte: _numeroDeCompteController.text.isNotEmpty
+            ? _numeroDeCompteController.text.trim()
+            : null,
+        grilleCategoriePaie: grilleCategoriePaie,
+        classe: classe,
+        echelon: echelon,
         periodPaie: (periodPaieCompteur != null && periodPaieUnit != null)
             ? (periodPaieCompteur! * unitMultipliers[periodPaieUnit]!)
             : null,
@@ -174,7 +273,6 @@ class _EditSalariePageState extends State<EditSalariePage> {
         );
       }
     } catch (err) {
- 
       _dialog.hide();
       MutationRequestContextualBehavior.showPopup(
         status: PopupStatus.customError,
@@ -183,7 +281,7 @@ class _EditSalariePageState extends State<EditSalariePage> {
     }
   }
 
-  Future<List<CategoriePaieModel>> fetchRoleItems() async {
+  Future<List<CategoriePaieModel>> fetchPaieCategorieItems() async {
     return await CategoriePaieService.getPaieCategories();
   }
 
@@ -196,6 +294,16 @@ class _EditSalariePageState extends State<EditSalariePage> {
     }
 
     return personnels;
+  }
+
+  // Fetchers pour les nouveaux dropdowns
+  Future<List<MoyenPaiementModel>> fetchMoyenPaiementItems() async {
+    return await MoyenPaiementService.getMoyenPaiements();
+  }
+
+  Future<List<GrilleCategoriePaieModel>>
+      _fetchGrilleCategoriePaieItems() async {
+    return await GrilleCategoriePaieService.getGrilleCategoriePaies();
   }
 
   void onValidate() {
@@ -227,10 +335,48 @@ class _EditSalariePageState extends State<EditSalariePage> {
             },
             itemsAsString: (p) => "${p.nom} ${p.prenom}",
           ),
+          // Nouveau champ: numéro matricule
+          SimpleTextField(
+            label: "Numéro matricule",
+            textController: _numeroMatriculeController,
+          ),
+          // Nouveau dropdown: moyen de paiement
+          FutureCustomDropDownField<MoyenPaiementModel>(
+            label: "Moyen de paiement",
+            selectedItem: moyenPaiement,
+            fetchItems: fetchMoyenPaiementItems,
+            onChanged: (MoyenPaiementModel? value) {
+              setState(() {
+                moyenPaiement = value;
+              });
+            },
+            canClose: true,
+            itemsAsString: (s) => s.libelle,
+          ),
+          FutureCustomDropDownField<OperateurModel>(
+            label: "Opérateur",
+            selectedItem: _operateur,
+            fetchItems: fetchOperateurItems,
+            onChanged: (OperateurModel? value) {
+              if (value != null) {
+                setState(() {
+                  _operateur = value;
+                });
+              }
+            },
+            canClose: true,
+            itemsAsString: (s) => s.libelle,
+          ),
+
+          SimpleTextField(
+            label: "Numéro de compte",
+            textController: _numeroDeCompteController,
+            required: false,
+          ),
           FutureCustomDropDownField<CategoriePaieModel>(
             label: "Catégorie de paie",
             selectedItem: categoriePaie,
-            fetchItems: fetchRoleItems,
+            fetchItems: fetchPaieCategorieItems,
             onChanged: (CategoriePaieModel? value) {
               setState(() {
                 categoriePaie = value;
@@ -238,43 +384,49 @@ class _EditSalariePageState extends State<EditSalariePage> {
             },
             itemsAsString: (r) => r.categoriePaie,
           ),
-          EnumRadioSelector<PaieManner>(
-            title: "Modalité de paiement",
-            selectedValue: paieManner,
-            values: PaieManner.values,
-            getLabel: (value) => value.label,
-            onChanged: (value) {
+          // Ajout sélection grille/classe/échelon
+          FutureCustomDropDownField<GrilleCategoriePaieModel>(
+            label: "Categorie de paie (Grille)",
+            selectedItem: grilleCategoriePaie,
+            fetchItems: _fetchGrilleCategoriePaieItems,
+            onChanged: (GrilleCategoriePaieModel? value) {
               setState(() {
-                paieManner = value;
-                if (paieManner != PaieManner.finMois
-                    //  &&
-                    //     paieManner != PaieManner.finPeriod
-                    ) {
-                  _compterController.clear();
-                  periodPaieUnit = null;
-                }
+                grilleCategoriePaie = value;
+                classe = null;
+                echelon = null;
               });
             },
-            isRequired: true,
+            itemsAsString: (r) => r.libelle,
           ),
-          if (paieManner == PaieManner.finMois
-              // ||
-              //     paieManner == PaieManner.finPeriod
-              ) ...[
-            DurationField(
-              controller: _compterController,
-              label: "Période de paie",
-              onUnityChanged: (value) {
-                setState(
-                  () {
-                    periodPaieUnit = value;
-                  },
-                );
+          if (grilleCategoriePaie != null)
+            CustomDropDownField(
+              items: grilleCategoriePaie!.classes ?? [],
+              selectedItem: classe,
+              onChanged: (value) {
+                setState(() {
+                  classe = value;
+                  echelon = null;
+                });
               },
-              unitSelectItem: periodPaieUnit,
-              required: true,
+              label: "Classe",
+              itemsAsString: (classe) => classe.libelle,
             ),
-          ],
+          if (classe != null && classe!.echelonIndiciciaires != null)
+            CustomDropDownField(
+              items: classe!.echelonIndiciciaires!.map((echelonIndiciaire) {
+                return echelonIndiciaire.echelon;
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  echelon = value!;
+                });
+              },
+              selectedItem: echelon,
+              label: "Echelon",
+              itemsAsString: (echelon) {
+                return echelon.libelle;
+              },
+            ),
           const Gap(16),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -292,7 +444,7 @@ class _EditSalariePageState extends State<EditSalariePage> {
 
   Future<List<RubriqueBulletin>> fetchRubriqueItems() async {
     if (categoriePaie == null) {
-      throw ("Veuillez choisir la catégorie de paie.");
+      throw ("Veuillez sélectionner un personnel et une catégorie de paie.");
     }
 
     final List<RubriqueOnBulletinModel> rubriquePaieResponse =

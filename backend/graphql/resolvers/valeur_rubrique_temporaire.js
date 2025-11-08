@@ -4,10 +4,15 @@ const valeurRubriqueTemporaireResolvers = {
   valeurRubriqueTemporaireBySalarie: async ({ salarieId }) =>
     await valeurRubriqueTemporaireModel.getBySalarieId(salarieId),
 
-  createValeurRubriqueTemporaire: async ({ salarieId, rubriques }) => {
-     return await valeurRubriqueTemporaireModel.createVariablesPaies({
+  createValeurRubriqueTemporaire: async ({
+    salarieId,
+    rubriques,
+    primesExceptionnelles,
+  }) => {
+    return await valeurRubriqueTemporaireModel.createVariablesPaies({
       salarieId,
       rubriques,
+      primesExceptionnelles,
     });
   },
 

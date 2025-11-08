@@ -74,7 +74,23 @@ class _ChoosePeriodPageState extends State<ChoosePeriodPage> {
         ...payCalendarData.map((e) {
           return AppTileClickable(
             tileTitle: e.libelle,
+            color: e.etat == EtatPayCalendar.closed
+                ? const Color.fromARGB(255, 231, 195, 195)
+                : e.etat == EtatPayCalendar.opened
+                    ? const Color.fromARGB(255, 197, 227, 199)
+                    : null,
             onClick: () {
+              e.etat == EtatPayCalendar.closed
+                  ? MutationRequestContextualBehavior
+                      .showCustomInformationPopUp(
+                      message: 'Cette période est déjà cloturée',
+                    )
+                  : e.etat == EtatPayCalendar.tobeOpen
+                      ? MutationRequestContextualBehavior
+                          .showCustomInformationPopUp(
+                          message: 'Cette période n\'est pas encore ouverte',
+                        )
+                      :
               onChoosePeriod(payCalendar: e);
             },
           );
@@ -110,7 +126,7 @@ class _ChoosePeriodPageState extends State<ChoosePeriodPage> {
             customMessage: "Bulletin généré avec succès",
             status: PopupStatus.success,
           );
-          widget.refresh();
+          widget.refresh;
         } else {
           MutationRequestContextualBehavior.showPopup(
             customMessage: response.message,

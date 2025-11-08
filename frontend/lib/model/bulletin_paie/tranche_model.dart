@@ -22,7 +22,8 @@ enum RubriqueIdentity {
   avanceSurSalaire("Avance sur salaire"),
   primeExceptionnelle("Prime exeptionnelle"),
   nombrePersonneCharge("Nombre de personnes à charge"),
-  netPayer("Net à payer");
+  netPayer("Net à payer"),
+  salaireBase("Salaire de base");
 
   final String label;
   const RubriqueIdentity(this.label);

@@ -28,16 +28,23 @@ class _ArchiveBulletinState extends State<BulletinPage> {
   int currentPage = GlobalValue.currentPage;
   RoleModel? role;
 
+  // 🔑 Ajouter une clé unique pour forcer le rebuild du FutureBuilder
+  late Future<List<BulletinPaieModel>> _bulletinsFuture;
+
   @override
   void initState() {
     super.initState();
     role = widget.role;
+    _bulletinsFuture =
+        _loadBulletinData(); // ✅ Initialiser le Future une seule fois
   }
 
-  // Future<void> getRole() async {
-  //   role = await AuthService().getRole();
-  //   setState(() {});
-  // }
+  /// Public method other pages can call to force a reload
+  Future<void> reload() async {
+    setState(() {
+      _bulletinsFuture = _loadBulletinData(); // ✅ Créer un nouveau Future
+    });
+  }
 
   Future<List<BulletinPaieModel>> _loadBulletinData() async {
     try {
@@ -68,35 +75,23 @@ class _ArchiveBulletinState extends State<BulletinPage> {
             AddElementButton(
               addElement: onEditBulletin,
               icon: Icons.list,
-              // isSmall: true,
               label: "Générer les bulletins",
             ),
-            // AppActionButton(
-            //   onPressed: () {
-            //     onEditBulletin();
-            //   },
-            //   child: Row(children:[SvgPicture.asset(
-            //     AssetsIcons.validInvoice,
-            //     height: 20,
-            //     colorFilter: ColorFilter.mode(
-            //       Theme.of(context).colorScheme.onPrimary,
-            //       BlendMode.srcIn,
-            //     ),
-            //   ), Text("Générer les bulletins")])
-            // ),
           ],
         ),
         const Gap(4),
         Expanded(
           child: FutureBuilder<List<BulletinPaieModel>>(
-            future: _loadBulletinData(),
+            future: _bulletinsFuture, // ✅ Utiliser le Future stocké
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError) {
                 return ErrorPage(
                   message: snapshot.error.toString(),
-                  onPressed: () => setState(() {}),
+                  onPressed: () => setState(() {
+                    _bulletinsFuture = _loadBulletinData(); // ✅ Recharger
+                  }),
                 );
               } else if (snapshot.hasData) {
                 final data = snapshot.data!;
@@ -124,7 +119,10 @@ class _ArchiveBulletinState extends State<BulletinPage> {
                             data: filteredData,
                             currentPage: currentPage,
                           ),
-                          refresh: () => setState(() {}),
+                          refresh: () => setState(() {
+                            _bulletinsFuture =
+                                _loadBulletinData(); // ✅ Recharger
+                          }),
                         ),
                       ),
                     ),
@@ -149,15 +147,15 @@ class _ArchiveBulletinState extends State<BulletinPage> {
   }
 
   void onEditBulletin() {
-    // showResponsiveConfigPageDialogBox(
-    //   context,
-    //   content: PreparationBulletinPage(),
-    //   title: "Préparation des bulletin",
-    // );
     showResponsiveDialog(
       context,
       content: ChoosePeriodPage(
-        refresh: _loadBulletinData,
+        refresh: () async {
+          // ✅ Recharger les données après mutation
+          setState(() {
+            _bulletinsFuture = _loadBulletinData();
+          });
+        },
       ),
       title: "Choisir la période de paie",
     );

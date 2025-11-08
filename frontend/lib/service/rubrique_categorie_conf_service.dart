@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:frontend/model/bulletin_paie/valeur_rubrique_temporaire.dart';
+
 import '../app/integration/popop_status.dart';
 import '../global/config.dart';
 import '../global/constant/request_management_value.dart';
@@ -225,7 +227,7 @@ class RubriqueCategorieConfService {
 
     ''';
 
-     var response = await http
+    var response = await http
         .post(
       Uri.parse(serverUrl),
       body: json.encode({'query': body}),
@@ -242,7 +244,7 @@ class RubriqueCategorieConfService {
 
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
-       var data = jsonData['data']['rubriqueBulletinByCategoriePaie'];
+      var data = jsonData['data']['rubriqueBulletinByCategoriePaie'];
       List<RubriqueOnBulletinModel> rubriques = [];
       if (data != null) {
         for (var rubrique in data) {
@@ -258,16 +260,18 @@ class RubriqueCategorieConfService {
     }
   }
 
-
-static Future<List<RubriqueOnBulletinModel>>
-      getRubriqueBulletinByCategoriePaieVariablePaie(
+  static Future<ValeurRubriqueTemporaire>
+      getvariablePaieAndPrimeExceptionnelles(
           {required CategoriePaieModel categorie,
           required String salarieId}) async {
     var body = '''
-    query RubriqueBulletinByCategoriePaieVariablePaie {
-    rubriqueBulletinByCategoriePaieVariablePaie(categoriePaieId: "${categorie.id}", salarieId: "$salarieId") {
-    value
-         rubrique{
+    query variablePaieAndPrimeExceptionnelles {
+    variablePaieAndPrimeExceptionnelles(categoriePaieId: "${categorie.id}", salarieId: "$salarieId") {
+      salarieId
+      _id
+      rubriques{
+        value
+        rubrique{
            _id
         rubrique
         code
@@ -345,11 +349,92 @@ static Future<List<RubriqueOnBulletinModel>>
             }
         }
          }
+      }
+      primesExceptionnelles{
+        value
+        rubrique{
+           _id
+        rubrique
+        code
+        type
+        portee
+        rubriqueIdentity
+        nature
+        section {
+            _id
+            section
+        }
+        taux {
+            base {
+                _id
+                rubrique
+                code
+                type
+                nature
+            }
+            taux
+        }
+        sommeRubrique {
+            operateur
+            elements {
+                type
+                valeur
+                rubrique {
+                    _id
+                    rubrique
+                    code
+                    type
+                    nature
+                }
+            }
+        }
+        bareme {
+            reference{
+                _id
+                rubrique
+                code
+                type
+                nature
+            }
+            tranches {
+                min
+                max
+                value {
+                    type
+                    valeur
+                    taux {
+                        base {
+                            _id
+                            rubrique
+                            code
+                            type
+                            nature
+                        }
+                        taux
+                    }
+                }
+            }
+        }
+        calcul {
+            operateur
+            elements {
+                type
+                valeur
+                rubrique {
+                    _id
+                    rubrique
+                    code
+                    type
+                    nature
+                }
+            }
+        }
+         }
+      }
     }
 }
 
     ''';
-
     var response = await http
         .post(
       Uri.parse(serverUrl),
@@ -365,25 +450,25 @@ static Future<List<RubriqueOnBulletinModel>>
       },
     );
 
-    if (response.statusCode == 200) {
-      var jsonData = jsonDecode(response.body);
-      var data =
-          jsonData['data']['rubriqueBulletinByCategoriePaieVariablePaie'];
-      List<RubriqueOnBulletinModel> rubriques = [];
-      if (data != null) {
-        for (var rubrique in data) {
-          rubriques.add(RubriqueOnBulletinModel.fromJson(rubrique));
-        }
+    try {
+      if (response.statusCode == 200) {
+        var jsonData = jsonDecode(response.body);
+        var data = jsonData['data']['variablePaieAndPrimeExceptionnelles'];
+        print(data);
 
-        return rubriques;
+        if (data != null) {
+          return ValeurRubriqueTemporaire.fromJson(data);
+        } else {
+          throw RequestMessage.failgettingDataMessage;
+        }
       } else {
-        throw RequestMessage.failgettingDataMessage;
+        throw jsonDecode(response.body)['errors'][0]['message'];
       }
-    } else {
-      throw jsonDecode(response.body)['errors'][0]['message'];
+    } catch (e) {
+      print(e.toString());
+      rethrow;
     }
   }
-
 
   static Future<RequestResponse> createRubriqueCategorie({
     required String rubriqueId,

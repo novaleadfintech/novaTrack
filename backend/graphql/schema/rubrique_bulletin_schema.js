@@ -12,6 +12,8 @@ const typeDef = `#graphql
         nombrePersonneCharge
         netPayer
         avanceSurSalaire
+        salaireBase
+        primeExceptionnelle
     }
 
     enum RubriqueBulletinType {

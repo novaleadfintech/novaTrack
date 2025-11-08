@@ -114,7 +114,7 @@ class _PersonnelPageState extends State<SalariePage> {
   onClickAddPersonnelButton() {
     showResponsiveDialog(
       context,
-      title: "Nouveau salarie",
+      title: "Nouveau salarié",
       content: AddSalariePage(
         refresh: _loadPersonnelData,
       ),

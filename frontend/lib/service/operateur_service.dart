@@ -1,8 +1,6 @@
 import 'dart:convert';
-
-import 'package:frontend/model/bulletin_paie/calendar_model.dart';
-
-import '../app/integration/popop_status.dart';
+import 'package:frontend/model/bulletin_paie/operateur_model.dart';
+ import '../app/integration/popop_status.dart';
 import '../global/config.dart';
 import '../global/constant/request_management_value.dart';
 import '../model/request_response.dart';
@@ -10,17 +8,14 @@ import 'package:http/http.dart' as http;
 
 import 'request_header.dart';
 
-class PayCalendarService {
-  static Future<List<PayCalendarModel>> getPayCalendars() async {
+class OperateurService {
+  static Future<List<OperateurModel>> getOperateurs() async {
     var body = '''
-      query PayCalendars {
-          payCalendars {
+      query Operateurs {
+          operateurs {
               _id
               libelle
-              dateDebut
-              dateFin
-              etat
-           }
+          }
       }
     ''';
     var response = await http
@@ -37,14 +32,14 @@ class PayCalendarService {
         throw RequestMessage.failgettingDataMessage;
       },
     );
-    List<PayCalendarModel> payCalendars = [];
+    List<OperateurModel> operateurs = [];
 
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
-      var data = jsonData['data']['payCalendars'];
+      var data = jsonData['data']['operateurs'];
       if (data != null) {
-        for (var payCalendar in data) {
-          payCalendars.add(PayCalendarModel.fromJson(payCalendar));
+        for (var operateur in data) {
+          operateurs.add(OperateurModel.fromJson(operateur));
         }
       } else {
         throw RequestMessage.failgettingDataMessage;
@@ -52,18 +47,15 @@ class PayCalendarService {
     } else {
       throw jsonDecode(response.body)['errors'][0]['message'];
     }
-    return payCalendars;
+    return operateurs;
   }
 
-  static Future<RequestResponse> createPayCalendar({
+  static Future<RequestResponse> createOperateur({
     required String libelle,
-    required DateTime dateDebut,
-    required DateTime dateFin,
-    //  etat: ${etatPayCalendarToString(EtatPayCalendar.tobeOpen)}
   }) async {
     var body = '''
-    mutation CreatePayCalendar {
-    createPayCalendar(libelle: "$libelle", dateDebut: ${dateDebut.millisecondsSinceEpoch}, dateFin: ${dateFin.millisecondsSinceEpoch}),
+    mutation CreateOperateur {
+    createOperateur(libelle: "$libelle")
 }
     ''';
 
@@ -80,7 +72,7 @@ class PayCalendarService {
 
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
-        var data = jsonData['data']['createPayCalendar'];
+        var data = jsonData['data']['createOperateur'];
         if (data == RequestMessage.success) {
           return RequestResponse(
             message: RequestMessage.successMessage,
@@ -97,65 +89,17 @@ class PayCalendarService {
     }
   }
 
-
-  static Future<RequestResponse> changePeriodEtat({
-    required String key,
-    required EtatPayCalendar etat,
-    //
-  }) async {
-    var body = '''
-mutation ChangeEtatPayPeriod {
-    changeEtatPayPeriod(key: "$key", etat: ${etatPayCalendarToString(etat)})
-}
-    ''';
-
-    try {
-      var response = await http
-          .post(
-        Uri.parse(serverUrl),
-        body: json.encode({'query': body}),
-        headers: getHeaders(),
-      )
-          .timeout(const Duration(seconds: reqTimeout), onTimeout: () {
-        throw RequestMessage.timeoutMessage;
-      });
-
-      if (response.statusCode == 200) {
-        var jsonData = jsonDecode(response.body);
-        var data = jsonData['data']['changeEtatPayPeriod'];
-        if (data == RequestMessage.success) {
-          return RequestResponse(
-            message: RequestMessage.successMessage,
-            status: PopupStatus.success,
-          );
-        } else {
-          throw RequestMessage.serverErrorMessage;
-        }
-      } else {
-        throw jsonDecode(response.body)['errors'][0]['message'];
-      }
-    } catch (error) {
-      throw error.toString();
-    }
-  }
-
-
-  static Future<RequestResponse> updatePayCalendar({
+  static Future<RequestResponse> updateOperateur({
     required String key,
     required String libelle,
-    required DateTime? dateDebut,
-    required DateTime? dateFin,
   }) async {
     var body = '''
-     mutation UpdatePayCalendar {
-      updatePayCalendar(key: "$key", libelle: "$libelle",
-        dateDebut: ${dateDebut?.millisecondsSinceEpoch},
-        dateFin: ${dateFin?.millisecondsSinceEpoch},
-      )
+     mutation UpdateOperateur {
+    updateOperateur(key: "$key", libelle: "$libelle")
 }
 
     ''';
-//TODO : c'est à completer
+
     try {
       var response = await http
           .post(
@@ -169,7 +113,7 @@ mutation ChangeEtatPayPeriod {
 
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
-        var data = jsonData['data']['updatePayCalendar'];
+        var data = jsonData['data']['updateOperateur'];
         if (data == RequestMessage.success) {
           return RequestResponse(
             message: RequestMessage.successMessage,
@@ -186,12 +130,12 @@ mutation ChangeEtatPayPeriod {
     }
   }
 
-  static Future<RequestResponse> deletePayCalendar({
+  static Future<RequestResponse> deleteOperateur({
     required String key,
   }) async {
     var body = '''
-     mutation DeletePayCalendar {
-    deletePayCalendar(key: "$key")
+     mutation DeleteOperateur {
+    deleteOperateur(key: "$key")
 }
 
     ''';
@@ -209,7 +153,7 @@ mutation ChangeEtatPayPeriod {
 
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
-        var data = jsonData['data']['deletePayCalendar'];
+        var data = jsonData['data']['deleteOperateur'];
         if (data == RequestMessage.success) {
           return RequestResponse(
             message: RequestMessage.successMessage,

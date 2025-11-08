@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:frontend/global/config.dart';
+import 'package:frontend/model/bulletin_paie/operateur_model.dart';
  import 'package:frontend/model/grille_salariale/classe_model.dart';
 import 'package:frontend/model/moyen_paiement_model.dart';
 import 'package:http/http.dart' as http;
@@ -26,7 +27,7 @@ class SalarieService {
         paieManner
         fullCount
         numeroCompte
-        paiementPlace
+       operateur{_id, libelle}
         moyenPaiement{
           _id
           libelle
@@ -128,6 +129,7 @@ class SalarieService {
         dateEnregistrement
         fullCount
         paieManner
+        operateur{_id, libelle}
         moyenPaiement{
           _id
           libelle
@@ -229,7 +231,7 @@ class SalarieService {
     required ClasseModel classe,
     required String numeroMatricule,
     required MoyenPaiementModel moyenPaiement,
-    required String paiementPlace,
+    required OperateurModel operateur,
     required EchelonModel echelon,
     required GrilleCategoriePaieModel grilleCategoriePaie,
     required String? numeroCompte,
@@ -244,7 +246,7 @@ class SalarieService {
               classeId: "${classe.id}"
               moyenPaiement: ${moyenPaiement.toJson()}
               numeroMatricule: "$numeroMatricule"
-              paiementPlace: "$paiementPlace"
+              operateur: ${operateur.toJson()}
               numeroCompte:${numeroCompte != null ? "\"$numeroCompte\"" : null}
               echelonId: "${echelon.id}"
               grilleCategoriePaieId: "${grilleCategoriePaie.id}"
@@ -286,6 +288,12 @@ class SalarieService {
     required MoyenPaiementModel? moyenPaiement,
     // required String? numeroMatricule,
     required PaieManner? paieManner,
+    String? numeroMatricule,
+    required OperateurModel? operateur,
+    String? numeroCompte,
+    GrilleCategoriePaieModel? grilleCategoriePaie,
+    required classe,
+    EchelonModel? echelon,
   }) async {
     String body = '''
   mutation UpdateSalarie {
@@ -307,9 +315,27 @@ class SalarieService {
     if (moyenPaiement != null) {
       body += "moyenPaiement: ${moyenPaiement.toJson()},";
     }
-    // if (numeroMatricule != null) {
-    //   body += 'numeroMatricule: "$numeroMatricule",';
-    // }
+
+    // Champs additionnels pour la mise à jour
+    if (numeroMatricule != null) {
+      body += 'numeroMatricule: "$numeroMatricule",';
+    }
+    // operateur est requis — on l'ajoute toujours
+    if (operateur != null) {
+      body += 'operateur: ${operateur.toJson()},';
+    }
+    if (numeroCompte != null) {
+      body += 'numeroCompte: "$numeroCompte",';
+    }
+    if (grilleCategoriePaie != null) {
+      body += 'grilleCategoriePaieId: "${grilleCategoriePaie.id}",';
+    }
+    if (classe != null) {
+      body += 'classeId: "${classe.id}",';
+    }
+    if (echelon != null) {
+      body += 'echelonId: "${echelon.id}",';
+    }
 
     body += '''
     )

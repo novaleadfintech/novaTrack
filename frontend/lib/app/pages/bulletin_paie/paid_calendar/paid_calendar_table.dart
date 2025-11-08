@@ -77,6 +77,51 @@ class _PayCalendarTableState extends State<PayCalendarTable> {
     );
   }
 
+  Future<void> changeEtatPayCalendar({
+    required PayCalendarModel periode,
+    required EtatPayCalendar etat,
+  }) async {
+    bool confirmed = await handleOperationButtonPress(
+      context,
+      content:
+          "Voulez-vous vraiment ${etat == EtatPayCalendar.opened ? 'ouvrir' : etat == EtatPayCalendar.closed ? 'cloturer' : ''} cette période",
+    );
+    if (confirmed) {
+      _dialog.show(
+        message: '',
+        type: SimpleFontelicoProgressDialogType.phoenix,
+        backgroundColor: Colors.transparent,
+      );
+
+      try {
+        RequestResponse result = await PayCalendarService.changePeriodEtat(
+          key: periode.id!,
+          etat: etat,
+        );
+        _dialog.hide();
+        if (result.status == PopupStatus.success) {
+          MutationRequestContextualBehavior.showPopup(
+            status: PopupStatus.success,
+            customMessage:
+                "La période de paie ${etat == EtatPayCalendar.opened ? 'ouverte' : etat == EtatPayCalendar.closed ? 'cloturée' : ''} avec succcès",
+          );
+          await widget.refresh();
+        } else {
+          MutationRequestContextualBehavior.showPopup(
+            status: result.status,
+            customMessage: result.message,
+          );
+        }
+      } catch (e) {
+        _dialog.hide();
+        MutationRequestContextualBehavior.showPopup(
+          status: PopupStatus.customError,
+          customMessage: 'Une erreur s\'est survenue',
+        );
+      }
+    }
+  }
+
   Future<void> deletePayCalendar({
     required PayCalendarModel payCalendar,
   }) async {
@@ -178,6 +223,32 @@ class _PayCalendarTableState extends State<PayCalendarTable> {
                             },
                             color: null,
                           ),
+                          // if (hasPermission(
+                          //   role: role,
+                          //   permission: PermissionAlias.updatePayCalendar.label,
+                          // ))
+                          if (payCalendar.etat == EtatPayCalendar.tobeOpen)
+                            (
+                              label: Constant.open,
+                              onTap: () {
+                                changeEtatPayCalendar(
+                                  periode: payCalendar,
+                                  etat: EtatPayCalendar.opened,
+                                );
+                              },
+                              color: null,
+                            ),
+                          if (payCalendar.etat == EtatPayCalendar.opened)
+                            (
+                              label: Constant.close,
+                              onTap: () {
+                                changeEtatPayCalendar(
+                                  periode: payCalendar,
+                                  etat: EtatPayCalendar.closed,
+                                );
+                              },
+                              color: null,
+                            )
                           // if (hasPermission(
                           //   role: role,
                           //   permission: PermissionAlias

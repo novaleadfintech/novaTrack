@@ -25,7 +25,11 @@ const payCalendarResolvers = {
       dateDebut: dateDebut,
       dateFin: dateFin,
     }),
-
+  changeEtatPayPeriod: async ({ key, etat }) =>
+    await payCalendar.changeEtatPayPeriod({
+      key: key,
+      etat: etat,
+    }),
   deletePayCalendar: async ({ key }) =>
     await payCalendar.deletePayCalendar({ key: key }),
 };

@@ -81,7 +81,7 @@ class CategoriePaieGrille {
     };
 
     try {
-      const result = await categoriePaieGrilleCollection.save(categorie);
+      await categoriePaieGrilleCollection.save(categorie);
       return "OK";
     } catch (error) {
       console.log(

@@ -3,6 +3,12 @@ import db from "../../db/database_connection.js";
 import { isValidValue } from "../../utils/util.js";
 
 const payCalendarCollection = db.collection("payCalendars");
+
+const EtatPayCalendar = {
+  opened: "opened",
+  closed: "closed",
+  tobeOpen: "tobeOpen",
+};
 class PayCalendar {
   constructor() {
     this.initializeCollections();
@@ -52,11 +58,11 @@ class PayCalendar {
 
   createPayCalendar = async ({ libelle, dateDebut, dateFin }) => {
     isValidValue({ value: [libelle, dateDebut, dateFin] });
-
     const newPayCalendar = {
       libelle: libelle,
       dateDebut: dateDebut,
       dateFin: dateFin,
+      etat: EtatPayCalendar.tobeOpen,
       timeStamp: Date.now(),
     };
     try {
@@ -70,10 +76,16 @@ class PayCalendar {
     }
   };
 
-  updatePayCalendar = async ({ key, libelle }) => {
+  updatePayCalendar = async ({ key, libelle, dateDebut, dateFin }) => {
     const updateField = {};
     if (libelle != undefined) {
       updateField.libelle = libelle;
+    }
+    if (dateDebut != undefined) {
+      updateField.dateDebut = dateDebut;
+    }
+    if (dateFin != undefined) {
+      updateField.dateFin = dateFin;
     }
 
     isValidValue({ value: updateField });
@@ -84,18 +96,29 @@ class PayCalendar {
       console.error(err);
 
       throw new Error(
-        "Une erreur s'est produite lors de la mise à jour du payCalendar"
+        "Une erreur s'est produite lors de la mise à jour de la période de paie"
       );
+    }
+  };
+  changeEtatPayPeriod = async ({ key, etat }) => {
+    try {
+      const updateField = { etat: etat };
+      await payCalendarCollection.update(key, updateField);
+      return "OK";
+    } catch (error) {
+      console.error(error);
+
+      throw new Error("Erreur lors du changement de l'état");
     }
   };
 
   deletePayCalendar = async ({ key }) => {
     try {
-       await payCalendarCollection.remove(key);
+      await payCalendarCollection.remove(key);
       return "OK";
     } catch (err) {
       console.error(err);
-       throw new Error(
+      throw new Error(
         err.message ||
           "Une erreur s'est produite lors de la suppression du calendrier de paie"
       );

@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'package:frontend/model/bulletin_paie/categorie_paie.dart';
 import 'package:frontend/model/bulletin_paie/rubrique_paie.dart';
 import 'package:frontend/model/bulletin_paie/salarie_model.dart';
+import 'package:frontend/model/bulletin_paie/valeur_rubrique_temporaire.dart';
 
 import '../app/integration/popop_status.dart';
 import '../global/config.dart';
@@ -14,9 +16,23 @@ class ValariablePaieService {
   static Future<RequestResponse> createValariablePaie({
     required SalarieModel salarie,
     required List<RubriqueOnBulletinModel> variablePaie,
+    required List<RubriqueOnBulletinModel> primesExceptionnelles,
   }) async {
     // Construction du champ "rubriques"
     final rubriquesString = variablePaie.map((r) {
+      final rubriqueId = r.rubrique.id;
+      final value = r.value ?? 0;
+
+      return '''
+      {
+        rubriqueId: "$rubriqueId",
+        value: $value
+      }
+    ''';
+    }).join(',');
+
+
+    final primeExceptionnelleString = primesExceptionnelles.map((r) {
       final rubriqueId = r.rubrique.id;
       final value = r.value ?? 0;
 
@@ -34,10 +50,10 @@ class ValariablePaieService {
       createValeurRubriqueTemporaire(
         salarieId: "${salarie.id}",
         rubriques: [$rubriquesString]
+        primesExceptionnelles: [$primeExceptionnelleString]
       )
     }
   ''';
-    print(body);
     try {
       var response = await http
           .post(
@@ -76,6 +92,218 @@ class ValariablePaieService {
       throw error.toString();
     }
   }
+
+
+static Future<List<ValeurRubriqueTemporaire>>
+      getvariablePaieAndPrimeExceptionnelles(
+          {required CategoriePaieModel categorie,
+          required String salarieId}) async {
+    var body = '''
+    query variablePaieAndPrimeExceptionnelles {
+        variablePaieAndPrimeExceptionnelles(
+            categoriePaieId: "${categorie.id}"
+            salarieId: "$salarieId"
+        ) {
+            salarieId
+            rubriques {
+                value
+                rubrique {
+                    _id
+                    rubrique
+                    code
+                    type
+                    portee
+                    rubriqueIdentity
+                    nature
+                    section {
+                        _id
+                        section
+                    }
+                    taux {
+                        base {
+                            _id
+                            rubrique
+                            code
+                            type
+                            nature
+                        }
+                        taux
+                    }
+                    sommeRubrique {
+                        operateur
+                        elements {
+                            type
+                            valeur
+                            rubrique {
+                                _id
+                                rubrique
+                                code
+                                type
+                                nature
+                            }
+                        }
+                    }
+                    bareme {
+                        reference {
+                            _id
+                            rubrique
+                            code
+                            type
+                            nature
+                        }
+                        tranches {
+                            min
+                            max
+                            value {
+                                type
+                                valeur
+                                taux {
+                                    base {
+                                        _id
+                                        rubrique
+                                        code
+                                        type
+                                        nature
+                                    }
+                                    taux
+                                }
+                            }
+                        }
+                    }
+                    calcul {
+                        operateur
+                        elements {
+                            type
+                            valeur
+                            rubrique {
+                                _id
+                                rubrique
+                                code
+                                type
+                                nature
+                            }
+                        }
+                    }
+                }
+            }
+            primesExceptionnelles {
+                value
+                rubrique {
+                    _id
+                    rubrique
+                    code
+                    type
+                    portee
+                    rubriqueIdentity
+                    nature
+                    section {
+                        _id
+                        section
+                    }
+                    taux {
+                        base {
+                            _id
+                            rubrique
+                            code
+                            type
+                            nature
+                        }
+                        taux
+                    }
+                    sommeRubrique {
+                        operateur
+                        elements {
+                            type
+                            valeur
+                            rubrique {
+                                _id
+                                rubrique
+                                code
+                                type
+                                nature
+                            }
+                        }
+                    }
+                    bareme {
+                        reference {
+                            _id
+                            rubrique
+                            code
+                            type
+                            nature
+                        }
+                        tranches {
+                            min
+                            max
+                            value {
+                                type
+                                valeur
+                                taux {
+                                    base {
+                                        _id
+                                        rubrique
+                                        code
+                                        type
+                                        nature
+                                    }
+                                    taux
+                                }
+                            }
+                        }
+                    }
+                    calcul {
+                        operateur
+                        elements {
+                            type
+                            valeur
+                            rubrique {
+                                _id
+                                rubrique
+                                code
+                                type
+                                nature
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    ''';
+
+    var response = await http
+        .post(
+      Uri.parse(serverUrl),
+      body: json.encode({'query': body}),
+      headers: getHeaders(),
+    )
+        .catchError((onError) {
+      throw onError.toString();
+    }).timeout(
+      const Duration(seconds: reqTimeout),
+      onTimeout: () {
+        throw RequestMessage.timeoutMessage;
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var jsonData = jsonDecode(response.body);
+      var data = jsonData['data']['variablePaieAndPrimeExceptionnelles'];
+      List<ValeurRubriqueTemporaire> rubriques = [];
+      if (data != null) {
+        for (var rubrique in data) {
+          rubriques.add(ValeurRubriqueTemporaire.fromJson(rubrique));
+        }
+
+        return rubriques;
+      } else {
+        throw RequestMessage.failgettingDataMessage;
+      }
+    } else {
+      throw jsonDecode(response.body)['errors'][0]['message'];
+    }
+  }
+
 
   static Future<RequestResponse> updateValariablePaie({
     required String paysId,

@@ -8,12 +8,12 @@ const typeDef = `#graphql
         echelon: Echelon
         grilleCategoriePaie: CategoriePaieGrille
         dateEnregistrement: Float!
-        paiementPlace: String
+        operateur: Operateur
         numeroCompte: String
         periodPaie: Float
         moyenPaiement: MoyenPaiement
         paieManner: PaieManner
-        fullCount:Int
+        fullCount: Int
     }
 
     enum TypePaie{
@@ -41,7 +41,7 @@ const mutation = `#graphql
             paieManner: PaieManner!
             numeroMatricule: String!
             classeId: String!
-            paiementPlace: String!
+            operateur: OperateurInput!
             numeroCompte: String
             moyenPaiement: MoyenPaiementInput!
             echelonId: String!
@@ -55,8 +55,10 @@ const mutation = `#graphql
             periodPaie: Float
             numeroMatricule: String
             classeId: String
-            paiementPlace: String
+            operateur: OperateurInput
             numeroCompte: String
+            echelonId: String
+            grilleCategoriePaieId: String
             moyenPaiement: MoyenPaiementInput
             paieManner: PaieManner
         ):String!,

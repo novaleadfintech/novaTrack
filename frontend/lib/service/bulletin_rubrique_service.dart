@@ -136,8 +136,8 @@ class BulletinRubriqueService {
 
   static Future<List<RubriqueBulletin>> getExceptionnellePrime() async {
     var body = '''
-      query RubriquesBulletin {
-    rubriquesBulletin {
+      query PrimesExceptionnelles {
+    primesExceptionnelles {
         _id
         rubrique
         code
@@ -237,7 +237,7 @@ class BulletinRubriqueService {
 
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
-      var data = jsonData['data']['rubriquesBulletin'];
+      var data = jsonData['data']['primesExceptionnelles'];
 
       List<RubriqueBulletin> rubriques = [];
       if (data != null) {

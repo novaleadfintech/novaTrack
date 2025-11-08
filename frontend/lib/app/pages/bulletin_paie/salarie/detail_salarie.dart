@@ -124,6 +124,19 @@ class DetailSalariePage extends StatelessWidget {
               ),
             ],
           ),
+        if (salarie.operateur != null)
+          TableRow(
+            decoration: tableDecoration(context),
+            children: [
+              const TabledetailBodyMiddle(
+                valeur: "Opérateur",
+                isbold: true,
+              ),
+              TabledetailBodyMiddle(
+                valeur: salarie.operateur!.libelle,
+              ),
+            ],
+          ),
         if (salarie.numeroCompte != null)
           TableRow(
             decoration: tableDecoration(context),

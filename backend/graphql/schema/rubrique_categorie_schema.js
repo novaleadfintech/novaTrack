@@ -12,7 +12,7 @@ const typeDef = `#graphql
 
 const query = `#graphql
     rubriqueBulletinByCategoriePaie(categoriePaieId: String): [RubriqueOnBulletin]!
-    rubriqueBulletinByCategoriePaieVariablePaie(categoriePaieId: String!, salarieId: String!): [RubriqueOnBulletin]!
+    variablePaieAndPrimeExceptionnelles(categoriePaieId: String!, salarieId: String!): ValeurRubriqueTemporaire
     rubriqueBulletinByCategoriePaieForConfiguration(categoriePaieId: String): [CategorieRubrique]!
 `;
 

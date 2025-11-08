@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/model/bulletin_paie/operateur_model.dart';
 import 'package:frontend/model/grille_salariale/categorie_paie.dart';
 import 'package:frontend/model/grille_salariale/echelon_model.dart';
 import 'package:frontend/model/moyen_paiement_model.dart';
 import 'package:frontend/service/banque_service.dart';
 import 'package:frontend/service/grille_categorie_paie_service.dart';
+import 'package:frontend/service/operateur_service.dart';
 import 'package:frontend/widget/drop_down_text_field.dart';
 import 'package:frontend/widget/simple_text_field.dart';
 import '../../../../model/bulletin_paie/categorie_paie.dart';
@@ -44,8 +46,6 @@ class AddSalariePage extends StatefulWidget {
 class _AddSalariePageState extends State<AddSalariePage> {
   late SimpleFontelicoProgressDialog _dialog;
   final TextEditingController _compterController = TextEditingController();
-  final TextEditingController _paiementPlaceController =
-      TextEditingController();
   final TextEditingController _numeroDeCompteController =
       TextEditingController();
   final TextEditingController _numeroMatriculeController =
@@ -61,7 +61,7 @@ class _AddSalariePageState extends State<AddSalariePage> {
   int? periodPaieCompteur;
   PaieManner? paieManner;
   MoyenPaiementModel? moyenPaiement;
-
+  OperateurModel? _operateur;
 
   @override
   void initState() {
@@ -89,7 +89,7 @@ class _AddSalariePageState extends State<AddSalariePage> {
           grilleCategoriePaie == null ||
           classe == null ||
           echelon == null ||
-          _paiementPlaceController.text.isEmpty) {
+          _operateur == null) {
         errorMessage = "Veuillez renseigner les champs marqués *";
       }
 
@@ -140,7 +140,7 @@ class _AddSalariePageState extends State<AddSalariePage> {
         numeroCompte: _numeroDeCompteController.text.isNotEmpty
             ? _numeroDeCompteController.text.trim()
             : null,
-        paiementPlace: _paiementPlaceController.text,
+        operateur: _operateur!,
         classe: classe!,
         echelon: echelon!,
         grilleCategoriePaie: grilleCategoriePaie!,
@@ -218,6 +218,10 @@ class _AddSalariePageState extends State<AddSalariePage> {
     return await MoyenPaiementService.getMoyenPaiements();
   }
 
+  Future<List<OperateurModel>> fetchOperateurItems() async {
+    return await OperateurService.getOperateurs();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -283,9 +287,21 @@ class _AddSalariePageState extends State<AddSalariePage> {
             canClose: true,
             itemsAsString: (s) => s.libelle,
           ),
-          SimpleTextField(
-              label: "Lieu de payement",
-              textController: _paiementPlaceController),
+          FutureCustomDropDownField<OperateurModel>(
+            label: "Opérateur",
+            selectedItem: _operateur,
+            fetchItems: fetchOperateurItems,
+            onChanged: (OperateurModel? value) {
+              if (value != null) {
+                setState(() {
+                  _operateur = value;
+                });
+              }
+            },
+            canClose: true,
+            itemsAsString: (s) => s.libelle,
+          ),
+
           SimpleTextField(
             label: "Numéro de compte",
             textController: _numeroDeCompteController,

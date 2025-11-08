@@ -113,7 +113,12 @@ enum PermissionAlias {
 // echelon
   createEchelon("CREATE_ECHELON"),
   updateEchelon("EDIT_ECHELON"),
-  readEchelon("READ_ECHELON");
+  readEchelon("READ_ECHELON"),
+
+// echelon
+  createOperateur("CREATE_OPERATEUR"),
+  updateOperateur("EDIT_OPERATEUR"),
+  readOperateur("READ_OPERATEUR");
 
   final String label;
   const PermissionAlias(this.label);

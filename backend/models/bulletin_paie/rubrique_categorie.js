@@ -58,8 +58,8 @@ import CategoriePaie from "./categorie_paie.js";
      }
    };
 
-   //selection des valeurs 
-   getRubriqueBulletinByCategoriePaieVariablePaie = async ({
+   //selection des valeurs
+   getvariablePaieAndPrimeExceptionnelles = async ({
      categoriePaieId,
      salarieId,
    }) => {
@@ -67,6 +67,7 @@ import CategoriePaie from "./categorie_paie.js";
        const rubriqueCategorieEdges = await rubriqueCategorieCollection.edges(
          categoriePaieId
        );
+
        const rubriqueConfiforCategorie = rubriqueCategorieEdges.edges;
 
        const existingVariable =
@@ -74,67 +75,80 @@ import CategoriePaie from "./categorie_paie.js";
            salarieId: salarieId,
          });
 
-       const rubriquesVariables = Array.isArray(existingVariable)
-         ? existingVariable
-         : existingVariable?.rubriques || [];
-
-       console.log(rubriquesVariables);
-
+       // existingVariable is a document with shape { salarieId, rubriques: [{ rubriqueId, value }], primesExceptionnelles: [...] }
+       const rubriquesVariables = existingVariable?.rubriques || [];
+       const primesVariables = existingVariable?.primesExceptionnelles || [];
+       // A REMPLACER PAR LA LISTE DE IDENTITE DEFINI DANS BULLETIN
        const excludedIdentities = [
          "anciennete",
          "avanceSurSalaire",
          "primeExceptionnelle",
          "nombrePersonneCharge",
+         "salaireBase",
          "netPayer",
        ];
 
-       // 3️⃣ Parcourir les rubriques de la catégorie
-       const result = await Promise.all(
-         rubriqueConfiforCategorie.map(async (rubriqueCategorie) => {
-           const rubrique = await rubriqueBulletin.getRubriqueBulletin({
-             key: rubriqueCategorie._from,
-           });
-           // 4️⃣ On ne garde que celles :
-           //    - dont la nature est 'constante'
-           //    - dont la valeur est null
-           //    - et qui ne sont pas dans la liste exclue
-           if (
-             !(
-               rubrique?.nature == NatureRubrique.constant &&
-               rubrique?.value == null
-             ) ||
-             excludedIdentities.includes(rubrique?.rubriqueIdentity)
-           ) {
-             return null;
-           }
+       const rubriqueEntries = [];
+       for (const rubriqueCategorie of rubriqueConfiforCategorie) {
+         const rubrique = await rubriqueBulletin.getRubriqueBulletin({
+           key: rubriqueCategorie._from,
+         });
 
-           // 5️⃣ Chercher une valeur personnalisée (si déjà définie)
-           const variableForRubrique = rubriquesVariables.find(
-             (v) => v.rubriqueId === rubriqueCategorie._from
-           );
-           // 6️⃣ Fusionner la rubrique avec la valeur du salarié (si trouvée)
-           const rubriqueFinale = {
-             ...rubriqueCategorie,
-             value:
-               variableForRubrique?.value !== undefined
-                 ? variableForRubrique.value
-                 : rubrique.value ?? null,
-             rubrique: {
-               ...rubrique,
-             },
-           };
-           return rubriqueFinale;
-         })
-       );
+         // Garder uniquement les rubriques de nature constante et valeur nulle, et exclure certaines identités
+         if (
+           !(
+             rubrique?.nature == NatureRubrique.constant &&
+             rubrique?.value != null
+           ) ||
+           excludedIdentities.includes(rubrique?.rubriqueIdentity)
+         ) {
+           continue;
+         }
 
-       const filteredResult = result.filter((r) => r !== null);
-       filteredResult.sort((a, b) => {
+         // Chercher une valeur personnalisée (si déjà définie)
+         const variableForRubrique = rubriquesVariables.find(
+           (v) =>
+             v.rubriqueId === rubrique._id ||
+             v.rubriqueId === rubriqueCategorie._from
+         );
+
+         const entry = {
+           value:
+             variableForRubrique?.value !== undefined
+               ? variableForRubrique.value
+               : rubrique.value ?? null,
+           rubrique: { ...rubrique },
+         };
+
+         rubriqueEntries.push(entry);
+       }
+
+       // trier par timeStamp
+       rubriqueEntries.sort((a, b) => {
          const tA = a.rubrique?.timeStamp ?? 0;
          const tB = b.rubrique?.timeStamp ?? 0;
          return tA - tB;
        });
 
-       return filteredResult;
+       // Construire les primes exceptionnelles : combiner celles définies dans la configuration et celles stockées pour le salarié
+       const primesFromExistingPromises = (primesVariables || []).map(
+         async (pe) => {
+           const rubrique = await rubriqueBulletin.getRubriqueBulletin({
+             key: pe.rubriqueId,
+           });
+           return { value: pe.value, rubrique };
+         }
+       );
+       const primesFromExisting = await Promise.all(primesFromExistingPromises);
+
+       // retourner sous la forme attendue par le frontend : liste de ValeurRubriqueTemporaire
+
+       return {
+         ...existingVariable,
+         salarieId: salarieId,
+         rubriques: rubriqueEntries,
+         primesExceptionnelles: primesFromExisting,
+       };
      } catch (e) {
        console.error(e);
        throw new Error(

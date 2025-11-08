@@ -633,7 +633,7 @@ double calculerAncienneteEnAnnees(int ancienneteEnMs) {
 
 // Fonction helper pour formater l'ancienneté
 String formatAnciennete(double? valueInMs) {
-  if (valueInMs == null) return "0 an";
+  if (valueInMs == null) return "non défini";
 
   final ancienneteEnAnnees = calculerAncienneteEnAnnees(valueInMs.toInt());
   final ancienneteEntiere = ancienneteEnAnnees.floor();

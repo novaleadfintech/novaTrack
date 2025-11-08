@@ -4,6 +4,12 @@ final List<String> classeTableTitlesSmall = [
   "LIBELLE",
   "",
 ];
+final List<String> operateurTableTitles = ["LIBELLE", ""];
+
+final List<String> operateurTableTitlesSmall = [
+  "LIBELLE",
+  "",
+];
 final List<String> echelonTableTitles = ["LIBELLE", ""];
 
 final List<String> echelonTableTitlesSmall = [

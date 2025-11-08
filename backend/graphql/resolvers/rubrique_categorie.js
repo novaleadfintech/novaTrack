@@ -8,11 +8,8 @@ const rubriqueBulletinResolvers = {
       categoriePaieId: categoriePaieId,
     }),
 
-  rubriqueBulletinByCategoriePaieVariablePaie: async ({
-    categoriePaieId,
-    salarieId,
-  }) =>
-    await rubriqueBulletinModel.getRubriqueBulletinByCategoriePaieVariablePaie({
+  variablePaieAndPrimeExceptionnelles: async ({ categoriePaieId, salarieId }) =>
+    await rubriqueBulletinModel.getvariablePaieAndPrimeExceptionnelles({
       categoriePaieId: categoriePaieId,
       salarieId: salarieId,
     }),

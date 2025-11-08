@@ -132,8 +132,22 @@ class Salarie {
             if (dateDebut && dateFin && personnel) {
               const debut = personnel.dateDebut;
               const fin = personnel.dateFin;
+
+              // Vérifier s'il y a un chevauchement entre la période demandée et le contrat
+              // Il y a chevauchement SI :
+              // - Le contrat commence avant la fin de la période ET
+              // - Le contrat se termine après le début de la période (ou n'a pas de fin)
+
               if (fin != null) {
-                if (debut > dateDebut || fin < dateFin) {
+                // Si le contrat a une date de fin
+                if (debut > dateFin || fin < dateDebut) {
+                  // Pas de chevauchement
+                  return null;
+                }
+              } else {
+                // Si le contrat n'a pas de date de fin (contrat en cours)
+                if (debut > dateFin) {
+                  // Le contrat commence après la période demandée
                   return null;
                 }
               }
@@ -205,10 +219,37 @@ class Salarie {
       const categoriePaie = await CategoriePaieModel.getCategoriePaie({
         key: salarie.categoriePaieId,
       });
+      let grilleCategoriePaie;
+      if (salarie.grilleCategoriePaieId) {
+        grilleCategoriePaie =
+          await CategoriePaieGrilleModel.getCategoriePaieGrille({
+            key: salarie.grilleCategoriePaieId,
+          });
+      }
+
+      let classe = null;
+      let echelon = null;
+
+      if (grilleCategoriePaie && Array.isArray(grilleCategoriePaie.classes)) {
+        classe = grilleCategoriePaie.classes.find(
+          (c) => c && c._id === salarie.classeId
+        );
+
+        if (classe && Array.isArray(classe.echelonIndiciciaires)) {
+          const foundEchelon = classe.echelonIndiciciaires.find(
+            (e) => e && e.echelon && e.echelon._id === salarie.echelonId
+          );
+          echelon = foundEchelon ? foundEchelon.echelon : null;
+        }
+      }
+
       return {
         ...salarie,
-        personnel: personnel,
-        categoriePaie: categoriePaie,
+        personnel: personnel ?? null,
+        categoriePaie: categoriePaie ?? null,
+        grilleCategoriePaie: grilleCategoriePaie ?? null,
+        classe: classe ?? null,
+        echelon: echelon ?? null,
       };
     } catch (err) {
       console.error(err);
@@ -226,7 +267,7 @@ class Salarie {
     paieManner,
     numeroMatricule,
     numeroCompte,
-    paiementPlace,
+    operateur,
     classeId,
     echelonId,
     moyenPaiement,
@@ -240,7 +281,7 @@ class Salarie {
         moyenPaiement,
         classeId,
         numeroMatricule,
-        paiementPlace,
+        operateur,
         echelonId,
         grilleCategoriePaieId,
       ],
@@ -273,7 +314,7 @@ class Salarie {
       moyenPaiement: moyenPaiement,
       numeroMatricule: numeroMatricule,
       numeroCompte: numeroCompte,
-      paiementPlace: paiementPlace,
+      operateur: operateur,
       echelonId: echelonId,
       grilleCategoriePaieId: grilleCategoriePaieId,
       timeStamp: Date.now(),
@@ -295,6 +336,12 @@ class Salarie {
     periodPaie,
     moyenPaiement,
     paieManner,
+    numeroCompte,
+    operateur,
+    classeId,
+    echelonId,
+    grilleCategoriePaieId,
+    numeroMatricule,
   }) => {
     const updateField = {};
     if (personnelId !== undefined) {
@@ -314,6 +361,30 @@ class Salarie {
     if (moyenPaiement !== undefined) {
       updateField.moyenPaiement = moyenPaiement;
     }
+    if (numeroCompte !== undefined) {
+      updateField.numeroCompte = numeroCompte;
+    }
+    if (operateur !== undefined) {
+      updateField.operateur = operateur;
+    }
+    if (classeId !== undefined) {
+      await ClasseModel.isExistClasse({ key: classeId });
+      updateField.classeId = classeId;
+    }
+    if (echelonId !== undefined) {
+      await EchelonModel.isExistEchelon({ key: echelonId });
+      updateField.echelonId = echelonId;
+    }
+    if (grilleCategoriePaieId !== undefined) {
+      await CategoriePaieGrilleModel.isExistCategoriePaieGrille({
+        key: grilleCategoriePaieId,
+      });
+      updateField.grilleCategoriePaieId = grilleCategoriePaieId;
+    }
+
+    if (numeroMatricule !== undefined) {
+      updateField.numeroMatricule = numeroMatricule;
+    }
 
     isValidValue({ value: updateField });
     if (periodPaie !== undefined) {
@@ -324,7 +395,6 @@ class Salarie {
       return "OK";
     } catch (err) {
       console.error(err);
-
       throw new Error("Erreur lors de la mise à jour du salarie");
     }
   };

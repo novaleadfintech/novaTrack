@@ -19,7 +19,9 @@ class PayCalendarModel {
       libelle: json["libelle"] ?? "",
       dateDebut: DateTime.fromMillisecondsSinceEpoch(json["dateDebut"]),
       dateFin: DateTime.fromMillisecondsSinceEpoch(json["dateFin"]),
-      etat: json["etat"] == null ? null : etatPayCalendarFromJson(json["etat"]),
+      etat: json["etat"] == null
+          ? EtatPayCalendar.tobeOpen
+          : etatPayCalendarFromJson(json["etat"]),
     );
   }
 

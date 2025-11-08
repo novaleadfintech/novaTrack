@@ -10,11 +10,13 @@ import RubriqueBulletin from "./rubrique_bulletin.js";
 import User from "../habilitation/user.js";
 import ValeurRubriqueTemporaire from "./valeur_rubrique_temporaire.js";
 import RubriqueCategorieConf from "./rubrique_categorie.js";
+import Entreprise from "../entreprise.js";
 
 const FluxFinancierModel = new FluxFinancier();
 const RubriqueCategorieConfModel = new RubriqueCategorieConf();
 const SalarieModel = new Salarie();
 const BanqueModel = new Banque();
+const EntrepriseModel = new Entreprise();
 const ValeurRubriqueTemporaireModel = new ValeurRubriqueTemporaire();
 const RubriqueBulletinModel = new RubriqueBulletin();
 const bulletinCollection = db.collection("bulletins");
@@ -37,6 +39,7 @@ const RubriqueIdentity = {
   anciennete: "anciennete",
   nombrePersonneCharge: "nombrePersonneCharge",
   netPayer: "netPayer",
+  salaireBase: "salaireBase",
   avanceSurSalaire: "avanceSurSalaire",
 };
 
@@ -261,6 +264,8 @@ class BulletinPaie {
             value: valeurTemp?.value ?? rubrique.value ?? 0,
           };
         });
+        // Fusionner les deux tableaux
+        rubriques.push(...(valeursTemp?.primesExceptionnelles || []));
         // 5. Créer le bulletin
         await this.createBulletin({
           // moyenPayement,
@@ -275,7 +280,6 @@ class BulletinPaie {
         throw new Error(error);
       }
     }
-    console.log("_______________________________________________");
     return "OK";
   }
 
@@ -548,7 +552,7 @@ class BulletinPaie {
     }
 
     const salarie = await SalarieModel.getSalarie({ key: salarieId });
-
+    console.log(salarie);
     // Étape 1 : Récupérer les découverts impayés ou partiellement payés
     const decouvertesQuery = await db.query(aql`
     FOR decouvert IN ${decouverteCollection}
@@ -587,13 +591,44 @@ class BulletinPaie {
       rubriques[indexRubriqueAvance].value = totalAvance;
     }
 
-    // ✨ ÉTAPE 5 : CALCULER TOUTES LES RUBRIQUES AVEC DÉPENDANCES
+    // Étape 4' : Ajouter ou mettre à jour la rubrique "avanceSurSalaire"
+    const indexRubriqueSalaireBace = rubriques.findIndex((r) => {
+      return r.rubrique?.rubriqueIdentity === RubriqueIdentity.salaireBase;
+    });
+
+    if (indexRubriqueSalaireBace !== -1) {
+      rubriques[indexRubriqueSalaireBace].value = await this.calculateSalaire({
+        salarie: salarie,
+      });
+    }
+
+    // Étape 4' : Ajouter ou mettre à jour la rubrique "ancienneté"
+    const indexRubriqueAnciennete = rubriques.findIndex(
+      (r) => r.rubrique?.rubriqueIdentity === RubriqueIdentity.anciennete
+    );
+
+    if (indexRubriqueAnciennete !== -1) {
+      rubriques[indexRubriqueAnciennete].value =
+        salarie.personnel.dateFin ??
+        Date.now -
+          (salarie.personnel.dateDebut + salarie.personnel.periodeEssai ?? 0);
+    }
+    // Étape 4' : Ajouter ou mettre à jour la rubrique "ancienneté"
+    const indexRubriqueNbrePerssonneEnCharge = rubriques.findIndex(
+      (r) =>
+        r.rubrique?.rubriqueIdentity === RubriqueIdentity.nombrePersonneCharge
+    );
+
+    if (indexRubriqueNbrePerssonneEnCharge !== -1) {
+      rubriques[indexRubriqueNbrePerssonneEnCharge].value =
+        salarie.personnel.nombrePersonneCharge ?? 0;
+    }
+
     console.log("Début du calcul des rubriques...");
     const rubriquesCalculees =
       this.calculateRubriquesWithDependencies(rubriques);
     console.log("Calcul des rubriques terminé");
 
-    // Étape 6 : Créer le bulletin avec les rubriques calculées
     const bulletin = {
       salarie: salarie,
       dateEdition: dateEdition,
@@ -623,6 +658,80 @@ class BulletinPaie {
       throw new Error(
         `Erreur lors de la création du bulletin: ${error.message}`
       );
+    }
+  }
+
+  async calculateSalaire({ salarie }) {
+    try {
+      // 1. Vérifier si le salarié a une grille salariale, classe et échelon
+      if (!salarie.grilleCategoriePaie || !salarie.classe || !salarie.echelon) {
+        console.warn("Grille salariale, classe ou échelon ne sont pas défini");
+        return 0;
+      }
+
+      // 2. Récupérer la valeur indiciaire de l'entreprise
+      const indice = await EntrepriseModel.getValeurIndiciaire();
+
+      if (!indice) {
+        throw new Error("Valeur indiciaire non trouvée");
+      }
+
+      // 3. Récupérer les informations de la grille salariale
+      const grilleSalariale = salarie.grilleCategoriePaie;
+      const classeId = salarie.classe._id;
+      const echelonId = salarie.echelon._id;
+
+      // 4. Vérifier que la grille a des classes
+      if (!grilleSalariale.classes || grilleSalariale.classes.length === 0) {
+        console.warn("Aucune classe dans la grille salariale - salaire = 0");
+        return 0;
+      }
+
+      // 5. Trouver la classe correspondante dans la grille
+      const classeCorrespondante = grilleSalariale.classes.find(
+        (c) => c._id === classeId
+      );
+
+      if (!classeCorrespondante) {
+        console.warn(
+          `Classe non trouvée dans la grille salariale - salaire = 0`
+        );
+        return 0;
+      }
+
+      // 6. Vérifier que la classe a des échelons indiciaires
+      if (
+        !classeCorrespondante.echelonIndiciciaires ||
+        classeCorrespondante.echelonIndiciciaires.length === 0
+      ) {
+        console.warn(
+          "Aucun échelon indiciaire dans cette classe - salaire = 0"
+        );
+        return 0;
+      }
+
+      // 7. Trouver l'échelon indiciaire correspondant
+      const echelonIndiciaire = classeCorrespondante.echelonIndiciciaires.find(
+        (ei) => ei.echelon._id === echelonId
+      );
+
+      if (!echelonIndiciaire) {
+        console.warn(`Échelon indiciaire non trouvé`);
+        return 0;
+      }
+
+      // 8. Récupérer l'indice de l'échelon
+      const indiceEchelon = echelonIndiciaire.indice;
+
+      if (indiceEchelon == null) {
+        console.warn("Indice non défini pour cet échelon");
+        return 0;
+      }
+      const salaire = indiceEchelon * indice;
+      return salaire;
+    } catch (error) {
+      console.error("Erreur lors du calcul du salaire:", error);
+      return 0;
     }
   }
 
@@ -733,7 +842,7 @@ class BulletinPaie {
         const referenceValue =
           rubriqueOnBulletin.rubrique.rubriqueIdentity ===
           RubriqueIdentity.anciennete
-            ? calculerAncienneteEnAnnees(reference.value)
+            ? this.calculerAncienneteEnAnnees(reference.value)
             : reference.value;
 
         const tranche = bareme.tranches.find((tr) => {
@@ -771,6 +880,10 @@ class BulletinPaie {
     }
   }
 
+  calculerAncienneteEnAnnees(ancienneteEnMs) {
+    const msParAnnee = 365.25 * 24 * 60 * 60 * 1000;
+    return ancienneteEnMs / msParAnnee;
+  }
   /**
    * Trouve les dépendances directes d'une rubrique
    * @param {Object} rubrique - La rubrique à analyser
@@ -869,7 +982,6 @@ class BulletinPaie {
    * @returns {Array} Rubriques avec valeurs calculées
    */
   calculateRubriquesWithDependencies(rubriques) {
-    console.log(rubriques);
     // Créer le graphe des dépendances
     const dependencyMap = new Map();
 
@@ -890,7 +1002,6 @@ class BulletinPaie {
         toutesLesRubriquesSurBulletin: rubriques,
       });
     }
-    console.log(rubriques);
     return rubriques;
   }
 

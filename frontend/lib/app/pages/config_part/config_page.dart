@@ -5,6 +5,8 @@ import 'package:frontend/app/pages/configure_page_dialog.dart';
 import 'package:frontend/app/pages/entreprise/entreprise_page.dart';
 import 'package:frontend/app/pages/grille_salariale/grille_page.dart';
 import 'package:frontend/app/pages/moyen_de_payement/moyen_payement_page.dart';
+import 'package:frontend/app/pages/operateur/operateur_page.dart'
+    show OperateurPage;
 import 'package:frontend/app/pages/pays/pays_page.dart';
 import 'package:frontend/app/pages/poste/poste_page.dart';
 import 'package:frontend/app/pages/profil/profil_page.dart';
@@ -268,6 +270,18 @@ class _ConfigPageState extends State<ConfigPage> {
                                   context,
                                   title: "Calendrier de paie",
                                   content: PayCalendarPage(role: role),
+                                );
+                              },
+                            ),
+                            InkWell(
+                              child: ResponsiveCard(
+                                label: "Opérateurs",
+                              ),
+                              onTap: () {
+                                showResponsiveConfigPageDialogBox(
+                                  context,
+                                  title: "Opérateurs",
+                                  content: OperateurPage(role: role),
                                 );
                               },
                             ),

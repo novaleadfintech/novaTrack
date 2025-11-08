@@ -126,11 +126,14 @@ class _AddClassCategorieSpaceState extends State<AddClassCategorieSpace> {
                       children: [
                         Expanded(
                           child: Container(
-                            padding: EdgeInsets.all(4),
-                            color: Theme.of(context).colorScheme.onSecondary,
+                            padding: EdgeInsets.all(8),
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSecondary
+                                .withValues(alpha: 0.5),
                             child: Text(
                               classe.libelle,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -140,7 +143,7 @@ class _AddClassCategorieSpaceState extends State<AddClassCategorieSpace> {
                         const Gap(8),
                         IconButton(
                           icon: Icon(
-                            Icons.list_alt,
+                            Icons.edit,
                             color: Theme.of(context).colorScheme.primary,
                           ),
                           onPressed: () {

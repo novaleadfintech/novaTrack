@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
  import 'package:frontend/app/pages/error_page.dart';
 import 'package:frontend/app/pages/no_data_page.dart';
+import 'package:frontend/helper/amout_formatter.dart';
 import 'package:frontend/model/bulletin_paie/nature_rubrique.dart';
 import 'package:frontend/model/bulletin_paie/rubrique.dart';
 import 'package:frontend/model/bulletin_paie/type_rubrique.dart';
@@ -297,7 +298,9 @@ class _RubriqueCategorieConfigPageState
         textController: valueControllers[rubrique.id]!,
         required: false,
         onChanged: (value) {
-          final parsed = value.isEmpty ? null : double.tryParse(value);
+          final parsed = value.isEmpty
+              ? null
+              : double.tryParse(Formatter.parseAmount(value));
           rubriqueConfig.rubriquePaie.value = parsed;
         },
         keyboardType: const TextInputType.numberWithOptions(decimal: true),

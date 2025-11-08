@@ -63,7 +63,7 @@ enum BaseType {
   rubrique  # une autre rubrique
 }
 
-enum Operateur {
+enum Opera {
   multiplication
   addition
   soustraction
@@ -77,7 +77,7 @@ input ElementCalculInput {
 }
 
 input CalculInput {
-  operateur: Operateur!
+  operateur: Opera!
   elements: [ElementCalculInput!]!
 }
 type ElementCalcul {
@@ -87,7 +87,7 @@ type ElementCalcul {
 }
 
 type Calcul {
-  operateur: Operateur!
+  operateur: Opera!
   elements: [ElementCalcul!]!
 }
 

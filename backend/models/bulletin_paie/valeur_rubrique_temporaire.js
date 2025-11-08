@@ -54,21 +54,23 @@ class valeurRubriqueTemporaire {
   /**
    * ➕ Créer une valeur rubrique temporaire
    */
-  async createVariablesPaies({ salarieId, rubriques }) {
+  async createVariablesPaies({ salarieId, rubriques, primesExceptionnelles }) {
     // Vérifie si déjà existant pour éviter doublon
     const exists = await this.existsForSalarie(salarieId);
-    if (exists) {
-      throw new Error(
-        `Une valeur temporaire existe déjà pour le salarié ${salarieId}`
-      );
-    }
-
+    let existVariablePaie;
     const doc = {
       salarieId,
       rubriques,
+      primesExceptionnelles,
       createdAt: Date.now(),
     };
-
+    if (exists) {
+      existVariablePaie = await this.getBySalarieId({ salarieId: salarieId });
+      if (existVariablePaie) {
+        await variablePaieCollection.update(existVariablePaie._id, doc);
+        return "OK";
+      }
+    }
     await variablePaieCollection.save(doc);
     return "OK";
   }

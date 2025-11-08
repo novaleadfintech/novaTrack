@@ -7,6 +7,7 @@ import 'package:frontend/helper/assets/asset_icon.dart';
 import 'package:frontend/model/bulletin_paie/rubrique.dart';
 import 'package:frontend/model/bulletin_paie/rubrique_paie.dart';
 import 'package:frontend/model/bulletin_paie/salarie_model.dart';
+import 'package:frontend/model/bulletin_paie/valeur_rubrique_temporaire.dart';
 import 'package:frontend/service/bulletin_rubrique_service.dart';
 import 'package:frontend/service/rubrique_categorie_conf_service.dart';
 import 'package:frontend/service/valeur_rubrique_temporaire_service.dart';
@@ -52,7 +53,8 @@ class _VariablePaiePageState extends State<VariablePaiePage> {
   /// Récupération de la liste des primes disponibles depuis le service
   Future<List<RubriqueBulletin>> fetchPrimes() async {
     try {
-      final primes = await BulletinRubriqueService.getExceptionnellePrime();
+      // TODO: ceci doit etre en vrai remplacer par getPrimeExceptionnelle
+      final primes = await BulletinRubriqueService.getBulletinRubriques();
       return primes;
     } catch (e) {
       debugPrint("Erreur lors du chargement des primes: $e");
@@ -71,26 +73,41 @@ class _VariablePaiePageState extends State<VariablePaiePage> {
 
   Future<void> _initRubriques() async {
     try {
-      final List<RubriqueOnBulletinModel> rubriquePaieResponse =
+      // On attend désormais un ValeurRubriqueTemporaire (contenant rubriques et primesExceptionnelles)
+      final ValeurRubriqueTemporaire valeurResponse =
           await RubriqueCategorieConfService
-              .getRubriqueBulletinByCategoriePaieVariablePaie(
+              .getvariablePaieAndPrimeExceptionnelles(
         categorie: widget.salarie.categoriePaie,
         salarieId: widget.salarie.id,
       );
 
-       for (var rubriqueBulletin in rubriquePaieResponse) {
-        final r = rubriqueBulletin.rubrique;
+      // Si rien reçu, on initialise avec listes vides
+      final List<RubriqueOnBulletinModel> rubriquePaieResponse =
+          valeurResponse.rubriques;
 
+      // Préremplir les controllers des rubriques constantes
+      for (var rubriqueBulletin in rubriquePaieResponse) {
+        final r = rubriqueBulletin.rubrique;
         if (r.nature == NatureRubrique.constant) {
           final controller = TextEditingController();
-
-          // Si la rubrique a déjà une valeur, on l'affiche dans le champ
           if (rubriqueBulletin.value != null) {
             controller.text = rubriqueBulletin.value.toString();
           }
-
           valueControllers[r.id] = controller;
         }
+      }
+
+      // Préremplir la liste primesExceptionnelles UI si elle existe dans la réponse
+      primesExceptionnelles = [];
+      final primesFromServer = valeurResponse.primesExceptionnelles ?? [];
+      for (var primeOnBulletin in primesFromServer) {
+        primesExceptionnelles.add({
+          "prime": primeOnBulletin.rubrique,
+          "montant": TextEditingController(
+              text: primeOnBulletin.value != null
+                  ? primeOnBulletin.value.toString()
+                  : ""),
+        });
       }
 
       setState(() {
@@ -156,6 +173,7 @@ class _VariablePaiePageState extends State<VariablePaiePage> {
                       },
                       keyboardType:
                           const TextInputType.numberWithOptions(decimal: true),
+                      // maxlength: 2,
                     );
                   }
 
@@ -202,7 +220,7 @@ class _VariablePaiePageState extends State<VariablePaiePage> {
                           ],
                         ),
                         FutureCustomDropDownField<RubriqueBulletin>(
-                          label: "Sélectionner une prime",
+                          label: "Sélectionnez une prime",
                           selectedItem: primesExceptionnelles[i]["prime"],
                           fetchItems: fetchPrimes,
                           onChanged: (RubriqueBulletin? selected) {
@@ -260,24 +278,29 @@ class _VariablePaiePageState extends State<VariablePaiePage> {
 
   void _addVariablePaie() async {
     List<RubriqueOnBulletinModel> variablesPaie = [];
+    List<RubriqueOnBulletinModel> primesPaie = [];
     List<String> erreurs = [];
 
-    // 🔹 Vérifie les rubriques normales
+    // 🔹 Vérifie les rubriques normales (seulement celles issues de _rubriquesOnBulletin et de nature constant)
     for (var rubrique in _rubriquesOnBulletin) {
       final nom = rubrique.rubrique.rubrique;
-      if (rubrique.value == null) {
-        erreurs.add("Veuillez renseigner la valeur pour la rubrique \"$nom\".");
-      } else {
-        variablesPaie.add(
-          RubriqueOnBulletinModel(
-            rubrique: rubrique.rubrique,
-            value: rubrique.value,
-          ),
-        );
+      // On considère que les rubriques normales doivent avoir une value
+      if (rubrique.rubrique.nature == NatureRubrique.constant) {
+        if (rubrique.value == null) {
+          erreurs
+              .add("Veuillez renseigner la valeur pour la rubrique \"$nom\".");
+        } else {
+          variablesPaie.add(
+            RubriqueOnBulletinModel(
+              rubrique: rubrique.rubrique,
+              value: rubrique.value,
+            ),
+          );
+        }
       }
     }
 
-    // 🔹 Vérifie les primes exceptionnelles saisies
+    // 🔹 Vérifie les primes exceptionnelles saisies séparément
     for (int i = 0; i < primesExceptionnelles.length; i++) {
       final rubrique = primesExceptionnelles[i]["prime"];
       final montantController = primesExceptionnelles[i]["montant"];
@@ -298,12 +321,12 @@ class _VariablePaiePageState extends State<VariablePaiePage> {
         continue;
       }
 
-      // ✅ Empêcher d’ajouter deux fois la même prime
-      final alreadyExists = variablesPaie.any(
+      // Empêcher d’ajouter deux fois la même prime dans la liste des primes
+      final alreadyExistsPrime = primesPaie.any(
         (r) => r.rubrique.rubrique == rubrique.rubrique,
       );
-      if (!alreadyExists) {
-        variablesPaie.add(
+      if (!alreadyExistsPrime) {
+        primesPaie.add(
           RubriqueOnBulletinModel(
             rubrique: rubrique,
             value: montant,
@@ -325,17 +348,10 @@ class _VariablePaiePageState extends State<VariablePaiePage> {
       return;
     }
 
-    // ✅ Met à jour la liste principale
     setState(() {
       _rubriquesOnBulletin = variablesPaie;
     });
 
-    debugPrint("🟢 Total rubriques valides : ${_rubriquesOnBulletin.length}");
-    for (var r in _rubriquesOnBulletin) {
-      debugPrint("✅ Rubrique: ${r.rubrique.rubrique}, Valeur: ${r.value}");
-    }
-
-    // 🌀 Affiche le chargement
     _dialog.show(
       message: "",
       type: SimpleFontelicoProgressDialogType.phoenix,
@@ -343,12 +359,14 @@ class _VariablePaiePageState extends State<VariablePaiePage> {
     );
 
     try {
-      var result = await ValariablePaieService.createValariablePaie(
-        salarie: widget.salarie,
-        variablePaie: _rubriquesOnBulletin,
-      );
-
       _dialog.hide();
+
+      // TODO: adapter le nom de la méthode de service si nécessaire.
+      // Exemple d'appel (vérifier l'API du service ValeurRubriqueTemporaireService) :
+      var result = await ValariablePaieService.createValariablePaie(
+          salarie: widget.salarie,
+          primesExceptionnelles: primesPaie.isNotEmpty ? primesPaie : [],
+          variablePaie: variablesPaie);
 
       if (result.status == PopupStatus.success) {
         setState(() {

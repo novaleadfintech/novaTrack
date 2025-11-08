@@ -118,7 +118,7 @@ class ResponsiveConfigPageDialogBox extends StatelessWidget {
                 surfaceTintColor: Theme.of(context).colorScheme.surface,
                 backgroundColor: Theme.of(context).colorScheme.surface,
                 shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.zero,
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
                 ),
                 insetPadding: const EdgeInsets.symmetric(
                     horizontal: 50.0, vertical: 50.0),

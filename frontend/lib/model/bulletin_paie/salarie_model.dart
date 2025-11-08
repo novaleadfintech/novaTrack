@@ -1,3 +1,4 @@
+import 'package:frontend/model/bulletin_paie/operateur_model.dart';
 import 'package:frontend/model/grille_salariale/categorie_paie.dart';
 import 'package:frontend/model/grille_salariale/classe_model.dart';
 import 'package:frontend/model/grille_salariale/echelon_model.dart';
@@ -16,7 +17,7 @@ class SalarieModel {
   final EchelonModel? echelon;
   final MoyenPaiementModel? moyenPaiement;
   final String? numeroCompte;
-  final String? paiementPlace;
+  final OperateurModel? operateur;
   final ClasseModel? classe;
   final GrilleCategoriePaieModel? grilleCategoriePaie;
   final PaieManner? paieManner;
@@ -32,7 +33,7 @@ class SalarieModel {
     this.echelon,
     this.classe,
     this.numeroCompte,
-    this.paiementPlace,
+    this.operateur,
     this.moyenPaiement,
     this.grilleCategoriePaie,
     this.numeroMatricule,
@@ -56,7 +57,9 @@ class SalarieModel {
       moyenPaiement: json["moyenPaiement"] == null
           ? null
           : MoyenPaiementModel.fromJson(json["moyenPaiement"]),
-      paiementPlace: json['paiementPlace'],
+      operateur: json['operateur'] != null
+          ? OperateurModel.fromJson(json['operateur'])
+          : null,
       classe:
           json['classe'] != null ? ClasseModel.fromJson(json['classe']) : null,
       grilleCategoriePaie: json['grilleCategoriePaie'] != null

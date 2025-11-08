@@ -4,12 +4,20 @@ type PayCalendar{
     libelle:String!
     dateDebut: Float!
     dateFin: Float!
+    etat: EtatPayCalendar
 }
 input PayCalendarInput{
     _id:ID!
     libelle:String!
     dateDebut: Float!
     dateFin: Float!
+    etat: EtatPayCalendar!
+}
+
+enum EtatPayCalendar{
+    opened
+    closed
+    tobeOpen
 }
 `;
 
@@ -21,6 +29,7 @@ const query = `#graphql
 const mutation = `#graphql
     createPayCalendar(libelle:String!, dateDebut: Float!, dateFin: Float!):String!
     updatePayCalendar(key:ID!, libelle:String, dateDebut: Float, dateFin: Float):String!
+    changeEtatPayPeriod(key:ID!, etat:EtatPayCalendar!):String!
     deletePayCalendar(key:ID!):String!
 `;
 
