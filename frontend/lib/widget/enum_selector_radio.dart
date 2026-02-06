@@ -47,6 +47,7 @@ class EnumRadioSelector<T extends Enum> extends StatelessWidget {
               children: [
                 Radio<T>(
                   value: value,
+                  
                   groupValue: selectedValue,
                   onChanged: onChanged,
                 ),
@@ -54,7 +55,24 @@ class EnumRadioSelector<T extends Enum> extends StatelessWidget {
               ],
             ),
           ),
-        ],
+        // RadioGroup<T>(
+        //     onChanged: onChanged,
+        //     groupValue: selectedValue,
+        //     child: Column(
+        //       children: [
+        //         ...values.map(
+        //           (value) => Row(
+        //             children: [
+        //               Radio<T>(
+        //                 value: value,
+        //               ),
+        //               Text(getLabel(value)),
+        //             ],
+        //           ),
+        //         )
+        //       ],
+        //     ))
+      ]
       ),
     );
   }

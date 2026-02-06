@@ -5,7 +5,7 @@ TableRow tableHeader(BuildContext context,
     {required List<String> tablesTitles}) {
   return TableRow(
     decoration: BoxDecoration(
-      color: Theme.of(context).colorScheme.onSecondary.withOpacity(0.2),
+      color: Theme.of(context).colorScheme.onSecondary.withValues(alpha: 0.2),
     ),
     children: tablesTitles.map(
       (value) => TableHeaderCell(

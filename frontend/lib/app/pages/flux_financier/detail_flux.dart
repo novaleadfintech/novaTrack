@@ -50,7 +50,20 @@ class DetailFluxPage extends StatelessWidget {
                 ],
               ),
             ],
-            
+            if (flux.partiePrenante != null) ...[
+              TableRow(
+                decoration: tableDecoration(context),
+                children: [
+                  TabledetailBodyMiddle(
+                    valeur: 'Partie prenante',
+                    isbold: true,
+                  ),
+                  TabledetailBodyMiddle(
+                    valeur: flux.partiePrenante!,
+                  ),
+                ],
+              ),
+            ],
             if (flux.reference != null) ...[
               TableRow(
                 decoration: tableDecoration(context),

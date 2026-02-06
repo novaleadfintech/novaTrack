@@ -277,6 +277,7 @@ class RubriqueCategorieConfService {
         code
         type
         portee
+        rubriqueRole
         rubriqueIdentity
         nature
         section {
@@ -454,8 +455,6 @@ class RubriqueCategorieConfService {
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
         var data = jsonData['data']['variablePaieAndPrimeExceptionnelles'];
-        print(data);
-
         if (data != null) {
           return ValeurRubriqueTemporaire.fromJson(data);
         } else {
@@ -465,7 +464,6 @@ class RubriqueCategorieConfService {
         throw jsonDecode(response.body)['errors'][0]['message'];
       }
     } catch (e) {
-      print(e.toString());
       rethrow;
     }
   }

@@ -330,6 +330,14 @@ class RubriqueBulletin {
       isValidValue({ value: sectionId });
       await sectionBulletinModel.isExistSectionBulletin({ key: sectionId });
     }
+    if (rubriqueIdentity != undefined) {
+      rubriquesExistant = await this.getAllRubriqueBulletin();
+      for (const rub of rubriquesExistant) {
+        if (rub.rubriqueIdentity == rubriqueIdentity) {
+          throw new Error("Une rubrique avec cette identité existe déjà!");
+        }
+      }
+    }
     const newRubriqueBulletin = {
       rubrique: rubrique,
       code: code,

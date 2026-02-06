@@ -101,6 +101,7 @@ class valeurRubriqueTemporaire {
     const result = await cursor.next();
     return result || null;
   }
+  
 }
 
 export default valeurRubriqueTemporaire;

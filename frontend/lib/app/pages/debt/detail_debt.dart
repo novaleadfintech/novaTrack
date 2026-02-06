@@ -106,6 +106,22 @@ class DetailDebtPage extends StatelessWidget {
             ],
           ),
         ],
+        if (debt.datePayementUlterieur != null) ...[
+          TableRow(
+            decoration: tableDecoration(context),
+            children: [
+              const TabledetailBodyMiddle(
+                valeur: "Date de payement ultérieure",
+                isbold: true,
+              ),
+              TabledetailBodyMiddle(
+                valeur: Responsive.isMobile(context)
+                    ? getShortStringDate(time: debt.datePayementUlterieur!)
+                    : getStringDate(time: debt.datePayementUlterieur!),
+              ),
+            ],
+          ),
+        ],
         if (debt.pieceJustificative != null) ...[
           TableRow(
             decoration: tableDecoration(context),

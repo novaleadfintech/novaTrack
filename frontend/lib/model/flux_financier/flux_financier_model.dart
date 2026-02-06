@@ -13,6 +13,7 @@ class FluxFinancierModel {
   final String? referenceTransaction;
   final FluxFinancierType? type;
   final ClientModel? client;
+  final String? partiePrenante;
   final FluxFinancierStatus? status;
   final double montant;
   final bool? isFromSystem;
@@ -37,6 +38,7 @@ class FluxFinancierModel {
     this.referenceTransaction,
     this.dateOperation,
     this.bank,
+    this.partiePrenante,
     this.isFromSystem = false,
     this.user,
     this.reference,
@@ -71,6 +73,7 @@ class FluxFinancierModel {
       bank: json['bank'] != null ? BanqueModel.fromJson(json['bank']) : null,
       client:
           json['client'] != null ? ClientModel.fromJson(json['client']) : null,
+      partiePrenante: json['partiePrenante'],
       user: json['user'] != null ? UserModel.fromJson(json['user']) : null,
       factureId: json['factureId'],
       referenceTransaction: json['referenceTransaction'] ?? "",
@@ -93,6 +96,7 @@ class FluxFinancierModel {
       'dateEnregistrement': dateEnregistrement?.millisecondsSinceEpoch,
       'dateOperation': dateOperation?.millisecondsSinceEpoch,
       'pieceJustificative': pieceJustificative,
+      'partiePrenante': partiePrenante,
       'referenceTransaction': referenceTransaction,
       'lieuOperation': bank?.toJson,
       'user': user?.toJson(),

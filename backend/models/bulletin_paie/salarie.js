@@ -130,7 +130,9 @@ class Salarie {
               key: salarie.personnelId,
             });
             if (dateDebut && dateFin && personnel) {
-              const debut = personnel.dateDebut;
+              const debut =
+                personnel.dateDebut +
+                (personnel.dureeEssai ?? 0) * 24 * 60 * 60 * 1000;
               const fin = personnel.dateFin;
 
               // Vérifier s'il y a un chevauchement entre la période demandée et le contrat

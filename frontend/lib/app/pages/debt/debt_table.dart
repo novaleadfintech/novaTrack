@@ -159,13 +159,13 @@ class _DebtTableState extends State<DebtTable> {
                                   },
                                   color: null,
                                 ),
-                                // (
-                                //   label: Constant.edit,
-                                //   onTap: () {
-                                //     editDebt(debt: debt);
-                                //   },
-                                //   color: null,
-                                // ),
+                                (
+                                  label: Constant.edit,
+                                  onTap: () {
+                                    editDebt(debt: debt);
+                                  },
+                                  color: null,
+                                ),
                                 (
                                   label: Constant.detail,
                                   onTap: () {
@@ -202,13 +202,13 @@ class _DebtTableState extends State<DebtTable> {
                                   },
                                   color: null,
                                 ),
-                                // (
-                                //   label: Constant.edit,
-                                //   onTap: () {
-                                //     editDebt(debt: debt);
-                                //   },
-                                //   color: null,
-                                // ),
+                                (
+                                  label: Constant.edit,
+                                  onTap: () {
+                                    editDebt(debt: debt);
+                                  },
+                                  color: null,
+                                ),
                                 (
                                   label: Constant.detail,
                                   onTap: () {

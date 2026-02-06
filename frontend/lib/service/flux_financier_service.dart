@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
 import 'package:frontend/model/commentaire_model.dart';
- import 'package:frontend/model/flux_financier/validate_flux_model.dart';
+import 'package:frontend/model/flux_financier/validate_flux_model.dart';
 import '../global/constant/request_management_value.dart';
 import '../model/client/client_model.dart';
 import '../model/entreprise/banque.dart';
@@ -20,10 +20,11 @@ class FluxFinancierService {
   static Future<RequestResponse> createFluxFinancier({
     required String libelle,
     required FluxFinancierType type,
-    required ClientModel client,
+    required ClientModel? client,
     required double montant,
     DateTime? dateOperation,
     required BanqueModel banque,
+    String? partiePrenante,
     required MoyenPaiementModel moyenPayement,
     required referenceTransaction,
     required String userId,
@@ -37,9 +38,10 @@ class FluxFinancierService {
                 referenceTransaction: "$referenceTransaction",
                 type: ${fluxFinancierTypeToString(type)},
                 montant: $montant,
+                partiePrenante: "$partiePrenante",
                 moyenPayement: ${moyenPayement.toJson()},
                 userId: "$userId",        
-                clientId: "${client.id}",        
+                clientId: ${client != null ? '"${client.id}"' : null},        
         ''';
       body += 'bankId: "${banque.id}",';
 
@@ -121,6 +123,7 @@ class FluxFinancierService {
     required double? montant,
     required DateTime? dateOperation,
     required MoyenPaiementModel? moyenPayement,
+    String? partiePrenante,
     required String? referenceTransaction,
     required BanqueModel? banque,
     required ClientModel? client,
@@ -148,10 +151,17 @@ class FluxFinancierService {
         body += 'moyenPayement: ${moyenPayement.toJson()},';
       }
       if (banque != null) {
-        body += 'bankId: "${banque.id}"';
+        body += 'bankId: "${banque.id}",';
       }
       if (client != null) {
-        body += 'clientId: "${client.id}"';
+        body += 'clientId: "${client.id}",';
+      } else {
+        body += 'clientId: $client,';
+      }
+      if (partiePrenante != null) {
+        body += 'partiePrenante: "$partiePrenante",';
+      } else {
+        body += 'partiePrenante:$partiePrenante,';
       }
       body += 'pieceJustificative: \$pieceJustificative';
 
@@ -159,6 +169,7 @@ class FluxFinancierService {
             )
         }
         ''';
+
       bool isFileModified = file != null && file.bytes != null;
       bool isFileUnchanged = file != null && file.bytes == null;
 
@@ -338,6 +349,7 @@ class FluxFinancierService {
                       type
                       montant
                       reference
+                      partiePrenante
                       referenceTransaction
                       status
                       factureId
@@ -443,6 +455,7 @@ class FluxFinancierService {
                       type
                       montant
                       reference
+                      partiePrenant
                       referenceTransaction
                       status
                       factureId
@@ -547,6 +560,7 @@ class FluxFinancierService {
                       reference
                       referenceTransaction
                       status
+                      partiePrenante
                       type
                       montant
                       moyenPayement{
@@ -651,6 +665,7 @@ class FluxFinancierService {
                       status
                       type
                       montant
+                      partiePrenante
                       factureId
                       moyenPayement{
                       _id
@@ -765,6 +780,7 @@ class FluxFinancierService {
                       reference
                       referenceTransaction
                       status
+                      partiePrenante
                       moyenPayement{
                       _id
                       libelle
@@ -860,6 +876,7 @@ class FluxFinancierService {
                       total
                       input
                       output
+                      partiePrenante
                       fluxFinanciers {
                       _id
                       libelle
@@ -958,6 +975,7 @@ class FluxFinancierService {
                       reference
                       isFromSystem
                       referenceTransaction
+                      partiePrenante                      
                       status
                       client {
                         _id

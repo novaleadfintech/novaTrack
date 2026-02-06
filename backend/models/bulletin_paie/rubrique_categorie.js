@@ -5,7 +5,7 @@ import RubriqueBulletin from "./rubrique_bulletin.js";
 import CategoriePaie from "./categorie_paie.js";
  import ValeurRubriqueTemporaire from "./valeur_rubrique_temporaire.js";
  const rubriqueCategorieCollection = db.collection("categoriePaieRubriques");
- import { NatureRubrique } from "./bulletin.js";
+ import { PorteeRubrique } from "./bulletin.js";
 
  const rubriqueBulletin = new RubriqueBulletin();
  const categoriePaieModel = new CategoriePaie();
@@ -26,9 +26,8 @@ import CategoriePaie from "./categorie_paie.js";
 
    getRubriqueBulletinByCategoriePaie = async ({ categoriePaieId }) => {
      try {
-       const rubriqueCategorieEdges = await rubriqueCategorieCollection.edges(
-         categoriePaieId
-       );
+       const rubriqueCategorieEdges =
+         await rubriqueCategorieCollection.edges(categoriePaieId);
        const rubriqueConfiforCategorie = rubriqueCategorieEdges.edges;
 
        // Attendre la récupération des rubriques
@@ -42,7 +41,7 @@ import CategoriePaie from "./categorie_paie.js";
              ...rubriqueCategorie,
              rubrique: rubrique,
            };
-         })
+         }),
        );
 
        // Trier les résultats par timeStamp croissant
@@ -64,9 +63,8 @@ import CategoriePaie from "./categorie_paie.js";
      salarieId,
    }) => {
      try {
-       const rubriqueCategorieEdges = await rubriqueCategorieCollection.edges(
-         categoriePaieId
-       );
+       const rubriqueCategorieEdges =
+         await rubriqueCategorieCollection.edges(categoriePaieId);
 
        const rubriqueConfiforCategorie = rubriqueCategorieEdges.edges;
 
@@ -74,7 +72,6 @@ import CategoriePaie from "./categorie_paie.js";
          await valeurRubriqueTemporaireModel.getBySalarieId({
            salarieId: salarieId,
          });
-
        // existingVariable is a document with shape { salarieId, rubriques: [{ rubriqueId, value }], primesExceptionnelles: [...] }
        const rubriquesVariables = existingVariable?.rubriques || [];
        const primesVariables = existingVariable?.primesExceptionnelles || [];
@@ -96,10 +93,11 @@ import CategoriePaie from "./categorie_paie.js";
 
          // Garder uniquement les rubriques de nature constante et valeur nulle, et exclure certaines identités
          if (
-           !(
-             rubrique?.nature == NatureRubrique.constant &&
-             rubrique?.value != null
-           ) ||
+           rubrique.portee == PorteeRubrique.individuel &&
+           //  !(
+           //    rubrique?.nature == NatureRubrique.constant &&
+           //    rubrique?.value != null
+           //  ) ||
            excludedIdentities.includes(rubrique?.rubriqueIdentity)
          ) {
            continue;
@@ -109,14 +107,14 @@ import CategoriePaie from "./categorie_paie.js";
          const variableForRubrique = rubriquesVariables.find(
            (v) =>
              v.rubriqueId === rubrique._id ||
-             v.rubriqueId === rubriqueCategorie._from
+             v.rubriqueId === rubriqueCategorie._from,
          );
 
          const entry = {
            value:
              variableForRubrique?.value !== undefined
                ? variableForRubrique.value
-               : rubrique.value ?? null,
+               : (rubrique.value ?? null),
            rubrique: { ...rubrique },
          };
 
@@ -137,7 +135,7 @@ import CategoriePaie from "./categorie_paie.js";
              key: pe.rubriqueId,
            });
            return { value: pe.value, rubrique };
-         }
+         },
        );
        const primesFromExisting = await Promise.all(primesFromExistingPromises);
 
@@ -152,7 +150,7 @@ import CategoriePaie from "./categorie_paie.js";
      } catch (e) {
        console.error(e);
        throw new Error(
-         "Erreur lors de la récupération des rubriques de type constante à valeur nulle"
+         "Erreur lors de la récupération des rubriques de type constante à valeur nulle",
        );
      }
    };
@@ -161,16 +159,15 @@ import CategoriePaie from "./categorie_paie.js";
      categoriePaieId,
    }) => {
      try {
-       const rubriqueCategorieEdges = await rubriqueCategorieCollection.edges(
-         categoriePaieId
-       );
+       const rubriqueCategorieEdges =
+         await rubriqueCategorieCollection.edges(categoriePaieId);
 
        const rubriqueConfiforCategorie = rubriqueCategorieEdges.edges;
        const allRubriques = await rubriqueBulletin.getAllRubriqueBulletin();
 
        const result = allRubriques.map((rubrique) => {
          const config = rubriqueConfiforCategorie.find(
-           (conf) => conf._from === rubrique._id
+           (conf) => conf._from === rubrique._id,
          );
          return {
            rubriqueCategorie: {

@@ -622,7 +622,7 @@ class _MoralFieldsState extends State<MoralFields> {
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Container(
               padding: const EdgeInsets.all(8.0),
-              color: AppColor.primaryColor.withOpacity(0.5),
+              color: AppColor.primaryColor.withValues(alpha: 0.5),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

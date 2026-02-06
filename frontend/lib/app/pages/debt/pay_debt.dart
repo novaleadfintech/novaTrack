@@ -2,7 +2,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/helper/amout_formatter.dart';
 import 'package:frontend/model/client/client_model.dart';
-import 'package:frontend/model/entreprise/banque.dart';
+ import 'package:frontend/model/entreprise/banque.dart';
 import 'package:frontend/model/flux_financier/debt_model.dart';
 import 'package:frontend/model/flux_financier/type_flux_financier.dart';
 import 'package:frontend/model/moyen_paiement_model.dart';
@@ -45,7 +45,10 @@ class _PayDebtState extends State<PayDebt> {
   final referenceTransactionFieldController = TextEditingController();
   final montantPayeTextFieldController = TextEditingController();
   final dateFieldController = TextEditingController();
+  final _datePayementUlterieurFieldController = TextEditingController();
+
   DateTime? dateOperation;
+  DateTime? _datePayementUlterieur;
   MoyenPaiementModel? moyenPayement;
   PlatformFile? _file;
   late SimpleFontelicoProgressDialog _dialog;
@@ -89,7 +92,7 @@ class _PayDebtState extends State<PayDebt> {
     try {
       user = await AuthService().decodeToken();
     } catch (err) {
-       _dialog.hide();
+      _dialog.hide();
       MutationRequestContextualBehavior.showPopup(
         status: PopupStatus.serverError,
         customMessage: "Enégistrement échoué",
@@ -116,6 +119,7 @@ class _PayDebtState extends State<PayDebt> {
             double.parse(montantPayeTextFieldController.text),
         referenceFacture: null,
         client: null,
+        datePayementUlterieur: _datePayementUlterieur,
         status: double.parse(montantPayeTextFieldController.text) >=
                 widget.debt.montant
             ? DebtStatus.paid
@@ -228,6 +232,19 @@ class _PayDebtState extends State<PayDebt> {
               label: "Date de paiement",
               dateController: dateFieldController,
               lastDate: DateTime.now(),
+            ),
+            DateField(
+              onCompleteDate: (value) {
+                setState(() {
+                  _datePayementUlterieur = value!;
+                  _datePayementUlterieurFieldController.text =
+                      getStringDate(time: value);
+                });
+              },
+              label: "Date de payement ultérieure",
+              dateController: _datePayementUlterieurFieldController,
+              firstDate: DateTime.now(),
+              required: false,
             ),
             SimpleTextField(
               label:

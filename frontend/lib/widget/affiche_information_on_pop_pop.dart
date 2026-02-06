@@ -43,3 +43,26 @@ class ShowNotificationInformation extends StatelessWidget {
     );
   }
 }
+
+class ShowInstruction extends StatelessWidget {
+  final String message;
+  const ShowInstruction({super.key, required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(4.0),
+      child: Container(
+        padding: EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: AppColor.bmodificationColor.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(
+            color: AppColor.modificationColor,
+          ),
+        ),
+        child: Align(alignment: Alignment.centerLeft, child: Text(message)),
+      ),
+    );
+  }
+}

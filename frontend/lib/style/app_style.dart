@@ -72,7 +72,7 @@ BoxDecoration marktableDecoration(BuildContext context) => BoxDecoration(
           width: 2,
         ),
       ),
-      color: Theme.of(context).colorScheme.error.withOpacity(0.2),
+      color: Theme.of(context).colorScheme.error.withValues(alpha: 0.2),
     );
 
 BoxDecoration inactiveUsertableDecoration(BuildContext context) =>
@@ -81,7 +81,7 @@ BoxDecoration inactiveUsertableDecoration(BuildContext context) =>
         horizontal: BorderSide(
             color: Theme.of(context).colorScheme.surfaceBright, width: 2),
       ),
-      color: Theme.of(context).colorScheme.error.withOpacity(0.2),
+      color: Theme.of(context).colorScheme.error.withValues(alpha: 0.2),
     );
 
 BoxDecoration inputTableDecoration(BuildContext context) => BoxDecoration(
@@ -91,7 +91,7 @@ BoxDecoration inputTableDecoration(BuildContext context) => BoxDecoration(
           width: 2,
         ),
       ),
-      color: Theme.of(context).colorScheme.primary.withOpacity(0.05),
+      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.05),
     );
 
 BoxDecoration outputTableDecoration(BuildContext context) => BoxDecoration(
@@ -101,7 +101,7 @@ BoxDecoration outputTableDecoration(BuildContext context) => BoxDecoration(
           width: 2,
         ),
       ),
-      color: Theme.of(context).colorScheme.error.withOpacity(0.05),
+      color: Theme.of(context).colorScheme.error.withValues(alpha: 0.05),
     );
 
 BoxDecoration checkPermissionTableDecoration(BuildContext context) => BoxDecoration(

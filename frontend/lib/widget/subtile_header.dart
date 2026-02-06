@@ -11,7 +11,7 @@ TableRow subTableHeader(
 }) {
   return TableRow(
     decoration: BoxDecoration(
-      color: Theme.of(context).colorScheme.onSecondary.withOpacity(0.075),
+      color: Theme.of(context).colorScheme.onSecondary.withValues(alpha: 0.075),
     ),
     children: [
       ...tablesTitles.map(

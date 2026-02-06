@@ -103,7 +103,7 @@ class BulletinPaie {
     }
     const query = await db.query(
       aql`FOR bulletin IN ${bulletinCollection} SORT bulletin.timeStamp DESC ${filter} ${limit} RETURN bulletin`,
-      { fullCount: true }
+      { fullCount: true },
     );
     if (query.hasNext) {
       const bulletins = await query.all();
@@ -128,7 +128,7 @@ class BulletinPaie {
                 valid.validater = await userModel.getUser({
                   key: valid.validater,
                 });
-              })
+              }),
             );
           }
           return {
@@ -136,7 +136,7 @@ class BulletinPaie {
             validate: validate,
             rubriques: rubriquesResolues,
           };
-        })
+        }),
       );
     } else {
       return [];
@@ -161,7 +161,7 @@ class BulletinPaie {
         ${limit}
         RETURN bulletin
       `,
-      { fullCount: true }
+      { fullCount: true },
     );
     if (query.hasNext) {
       const bulletins = await query.all();
@@ -189,7 +189,7 @@ class BulletinPaie {
                 valid.validater = await userModel.getUser({
                   key: valid.validater,
                 });
-              })
+              }),
             );
           }
 
@@ -198,7 +198,7 @@ class BulletinPaie {
             validate: validate,
             rubriques: rubriquesResolues,
           };
-        })
+        }),
       );
     } else {
       return [];
@@ -257,7 +257,7 @@ class BulletinPaie {
         const rubriques = rubriquesBase.map((rubrique) => {
           // Chercher si une valeur temporaire existe pour cette rubrique
           const valeurTemp = valeursTemp?.rubriques?.find(
-            (r) => r.rubriqueId === rubrique.rubrique._id
+            (r) => r.rubriqueId === rubrique.rubrique._id,
           );
           return {
             rubriqueId: rubrique.rubrique._id,
@@ -266,13 +266,14 @@ class BulletinPaie {
         });
         // Fusionner les deux tableaux
         rubriques.push(...(valeursTemp?.primesExceptionnelles || []));
+        // console.log(salarie);
         // 5. Créer le bulletin
         await this.createBulletin({
-          // moyenPayement,
           debutPeriodePaie: dateDebut,
           finPeriodePaie: dateFin,
           dateEdition: Date.now(),
           salarieId: salarie._id,
+
           rubriques: rubriques,
         });
       } catch (error) {
@@ -327,7 +328,7 @@ class BulletinPaie {
     }
     const query = await db.query(
       aql`FOR bulletin IN ${bulletinCollection} SORT bulletin.timeStamp DESC ${filter} ${limit} RETURN bulletin`,
-      { fullCount: true }
+      { fullCount: true },
     );
     if (query.hasNext) {
       const bulletins = await query.all();
@@ -352,7 +353,7 @@ class BulletinPaie {
                 valid.validater = await userModel.getUser({
                   key: valid.validater,
                 });
-              })
+              }),
             );
           }
           return {
@@ -360,7 +361,7 @@ class BulletinPaie {
             rubriques: rubriquesResolues,
             validate: validate,
           };
-        })
+        }),
       );
     } else {
       return [];
@@ -389,7 +390,7 @@ class BulletinPaie {
             valid.validater = await userModel.getUser({
               key: valid.validater,
             });
-          })
+          }),
         );
       }
       return {
@@ -408,7 +409,7 @@ class BulletinPaie {
       const query = await db.query(
         aql`FOR bulletin IN ${bulletinCollection} FILTER bulletin.salarie._id == ${salarieId} SORT bulletin.dateEdition DESC
         LIMIT 1
-        RETURN bulletin`
+        RETURN bulletin`,
       );
       if (query.hasNext) {
         const bulletin = await query.next();
@@ -431,7 +432,7 @@ class BulletinPaie {
               valid.validater = await userModel.getUser({
                 key: valid.validater,
               });
-            })
+            }),
           );
         }
         return {
@@ -460,7 +461,7 @@ class BulletinPaie {
       const bulletin = await cursor.next();
       if (!bulletin) {
         throw new Error(
-          "Vous n'êtes pas éligible à une avance sur salaire. Vous n'avez jamais été payé auparavant."
+          "Vous n'êtes pas éligible à une avance sur salaire. Vous n'avez jamais été payé auparavant.",
         );
       }
 
@@ -479,7 +480,7 @@ class BulletinPaie {
 
       // 🔍 Trouver la rubrique "net à payer"
       const rubriqueNetAPayer = rubriquesResolues.find(
-        (r) => r.rubrique?.rubriqueIdentity === RubriqueIdentity.netPayer
+        (r) => r.rubrique?.rubriqueIdentity === RubriqueIdentity.netPayer,
       );
       let valeurNet;
       if (!rubriqueNetAPayer) {
@@ -494,7 +495,7 @@ class BulletinPaie {
       const moitie = valeurNet / 2;
       if (montantDemande > moitie) {
         throw new Error(
-          `Nous trouvons que vous seriez incapable de remborser la somme demandée? Le maximun de somme que vous pouvez demander s'éléve à ${moitie}`
+          `Nous trouvons que vous seriez incapable de remborser la somme demandée? Le maximun de somme que vous pouvez demander s'éléve à ${moitie}`,
         );
       }
 
@@ -504,7 +505,7 @@ class BulletinPaie {
           valid.validater = await userModel.getUser({
             key: valid.validater,
           });
-        })
+        }),
       );
 
       return {
@@ -516,7 +517,7 @@ class BulletinPaie {
       console.error(err);
 
       throw new Error(
-        err.message || "Erreur lors de la récupération du bulletin."
+        err.message || "Erreur lors de la récupération du bulletin.",
       );
     }
   }
@@ -547,13 +548,12 @@ class BulletinPaie {
 
     if (existingBulletin.hasNext) {
       throw new Error(
-        `Un bulletin existe déjà pour ce salarié dans cette période.`
+        `Un bulletin existe déjà pour ce salarié dans cette période.`,
       );
     }
 
     const salarie = await SalarieModel.getSalarie({ key: salarieId });
-    console.log(salarie);
-    // Étape 1 : Récupérer les découverts impayés ou partiellement payés
+     // Étape 1 : Récupérer les découverts impayés ou partiellement payés
     const decouvertesQuery = await db.query(aql`
     FOR decouvert IN ${decouverteCollection}
       FILTER decouvert.salarie._id == ${salarieId}
@@ -584,7 +584,7 @@ class BulletinPaie {
 
     // Étape 4 : Ajouter ou mettre à jour la rubrique "avanceSurSalaire"
     const indexRubriqueAvance = rubriques.findIndex(
-      (r) => r.rubrique?.rubriqueIdentity === RubriqueIdentity.avanceSurSalaire
+      (r) => r.rubrique?.rubriqueIdentity === RubriqueIdentity.avanceSurSalaire,
     );
 
     if (indexRubriqueAvance !== -1) {
@@ -604,7 +604,7 @@ class BulletinPaie {
 
     // Étape 4' : Ajouter ou mettre à jour la rubrique "ancienneté"
     const indexRubriqueAnciennete = rubriques.findIndex(
-      (r) => r.rubrique?.rubriqueIdentity === RubriqueIdentity.anciennete
+      (r) => r.rubrique?.rubriqueIdentity === RubriqueIdentity.anciennete,
     );
 
     if (indexRubriqueAnciennete !== -1) {
@@ -616,7 +616,7 @@ class BulletinPaie {
     // Étape 4' : Ajouter ou mettre à jour la rubrique "ancienneté"
     const indexRubriqueNbrePerssonneEnCharge = rubriques.findIndex(
       (r) =>
-        r.rubrique?.rubriqueIdentity === RubriqueIdentity.nombrePersonneCharge
+        r.rubrique?.rubriqueIdentity === RubriqueIdentity.nombrePersonneCharge,
     );
 
     if (indexRubriqueNbrePerssonneEnCharge !== -1) {
@@ -656,7 +656,7 @@ class BulletinPaie {
       console.error("Erreur lors de la création du bulletin:", error);
       await session.abort();
       throw new Error(
-        `Erreur lors de la création du bulletin: ${error.message}`
+        `Erreur lors de la création du bulletin: ${error.message}`,
       );
     }
   }
@@ -689,12 +689,12 @@ class BulletinPaie {
 
       // 5. Trouver la classe correspondante dans la grille
       const classeCorrespondante = grilleSalariale.classes.find(
-        (c) => c._id === classeId
+        (c) => c._id === classeId,
       );
 
       if (!classeCorrespondante) {
         console.warn(
-          `Classe non trouvée dans la grille salariale - salaire = 0`
+          `Classe non trouvée dans la grille salariale - salaire = 0`,
         );
         return 0;
       }
@@ -705,14 +705,14 @@ class BulletinPaie {
         classeCorrespondante.echelonIndiciciaires.length === 0
       ) {
         console.warn(
-          "Aucun échelon indiciaire dans cette classe - salaire = 0"
+          "Aucun échelon indiciaire dans cette classe - salaire = 0",
         );
         return 0;
       }
 
       // 7. Trouver l'échelon indiciaire correspondant
       const echelonIndiciaire = classeCorrespondante.echelonIndiciciaires.find(
-        (ei) => ei.echelon._id === echelonId
+        (ei) => ei.echelon._id === echelonId,
       );
 
       if (!echelonIndiciaire) {
@@ -756,7 +756,7 @@ class BulletinPaie {
         const taux = rubrique.taux.taux;
 
         const baseRubrique = toutesLesRubriquesSurBulletin.find(
-          (el) => el.rubrique.code === rubrique.taux.base.code
+          (el) => el.rubrique.code === rubrique.taux.base.code,
         ) || { rubrique: rubrique.taux.base, value: 0 };
 
         const base = baseRubrique.value ?? 0;
@@ -770,7 +770,7 @@ class BulletinPaie {
         const valeurs = rubriquesCible.map((element) => {
           if (element.type === BaseType.rubrique) {
             const r = toutesLesRubriquesSurBulletin.find(
-              (toElement) => toElement.rubrique.code === element.rubrique.code
+              (toElement) => toElement.rubrique.code === element.rubrique.code,
             ) || { rubrique: element.rubrique, value: 0 };
             return r.value;
           } else if (element.type === BaseType.valeur) {
@@ -807,7 +807,7 @@ class BulletinPaie {
         const valeurs = rubriquesCible.map((element) => {
           if (element.type === BaseType.rubrique) {
             const match = toutesLesRubriquesSurBulletin.find(
-              (toElement) => toElement.rubrique.code === element.rubrique.code
+              (toElement) => toElement.rubrique.code === element.rubrique.code,
             ) || { rubrique: element.rubrique, value: 0 };
             return match.value;
           } else if (element.type === BaseType.valeur) {
@@ -826,7 +826,7 @@ class BulletinPaie {
         const bareme = rubriqueOnBulletin.rubrique.bareme;
 
         const reference = toutesLesRubriquesSurBulletin.find(
-          (el) => el.rubrique.code === bareme.reference.code
+          (el) => el.rubrique.code === bareme.reference.code,
         ) || {
           rubrique: {
             id: "id",
@@ -865,7 +865,7 @@ class BulletinPaie {
           const taux = tranche.value.taux.taux;
 
           const baseRubrique = toutesLesRubriquesSurBulletin.find(
-            (el) => el.rubrique.code === tranche.value.taux.base.code
+            (el) => el.rubrique.code === tranche.value.taux.base.code,
           ) || { rubrique: rubrique.taux.base, value: 0 };
 
           const base = baseRubrique.value ?? 0;
@@ -950,7 +950,7 @@ class BulletinPaie {
 
       for (const dependency of dependencies) {
         const depRubrique = rubriques.find(
-          (r) => r.rubrique.code === dependency
+          (r) => r.rubrique.code === dependency,
         );
 
         if (!depRubrique) {
@@ -988,7 +988,7 @@ class BulletinPaie {
     for (const rubrique of rubriques) {
       dependencyMap.set(
         rubrique.rubrique.code,
-        this.findDependencies(rubrique, rubriques)
+        this.findDependencies(rubrique, rubriques),
       );
     }
 
@@ -1047,7 +1047,7 @@ class BulletinPaie {
       if (logo != null) {
         otherdata.logo = logo.replace(
           process.env.FILE_PREFIX + `${locateBanqueFolder}/`,
-          ""
+          "",
         );
       }
       updateField.banque = otherdata;
@@ -1157,7 +1157,7 @@ class BulletinPaie {
       }
 
       const netayerRubrique = bulletin.rubriques.find(
-        (r) => r.rubrique?.rubriqueIdentity == RubriqueIdentity.netPayer
+        (r) => r.rubrique?.rubriqueIdentity == RubriqueIdentity.netPayer,
       );
       const montant = netayerRubrique?.value ?? 0;
 
@@ -1176,7 +1176,7 @@ class BulletinPaie {
       if (validate.validateStatus === EtatBulletin.valid) {
         if (montant == 0) {
           throw new Error(
-            `Ce bulletin de ${bulletin.salarie.personnel.nom} ${bulletin.salarie.personnel.prenom} n'a pas de net à payer ou son net à payer n'a pas de valeur`
+            `Ce bulletin de ${bulletin.salarie.personnel.nom} ${bulletin.salarie.personnel.prenom} n'a pas de net à payer ou son net à payer n'a pas de valeur`,
           );
         }
 
@@ -1255,4 +1255,4 @@ class BulletinPaie {
 }
 
 export default BulletinPaie;
-export { NatureRubrique };
+export { NatureRubrique, PorteeRubrique };

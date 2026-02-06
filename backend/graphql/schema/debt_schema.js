@@ -11,7 +11,9 @@ const typeDef = `#graphql
         montant:Float!
         referenceFacture: String
         status: DebtStatus
+        datePayementUlterieur:Float
         dateOperation:Float!
+        partiePrenante: String
         dateEnregistrement:Float!
         pieceJustificative: String
         user: User #userId
@@ -30,9 +32,11 @@ const mutation = `#graphql
          montant:Float!,
          pieceJustificative:Upload,
         userId: String!,
+        datePayementUlterieur:Float,
+        partiePrenante: String,
         referenceFacture: String!
         dateOperation:Float
-          clientId: String!
+          clientId: String
     ):String!
 
     updateDebt(
@@ -43,6 +47,8 @@ const mutation = `#graphql
         referenceFacture: String
         status: DebtStatus,
          pieceJustificative:Upload,
+         partiePrenante: String,
+        datePayementUlterieur:Float,
          clientId: String,
     ):String!
 

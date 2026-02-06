@@ -44,6 +44,8 @@ class _EditFluxFiancierPageState extends State<EditFluxFiancierPage> {
   final dateOperationController = TextEditingController();
   final referenceTransactionFieldController = TextEditingController();
   final montantPayeTextFieldController = TextEditingController();
+  final libelleTypeController = TextEditingController();
+  final partiePrenanteFieldController = TextEditingController();
 
   MoyenPaiementModel? moyenPayement;
   DateTime? dateOperation;
@@ -59,6 +61,7 @@ class _EditFluxFiancierPageState extends State<EditFluxFiancierPage> {
   BanqueModel? _selectedBank;
   BanqueModel? newbanque;
   ClientModel? newclient;
+  String? newPartiePrenante;
   MultiSelectController<BanqueModel> comptesController =
       MultiSelectController<BanqueModel>();
 
@@ -74,18 +77,20 @@ class _EditFluxFiancierPageState extends State<EditFluxFiancierPage> {
   }
 
   editFlux({required FluxFinancierModel flux}) async {
+    bool isClientModified = false;
     if (libelleFieldController.text.isEmpty ||
         amountFieldController.text.isEmpty ||
         referenceTransactionFieldController.text.isEmpty ||
         moyenPayement == null ||
         _selectedBank == null ||
-        client == null) {
+        (client == null && partiePrenanteFieldController.text.isEmpty)) {
       MutationRequestContextualBehavior.showCustomInformationPopUp(
         message: "Veuiller remplir tous les champs marqués",
       );
       return;
     }
-    if (libelleFieldController.text != widget.flux.libelle) {
+    if (libelleFieldController.text !=
+        widget.flux.libelle!.split(':')[1].trim()) {
       libelle = libelleFieldController.text;
     }
     if (referenceTransactionFieldController.text !=
@@ -100,8 +105,14 @@ class _EditFluxFiancierPageState extends State<EditFluxFiancierPage> {
     if (dateOperation != widget.flux.dateOperation) {
       newdateOperation = dateOperation;
     }
-    if (!client!.equalTo(client: flux.client)) {
-      newclient = client;
+
+if (client?.id != widget.flux.client?.id) {
+      isClientModified = true;
+      newclient = client; 
+    }
+
+    if (partiePrenanteFieldController.text != widget.flux.partiePrenante) {
+      newPartiePrenante = partiePrenanteFieldController.text;
     }
 
     if (dateOperation != widget.flux.dateOperation) {
@@ -118,9 +129,10 @@ class _EditFluxFiancierPageState extends State<EditFluxFiancierPage> {
     if (newdateOperation == null &&
         newmoyenPayement == null &&
         libelle == null &&
-        newclient == null &&
+        !isClientModified &&
         montant == null &&
         newbanque == null &&
+        newPartiePrenante == null &&
         referenceTransaction == null &&
         initialFile == file) {
       MutationRequestContextualBehavior.showCustomInformationPopUp(
@@ -142,7 +154,11 @@ class _EditFluxFiancierPageState extends State<EditFluxFiancierPage> {
       moyenPayement: newmoyenPayement,
       file: file,
       referenceTransaction: referenceTransaction,
-      libelle: libelle,
+      partiePrenante: partiePrenanteFieldController.text.isNotEmpty
+          ? partiePrenanteFieldController.text
+          : null,
+      libelle:
+          libelle != null ? "${libelleTypeController.text} : $libelle" : null,
       banque: newbanque,
       client: newclient,
     );
@@ -168,8 +184,11 @@ class _EditFluxFiancierPageState extends State<EditFluxFiancierPage> {
 
   @override
   void initState() {
-    libelleFieldController.text = widget.flux.libelle!;
+    List entirelibelle = widget.flux.libelle!.split(":");
+    libelleTypeController.text = entirelibelle[0].trim();
+    libelleFieldController.text = entirelibelle[1].trim();
     amountFieldController.text = widget.flux.montant.toString();
+    partiePrenanteFieldController.text = widget.flux.partiePrenante ?? "";
     moyenPayement = widget.flux.moyenPayement;
     dateOperationController.text = getStringDate(
       time: widget.flux.dateOperation!,
@@ -177,7 +196,7 @@ class _EditFluxFiancierPageState extends State<EditFluxFiancierPage> {
     client = widget.flux.client;
     _selectedBank = widget.flux.bank!;
     referenceTransactionFieldController.text =
-        widget.flux.referenceTransaction!;
+        widget.flux.referenceTransaction ?? "";
     initialFile = file;
     file = widget.flux.pieceJustificative == null
         ? null
@@ -240,6 +259,17 @@ class _EditFluxFiancierPageState extends State<EditFluxFiancierPage> {
                   : "Fournisseur",
               selectedItem: client,
               itemsAsString: (l) => l.toStringify(),
+            ),
+            SimpleTextField(
+              label: "Partie prenante",
+              textController: partiePrenanteFieldController,
+              keyboardType: TextInputType.text,
+            ),
+            SimpleTextField(
+              label: "Type de libellé",
+              textController: libelleTypeController,
+              keyboardType: TextInputType.text,
+              readOnly: true,
             ),
             SimpleTextField(
               label: "Libellé",

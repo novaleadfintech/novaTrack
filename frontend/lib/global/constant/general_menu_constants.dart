@@ -44,10 +44,10 @@ final allMenuItems = [
   (Menu.fluxFinancier, AssetsIcons.flux, 6),
   (Menu.creance, AssetsIcons.claim, 7),
   (Menu.dette, AssetsIcons.claim, 8),
-  (Menu.config, AssetsIcons.fluxLibelle, 9),
-  (Menu.comptebancaires, AssetsIcons.bank, 10),
-  (Menu.bulletin, AssetsIcons.facture, 11),
-  (Menu.utilisation, AssetsIcons.user, 12),
+  (Menu.comptebancaires, AssetsIcons.bank, 9),
+  (Menu.bulletin, AssetsIcons.facture, 10),
+  (Menu.utilisation, AssetsIcons.user, 11),
+  (Menu.config, AssetsIcons.fluxLibelle, 12),
 ];
 
 // Pages correspondantes
@@ -61,10 +61,10 @@ final allPages = <Widget>[
   const FluxFinancierLayout(),
   const CreancePage(),
   const DebtPage(),
-  const ConfigPage(),
   const BanquePage(),
   const BulletinLayout(),
   const UserPage(),
+  const ConfigPage(),
 ];
 
 // Permissions requises pour chaque menu (par alias)

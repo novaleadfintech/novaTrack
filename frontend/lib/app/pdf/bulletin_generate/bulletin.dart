@@ -73,8 +73,6 @@ class BulletinPdfGenerator {
     PdfDownloadHelper.downloadPdf(bytes: bytes, fileName: fileName);
     return RequestResponse(status: PopupStatus.success);
     } catch (err) {
-       
-
       throw err.toString();
     }
   }
@@ -151,6 +149,7 @@ class BulletinPdfGenerator {
           (r) =>
               r.rubrique.section == null &&
               r.rubrique.rubriqueRole != RubriqueRole.variable &&
+              r.rubrique.rubriqueIdentity != RubriqueIdentity.netPayer &&
               r.value != null &&
               r.value?.toInt() != 0,
         )
@@ -208,13 +207,13 @@ class BulletinPdfGenerator {
                   ),
                   pw.SizedBox(height: 3),
                   pw.Text(
-                    "Poste : ${bulletin.salarie.personnel.poste != null ? bulletin.salarie.personnel.poste!.libelle : "Aucun"}",
+                    "Poste: ${bulletin.salarie.personnel.poste != null ? bulletin.salarie.personnel.poste!.libelle : "Aucun"}",
                     style: const pw.TextStyle(
                       fontSize: 9,
                     ),
                   ),
                   pw.Text(
-                    "Tel : +${bulletin.salarie.personnel.pays!.code} ${bulletin.salarie.personnel.telephone}",
+                    "Tel: +${bulletin.salarie.personnel.pays!.code} ${bulletin.salarie.personnel.telephone}",
                     style: const pw.TextStyle(
                       fontSize: 9,
                     ),
@@ -244,13 +243,13 @@ class BulletinPdfGenerator {
             ),
             pw.SizedBox(height: 5),
             pw.Text(
-              'Période : du ${getStringDate(time: bulletin.debutPeriodePaie)} au ${getStringDate(time: bulletin.finPeriodePaie)}',
+              'Période: du ${getStringDate(time: bulletin.debutPeriodePaie)} au ${getStringDate(time: bulletin.finPeriodePaie)}',
               style: const pw.TextStyle(
                 fontSize: 10,
               ),
             ),
             pw.Text(
-              'Date d\'édition : ${formatDate(dateTime: bulletin.dateEdition)}',
+              'Date d\'édition: ${formatDate(dateTime: bulletin.datePayement ?? bulletin.dateEdition)}',
               style: const pw.TextStyle(
                 fontSize: 9,
               ),
@@ -303,6 +302,8 @@ class BulletinPdfGenerator {
             final rubriquesDeSection = bulletin.rubriques
                 .where((r) =>
                     r.rubrique.section?.id == section.id &&
+                    r.rubrique.rubriqueRole != RubriqueRole.variable &&
+                    r.rubrique.rubriqueIdentity != RubriqueIdentity.netPayer &&
                     r.value != null &&
                     r.value?.toInt() != 0)
                 .toList();
@@ -408,7 +409,7 @@ class BulletinPdfGenerator {
     return pw.Padding(
       padding: const pw.EdgeInsets.all(4),
       child: pw.Text(
-        '$label : $valueText',
+        '$label: $valueText',
         style: pw.TextStyle(fontSize: 10),
       ),
     );
@@ -627,7 +628,10 @@ class BulletinPdfGenerator {
         mainAxisAlignment: pw.MainAxisAlignment.center,
         children: [
           pw.Table(
-            border: pw.TableBorder.all(width: 0.5),
+            border: pw.TableBorder.symmetric(
+              // inside: pw.BorderSide(width: 0.5),
+              outside: pw.BorderSide(width: 0.5),
+            ),
             children: [
               pw.TableRow(
                 decoration: pw.BoxDecoration(color: PdfColors.green200),
@@ -644,20 +648,7 @@ class BulletinPdfGenerator {
                   pw.Padding(
                     padding: const pw.EdgeInsets.all(5),
                     child: pw.Text(
-                      "",
-                      style: pw.TextStyle(
-                        fontWeight: pw.FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              pw.TableRow(
-                children: [
-                  pw.Padding(
-                    padding: const pw.EdgeInsets.all(5),
-                    child: pw.Text(
-                      textAlign: pw.TextAlign.center,
+                      textAlign: pw.TextAlign.right,
                       "${Formatter.formatAmount(bulletin.rubriques.firstWhere(
                             (r) =>
                                 r.rubrique.rubriqueIdentity ==
@@ -679,23 +670,6 @@ class BulletinPdfGenerator {
                       ),
                     ),
                   ),
-                  // TODO: à remettre à leur place plustard
-                  // pw.Padding(
-                  //   padding: const pw.EdgeInsets.all(5),
-                  //   child: pw.Column(
-                  //     children: [
-                  //       pw.Text(
-                  //         "Par ${bulletin.moyenPayement!.libelle}",
-                  //       ),
-                  //       pw.Text(
-                  //         bulletin.banque!.name,
-                  //       ),
-                  //       pw.Text(
-                  //         "${bulletin.referencePaie}",
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
                 ],
               ),
             ],

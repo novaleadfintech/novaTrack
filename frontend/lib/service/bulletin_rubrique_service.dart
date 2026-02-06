@@ -12,6 +12,7 @@ import 'package:http/http.dart' as http;
 import 'request_header.dart';
 
 class BulletinRubriqueService {
+  // recupere les rubriques qui peuvent se figurer sur un bulletin
   static Future<List<RubriqueBulletin>> getBulletinRubriques() async {
     var body = '''
       query RubriquesBulletin {

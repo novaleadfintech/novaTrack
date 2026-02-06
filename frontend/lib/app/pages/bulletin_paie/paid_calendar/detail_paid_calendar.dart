@@ -46,6 +46,20 @@ class _DetailPayCalendarPageState extends State<DetailPayCalendarPage> {
             ),
           ],
         ),
+        TableRow(
+          decoration: tableDecoration(context),
+          children: [
+            const TabledetailBodyMiddle(
+              valeur: "Statut",
+              isbold: true,
+            ),
+            TabledetailBodyMiddle(
+              valeur: widget.payCalendar.etat != null
+                  ? widget.payCalendar.etat!.label
+                  : '',
+            ),
+          ],
+        ),
       ],
     );
   }

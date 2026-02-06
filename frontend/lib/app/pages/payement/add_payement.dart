@@ -266,11 +266,11 @@ Future<List<MoyenPaiementModel>> fetchMoyenPaiementItems() async {
                 int rang = widget.facture.payements!.length + 1;
                 Color rowColor;
                 if (toElement.rang < rang) {
-                  rowColor = Colors.green.withOpacity(0.3);
+                  rowColor = Colors.green.withValues(alpha: 0.3);
                 } else if (toElement.rang == rang) {
-                  rowColor = Colors.blue.withOpacity(0.3);
+                  rowColor = Colors.blue.withValues(alpha: 0.3);
                 } else {
-                  rowColor = const Color(0xFFFFFACD).withOpacity(0.6);
+                  rowColor = const Color(0xFFFFFACD).withValues(alpha: 0.6);
                 }
                 return Container(
                   color: rowColor,

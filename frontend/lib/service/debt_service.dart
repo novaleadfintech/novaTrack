@@ -14,12 +14,14 @@ import 'request_header.dart';
 class DebtService {
   static Future<RequestResponse> createDebt({
     required String libelle,
-    required ClientModel client,
+    required ClientModel? client,
     required double montant,
     DateTime? dateOperation,
     required String? referenceFacture,
     required String userId,
+    required String? partiePrenante,
     PlatformFile? file,
+    DateTime? datePayementUlterieur,
   }) async {
     try {
       String body = '''
@@ -27,15 +29,24 @@ class DebtService {
             createDebt(
                 libelle: "$libelle",
                 montant: $montant,
-                userId: "$userId",        
-                clientId: "${client.id}",        
+                userId: "$userId",               
         ''';
 
       if (dateOperation != null) {
         body += 'dateOperation: ${dateOperation.millisecondsSinceEpoch},';
       }
+      if (client != null) {
+        body += 'clientId: "${client.id}",';
+      }
+      if (partiePrenante != null && partiePrenante.isNotEmpty) {
+        body += 'partiePrenante: "$partiePrenante",';
+      }
       if (referenceFacture != null && referenceFacture.isNotEmpty) {
         body += 'referenceFacture: "$referenceFacture",';
+      }
+      if (datePayementUlterieur != null) {
+        body +=
+            'datePayementUlterieur: ${datePayementUlterieur.millisecondsSinceEpoch},';
       }
       body += 'pieceJustificative: \$pieceJustificative';
       body += '''
@@ -112,8 +123,10 @@ class DebtService {
     required double? montant,
     required DateTime? dateOperation,
     DebtStatus? status,
+    String? partiePrenante,
     required String? referenceFacture,
     required ClientModel? client,
+    required DateTime? datePayementUlterieur,
     required PlatformFile? file,
   }) async {
     try {
@@ -128,6 +141,10 @@ class DebtService {
       if (libelle != null) {
         body += 'libelle: "$libelle",';
       }
+
+      body +=
+          'datePayementUlterieur: ${datePayementUlterieur?.millisecondsSinceEpoch},';
+
       if (referenceFacture != null) {
         body += 'referenceFacture: "$referenceFacture",';
       }
@@ -135,7 +152,14 @@ class DebtService {
         body += 'montant: $montant,';
       }
       if (client != null) {
-        body += 'clientId: "${client.id}"';
+        body += 'clientId: "${client.id}",';
+      } else {
+        body += 'clientId: ${null},';
+      }
+      if (partiePrenante != null) {
+        body += 'partiePrenante: "$partiePrenante",';
+      } else {
+        body += 'partiePrenante: ${null},';
       }
       if (status != null) {
         body += 'status: ${debtStatusToString(status)},';
@@ -146,6 +170,7 @@ class DebtService {
             )
         }
         ''';
+
       bool isFileModified = file != null && file.bytes != null;
       bool isFileUnchanged = file != null && file.bytes == null;
 
@@ -153,10 +178,9 @@ class DebtService {
         "pieceJustificative": isFileUnchanged ? "__unchanged__" : null
       };
       // Création de la requête multipart
-      http.MultipartRequest multipartRequest = http.MultipartRequest(
-          'POST', Uri.parse(serverUrl))
-        ..fields['operations'] =
-            jsonEncode(<String, Object>{
+      http.MultipartRequest multipartRequest =
+          http.MultipartRequest('POST', Uri.parse(serverUrl))
+            ..fields['operations'] = jsonEncode(<String, Object>{
               "query": body,
               "variables": variables,
             });
@@ -275,7 +299,9 @@ class DebtService {
                       montant
                       referenceFacture
                       status
+                      partiePrenante
                       dateOperation
+                      datePayementUlterieur
                       dateEnregistrement
                       pieceJustificative
                       client {
@@ -323,7 +349,6 @@ class DebtService {
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
       var data = jsonData['data']['debts'];
-      print(data);
       if (data != null) {
         for (var debt in data) {
           debts.add(DebtModel.fromJson(debt));

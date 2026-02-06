@@ -28,7 +28,6 @@ class _ArchiveBulletinState extends State<BulletinPage> {
   int currentPage = GlobalValue.currentPage;
   RoleModel? role;
 
-  // 🔑 Ajouter une clé unique pour forcer le rebuild du FutureBuilder
   late Future<List<BulletinPaieModel>> _bulletinsFuture;
 
   @override

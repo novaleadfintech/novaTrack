@@ -6,6 +6,7 @@ import '../../../model/entreprise/banque.dart';
 import '../../../model/moyen_paiement_model.dart';
 import '../../../service/client_service.dart';
 import '../../../service/moyen_paiement_service.dart';
+import '../../../widget/affiche_information_on_pop_pop.dart';
 import '../../../widget/future_dropdown_field.dart';
 import '../../integration/request_frot_behavior.dart';
 import '../../../auth/authentification_token.dart';
@@ -37,6 +38,9 @@ class _AddDebtPageState extends State<AddDebtPage> {
   final _amountFieldController = TextEditingController();
   final _referenceTransactionFieldController = TextEditingController();
   final _dateFieldController = TextEditingController();
+  final _datePayementUlterieurFieldController = TextEditingController();
+  DateTime? _datePayementUlterieur;
+  final partiePrenanteFieldController = TextEditingController();
   DateTime? _dateOperation;
   PlatformFile? _file;
   late SimpleFontelicoProgressDialog _dialog;
@@ -55,7 +59,7 @@ class _AddDebtPageState extends State<AddDebtPage> {
         _amountFieldController.text.isEmpty ||
         _referenceTransactionFieldController.text.isEmpty ||
         _dateOperation == null ||
-        _client == null) {
+        (_client == null && partiePrenanteFieldController.text.isEmpty)) {
       MutationRequestContextualBehavior.showCustomInformationPopUp(
         message: "Veuiller remplir tous les champs marqués",
       );
@@ -81,7 +85,9 @@ class _AddDebtPageState extends State<AddDebtPage> {
       montant: double.parse(_amountFieldController.text),
       referenceFacture: _referenceTransactionFieldController.text,
       dateOperation: _dateOperation,
-      client: _client!,
+      client: _client,
+      partiePrenante: partiePrenanteFieldController.text,
+      datePayementUlterieur: _datePayementUlterieur,
       file: _file,
       userId: _user!.id!,
     );
@@ -119,6 +125,10 @@ class _AddDebtPageState extends State<AddDebtPage> {
       child: Form(
         child: Column(
           children: [
+            ShowInstruction(
+              message:
+                  'Remplissez soit le champs du fournisseur soit la partie prenante.',
+            ),
             FutureCustomDropDownField<ClientModel>(
               fetchItems: fetchFournisseurItems,
               onChanged: (value) {
@@ -129,6 +139,11 @@ class _AddDebtPageState extends State<AddDebtPage> {
               label: "Fournisseur",
               selectedItem: _client,
               itemsAsString: (l) => l.toStringify(),
+            ),
+            SimpleTextField(
+              label: "Partie prenante",
+              textController: partiePrenanteFieldController,
+              keyboardType: TextInputType.text,
             ),
             SimpleTextField(
               label: "Libellé",
@@ -150,6 +165,19 @@ class _AddDebtPageState extends State<AddDebtPage> {
               label: "Date d'achat",
               dateController: _dateFieldController,
               lastDate: DateTime.now(),
+            ),
+            DateField(
+              onCompleteDate: (value) {
+                setState(() {
+                  _datePayementUlterieur = value!;
+                  _datePayementUlterieurFieldController.text =
+                      getStringDate(time: value);
+                });
+              },
+              label: "Date de payement ultérieure",
+              dateController: _datePayementUlterieurFieldController,
+              firstDate: DateTime.now(),
+              required: false,
             ),
             SimpleTextField(
               label: "Réference de la facture / transaction / opération",

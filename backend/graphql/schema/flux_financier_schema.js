@@ -59,6 +59,7 @@ const typeDef = `#graphql
         type:FluxFinancierType!
         montant:Float!
         moyenPayement: MoyenPaiement!
+        partiePrenante: String
         validate: [ValidateFlux]
         referenceTransaction: String
         status: FluxFinancierStatus
@@ -92,13 +93,14 @@ const mutation = `#graphql
         type:FluxFinancierType!,
         montant:Float!,
         moyenPayement: MoyenPaiementInput!,
+        partiePrenante: String,
         pieceJustificative:Upload,
         userId: String!,
         referenceTransaction: String!
         dateOperation:Float
         factureId:String,
         bankId: String!
-        clientId: String!
+        clientId: String
     ):String!
 
     updateFluxFinancier(
@@ -111,6 +113,7 @@ const mutation = `#graphql
         commentaire: CommentaireInput,
         moyenPayement: MoyenPaiementInput,
         pieceJustificative:Upload,
+        partiePrenante: String,
         bankId: String,
         clientId: String,
     ):String!

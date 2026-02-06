@@ -1,24 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/app/pages/app_dialog_box.dart';
 import 'package:frontend/app/pages/bulletin_paie/archive/archive_bulletin_table.dart';
+import 'package:frontend/app/pages/bulletin_paie/archive/period_bulletin.dart';
 import 'package:frontend/app/pages/bulletin_paie/decouverte/decouverte_table.dart';
 import 'package:frontend/app/pages/bulletin_paie/salarie/salaire_table.dart';
+import 'package:frontend/app/pages/configure_page_dialog.dart';
 import 'package:frontend/app/responsitvity/responsivity.dart';
 import 'package:frontend/global/constant/permission_alias.dart';
 import 'package:frontend/helper/user_helper.dart';
+import 'package:frontend/model/bulletin_paie/calendar_model.dart'
+    show EtatPayCalendar, PayCalendarModel;
 import 'package:frontend/model/bulletin_paie/decouverte_model.dart';
 import 'package:frontend/model/bulletin_paie/etat_bulletin.dart';
 import 'package:frontend/model/bulletin_paie/salarie_model.dart';
 import 'package:frontend/model/personnel/enum_personnel.dart';
-import 'package:frontend/service/bulletin_service.dart';
 import 'package:frontend/service/decouverte_service.dart';
 import 'package:frontend/service/salarie_service.dart';
 import 'package:frontend/style/app_color.dart';
+import 'package:frontend/widget/reponsive_conf_card.dart';
 import 'package:gap/gap.dart';
 import '../../../../global/global_value.dart';
 import '../../../../helper/paginate_data.dart';
 import '../../../../model/bulletin_paie/bulletin_model.dart';
 import '../../../../model/habilitation/role_model.dart';
+import '../../../../service/pay_calendar_service.dart';
 import '../../../../widget/filter_bar.dart';
 import '../../../../widget/pagination.dart';
 import '../../../../widget/research_bar.dart';
@@ -43,6 +48,7 @@ class _ArchiveBulletinState extends State<ArchiveBulletinPage> {
   String? selectedFilter = "Bulletin";
   bool isLoading = true;
   bool hasError = false;
+  List<PayCalendarModel> payCalendarData = [];
   String? errorMessage;
   List<String> selectedFilterOption = [
     "Bulletin",
@@ -62,7 +68,10 @@ class _ArchiveBulletinState extends State<ArchiveBulletinPage> {
       });
 
       if (selectedFilter == "Bulletin" || selectedFilter == null) {
-        bulletinData = await BulletinService.getArchiveBulletins();
+        payCalendarData =
+            (await PayCalendarService.getPayCalendars()).where((pay) {
+          return pay.etat != EtatPayCalendar.tobeOpen;
+        }).toList();
       } else if (selectedFilter == "Salarié") {
         salarieData = (await SalarieService.getSalaries()).where((salarie) {
           return salarie.personnel.etat == EtatPersonnel.archived;
@@ -97,6 +106,22 @@ class _ArchiveBulletinState extends State<ArchiveBulletinPage> {
     });
     _loadArchiveData();
   }
+
+  // Future<void> _loadPayCalendar() async {
+  //   try {
+  //     final data
+  //     setState(() {
+  //       payCalendarData = data;
+  //       isLoading = false;
+  //     });
+  //   } catch (error) {
+  //     setState(() {
+  //       errorMessage = error.toString();
+  //       hasError = true;
+  //       isLoading = false;
+  //     });
+  //   }
+  // }
 
   List<BulletinPaieModel> filteredBulletinData() {
     return bulletinData.where((bulletin) {
@@ -214,35 +239,25 @@ class _ArchiveBulletinState extends State<ArchiveBulletinPage> {
                         },
                       ))
                     : (selectedFilter == "Bulletin")
-                        ? filteredBulletin.isEmpty
+                        ? payCalendarData.isEmpty
                             ? NoDataPage(
                                 data: bulletinData,
                                 message: "Aucune archive de bulletin",
                               )
-                            : Column(
-                                mainAxisSize: MainAxisSize.max,
+                            : Wrap(
                                 children: [
-                                  Expanded(
-                                    child: Container(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .surfaceBright,
-                                      child: ArchiveBulletinTable(
-                                        paginatedCurrentBulletintData:
-                                            getPaginatedData(
-                                          data: filteredBulletin,
-                                          currentPage: currentPage,
-                                        ),
-                                        refresh: _loadArchiveData,
+                                  ...payCalendarData.map((payCalendar) {
+                                    return InkWell(
+                                      onTap: () {
+                                        onTapPeriod(
+                                            role: widget.role,
+                                            period: payCalendar);
+                                      },
+                                      child: ResponsiveCard(
+                                        label: payCalendar.libelle,
                                       ),
-                                    ),
-                                  ),
-                                  if (filteredBulletin.isNotEmpty)
-                                    PaginationSpace(
-                                      currentPage: currentPage,
-                                      onPageChanged: updateCurrentPage,
-                                      filterDataCount: filteredBulletin.length,
-                                    ),
+                                    );
+                                  }),
                                 ],
                               )
                         : selectedFilter == "Salarié"
@@ -332,5 +347,52 @@ class _ArchiveBulletinState extends State<ArchiveBulletinPage> {
           ),
         )
     ]);
+  }
+
+  periodShow({required List<BulletinPaieModel> filteredBulletin}) {
+    InkWell(
+      child: ResponsiveCard(label: "Catégories de partenaire"),
+      onTap: () {
+        showResponsiveConfigPageDialogBox(context,
+            title: "Catégories de partenaire",
+            content: Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Expanded(
+                  child: Container(
+                    color: Theme.of(context).colorScheme.surfaceBright,
+                    child: ArchiveBulletinTable(
+                      paginatedCurrentBulletintData: getPaginatedData(
+                        data: filteredBulletin,
+                        currentPage: currentPage,
+                      ),
+                      refresh: _loadArchiveData,
+                    ),
+                  ),
+                ),
+                if (filteredBulletin.isNotEmpty)
+                  PaginationSpace(
+                    currentPage: currentPage,
+                    onPageChanged: updateCurrentPage,
+                    filterDataCount: filteredBulletin.length,
+                  ),
+              ],
+            ));
+      },
+    );
+  }
+
+  void onTapPeriod({
+    required RoleModel role,
+    required PayCalendarModel period,
+  }) {
+    showResponsiveConfigPageDialogBox(context,
+        maxHeightFactor: 1,
+        widthFactor: 0.9,
+        title: "Bulltetins - ${period.libelle}",
+        content: PeriodBulletinPage(
+          role: role,
+          payCalendar: period,
+        ));
   }
 }

@@ -62,7 +62,7 @@ class FluxFinancier {
       ${filtreStatus}
       SORT fluxFinancier.dateEnregistrement DESC 
       ${limit} 
-      RETURN fluxFinancier`
+      RETURN fluxFinancier`,
       );
 
       const fluxFinanciers = await query.all();
@@ -76,7 +76,7 @@ class FluxFinancier {
                 valid.validater = await userModel.getUser({
                   key: valid.validater,
                 });
-              })
+              }),
             );
           }
           return {
@@ -97,10 +97,10 @@ class FluxFinancier {
                   fluxFinancier.pieceJustificative
                 : null,
           };
-        })
+        }),
       );
     } catch (err) {
-    console.error(err);
+      console.error(err);
 
       return [];
     }
@@ -116,7 +116,7 @@ class FluxFinancier {
       filtre = aql`FILTER fluxFinancier.type == ${FluxFinancierType.output} AND fluxFinancier.status==${FluxFinancierStatus.valid}
         AND fluxFinancier.type == ${FluxFinancierType.output} AND (fluxFinancier.montant - fluxFinancier.montantPaye)>0`;
       const query = await db.query(
-        aql`FOR fluxFinancier IN ${fluxFinancierCollection} SORT fluxFinancier.dateEnregistrement DESC ${limit} ${filtre} RETURN fluxFinancier`
+        aql`FOR fluxFinancier IN ${fluxFinancierCollection} SORT fluxFinancier.dateEnregistrement DESC ${limit} ${filtre} RETURN fluxFinancier`,
       );
       const fluxFinanciers = await query.all();
       return Promise.all(
@@ -129,7 +129,7 @@ class FluxFinancier {
                 valid.validater = await userModel.getUser({
                   key: valid.validater,
                 });
-              })
+              }),
             );
           }
           return {
@@ -150,10 +150,10 @@ class FluxFinancier {
                   fluxFinancier.pieceJustificative
                 : null,
           };
-        })
+        }),
       );
     } catch (err) {
-    console.error(err);
+      console.error(err);
 
       return [];
     }
@@ -175,7 +175,7 @@ class FluxFinancier {
         SORT fluxFinancier.dateOperation ASC  
         ${limit}  
         RETURN fluxFinancier
-      `
+      `,
       );
 
       const fluxFinanciers = await query.all();
@@ -189,7 +189,7 @@ class FluxFinancier {
                 valid.validater = await userModel.getUser({
                   key: valid.validater,
                 });
-              })
+              }),
             );
           }
 
@@ -210,7 +210,7 @@ class FluxFinancier {
                 fluxFinancier.pieceJustificative
               : null,
           };
-        })
+        }),
       );
     } catch (err) {
       console.error(err);
@@ -236,7 +236,7 @@ class FluxFinancier {
         SORT fluxFinancier.dateOperation ASC  
         ${limit}  
         RETURN fluxFinancier
-      `
+      `,
       );
 
       const fluxFinanciers = await query.all();
@@ -251,7 +251,7 @@ class FluxFinancier {
                 valid.validater = await userModel.getUser({
                   key: valid.validater,
                 });
-              })
+              }),
             );
           }
           return {
@@ -271,7 +271,7 @@ class FluxFinancier {
                 fluxFinancier.pieceJustificative
               : null,
           };
-        })
+        }),
       );
     } catch (err) {
       console.error(err);
@@ -298,7 +298,7 @@ class FluxFinancier {
         ${filtre}
         SORT fluxFinancier.dateOperation ASC
         RETURN fluxFinancier
-      `
+      `,
       );
 
       const fluxFinanciers = await query.all();
@@ -321,7 +321,7 @@ class FluxFinancier {
                   fluxFinancier.pieceJustificative
                 : null,
           };
-        })
+        }),
       );
     } catch (err) {
       console.error(`Erreur lors de la récupération des flux financiers`, err);
@@ -342,7 +342,7 @@ class FluxFinancier {
         `;
       }
       const query = await db.query(
-        aql`FOR fluxFinancier IN ${fluxFinancierCollection} ${filtre} SORT fluxFinancier.dateOperation ASC RETURN fluxFinancier`
+        aql`FOR fluxFinancier IN ${fluxFinancierCollection} ${filtre} SORT fluxFinancier.dateOperation ASC RETURN fluxFinancier`,
       );
       const fluxFinanciers = await query.all();
 
@@ -356,7 +356,7 @@ class FluxFinancier {
                 valid.validater = await userModel.getUser({
                   key: valid.validater,
                 });
-              })
+              }),
             );
           }
           return {
@@ -375,7 +375,7 @@ class FluxFinancier {
                   fluxFinancier.pieceJustificative
                 : null,
           };
-        })
+        }),
       );
     } catch (err) {
       console.error(err);
@@ -393,7 +393,7 @@ class FluxFinancier {
         await Promise.all(
           validate.map(async (valid) => {
             valid.validater = await userModel.getUser({ key: valid.validater });
-          })
+          }),
         );
       }
       return {
@@ -423,7 +423,7 @@ class FluxFinancier {
       precision = aql`FILTER payement.decouvertId == ${decouvertId} SORT payement.dateEnregistrement ASC`;
     }
     const query = await db.query(
-      aql`FOR payement IN ${fluxFinancierCollection} ${precision} RETURN payement`
+      aql`FOR payement IN ${fluxFinancierCollection} ${precision} RETURN payement`,
     );
 
     if (query.hasNext) {
@@ -434,7 +434,7 @@ class FluxFinancier {
         await Promise.all(
           validate.map(async (valid) => {
             valid.validater = await userModel.getUser({ key: valid.validater });
-          })
+          }),
         );
       }
       return {
@@ -461,7 +461,7 @@ class FluxFinancier {
       precision = aql`FILTER payement.factureId == ${factureId} SORT payement.dateEnregistrement ASC`;
     }
     const query = await db.query(
-      aql`FOR payement IN ${fluxFinancierCollection} ${precision}  RETURN payement`
+      aql`FOR payement IN ${fluxFinancierCollection} ${precision}  RETURN payement`,
     );
 
     if (query.hasNext) {
@@ -476,7 +476,7 @@ class FluxFinancier {
                 valid.validater = await userModel.getUser({
                   key: valid.validater,
                 });
-              })
+              }),
             );
           }
 
@@ -495,7 +495,7 @@ class FluxFinancier {
                   payement.pieceJustificative
                 : null,
           };
-        })
+        }),
       );
     } else {
       return [];
@@ -508,7 +508,7 @@ class FluxFinancier {
       precision = aql`FILTER payement.factureId == ${factureId} AND payement.status != ${FluxFinancierStatus.reject}  SORT payement.dateEnregistrement ASC`;
     }
     const query = await db.query(
-      aql`FOR payement IN ${fluxFinancierCollection} ${precision}  RETURN payement`
+      aql`FOR payement IN ${fluxFinancierCollection} ${precision}  RETURN payement`,
     );
 
     if (query.hasNext) {
@@ -523,7 +523,7 @@ class FluxFinancier {
                 valid.validater = await userModel.getUser({
                   key: valid.validater,
                 });
-              })
+              }),
             );
           }
 
@@ -542,7 +542,7 @@ class FluxFinancier {
                   payement.pieceJustificative
                 : null,
           };
-        })
+        }),
       );
     } else {
       return [];
@@ -557,6 +557,7 @@ class FluxFinancier {
     pieceJustificative,
     referenceTransaction,
     userId,
+    partiePrenante,
     clientId,
     factureId,
     decouvertId,
@@ -584,8 +585,9 @@ class FluxFinancier {
     if (clientId != undefined) {
       await clientModel.isExistClient({ key: clientId });
     }
+
     const query = await db.query(
-      aql`FOR flux IN ${fluxFinancierCollection} FILTER flux.status != ${FluxFinancierStatus.reject} AND flux.referenceTransaction == ${referenceTransaction} LIMIT 1 RETURN flux`
+      aql`FOR flux IN ${fluxFinancierCollection} FILTER flux.status != ${FluxFinancierStatus.reject} AND flux.referenceTransaction == ${referenceTransaction} LIMIT 1 RETURN flux`,
     );
 
     if (query.hasNext) {
@@ -624,7 +626,7 @@ class FluxFinancier {
       if (logo != null) {
         otherdata.logo = logo.replace(
           process.env.FILE_PREFIX + `${locateBanqueFolder}/`,
-          ""
+          "",
         );
       }
 
@@ -641,6 +643,7 @@ class FluxFinancier {
         dateEnregistrement: Date.now(),
         pieceJustificative: filePath ? filePath.replace(/\\/g, "/") : null,
         userId: userId,
+        partiePrenante: partiePrenante,
         clientId: clientId,
         status: FluxFinancierStatus.wait,
         factureId: factureId,
@@ -676,6 +679,7 @@ class FluxFinancier {
     libelle,
     montant,
     bankId,
+    partiePrenante,
     clientId,
     referenceTransaction,
     moyenPayement,
@@ -733,7 +737,7 @@ class FluxFinancier {
             if (logo) {
               otherdata.logo = logo.replace(
                 process.env.FILE_PREFIX + `${locateBanqueFolder}/`,
-                ""
+                "",
               );
             }
             updateField.bank = otherdata;
@@ -757,16 +761,20 @@ class FluxFinancier {
         }
 
         if (libelle !== undefined) updateField.libelle = libelle;
+        console.log();
         if (clientId !== undefined) {
-          await clientModel.isExistClient({ key: clientId });
+          (await clientId) != null ??
+            clientModel.isExistClient({ key: clientId });
           updateField.clientId = clientId;
         }
+        if (partiePrenante !== undefined)
+          updateField.partiePrenante = partiePrenante;
         if (montant !== undefined) updateField.montant = montant;
         if (moyenPayement !== undefined)
           updateField.moyenPayement = moyenPayement;
         if (referenceTransaction !== undefined) {
           const query = await db.query(
-            aql`FOR flux IN ${fluxFinancierCollection} FILTER flux.status != ${FluxFinancierStatus.reject} AND flux.referenceTransaction == ${referenceTransaction} LIMIT 1 RETURN flux`
+            aql`FOR flux IN ${fluxFinancierCollection} FILTER flux.status != ${FluxFinancierStatus.reject} AND flux.referenceTransaction == ${referenceTransaction} LIMIT 1 RETURN flux`,
           );
 
           if (query.hasNext) {
@@ -793,7 +801,7 @@ class FluxFinancier {
             const newFileExtension = path.extname(filename);
             const trueOldFilePath = oldFilePath.replace(
               process.env.FILE_PREFIX + `${locateFinanceFolder}/`,
-              ""
+              "",
             );
 
             if (newFileExtension !== oldFileExtension) {
@@ -803,7 +811,7 @@ class FluxFinancier {
             }
             uniquefilename = trueOldFilePath.replace(
               oldFileExtension,
-              newFileExtension
+              newFileExtension,
             );
           } else {
             const valid_name = "preuve".replace(/ /g, "_");
@@ -849,7 +857,7 @@ class FluxFinancier {
 
       if (flux.status !== FluxFinancierStatus.wait) {
         throw new Error(
-          "Impossible de supprimer un flux financier déjà validé."
+          "Impossible de supprimer un flux financier déjà validé.",
         );
       }
 
@@ -894,7 +902,7 @@ class FluxFinancier {
         });
       } else {
         throw new Error(
-          "Fonds insuffisants pour couvrir le montant total de cette sortie financière."
+          "Fonds insuffisants pour couvrir le montant total de cette sortie financière.",
         );
       }
     } else {
@@ -910,7 +918,7 @@ class FluxFinancier {
       await fluxFinancierCollection.remove(key);
       return "OK";
     } catch (err) {
-    console.error(err);
+      console.error(err);
 
       throw new Error("Une erreur s'est produite lors de la suppression");
     }
@@ -928,7 +936,8 @@ class FluxFinancier {
         type: type,
       });
       let fluxFinanciers = fluxs.filter(
-        (flux) => flux.validate != null && flux.validate.validateStatus === true
+        (flux) =>
+          flux.validate != null && flux.validate.validateStatus === true,
       );
       let total = 0;
       let input = 0;
@@ -949,7 +958,7 @@ class FluxFinancier {
         fluxFinanciers,
       };
     } catch (err) {
-    console.error(err);
+      console.error(err);
 
       throw new Error("Erreur lors du calcul du bilan financier");
     }
@@ -983,7 +992,7 @@ class FluxFinancier {
       const yearResult = await cursor.all();
       return yearResult;
     } catch (err) {
-    console.error(err);
+      console.error(err);
 
       throw new Error(`Erreur lors de la récupération du bilan`);
     }
@@ -1004,7 +1013,7 @@ class FluxFinancier {
         LIMIT 1
         SORT flux.dateEnregistrement DESC
         RETURN flux        
-      `
+      `,
     );
 
     let count = 0;
@@ -1016,10 +1025,10 @@ class FluxFinancier {
     }
     return type == FluxFinancierType.input
       ? `${String(count + 1).padStart(2, "0")}/DG/ENT/${String(
-          currentMonth
+          currentMonth,
         ).padStart(2, "0")}/${lastTwoDigitsYear}`
       : `${String(count + 1).padStart(2, "0")}/DG/SO/${String(
-          currentMonth
+          currentMonth,
         ).padStart(2, "0")}/${lastTwoDigitsYear}`;
   };
 }

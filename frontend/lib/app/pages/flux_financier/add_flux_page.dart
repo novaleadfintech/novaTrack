@@ -8,6 +8,7 @@ import 'package:frontend/service/banque_service.dart';
 import 'package:frontend/service/client_service.dart';
 import 'package:frontend/service/libelle_flux_financier_service.dart';
 import 'package:frontend/service/moyen_paiement_service.dart';
+import 'package:frontend/widget/affiche_information_on_pop_pop.dart';
 import '../../../widget/future_dropdown_field.dart';
 import '../../integration/request_frot_behavior.dart';
 import '../../../auth/authentification_token.dart';
@@ -43,6 +44,7 @@ class _AddFluxPageState extends State<AddFluxPage> {
   final amountFieldController = TextEditingController();
   final referenceTransactionFieldController = TextEditingController();
   final montantPayeTextFieldController = TextEditingController();
+  final partiePrenanteFieldController = TextEditingController();
   final dateFieldController = TextEditingController();
   DateTime? dateOperation;
   MoyenPaiementModel? moyenPayement;
@@ -65,7 +67,7 @@ class _AddFluxPageState extends State<AddFluxPage> {
         referenceTransactionFieldController.text.isEmpty ||
         moyenPayement == null ||
         banque == null ||
-        client == null ||
+        (client == null && partiePrenanteFieldController.text.isEmpty) ||
         libelleType == null) {
       MutationRequestContextualBehavior.showCustomInformationPopUp(
         message: "Veuiller remplir tous les champs marqués",
@@ -81,8 +83,6 @@ class _AddFluxPageState extends State<AddFluxPage> {
     try {
       user = await AuthService().decodeToken();
     } catch (err) {
-       
-
       _dialog.hide();
       MutationRequestContextualBehavior.showPopup(
         status: PopupStatus.serverError,
@@ -93,11 +93,12 @@ class _AddFluxPageState extends State<AddFluxPage> {
     RequestResponse result = await FluxFinancierService.createFluxFinancier(
       libelle: "${libelleType!.libelle} : ${libelleFieldController.text}",
       montant: double.parse(amountFieldController.text),
+      partiePrenante: partiePrenanteFieldController.text,
       moyenPayement: moyenPayement!,
       type: widget.type,
       referenceTransaction: referenceTransactionFieldController.text,
       dateOperation: dateOperation,
-      client: client!,
+      client: client,
       file: file,
       banque: banque!,
       userId: user!.id!,
@@ -156,6 +157,10 @@ class _AddFluxPageState extends State<AddFluxPage> {
         //key: UniqueKey(),
         child: Column(
           children: [
+            ShowInstruction(
+              message:
+                  'Remplissez soit le champs du ${widget.type == FluxFinancierType.input ? 'client' : 'fournisseur'} soit la partie prenante.',
+            ),
             FutureCustomDropDownField<ClientModel>(
               fetchItems: widget.type == FluxFinancierType.input
                   ? fetchClientItems
@@ -170,6 +175,11 @@ class _AddFluxPageState extends State<AddFluxPage> {
                   : "Fournisseur",
               selectedItem: client,
               itemsAsString: (l) => l.toStringify(),
+            ),
+            SimpleTextField(
+              label: "Partie prenante",
+              textController: partiePrenanteFieldController,
+              keyboardType: TextInputType.text,
             ),
             FutureCustomDropDownField<LibelleFluxModel>(
               fetchItems: fetchLibelleItems,

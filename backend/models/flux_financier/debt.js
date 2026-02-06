@@ -47,11 +47,11 @@ class Debt {
        ${filtreStatus}
       SORT debt.dateOperation DESC 
       ${limit} 
-      RETURN debt`
+      RETURN debt`,
       );
 
       const debts = await query.all();
-       return Promise.all(
+      return Promise.all(
         debts.map(async (debt) => {
           return {
             ...debt,
@@ -70,7 +70,7 @@ class Debt {
                   debt.pieceJustificative
                 : null,
           };
-        })
+        }),
       );
     } catch (err) {
       console.error(err);
@@ -96,7 +96,7 @@ class Debt {
          SORT debt.dateOperation ASC  
         ${limit}  
         RETURN debt
-      `
+      `,
       );
 
       const debts = await query.all();
@@ -119,7 +119,7 @@ class Debt {
                 debt.pieceJustificative
               : null,
           };
-        })
+        }),
       );
     } catch (err) {
       console.error(err);
@@ -157,6 +157,8 @@ class Debt {
     pieceJustificative,
     referenceFacture,
     userId,
+    partiePrenante,
+    datePayementUlterieur,
     clientId,
     dateOperation = Date.now(),
   }) => {
@@ -165,6 +167,7 @@ class Debt {
         libelle,
         montant,
         userId,
+
         // clientId,
         referenceFacture,
       ],
@@ -174,11 +177,11 @@ class Debt {
       write: ["debts", "banques"],
     });
 
-    if (clientId != undefined) {
+    if (clientId != undefined && clientId !== null) {
       await clientModel.isExistClient({ key: clientId });
     }
     const query = await db.query(
-      aql`FOR debt IN ${debtCollection} FILTER debt.referenceFacture == ${referenceFacture} LIMIT 1 RETURN debt`
+      aql`FOR debt IN ${debtCollection} FILTER debt.referenceFacture == ${referenceFacture} LIMIT 1 RETURN debt`,
     );
 
     if (query.hasNext) {
@@ -223,7 +226,9 @@ class Debt {
         dateEnregistrement: Date.now(),
         pieceJustificative: filePath ? filePath.replace(/\\/g, "/") : null,
         userId: userId,
+        partiePrenante: partiePrenante,
         clientId: clientId,
+        datePayementUlterieur: datePayementUlterieur,
         dateOperation: dateOperation,
       };
 
@@ -252,7 +257,9 @@ class Debt {
     libelle,
     montant,
     clientId,
+    datePayementUlterieur,
     referenceFacture,
+    partiePrenante,
     pieceJustificative,
     dateOperation,
     status,
@@ -268,15 +275,21 @@ class Debt {
 
       await session.step(async () => {
         if (libelle !== undefined) updateField.libelle = libelle;
+        if (datePayementUlterieur !== undefined)
+          updateField.datePayementUlterieur = datePayementUlterieur;
         if (clientId !== undefined) {
-          await clientModel.isExistClient({ key: clientId });
+          (await clientId) != null ??
+            clientModel.isExistClient({ key: clientId });
           updateField.clientId = clientId;
+        }
+        if (partiePrenante !== undefined) {
+          updateField.partiePrenante = partiePrenante;
         }
         if (montant !== undefined) updateField.montant = montant;
 
         if (referenceFacture !== undefined) {
           const query = await db.query(
-            aql`FOR debt IN ${debtCollection} FILTER debt.referenceFacture == ${referenceFacture} AND debt._id != ${key} LIMIT 1 RETURN debt`
+            aql`FOR debt IN ${debtCollection} FILTER debt.referenceFacture == ${referenceFacture} AND debt._id != ${key} LIMIT 1 RETURN debt`,
           );
 
           if (query.hasNext) {
@@ -303,7 +316,7 @@ class Debt {
             const newFileExtension = path.extname(filename);
             const trueOldFilePath = oldFilePath.replace(
               process.env.FILE_PREFIX + `${locateDebtFolder}/`,
-              ""
+              "",
             );
 
             if (newFileExtension !== oldFileExtension) {
@@ -313,7 +326,7 @@ class Debt {
             }
             uniquefilename = trueOldFilePath.replace(
               oldFileExtension,
-              newFileExtension
+              newFileExtension,
             );
           } else {
             const valid_name = "preuve".replace(/ /g, "_");

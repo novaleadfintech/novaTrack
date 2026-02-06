@@ -161,7 +161,7 @@ class _MoreUserDetailState extends State<MoreUserDetail> {
                                           context)
                                       : userRole.roleAuthorization ==
                                               RoleAuthorization.refused
-                                          ? AppColor.redColor.withOpacity(0.3)
+                                          ? AppColor.redColor.withValues(alpha: 0.3)
                                           : AppColor.popGrey,
                                   padding: const EdgeInsets.all(8),
                                   child: Text(

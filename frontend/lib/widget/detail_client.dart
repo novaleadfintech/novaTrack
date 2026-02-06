@@ -59,7 +59,7 @@ class _DetailClientState extends State<DetailClient> {
                       color: Theme.of(context)
                           .colorScheme
                           .primary
-                          .withOpacity(0.2),
+                          .withValues(alpha: 0.2),
                       image: DecorationImage(
                         image: NetworkImage(
                             (widget.client as ClientMoralModel).logo!),
@@ -90,7 +90,7 @@ class _DetailClientState extends State<DetailClient> {
                           color: Theme.of(context)
                               .colorScheme
                               .surface
-                              .withOpacity(1),
+                              .withValues(alpha: 1),
                           image: DecorationImage(
                             image: NetworkImage(
                               (widget.client as ClientMoralModel).logo!,

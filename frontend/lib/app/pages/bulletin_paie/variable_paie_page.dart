@@ -7,6 +7,7 @@ import 'package:frontend/helper/assets/asset_icon.dart';
 import 'package:frontend/model/bulletin_paie/rubrique.dart';
 import 'package:frontend/model/bulletin_paie/rubrique_paie.dart';
 import 'package:frontend/model/bulletin_paie/salarie_model.dart';
+import 'package:frontend/model/bulletin_paie/tranche_model.dart';
 import 'package:frontend/model/bulletin_paie/valeur_rubrique_temporaire.dart';
 import 'package:frontend/service/bulletin_rubrique_service.dart';
 import 'package:frontend/service/rubrique_categorie_conf_service.dart';
@@ -33,6 +34,11 @@ class _VariablePaiePageState extends State<VariablePaiePage> {
   Map<String, TextEditingController> valueControllers = {};
   late SimpleFontelicoProgressDialog _dialog;
   List<RubriqueOnBulletinModel> _rubriquesOnBulletin = [];
+  List<RubriqueOnBulletinModel> variablePaies = [];
+  List<RubriqueOnBulletinModel> variableRubriques = [];
+  List<RubriqueOnBulletinModel> nonVariableRubriques = [];
+// Liste pour les rubriques non variables
+
   bool isLoading = true;
   bool hasError = false;
   void _addPrime() {
@@ -53,8 +59,7 @@ class _VariablePaiePageState extends State<VariablePaiePage> {
   /// Récupération de la liste des primes disponibles depuis le service
   Future<List<RubriqueBulletin>> fetchPrimes() async {
     try {
-      // TODO: ceci doit etre en vrai remplacer par getPrimeExceptionnelle
-      final primes = await BulletinRubriqueService.getBulletinRubriques();
+      final primes = await BulletinRubriqueService.getExceptionnellePrime();
       return primes;
     } catch (e) {
       debugPrint("Erreur lors du chargement des primes: $e");
@@ -84,7 +89,14 @@ class _VariablePaiePageState extends State<VariablePaiePage> {
       // Si rien reçu, on initialise avec listes vides
       final List<RubriqueOnBulletinModel> rubriquePaieResponse =
           valeurResponse.rubriques;
+    
+      variablePaies.addAll(valeurResponse.rubriques.where((rubrque) {
+        return rubrque.rubrique.rubriqueRole == RubriqueRole.variable;
+      }).toList());
 
+      nonVariableRubriques.addAll(valeurResponse.rubriques.where((rubrque) {
+        return rubrque.rubrique.rubriqueRole != RubriqueRole.variable;
+      }).toList());
       // Préremplir les controllers des rubriques constantes
       for (var rubriqueBulletin in rubriquePaieResponse) {
         final r = rubriqueBulletin.rubrique;
@@ -111,7 +123,7 @@ class _VariablePaiePageState extends State<VariablePaiePage> {
       }
 
       setState(() {
-        _rubriquesOnBulletin = rubriquePaieResponse;
+        _rubriquesOnBulletin = nonVariableRubriques;
         isLoading = false;
         hasError = false;
       });
@@ -134,9 +146,8 @@ class _VariablePaiePageState extends State<VariablePaiePage> {
             //key: UniqueKey(),
             child: Column(
               children: [
-                ..._rubriquesOnBulletin.map((rubrique) {
+                ...nonVariableRubriques.map((rubrique) {
                   final r = rubrique.rubrique;
-
                   if (r.nature == NatureRubrique.constant) {
                     // On gère les cas particuliers d'abord
                     // if (r.rubriqueIdentity == RubriqueIdentity.anciennete) {
@@ -159,7 +170,6 @@ class _VariablePaiePageState extends State<VariablePaiePage> {
                     //   return const SizedBox(); // On n'affiche rien
                     // }
 
-                    // Pour les autres rubriques constants individuels
                     return SimpleTextField(
                       label: r.rubrique,
                       textController:
@@ -175,88 +185,157 @@ class _VariablePaiePageState extends State<VariablePaiePage> {
                           const TextInputType.numberWithOptions(decimal: true),
                       // maxlength: 2,
                     );
+                    
                   }
 
                   return const SizedBox();
                 }),
-              ],
-            ),
-          ),
-          Gap(16),
-          Text(
-            "Primes Exceptionnelles",
-            style: DestopAppStyle.fieldTitlesStyle.copyWith(
-              color: Theme.of(context).colorScheme.onSecondary,
-            ),
-          ),
-          const Gap(8),
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              border: Border.all(width: 0.5, color: Colors.grey),
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: Column(
-              children: [
-                for (int i = 0; i < primesExceptionnelles.length; i++)
+                Column(children: [
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Column(
+                    child: Row(
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Prime ${i + 1}",
-                              style: DestopAppStyle.normalText.copyWith(
-                                color:
-                                    Theme.of(context).colorScheme.onSecondary,
-                              ),
-                            ),
-                            IconButton(
-                              onPressed: () => _removePrime(i),
-                              icon: SvgPicture.asset(AssetsIcons.block),
-                            ),
-                          ],
+                        Expanded(
+                          child: Divider(
+                            thickness: 2,
+                            height: 16,
+                          ),
                         ),
-                        FutureCustomDropDownField<RubriqueBulletin>(
-                          label: "Sélectionnez une prime",
-                          selectedItem: primesExceptionnelles[i]["prime"],
-                          fetchItems: fetchPrimes,
-                          onChanged: (RubriqueBulletin? selected) {
-                            setState(() {
-                              primesExceptionnelles[i]["prime"] = selected;
-                            });
-                          },
-                          itemsAsString: itemAsString,
+                        Gap(8),
+                        Text(
+                          'Variable de paie',
+                          style: DestopAppStyle.fieldTitlesStyle.copyWith(
+                            color: Theme.of(context).colorScheme.onSecondary,
+                          ),
                         ),
-                        SimpleTextField(
-                          label: "Montant",
-                          textController: primesExceptionnelles[i]["montant"],
-                          keyboardType: const TextInputType.numberWithOptions(
-                              decimal: true),
-                          required: true,
-                          onChanged: (value) {
-                            final parsed = value.isEmpty
-                                ? 0
-                                : double.tryParse(
-                                        Formatter.parseAmount(value)) ??
-                                    0;
-                            primesExceptionnelles[i]["montant"].text =
-                                parsed.toString();
-                          },
+                        Gap(8),
+                        Expanded(
+                          child: Divider(
+                            thickness: 2,
+                            height: 16,
+                          ),
                         ),
                       ],
                     ),
                   ),
+                  ...variablePaies.map((rubrique) {
+                    final r = rubrique.rubrique;
+                    return SimpleTextField(
+                      label: r.rubrique,
+                      textController:
+                          valueControllers[r.id] ?? TextEditingController(),
+                      required: true,
+                      onChanged: (value) {
+                        final parsed = value.isEmpty
+                            ? null
+                            : double.tryParse(Formatter.parseAmount(value));
+                        rubrique.value = parsed;
+                      },
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                      // maxlength: 2,
+                    );
+                  }),
+                ]),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    IconButton(
-                      onPressed: _addPrime,
-                      icon: SvgPicture.asset(AssetsIcons.simpleAdd),
+                    Expanded(child: Divider(thickness: 2, height: 16)),
+                    Gap(8),
+                    Text(
+                      "Primes Exceptionnelles",
+                      style: DestopAppStyle.fieldTitlesStyle.copyWith(
+                        color: Theme.of(context).colorScheme.onSecondary,
+                      ),
                     ),
+                    Gap(8),
+                    Expanded(child: Divider(thickness: 2, height: 16)),
                   ],
+                ),
+             
+                const Gap(8),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 0.5, color: Colors.grey),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Column(
+                    children: [
+                      for (int i = 0; i < primesExceptionnelles.length; i++)
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Prime ${i + 1}",
+                                    style: DestopAppStyle.normalText.copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSecondary,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () => _removePrime(i),
+                                    icon: SvgPicture.asset(AssetsIcons.block),
+                                  ),
+                                ],
+                              ),
+                              FutureCustomDropDownField<RubriqueBulletin>(
+                                label: "Sélectionnez une prime",
+                                selectedItem: primesExceptionnelles[i]["prime"],
+                                fetchItems: fetchPrimes,
+                                onChanged: (RubriqueBulletin? selected) {
+                                  setState(() {
+                                    primesExceptionnelles[i]["prime"] =
+                                        selected;
+                                  });
+                                },
+                                itemsAsString: itemAsString,
+                              ),
+                              SimpleTextField(
+                                label: "Montant",
+                                textController: primesExceptionnelles[i]
+                                    ["montant"],
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                        decimal: true),
+                                required: true,
+                                onChanged: (value) {
+                                  final parsed = value.isEmpty
+                                      ? 0
+                                      : double.tryParse(
+                                              Formatter.parseAmount(value)) ??
+                                          0;
+                                  primesExceptionnelles[i]["montant"].text =
+                                      parsed.toString();
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          IconButton(
+                            onPressed: _addPrime,
+                            icon: SvgPicture.asset(AssetsIcons.simpleAdd),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -281,8 +360,7 @@ class _VariablePaiePageState extends State<VariablePaiePage> {
     List<RubriqueOnBulletinModel> primesPaie = [];
     List<String> erreurs = [];
 
-    // 🔹 Vérifie les rubriques normales (seulement celles issues de _rubriquesOnBulletin et de nature constant)
-    for (var rubrique in _rubriquesOnBulletin) {
+    for (var rubrique in [...nonVariableRubriques, ...variablePaies]) {
       final nom = rubrique.rubrique.rubrique;
       // On considère que les rubriques normales doivent avoir une value
       if (rubrique.rubrique.nature == NatureRubrique.constant) {
@@ -335,15 +413,11 @@ class _VariablePaiePageState extends State<VariablePaiePage> {
       }
     }
 
-    // ❌ Si erreurs, on affiche et on arrête
     if (erreurs.isNotEmpty) {
       final message = erreurs.join("\n");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message, style: const TextStyle(color: Colors.white)),
-          backgroundColor: Colors.redAccent,
-          duration: const Duration(seconds: 4),
-        ),
+      MutationRequestContextualBehavior.showPopup(
+        status: PopupStatus.customError,
+        customMessage: message,
       );
       return;
     }

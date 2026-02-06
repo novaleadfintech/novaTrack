@@ -199,6 +199,7 @@ void showResponsiveConfigPageDialogBox(
   required String title,
   bool canClose = true,
   double maxHeightFactor = 0.95,
+  double widthFactor = 0.7,
 }) {
   showDialog(
     barrierDismissible: false,
@@ -211,6 +212,7 @@ void showResponsiveConfigPageDialogBox(
       title: title,
       content: content,
       maxHeightFactor: maxHeightFactor,
+      widthFactor: widthFactor,
     ),
   );
 }

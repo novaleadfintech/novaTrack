@@ -91,7 +91,7 @@ class _SettingScreenState extends State<SettingScreen> {
                         backgroundColor: Theme.of(context)
                             .colorScheme
                             .primary
-                            .withOpacity(0.2),
+                            .withValues(alpha: 0.2),
                         child: Text(
                           getInitials(),
                           style: const TextStyle(

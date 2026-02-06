@@ -57,7 +57,7 @@ class _PaginationSpaceState extends State<PaginationSpace> {
             Container(
               decoration: BoxDecoration(
                 color:
-                    Theme.of(context).colorScheme.onSecondary.withOpacity(0.2),
+                    Theme.of(context).colorScheme.onSecondary.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(4),
               ),
               child: InkWell(
@@ -87,7 +87,7 @@ class _PaginationSpaceState extends State<PaginationSpace> {
             Container(
               decoration: BoxDecoration(
                 color:
-                    Theme.of(context).colorScheme.onSecondary.withOpacity(0.2),
+                    Theme.of(context).colorScheme.onSecondary.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(4),
               ),
               child: InkWell(

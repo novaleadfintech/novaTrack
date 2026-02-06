@@ -7,6 +7,7 @@ import '../../../model/flux_financier/debt_model.dart';
 import '../../../model/moyen_paiement_model.dart';
 import '../../../service/client_service.dart';
 import '../../../service/moyen_paiement_service.dart';
+import '../../../widget/affiche_information_on_pop_pop.dart';
 import '../../../widget/future_dropdown_field.dart';
 import '../../integration/request_frot_behavior.dart';
 import '../../../helper/date_helper.dart';
@@ -37,9 +38,12 @@ class _EditDebtPageState extends State<EditDebtPage> {
   final _libelleFieldController = TextEditingController();
   final _amountFieldController = TextEditingController();
   final _referenceTransactionFieldController = TextEditingController();
+  final _datePayementUlterieurFieldController = TextEditingController();
   final _dateFieldController = TextEditingController();
+  final partiePrenanteFieldController = TextEditingController();
   DateTime? _dateOperation;
   PlatformFile? _file;
+  DateTime? _datePayementUlterieur;
   late SimpleFontelicoProgressDialog _dialog;
   ClientModel? _client;
   BanqueModel? _banque;
@@ -57,6 +61,17 @@ class _EditDebtPageState extends State<EditDebtPage> {
     _referenceTransactionFieldController.text =
         widget.debt.referenceFacture ?? '';
     _dateOperation = widget.debt.dateOperation;
+    partiePrenanteFieldController.text = widget.debt.partiePrenante ?? '';
+    _datePayementUlterieur = widget.debt.datePayementUlterieur;
+    _datePayementUlterieurFieldController.text = _datePayementUlterieur != null
+        ? getStringDate(time: _datePayementUlterieur!)
+        : '';
+    _file = widget.debt.pieceJustificative == null
+        ? null
+        : PlatformFile(
+            name: widget.debt.pieceJustificative!.split("/").last,
+            size: 10,
+            path: widget.debt.pieceJustificative);
     _dateFieldController.text = getStringDate(time: widget.debt.dateOperation);
     _client = widget.debt.client;
   }
@@ -66,7 +81,7 @@ class _EditDebtPageState extends State<EditDebtPage> {
         _amountFieldController.text.isEmpty ||
         _referenceTransactionFieldController.text.isEmpty ||
         _dateOperation == null ||
-        _client == null) {
+        (_client == null && partiePrenanteFieldController.text.isEmpty)) {
       MutationRequestContextualBehavior.showCustomInformationPopUp(
         message: "Veuiller remplir tous les champs marqués",
       );
@@ -83,7 +98,9 @@ class _EditDebtPageState extends State<EditDebtPage> {
       montant: double.parse(_amountFieldController.text),
       referenceFacture: _referenceTransactionFieldController.text,
       dateOperation: _dateOperation,
-      client: _client!,
+      datePayementUlterieur: _datePayementUlterieur,
+      client: _client,
+      partiePrenante: partiePrenanteFieldController.text,
       file: _file,
       key: widget.debt.id,
     );
@@ -121,6 +138,10 @@ class _EditDebtPageState extends State<EditDebtPage> {
       child: Form(
         child: Column(
           children: [
+            ShowInstruction(
+              message:
+                  'Remplissez soit le champs du fournisseur soit la partie prenante.',
+            ),
             FutureCustomDropDownField<ClientModel>(
               fetchItems: fetchFournisseurItems,
               onChanged: (value) {
@@ -131,6 +152,11 @@ class _EditDebtPageState extends State<EditDebtPage> {
               label: "Fournisseur",
               selectedItem: _client,
               itemsAsString: (l) => l.toStringify(),
+            ),
+            SimpleTextField(
+              label: "Partie prenante",
+              textController: partiePrenanteFieldController,
+              keyboardType: TextInputType.text,
             ),
             SimpleTextField(
               label: "Libellé",
@@ -152,6 +178,19 @@ class _EditDebtPageState extends State<EditDebtPage> {
               label: "Date d'achat",
               dateController: _dateFieldController,
               lastDate: DateTime.now(),
+            ),
+            DateField(
+              onCompleteDate: (value) {
+                setState(() {
+                  _datePayementUlterieur = value!;
+                  _datePayementUlterieurFieldController.text =
+                      getStringDate(time: value);
+                });
+              },
+              label: "Date de payement ultérieure",
+              dateController: _datePayementUlterieurFieldController,
+              firstDate: DateTime.now(),
+              required: false,
             ),
             SimpleTextField(
               label: "Réference de la facture / transaction / opération",

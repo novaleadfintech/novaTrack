@@ -7,7 +7,9 @@ class DebtModel {
   final String libelle;
   final String? referenceFacture;
   final ClientModel? client;
+  final String? partiePrenante;
   final DebtStatus? status;
+  final DateTime? datePayementUlterieur;
   final double montant;
   final DateTime? dateEnregistrement;
   final DateTime dateOperation;
@@ -21,7 +23,9 @@ class DebtModel {
     required this.client,
     this.dateEnregistrement,
     this.pieceJustificative,
+    this.datePayementUlterieur,
     this.referenceFacture,
+    this.partiePrenante,
     required this.dateOperation,
     this.user,
     required this.status,
@@ -39,8 +43,11 @@ class DebtModel {
           ? DateTime.fromMillisecondsSinceEpoch(json['dateEnregistrement'])
           : null,
       dateOperation: DateTime.fromMillisecondsSinceEpoch(json['dateOperation']),
-        
+      datePayementUlterieur: json['datePayementUlterieur'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(json['datePayementUlterieur'])
+          : null,
       pieceJustificative: json['pieceJustificative'],
+      partiePrenante: json['partiePrenante'] as String?,
       client:
           json['client'] != null ? ClientModel.fromJson(json['client']) : null,
       user: json['user'] != null ? UserModel.fromJson(json['user']) : null,
@@ -56,6 +63,8 @@ class DebtModel {
       'dateOperation': dateOperation.millisecondsSinceEpoch,
       'pieceJustificative': pieceJustificative,
       'referenceFacture': referenceFacture,
+      'partiePrenante': partiePrenante,
+      'datePayementUlterieur': datePayementUlterieur?.millisecondsSinceEpoch,
       'user': user?.toJson(),
       'client': client?.toJson(),
       'status': status != null ? debtStatusToString(status!) : null,
