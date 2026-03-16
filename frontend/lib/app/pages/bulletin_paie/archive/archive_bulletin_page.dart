@@ -53,10 +53,9 @@ class _ArchiveBulletinState extends State<ArchiveBulletinPage> {
   List<String> selectedFilterOption = [
     "Bulletin",
     "Salarié",
-    "Découverte",
+    // "Découverte",
   ];
   String searchQuery = "";
-  List<BulletinPaieModel> bulletinData = [];
   List<DecouverteModel> decouvertData = [];
   List<SalarieModel> salarieData = [];
 
@@ -123,16 +122,6 @@ class _ArchiveBulletinState extends State<ArchiveBulletinPage> {
   //   }
   // }
 
-  List<BulletinPaieModel> filteredBulletinData() {
-    return bulletinData.where((bulletin) {
-      bool matchesSearch = bulletin.salarie.personnel
-          .toStringify()
-          .toLowerCase()
-          .contains(searchQuery.toLowerCase().trim());
-
-      return matchesSearch;
-    }).toList();
-  }
 
   List<SalarieModel> filteredSalarieData() {
     return salarieData.where((salarie) {
@@ -156,6 +145,16 @@ class _ArchiveBulletinState extends State<ArchiveBulletinPage> {
     }).toList();
   }
 
+  List<PayCalendarModel> filteredPeriod() {
+    return payCalendarData.where((period) {
+      bool matchesSearch = period.libelle
+          .toLowerCase()
+          .contains(searchQuery.toLowerCase().trim());
+
+      return matchesSearch;
+    }).toList();
+  }
+
   void updateCurrentPage(int page) {
     setState(() {
       currentPage = page;
@@ -170,9 +169,9 @@ class _ArchiveBulletinState extends State<ArchiveBulletinPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<BulletinPaieModel> filteredBulletin = filteredBulletinData();
     List<SalarieModel> filteredSalarie = filteredSalarieData();
     List<DecouverteModel> filteredDecouverte = filteredDecouverteData();
+    List<PayCalendarModel> filterPeriod = filteredPeriod();
 
     return Stack(children: [
       Column(
@@ -188,30 +187,6 @@ class _ArchiveBulletinState extends State<ArchiveBulletinPage> {
               ),
               Row(
                 children: [
-                  if (selectedFilter == "Bulletin" &&
-                      Responsive.isDesktop(context) &&
-                      hasPermission(
-                          role: widget.role,
-                          permission: PermissionAlias.readBulletin.label)) ...[
-                    Align(
-                      alignment: Alignment.bottomRight,
-                      child: Container(
-                        // padding: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: AppColor.primaryColor,
-                        ),
-                        child: IconButton(
-                          onPressed: onGetManyBulletin,
-                          icon: Icon(
-                            Icons.picture_as_pdf,
-                            color: AppColor.whiteColor,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Gap(8),
-                  ],
                   FilterBar(
                     label:
                         selectedFilter != null ? selectedFilter! : "Bulletin",
@@ -239,14 +214,14 @@ class _ArchiveBulletinState extends State<ArchiveBulletinPage> {
                         },
                       ))
                     : (selectedFilter == "Bulletin")
-                        ? payCalendarData.isEmpty
+                        ? filterPeriod.isEmpty
                             ? NoDataPage(
-                                data: bulletinData,
+                                data: filterPeriod,
                                 message: "Aucune archive de bulletin",
                               )
                             : Wrap(
                                 children: [
-                                  ...payCalendarData.map((payCalendar) {
+                                  ...filterPeriod.map((payCalendar) {
                                     return InkWell(
                                       onTap: () {
                                         onTapPeriod(
@@ -330,22 +305,22 @@ class _ArchiveBulletinState extends State<ArchiveBulletinPage> {
           ),
         ],
       ),
-      if (selectedFilter == "Bulletin" &&
-          !Responsive.isDesktop(context) &&
-          hasPermission(
-              role: widget.role,
-              permission: PermissionAlias.readBulletin.label) &&
-          bulletinData.isNotEmpty)
-        Padding(
-          padding: const EdgeInsets.only(bottom: 60, right: 8),
-          child: Align(
-            alignment: Alignment.bottomRight,
-            child: FloatingActionButton(
-              onPressed: onGetManyBulletin,
-              child: Icon(Icons.picture_as_pdf),
-            ),
-          ),
-        )
+      // if (selectedFilter == "Bulletin" &&
+      //     !Responsive.isDesktop(context) &&
+      //     hasPermission(
+      //         role: widget.role,
+      //         permission: PermissionAlias.readBulletin.label) &&
+      //     bulletinData.isNotEmpty)
+      //   Padding(
+      //     padding: const EdgeInsets.only(bottom: 60, right: 8),
+      //     child: Align(
+      //       alignment: Alignment.bottomRight,
+      //       child: FloatingActionButton(
+      //         onPressed: onGetManyBulletin,
+      //         child: Icon(Icons.picture_as_pdf),
+      //       ),
+      //     ),
+      //   )
     ]);
   }
 

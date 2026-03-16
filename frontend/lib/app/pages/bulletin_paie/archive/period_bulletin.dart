@@ -49,7 +49,11 @@ class _PeriodBulletinState extends State<PeriodBulletinPage> {
         hasError = false;
       });
 
-      bulletinData = (await BulletinService.getArchiveBulletins());
+      bulletinData = (await BulletinService.getArchiveBulletins())
+          .where((bulletin) =>
+              bulletin.finPeriodePaie.isAfter(widget.payCalendar.dateDebut) &&
+              bulletin.debutPeriodePaie.isBefore(widget.payCalendar.dateFin))
+          .toList();
     } catch (error) {
       setState(() {
         hasError = true;
@@ -64,8 +68,11 @@ class _PeriodBulletinState extends State<PeriodBulletinPage> {
   }
 
   onGetManyBulletin() {
-    showResponsiveDialog(context,
-        content: MultipleBulletnPage(), title: "Selectionné les salariés");
+    showResponsiveDialog(
+      context,
+      content: MultipleBulletnPage(),
+      title: "Selectionné les salariés",
+    );
   }
 
   // Future<void> _loadPayCalendar() async {
