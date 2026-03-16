@@ -1,4 +1,4 @@
-import { aql } from "arangojs";
+import { aql, CollectionType } from "arangojs";
 import db from "../../db/database_connection.js";
 import { isValidValue } from "../../utils/util.js";
 import SectionBulletin from "./section_bulletin.js";
@@ -57,7 +57,7 @@ class RubriqueBulletin {
           SORT rubriqueBulletin.timeStamp ASC
           ${limit}
           RETURN rubriqueBulletin
-        `
+        `,
       );
 
       if (query.hasNext) {
@@ -109,7 +109,7 @@ class RubriqueBulletin {
                   })
                 : null,
             };
-          })
+          }),
         );
       } else {
         return [];
@@ -134,7 +134,7 @@ class RubriqueBulletin {
           SORT rubriqueBulletin.timeStamp ASC
         ${limit}
           RETURN rubriqueBulletin
-        `
+        `,
       );
 
       if (query.hasNext) {
@@ -186,7 +186,7 @@ class RubriqueBulletin {
                   })
                 : null,
             };
-          })
+          }),
         );
       } else {
         return [];
@@ -246,7 +246,7 @@ class RubriqueBulletin {
       console.error(err);
 
       throw new Error(
-        "Une erreur s'est produite lors de la récupération du rubrique"
+        "Une erreur s'est produite lors de la récupération du rubrique",
       );
     }
   };
@@ -254,7 +254,7 @@ class RubriqueBulletin {
   getRubriqueBulletinByCode = async ({ code }) => {
     try {
       const query = await db.query(
-        aql`FOR rubrique IN ${rubriqueBulletinCollection} FILTER rubrique.code == ${code} SORT rubrique.timeStamp ASC RETURN rubrique`
+        aql`FOR rubrique IN ${rubriqueBulletinCollection} FILTER rubrique.code == ${code} SORT rubrique.timeStamp ASC RETURN rubrique`,
       );
       if (query.hasNext) {
         const rubrique = await query.next();
@@ -271,7 +271,7 @@ class RubriqueBulletin {
       console.error(err);
 
       throw new Error(
-        "Une erreur s'est produite lors de la récupération du rubrique"
+        "Une erreur s'est produite lors de la récupération du rubrique",
       );
     }
   };
@@ -360,7 +360,7 @@ class RubriqueBulletin {
       console.error(err);
 
       throw new Error(
-        "Une erreur s'est produite lors de l'enregistrement du rubrique"
+        "Une erreur s'est produite lors de l'enregistrement du rubrique",
       );
     }
   };
@@ -456,7 +456,7 @@ class RubriqueBulletin {
       console.error(err);
 
       throw new Error(
-        "Une erreur s'est produite lors de la mise à jour du rubrique"
+        "Une erreur s'est produite lors de la mise à jour du rubrique",
       );
     }
   };
@@ -469,7 +469,7 @@ class RubriqueBulletin {
       console.error(err);
 
       throw new Error(
-        "Une erreur s'est produite lors de la suppression du rubrique"
+        "Une erreur s'est produite lors de la suppression du rubrique",
       );
     }
   };

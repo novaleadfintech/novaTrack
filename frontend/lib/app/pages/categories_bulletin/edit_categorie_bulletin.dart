@@ -78,7 +78,6 @@ class _EditCategoriePaiePageState extends State<EditCategoriePaiePage> {
         );
       }
     } catch (err) {
- 
       _dialog.hide();
       MutationRequestContextualBehavior.showPopup(
         status: PopupStatus.customError,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/app/pages/categories_paie/edit_categorie_paie.dart';
+import 'package:frontend/app/pages/categories_bulletin/edit_categorie_bulletin.dart';
 import '../../../global/constant/permission_alias.dart';
 import '../../../helper/user_helper.dart';
 import '../../../model/bulletin_paie/categorie_paie.dart';
@@ -20,7 +20,7 @@ import '../../../widget/table_body_middle.dart';
 import '../../../widget/table_header.dart';
 import '../../../auth/authentification_token.dart';
 import '../../../model/habilitation/role_model.dart';
- import 'detail_categorie_paie.dart';
+ import 'detail_categorie_bulletin.dart';
 
 class CategoriePaieTable extends StatefulWidget {
   final List<CategoriePaieModel> categories;

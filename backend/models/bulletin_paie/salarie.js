@@ -2,7 +2,7 @@ import { aql } from "arangojs";
 import db from "../../db/database_connection.js";
 import { isValidValue } from "../../utils/util.js";
 import Personnel from "../../models/habilitation/personnel.js";
-import CategoriePaie from "./categorie_paie.js";
+import CategoriePaie from "./categorie_bulletin.js";
 import CategoriePaieGrille from "./../grille_salariale/categoriePaieGrille.js";
 import Rubrique from "./rubrique_bulletin.js";
 import Classe from "./../grille_salariale/classe.js";

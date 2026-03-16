@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
  import 'package:frontend/app/pages/bulletin_paie/paid_calendar/paid_calendar_page.dart';
-import 'package:frontend/app/pages/categories_paie/categorie_paie_page.dart';
+import 'package:frontend/app/pages/categories_bulletin/categorie_bulletin_page.dart';
+import 'package:frontend/app/pages/categories_partenaire/categorie_page.dart';
 import 'package:frontend/app/pages/configure_page_dialog.dart';
 import 'package:frontend/app/pages/entreprise/entreprise_page.dart';
 import 'package:frontend/app/pages/grille_salariale/grille_page.dart';
@@ -16,7 +17,6 @@ import 'package:frontend/helper/user_helper.dart';
 import 'package:frontend/widget/reponsive_conf_card.dart';
 import '../../../auth/authentification_token.dart';
 import '../../../model/habilitation/role_model.dart';
-import '../categories/categorie_page.dart';
 import '../error_page.dart';
 import '../facture_config/facture_config_page.dart';
 import '../libelle_flux_financier/flux_libelle_page.dart';
@@ -132,11 +132,12 @@ class _ConfigPageState extends State<ConfigPage> {
                             ),
                             InkWell(
                               child:
-                                  ResponsiveCard(label: "Catégories de paie"),
+                                  ResponsiveCard(
+                                  label: "Catégories de bulletin"),
                               onTap: () {
                                 showResponsiveConfigPageDialogBox(
                                   context,
-                                  title: "Catégories de paie",
+                                  title: "Catégories de bulletin",
                                   content: CategoriePaiePage(),
                                 );
                               },

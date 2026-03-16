@@ -1,8 +1,8 @@
 import 'package:custom_dropdown_search/custom_dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:frontend/app/pages/categories_partenaire/add_categorie.dart';
 import '../app/pages/app_dialog_box.dart';
-import '../app/pages/categories/add_categorie.dart';
 import '../helper/assets/asset_icon.dart';
 import '../model/client/categorie_model.dart';
 import '../service/categorie_service.dart';

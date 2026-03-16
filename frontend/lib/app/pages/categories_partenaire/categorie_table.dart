@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/app/pages/categories/edit_categorie.dart';
-import 'package:frontend/model/client/categorie_model.dart';
+import 'package:frontend/app/pages/categories_partenaire/edit_categorie.dart';
+ import 'package:frontend/model/client/categorie_model.dart';
 import '../../../global/constant/permission_alias.dart';
 import '../../../helper/user_helper.dart';
 import '../../../model/request_response.dart';

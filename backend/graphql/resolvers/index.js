@@ -6,7 +6,7 @@ import roleResolvers from "./role.js";
 import permissionResolvers from "./permission.js";
 import fluxFinancierResolvers from "./flux_financier.js";
 import factureResolvers from "./facture.js";
-import categorieResolvers from "./categorie.js";
+import categorieClientResolvers from "./categorie_client.js";
 import ligneFactureResolvers from "./ligneFacture.js";
 import ligneProformaResolvers from "./ligneProforma.js";
 import entrepriseResolvers from "./entreprise.js";
@@ -19,7 +19,7 @@ import libelleFluxResolvers from "./libelle_flux.js";
 import countryResolvers from "./country.js";
 import rubriqueBulletinResolvers from "./rubrique_bulletin.js";
 import sectionBulletinResolvers from "./section_bulletin.js";
-import categoriePaieResolvers from "./categoriePaie.js";
+import categorieBulletinResolvers from "./categorie_bulletin.js";
 import moyenPaiementResolvers from "./moyen_paiement.js";
 import salaireResolvers from "./salaire.js";
 import rubriqueCategorieRubrique from "./rubrique_categorie.js";
@@ -43,7 +43,7 @@ const graphQlResolvers = {
   ...permissionResolvers,
   ...fluxFinancierResolvers,
   ...factureResolvers,
-  ...categorieResolvers,
+  ...categorieClientResolvers,
   ...ligneFactureResolvers,
   ...ligneProformaResolvers,
   ...entrepriseResolvers,
@@ -56,7 +56,7 @@ const graphQlResolvers = {
   ...countryResolvers,
   ...rubriqueBulletinResolvers,
   ...sectionBulletinResolvers,
-  ...categoriePaieResolvers,
+  ...categorieBulletinResolvers,
   ...salaireResolvers,
   ...moyenPaiementResolvers,
   ...rubriqueCategorieRubrique,
