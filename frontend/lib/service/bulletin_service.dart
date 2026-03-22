@@ -67,9 +67,9 @@ class BulletinService {
                     telephone2
                 }
             }
-            categoriePaie {
+            categorieBulletin {
                 _id
-                categoriePaie
+                categorieBulletin
             }
         }
         validate {
@@ -249,7 +249,6 @@ class BulletinService {
         debutPeriodePaie
         finPeriodePaie
         dateEdition
-        
         salarie {
             _id
             dateEnregistrement
@@ -293,9 +292,9 @@ class BulletinService {
                     telephone2
                 }
             }
-            categoriePaie {
+            categorieBulletin {
                 _id
-                categoriePaie
+                categorieBulletin
             }
         }
         validate {
@@ -581,9 +580,9 @@ static Future<RequestResponse> generateBulletinsForPeriod({
                     telephone2
                 }
             }
-            categoriePaie {
+            categorieBulletin {
                 _id
-                categoriePaie
+                categorieBulletin
             }
         }
         validate {

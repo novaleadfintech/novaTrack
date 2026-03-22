@@ -5,9 +5,6 @@ import 'package:frontend/app/pages/bulletin_paie/archive/period_bulletin.dart';
 import 'package:frontend/app/pages/bulletin_paie/decouverte/decouverte_table.dart';
 import 'package:frontend/app/pages/bulletin_paie/salarie/salaire_table.dart';
 import 'package:frontend/app/pages/configure_page_dialog.dart';
-import 'package:frontend/app/responsitvity/responsivity.dart';
-import 'package:frontend/global/constant/permission_alias.dart';
-import 'package:frontend/helper/user_helper.dart';
 import 'package:frontend/model/bulletin_paie/calendar_model.dart'
     show EtatPayCalendar, PayCalendarModel;
 import 'package:frontend/model/bulletin_paie/decouverte_model.dart';
@@ -16,7 +13,6 @@ import 'package:frontend/model/bulletin_paie/salarie_model.dart';
 import 'package:frontend/model/personnel/enum_personnel.dart';
 import 'package:frontend/service/decouverte_service.dart';
 import 'package:frontend/service/salarie_service.dart';
-import 'package:frontend/style/app_color.dart';
 import 'package:frontend/widget/reponsive_conf_card.dart';
 import 'package:gap/gap.dart';
 import '../../../../global/global_value.dart';

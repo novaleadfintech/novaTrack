@@ -1,25 +1,27 @@
 import 'package:flutter/material.dart';
- import 'package:frontend/app/pages/error_page.dart';
+import 'package:frontend/app/pages/error_page.dart';
 import 'package:frontend/app/pages/no_data_page.dart';
 import 'package:frontend/helper/amout_formatter.dart';
+import 'package:frontend/model/bulletin_paie/categorie_bulletin.dart'
+    show CategorieBulletinModel;
 import 'package:frontend/model/bulletin_paie/nature_rubrique.dart';
 import 'package:frontend/model/bulletin_paie/rubrique.dart';
 import 'package:frontend/model/bulletin_paie/type_rubrique.dart';
-import 'package:frontend/service/rubrique_categorie_conf_service.dart';
+import 'package:frontend/service/rubrique_categorie_bulletin_conf_service.dart';
 import 'package:frontend/widget/simple_text_field.dart';
 import 'package:frontend/widget/validate_button.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 import '../../../../helper/get_bulletin_period.dart';
-import '../../../../model/bulletin_paie/categorie_paie.dart';
 import '../../../../model/bulletin_paie/rubrique_paie.dart';
 import '../../../../widget/research_bar.dart';
 import '../../integration/popop_status.dart';
 import '../../integration/request_frot_behavior.dart';
 
 class RubriqueCategorieConfigPage extends StatefulWidget {
-  final CategoriePaieModel categoriePaie;
+  final CategorieBulletinModel categorieBulletin;
 
-  const RubriqueCategorieConfigPage({super.key, required this.categoriePaie});
+  const RubriqueCategorieConfigPage(
+      {super.key, required this.categorieBulletin});
 
   @override
   State<RubriqueCategorieConfigPage> createState() =>
@@ -40,27 +42,27 @@ class _RubriqueCategorieConfigPageState
   @override
   void initState() {
     super.initState();
-    _loadRubriqueCategories();
+    _loadCategorieBulletinRubriques();
     _researchController.addListener(_onSearchChanged);
 
     _dialog = SimpleFontelicoProgressDialog(context: context);
   }
 
-  Future<void> _loadRubriqueCategories() async {
+  Future<void> _loadCategorieBulletinRubriques() async {
      setState(() {
       isLoading = true;
     });
     try {
       rubriqueCategories = await RubriqueCategorieConfService
-          .getBulletinRubriquesByCategorieForConfig(
-              categoriePaie: widget.categoriePaie);
+          .getBulletinRubriquesByCategorieBulletinForConfig(
+              categorieBulletin: widget.categorieBulletin);
 
       // Créer une deep copy pour oldRubriqueCategories
       oldRubriqueCategories = rubriqueCategories
           .map((rubrique) => RubriquePaieConfig(
-                rubriquePaie: RubriqueOnBulletinModel(
-                  rubrique: rubrique.rubriquePaie.rubrique,
-                  value: rubrique.rubriquePaie.value,
+                rubriqueOnBulletin: RubriqueOnBulletinModel(
+                  rubrique: rubrique.rubriqueOnBulletin.rubrique,
+                  value: rubrique.rubriqueOnBulletin.value,
                 ),
                 isChecked: rubrique.isChecked,
               ))
@@ -68,10 +70,10 @@ class _RubriqueCategorieConfigPageState
 
       // Initialiser les contrôleurs avec les valeurs existantes
       for (var rubrique in rubriqueCategories) {
-        if (rubrique.rubriquePaie.value != null) {
-          valueControllers[rubrique.rubriquePaie.rubrique.id] =
+        if (rubrique.rubriqueOnBulletin.value != null) {
+          valueControllers[rubrique.rubriqueOnBulletin.rubrique.id] =
               TextEditingController(
-                  text: rubrique.rubriquePaie.value?.toString() ?? "");
+                  text: rubrique.rubriqueOnBulletin.value?.toString() ?? "");
         }
       }
 
@@ -88,9 +90,9 @@ class _RubriqueCategorieConfigPageState
   }
 
   String searchQuery = "";
-  List<RubriquePaieConfig> filterCategoriePaieClient() {
-    return rubriqueCategories.where((categoriePaie) {
-      return categoriePaie.rubriquePaie.rubrique.rubrique
+  List<RubriquePaieConfig> filterCategorieBulletinRubrique() {
+    return rubriqueCategories.where((categorieBulletin) {
+      return categorieBulletin.rubriqueOnBulletin.rubrique.rubrique
           .toLowerCase()
           .contains(searchQuery.toLowerCase().trim());
     }).toList();
@@ -109,7 +111,7 @@ class _RubriqueCategorieConfigPageState
 
     // Étape 1 : Extraire la liste de toutes les rubriques (cochées ou non)
     List<RubriqueOnBulletinModel> allRubriques =
-        rubriqueCategories.map((rc) => rc.rubriquePaie).toList();
+        rubriqueCategories.map((rc) => rc.rubriqueOnBulletin).toList();
 
     // Étape 2 : Construire la map des dépendances
     final dependencyMap = {
@@ -120,23 +122,31 @@ class _RubriqueCategorieConfigPageState
     // Étape 3 : Vérifier les dépendances pour chaque rubrique cochée
     for (var rubrique in rubriqueCategories) {
       if (rubrique.isChecked) {
-        final code = rubrique.rubriquePaie.rubrique.code;
+        final code = rubrique.rubriqueOnBulletin.rubrique.code;
         final deps = dependencyMap[code] ?? {};
 
+        List<String> missingDeps = [];
+
         for (var depCode in deps) {
-          final depRubrique = rubriqueCategories.firstWhere(
-            (r) => r.rubriquePaie.rubrique.code == depCode,
-            orElse: () => throw 'Rubrique de dépendance manquante',
+          final depRubriques = rubriqueCategories.where(
+            (r) => r.rubriqueOnBulletin.rubrique.code == depCode,
           );
 
-          if (!depRubrique.isChecked) {
-            MutationRequestContextualBehavior.showPopup(
-              status: PopupStatus.information,
-              customMessage:
-                  "La rubrique \"${rubrique.rubriquePaie.rubrique.rubrique}\" dépend de \"${depRubrique.rubriquePaie.rubrique.rubrique}\" qui n'est pas cochée.",
-            );
-            return;
+          for (var depRubrique in depRubriques) {
+            if (!depRubrique.isChecked) {
+              missingDeps.add(
+                  "\"${depRubrique.rubriqueOnBulletin.rubrique.rubrique}\"");
+            }
           }
+        }
+
+        if (missingDeps.isNotEmpty) {
+          MutationRequestContextualBehavior.showPopup(
+            status: PopupStatus.information,
+            customMessage:
+                "La rubrique \"${rubrique.rubriqueOnBulletin.rubrique.rubrique}\" dépend de : ${missingDeps.join(', ')} qui ne sont pas cochées.",
+          );
+          return;
         }
       }
     }
@@ -147,8 +157,8 @@ class _RubriqueCategorieConfigPageState
       try {
         oldRubrique = oldRubriqueCategories.firstWhere(
           (rc) =>
-              rc.rubriquePaie.rubrique.id ==
-              newRubrique.rubriquePaie.rubrique.id,
+              rc.rubriqueOnBulletin.rubrique.id ==
+              newRubrique.rubriqueOnBulletin.rubrique.id,
         );
       } catch (_) {}
 
@@ -156,8 +166,8 @@ class _RubriqueCategorieConfigPageState
         if (oldRubrique == null || !oldRubrique.isChecked) {
           createdRubriques.add(newRubrique);
         } else {
-          final oldValue = oldRubrique.rubriquePaie.value;
-          final newValue = newRubrique.rubriquePaie.value;
+          final oldValue = oldRubrique.rubriqueOnBulletin.value;
+          final newValue = newRubrique.rubriqueOnBulletin.value;
 
           if (oldValue != newValue) {
             updatedRubriques.add(newRubrique);
@@ -178,25 +188,27 @@ class _RubriqueCategorieConfigPageState
 
     try {
       for (var rubrique in createdRubriques) {
-        await RubriqueCategorieConfService.createRubriqueCategorie(
-          rubriqueId: rubrique.rubriquePaie.rubrique.id,
-          categorieId: widget.categoriePaie.id,
-          value: rubrique.rubriquePaie.value,
+        await RubriqueCategorieConfService.createCategorieBulletinRubrique(
+          rubriqueId: rubrique.rubriqueOnBulletin.rubrique.id,
+          categorieBulletinId: widget.categorieBulletin.id,
+          value: rubrique.rubriqueOnBulletin.value,
         );
       }
 
       for (var rubrique in updatedRubriques) {
-        await RubriqueCategorieConfService.updateRubriqueCategorie(
-          rubriqueId: rubrique.rubriquePaie.rubrique.id,
-          categorieId: widget.categoriePaie.id,
-          value: rubrique.rubriquePaie.value,
+        await RubriqueCategorieConfService
+            .updateCategorieBulletinRubriqueBulletin(
+          rubriqueId: rubrique.rubriqueOnBulletin.rubrique.id,
+          categorieBulletinId: widget.categorieBulletin.id,
+          value: rubrique.rubriqueOnBulletin.value,
         );
       }
 
       for (var rubrique in deletedRubriques) {
-        await RubriqueCategorieConfService.deleteRubriqueCategorie(
-          rubriqueId: rubrique.rubriquePaie.rubrique.id,
-          categorieId: widget.categoriePaie.id,
+        await RubriqueCategorieConfService
+            .deleteCategorieBulletinRubriqueBulletin(
+          rubriqueId: rubrique.rubriqueOnBulletin.rubrique.id,
+          categorieBulletinId: widget.categorieBulletin.id,
         );
       }
 
@@ -217,14 +229,14 @@ class _RubriqueCategorieConfigPageState
 
   @override
   Widget build(BuildContext context) {
-    List<RubriquePaieConfig> filteredData = filterCategoriePaieClient();
+    List<RubriquePaieConfig> filteredData = filterCategorieBulletinRubrique();
     if (isLoading) return const Center(child: CircularProgressIndicator());
     if (hasError) {
       return Center(
         child: ErrorPage(
           message: errMessage ?? "Erreur lors du chargement",
           onPressed: () async {
-            _loadRubriqueCategories();
+            _loadCategorieBulletinRubriques();
           },
         ),
       );
@@ -252,7 +264,7 @@ class _RubriqueCategorieConfigPageState
             itemCount: filteredData.length,
             itemBuilder: (context, index) {
               RubriquePaieConfig rubriqueConfig = filteredData[index];
-              final rubrique = rubriqueConfig.rubriquePaie.rubrique;
+              final rubrique = rubriqueConfig.rubriqueOnBulletin.rubrique;
               final isChecked = rubriqueConfig.isChecked;
 
               return Column(
@@ -289,7 +301,7 @@ class _RubriqueCategorieConfigPageState
     // S'assurer que nous avons un contrôleur pour cette rubrique
     if (!valueControllers.containsKey(rubrique.id)) {
       valueControllers[rubrique.id] = TextEditingController(
-          text: rubriqueConfig.rubriquePaie.value?.toString() ?? "");
+          text: rubriqueConfig.rubriqueOnBulletin.value?.toString() ?? "");
     }
 
     if (rubrique.portee != null && rubrique.portee == PorteeRubrique.commun) {
@@ -301,7 +313,7 @@ class _RubriqueCategorieConfigPageState
           final parsed = value.isEmpty
               ? null
               : double.tryParse(Formatter.parseAmount(value));
-          rubriqueConfig.rubriquePaie.value = parsed;
+          rubriqueConfig.rubriqueOnBulletin.value = parsed;
         },
         keyboardType: const TextInputType.numberWithOptions(decimal: true),
        );

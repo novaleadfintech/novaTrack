@@ -10,7 +10,7 @@ class Operateur {
 
   async initializeCollections() {
     if (!(await operateurCollection.exists())) {
-      operateurCollection.create();
+    await  operateurCollection.create();
     }
   }
 

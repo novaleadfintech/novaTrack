@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/model/bulletin_paie/categorie_bulletin.dart';
 import 'package:frontend/model/bulletin_paie/operateur_model.dart';
 import 'package:frontend/model/grille_salariale/categorie_paie.dart';
 import 'package:frontend/model/grille_salariale/echelon_model.dart';
 import 'package:frontend/model/moyen_paiement_model.dart';
 import 'package:frontend/service/banque_service.dart';
+import 'package:frontend/service/categorie_bulletin_service.dart';
 import 'package:frontend/service/grille_categorie_paie_service.dart';
 import 'package:frontend/service/operateur_service.dart';
 import 'package:frontend/widget/drop_down_text_field.dart';
 import 'package:frontend/widget/simple_text_field.dart';
-import '../../../../model/bulletin_paie/categorie_paie.dart';
-import '../../../../model/bulletin_paie/nature_rubrique.dart';
+ import '../../../../model/bulletin_paie/nature_rubrique.dart';
 import '../../../../model/bulletin_paie/rubrique.dart';
 import '../../../../model/bulletin_paie/rubrique_paie.dart';
 import '../../../../model/entreprise/banque.dart';
 import '../../../../model/grille_salariale/classe_model.dart' show ClasseModel;
 import '../../../../model/habilitation/user_model.dart';
-import '../../../../service/categorie_paie_service.dart';
-import '../../../../service/moyen_paiement_service.dart';
-import '../../../../service/rubrique_categorie_conf_service.dart';
+ import '../../../../service/moyen_paiement_service.dart';
+import '../../../../service/rubrique_categorie_bulletin_conf_service.dart';
 import 'package:gap/gap.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 import '../../../../auth/authentification_token.dart';
@@ -45,27 +45,27 @@ class AddSalariePage extends StatefulWidget {
 
 class _AddSalariePageState extends State<AddSalariePage> {
   late SimpleFontelicoProgressDialog _dialog;
-  final TextEditingController _compterController = TextEditingController();
+  // final TextEditingController _compterController = TextEditingController();
   final TextEditingController _numeroDeCompteController =
       TextEditingController();
   final TextEditingController _numeroMatriculeController =
       TextEditingController();
-
+  PaieClause? paieClause;
   PersonnelModel? personnel;
-  CategoriePaieModel? categoriePaieBulletiin;
+  CategorieBulletinModel? categorieBulletin;
   ClasseModel? classe;
   EchelonModel? echelon;
   GrilleCategoriePaieModel? grilleCategoriePaie;
   String? currentPersonnelId;
   String? periodPaieUnit;
   int? periodPaieCompteur;
-  PaieManner? paieManner;
+  // PaieManner? paieManner;
   MoyenPaiementModel? moyenPaiement;
   OperateurModel? _operateur;
 
   @override
   void initState() {
-    paieManner = PaieManner.finMois;
+    // paieManner = PaieManner.finMois;
     _dialog = SimpleFontelicoProgressDialog(context: context);
     _loadCurrentUser();
     super.initState();
@@ -80,11 +80,11 @@ class _AddSalariePageState extends State<AddSalariePage> {
 
   Future<void> createSalarie({
     required PersonnelModel personnel,
-    required CategoriePaieModel categoriePaieBulletiin,
+    required CategorieBulletinModel categorieBulletin,
   }) async {
     try {
       String? errorMessage;
-      if (paieManner == null ||
+      if (paieClause == null ||
           moyenPaiement == null ||
           grilleCategoriePaie == null ||
           classe == null ||
@@ -108,12 +108,12 @@ class _AddSalariePageState extends State<AddSalariePage> {
       //         "Le compteur de période de paie doit être un nombre entier.";
       //   }
       // }
-      if (paieManner == PaieManner.finMois // ||
-          // paieManner == PaieManner.finPeriod
-          ) {
-        periodPaieCompteur = 1;
-        periodPaieUnit = "mois";
-      }
+      // if (paieManner == PaieManner.finMois // ||
+      //     // paieManner == PaieManner.finPeriod
+      //     ) {
+      //   periodPaieCompteur = 1;
+      //   periodPaieUnit = "mois";
+      // }
       if (errorMessage != null) {
         MutationRequestContextualBehavior.showPopup(
           status: PopupStatus.information,
@@ -130,11 +130,12 @@ class _AddSalariePageState extends State<AddSalariePage> {
 
       final result = await SalarieService.createSalarie(
         personnelId: personnel.id,
-        categoriePaieId: categoriePaieBulletiin.id!,
+        categorieBulletinId: categorieBulletin.id!,
         periodPaie: (periodPaieCompteur != null && periodPaieUnit != null)
             ? (periodPaieCompteur! * unitMultipliers[periodPaieUnit]!)
             : null,
-        paieManner: paieManner!,
+        // paieManner: paieManner!,
+        paieClause: paieClause!,
         numeroMatricule: _numeroMatriculeController.text.trim(),
         moyenPaiement: moyenPaiement!,
         numeroCompte: _numeroDeCompteController.text.isNotEmpty
@@ -170,8 +171,11 @@ class _AddSalariePageState extends State<AddSalariePage> {
     }
   }
 
-  Future<List<CategoriePaieModel>> _fetchCategoriePaieItems() async {
-    return await CategoriePaieService.getPaieCategories();
+  Future<List<CategorieBulletinModel>> _fetchCategorieBulletinItems() async {
+    return (await CategorieBulletinService.getCategoriesBulletin())
+        .where((categorieBulletin) {
+      return categorieBulletin.paieClause == paieClause;
+    }).toList();
   }
 
   Future<List<GrilleCategoriePaieModel>>
@@ -192,10 +196,10 @@ class _AddSalariePageState extends State<AddSalariePage> {
   }
 
   onvalidate() {
-    if (personnel != null && categoriePaieBulletiin != null) {
+    if (personnel != null && categorieBulletin != null) {
       createSalarie(
         personnel: personnel!,
-        categoriePaieBulletiin: categoriePaieBulletiin!,
+        categorieBulletin: categorieBulletin!,
       );
     } else {
       MutationRequestContextualBehavior.showPopup(
@@ -243,34 +247,48 @@ class _AddSalariePageState extends State<AddSalariePage> {
             label: "Numéro matricule",
             textController: _numeroMatriculeController,
           ),
-          FutureCustomDropDownField<CategoriePaieModel>(
-            label: "Categorie de bulletin de paie",
-            selectedItem: categoriePaieBulletiin,
-            fetchItems: _fetchCategoriePaieItems,
-            onChanged: (CategoriePaieModel? value) {
-              setState(() {
-                categoriePaieBulletiin = value;
-              });
-            },
-            itemsAsString: (r) => r.categoriePaie,
-          ),
-          EnumRadioSelector<PaieManner>(
-            title: "Modalité de paiement",
-            selectedValue: paieManner,
-            values: PaieManner.values,
+          EnumRadioSelector<PaieClause>(
+            title: "Clause de paie",
+            selectedValue: paieClause,
+            values: PaieClause.values,
             getLabel: (value) => value.label,
             onChanged: (value) {
               setState(() {
-                paieManner = value;
-                if (paieManner != PaieManner.finMois //&&
-                    // paieManner != PaieManner.finPeriod
-                    ) {
-                  _compterController.clear();
-                  periodPaieUnit = null;
-                }
+                paieClause = value;
+                categorieBulletin = null;
               });
             },
             isRequired: true,
+          ),
+          // EnumRadioSelector<PaieManner>(
+          //   title: "Modalité de paiement",
+          //   selectedValue: paieManner,
+          //   values: PaieManner.values,
+          //   getLabel: (value) => value.label,
+          //   onChanged: (value) {
+          //     setState(() {
+          //       paieManner = value;
+          //       if (paieManner != PaieManner.finMois //&&
+          //           // paieManner != PaieManner.finPeriod
+          //           ) {
+          //         _compterController.clear();
+          //         periodPaieUnit = null;
+          //       }
+          //     });
+          //   },
+          //   isRequired: true,
+          // ),
+
+          FutureCustomDropDownField<CategorieBulletinModel>(
+            label: "Categorie de bulletin de paie",
+            selectedItem: categorieBulletin,
+            fetchItems: _fetchCategorieBulletinItems,
+            onChanged: (CategorieBulletinModel? value) {
+              setState(() {
+                categorieBulletin = value;
+              });
+            },
+            itemsAsString: (r) => r.categorieBulletin,
           ),
 
           FutureCustomDropDownField<MoyenPaiementModel>(
@@ -376,13 +394,13 @@ class _AddSalariePageState extends State<AddSalariePage> {
   }
 
   Future<List<RubriqueBulletin>> fetchRubriqueItems() async {
-    if (categoriePaieBulletiin == null) {
+    if (categorieBulletin == null) {
       throw ("Veuillez choisir la catégorie de paie.");
     }
 
     final List<RubriqueOnBulletinModel> rubriquePaieResponse =
-        await RubriqueCategorieConfService.getBulletinRubriquesByCategoriePaie(
-      categorie: categoriePaieBulletiin!,
+        await RubriqueCategorieConfService.getBulletinRubriquesByCategorieBulletin(
+      categorieBulletin: categorieBulletin!,
     );
 
     return rubriquePaieResponse

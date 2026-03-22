@@ -68,7 +68,7 @@ class DetailSalariePage extends StatelessWidget {
               isbold: true,
             ),
             TabledetailBodyMiddle(
-              valeur: salarie.categoriePaie.categoriePaie,
+              valeur: salarie.categorieBulletin.categorieBulletin,
             ),
           ],
         ),
@@ -169,21 +169,34 @@ class DetailSalariePage extends StatelessWidget {
           ],
         ),
         
+        // TableRow(
+        //   decoration: tableDecoration(context),
+        //   children: [
+        //     const TabledetailBodyMiddle(
+        //       valeur: "Modalité de paiement",
+        //       isbold: true,
+        //     ),
+        //     TabledetailBodyMiddle(
+        //       valeur: (salarie.paieManner == null)
+        //           ? "Aucune"
+        //           : salarie.paieManner!.label,
+        //     ),
+        //   ],
+        // ),
         TableRow(
           decoration: tableDecoration(context),
           children: [
             const TabledetailBodyMiddle(
-              valeur: "Modalité de paiement",
+              valeur: "Clause de paie",
               isbold: true,
             ),
             TabledetailBodyMiddle(
-              valeur: (salarie.paieManner == null)
+              valeur: (salarie.paieClause == null)
                   ? "Aucune"
-                  : salarie.paieManner!.label,
+                  : salarie.paieClause!.label,
             ),
           ],
         ),
-        
         if (personnel.email != null) ...[
           TableRow(
             decoration: tableDecoration(context),

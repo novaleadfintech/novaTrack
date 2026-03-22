@@ -64,6 +64,8 @@ enum PaieManner {
   const PaieManner(this.label);
 }
 
+
+
 String paieMannerToString(PaieManner paieManner) {
   return paieManner.toString().split('.').last;
 }
@@ -73,6 +75,24 @@ PaieManner paieMannerFromJson(String paieManner) {
       .firstWhere((e) => e.toString().split('.').last == paieManner);
 }
 
+enum PaieClause {
+  grille("Grille salariale"),
+  horaire("Paiement horaire"),
+  forfaitMensuel('Forfait mensuel'),
+  journalier("Paiement journalier");
+
+  final String label;
+  const PaieClause(this.label);
+
+  static String paieClauseToString(PaieClause paieClause) {
+    return paieClause.toString().split('.').last;
+  }
+
+  static PaieClause paieClauseFromJson(String paieClause) {
+    return PaieClause.values
+        .firstWhere((e) => e.toString().split('.').last == paieClause);
+  }
+}
 enum TypePaie {
   taux("Taux"),
   forfait("Forfait");

@@ -24,7 +24,7 @@ class SalarieService {
     salaries {
         _id
         dateEnregistrement
-        paieManner
+        paieClause
         fullCount
         numeroCompte
        operateur{_id, libelle}
@@ -71,9 +71,10 @@ class SalarieService {
                 telephone2
             }
         }
-        categoriePaie {
+        categorieBulletin {
             _id
-            categoriePaie
+            categorieBulletin
+            paieClause
         }
         classe {
             _id
@@ -107,6 +108,7 @@ class SalarieService {
 
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
+      print(jsonData);
       var data = jsonData['data']['salaries'];
 
       if (data != null) {
@@ -128,7 +130,7 @@ class SalarieService {
         _id
         dateEnregistrement
         fullCount
-        paieManner
+        paieClause
         operateur{_id, libelle}
         moyenPaiement{
           _id
@@ -173,9 +175,10 @@ class SalarieService {
                 telephone2
             }
         }
-        categoriePaie {
+        categorieBulletin {
             _id
-            categoriePaie
+            categorieBulletin
+            paieClause
         }
         periodPaie
         typePaie
@@ -225,9 +228,9 @@ class SalarieService {
 
   static Future<RequestResponse> createSalarie({
     required String personnelId,
-    required String categoriePaieId,
+    required String categorieBulletinId,
     required int? periodPaie,
-    required PaieManner paieManner,
+    required PaieClause paieClause,
     required ClasseModel classe,
     required String numeroMatricule,
     required MoyenPaiementModel moyenPaiement,
@@ -240,9 +243,9 @@ class SalarieService {
       mutation CreateSalarie {
           createSalarie(
               personnelId: "$personnelId"
-              categoriePaieId: "$categoriePaieId"
+              categorieBulletinId: "$categorieBulletinId"
               periodPaie: $periodPaie
-              paieManner: ${paieMannerToString(paieManner)}
+              paieClause: ${PaieClause.paieClauseToString(paieClause)}
               classeId: "${classe.id}"
               moyenPaiement: ${moyenPaiement.toJson()}
               numeroMatricule: "$numeroMatricule"
@@ -283,11 +286,11 @@ class SalarieService {
   static Future<RequestResponse> updateSalarie({
     required String key,
     required String? personnelId,
-    required String? categoriePaieId,
+    required String? categorieBulletinId,
     required int? periodPaie,
     required MoyenPaiementModel? moyenPaiement,
     // required String? numeroMatricule,
-    required PaieManner? paieManner,
+    required PaieClause? paieClause,
     String? numeroMatricule,
     required OperateurModel? operateur,
     String? numeroCompte,
@@ -305,12 +308,12 @@ class SalarieService {
     if (personnelId != null) {
       body += 'personnelId: "$personnelId",';
     }
-    if (categoriePaieId != null) {
-      body += 'categoriePaieId: "$categoriePaieId",';
+    if (categorieBulletinId != null) {
+      body += 'categorieBulletinId: "$categorieBulletinId",';
     }
 
-    if (paieManner != null) {
-      body += "paieManner: ${paieMannerToString(paieManner)},";
+    if (paieClause != null) {
+      body += "paieClause: ${PaieClause.paieClauseToString(paieClause)},";
     }
     if (moyenPaiement != null) {
       body += "moyenPaiement: ${moyenPaiement.toJson()},";

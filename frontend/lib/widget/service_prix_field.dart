@@ -41,6 +41,16 @@ class _ServiceTariffieldsState extends State<ServiceTariffields> {
   }
 
   @override
+  void dispose() {
+    for (var controller in widget.controllers) {
+      controller['minQuantity']?.dispose();
+      controller['maxQuantity']?.dispose();
+      controller['prix']?.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),

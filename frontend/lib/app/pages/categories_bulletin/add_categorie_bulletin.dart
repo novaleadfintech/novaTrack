@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/model/bulletin_paie/tranche_model.dart';
+import 'package:frontend/widget/enum_selector_radio.dart';
 import '../../../helper/string_helper.dart';
-import '../../../service/categorie_paie_service.dart';
+import '../../../service/categorie_bulletin_service.dart';
 import '../../integration/popop_status.dart';
 import '../../integration/request_frot_behavior.dart';
 import '../../../widget/simple_text_field.dart';
@@ -8,31 +10,32 @@ import '../../../widget/validate_button.dart';
 import 'package:gap/gap.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 
-class AddCategoriePaiePage extends StatefulWidget {
+class AddCategorieBulletinPage extends StatefulWidget {
   final Future<void> Function() refresh;
-  const AddCategoriePaiePage({
+  const AddCategorieBulletinPage({
     super.key,
     required this.refresh,
   });
 
   @override
-  State<AddCategoriePaiePage> createState() => _AddCategoriePaiePageState();
+  State<AddCategorieBulletinPage> createState() =>
+      _AddCategorieBulletinPageState();
 }
 
-class _AddCategoriePaiePageState extends State<AddCategoriePaiePage> {
+class _AddCategorieBulletinPageState extends State<AddCategorieBulletinPage> {
   final TextEditingController _libelleController = TextEditingController();
 
   late SimpleFontelicoProgressDialog _dialog;
-
+PaieClause? paieClause;
   @override
   void initState() {
     super.initState();
     _dialog = SimpleFontelicoProgressDialog(context: context);
   }
 
-  Future<void> _addCategoriePaie() async {
+  Future<void> _addCategorieBulletin() async {
     String? errMessage;
-    if (_libelleController.text.isEmpty) {
+    if (_libelleController.text.isEmpty && paieClause == null) {
       errMessage = "Veuillez remplir tous les champs marqués.";
     }
 
@@ -49,9 +52,10 @@ class _AddCategoriePaiePageState extends State<AddCategoriePaiePage> {
       backgroundColor: Colors.transparent,
     );
 
-    var result = await CategoriePaieService.createCategoriePaie(
-      categoriePaie:
+    var result = await CategorieBulletinService.createCategorieBulletin(
+      categorieBulletin:
           capitalizeFirstLetter(word: _libelleController.text.toLowerCase()),
+      paieClause: paieClause!,
     );
 
     _dialog.hide();
@@ -60,7 +64,7 @@ class _AddCategoriePaiePageState extends State<AddCategoriePaiePage> {
       MutationRequestContextualBehavior.closePopup();
       MutationRequestContextualBehavior.showPopup(
           status: PopupStatus.success,
-          customMessage: "Catégorie de paie crée avec succès");
+          customMessage: "Catégorie de bulletin crée avec succès");
       await widget.refresh();
     } else {
       MutationRequestContextualBehavior.showPopup(
@@ -79,6 +83,18 @@ class _AddCategoriePaiePageState extends State<AddCategoriePaiePage> {
             label: "Libellé",
             textController: _libelleController,
           ),
+        EnumRadioSelector<PaieClause>(
+          title: "Clause de paie",
+          selectedValue: paieClause,
+          values: PaieClause.values,
+          getLabel: (value) => value.label,
+          onChanged: (value) {
+            setState(() {
+              paieClause = value;
+            });
+          },
+          isRequired: true,
+        ),
           const Gap(16),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -86,7 +102,7 @@ class _AddCategoriePaiePageState extends State<AddCategoriePaiePage> {
               alignment: Alignment.bottomRight,
               child: ValidateButton(
                 onPressed: () async {
-                  await _addCategoriePaie();
+                await _addCategorieBulletin();
                 },
               ),
             ),

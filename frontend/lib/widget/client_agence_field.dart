@@ -37,6 +37,14 @@ class _AgencesFieldsState extends State<AgencesFields> {
   }
 
   @override
+  void dispose() {
+    for (var controller in widget.controllers) {
+      controller['nom']?.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [

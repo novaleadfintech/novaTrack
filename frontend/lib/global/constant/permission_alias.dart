@@ -74,7 +74,13 @@ enum PermissionAlias {
   updateAvance("EDIT_AVANCE"),
   readAvance("READ_AVANCE"),
 
-// Catégorie Paie
+// Catégorie bulletin
+  createCategorieBulletin("CREATE_CATEGORIE_BULLETIN"),
+  updateCategorieBulletin("EDIT_CATEGORIE_BULLETIN"),
+  readCategorieBulletin("READ_CATEGORIE_BULLETIN"),
+  deleteCategorieBulletin("DELETE_CATEGORIE_BULLETIN"),
+
+// Catégorie paie
   createCategoriePaie("CREATE_CATEGORIE_PAIE"),
   updateCategoriePaie("EDIT_CATEGORIE_PAIE"),
   readCategoriePaie("READ_CATEGORIE_PAIE"),
@@ -107,7 +113,7 @@ enum PermissionAlias {
   readPoste("READ_POSTE"),
 
 // Assignation
-  assignRubriqueCategoriePaie("ASSIGN_RUBRIQUE_TO_CATEGORIE"),
+  assignRubriqueCategorieBulletin("ASSIGN_RUBRIQUE_TO_CATEGORIE_BULLETIN"),
 //Poste
 
 // echelon

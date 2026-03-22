@@ -11,10 +11,10 @@ class SectionBulletin {
 
   async initializeCollections() {
     if (!(await sectionBulletinCollection.exists())) {
-      sectionBulletinCollection.create();
+     await sectionBulletinCollection.create();
     }
     if (!(await rubriqueBulletinCollection.exists())) {
-      rubriqueBulletinCollection.create();
+      await rubriqueBulletinCollection.create();
     }
   }
 

@@ -1,4 +1,4 @@
-import CategorieBulletin from "../../models/bulletin_bulletin/categorie_bulletin.js";
+import CategorieBulletin from "../../models/bulletin_paie/categorie_bulletin.js";
 
 const categorieBulletinModel = new CategorieBulletin();
 
@@ -14,16 +14,18 @@ const categorieBulletinResolvers = {
     return await categorieBulletinModel.getCategorieBulletin({ key });
   },
 
-  createCategorieBulletin: async ({ categorieBulletin }) => {
+  createCategorieBulletin: async ({ categorieBulletin, paieClause }) => {
     return await categorieBulletinModel.createCategorieBulletin({
       categorieBulletin,
+      paieClause,
     });
   },
 
-  updateCategorieBulletin: async ({ key, categorieBulletin }) => {
+  updateCategorieBulletin: async ({ key, categorieBulletin, paieClause }) => {
     return await categorieBulletinModel.updateCategorieBulletin({
       key,
       categorieBulletin,
+      paieClause,
     });
   },
 

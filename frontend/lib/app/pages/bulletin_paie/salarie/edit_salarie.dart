@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/model/bulletin_paie/categorie_paie.dart';
+import 'package:frontend/model/bulletin_paie/categorie_bulletin.dart';
 import 'package:frontend/model/bulletin_paie/operateur_model.dart';
 import 'package:frontend/model/grille_salariale/classe_model.dart';
 import 'package:frontend/model/grille_salariale/echelon_indice_model.dart';
 import 'package:frontend/model/habilitation/user_model.dart';
-import 'package:frontend/service/categorie_paie_service.dart';
+import 'package:frontend/service/categorie_bulletin_service.dart';
+import 'package:frontend/widget/enum_selector_radio.dart';
 import 'package:gap/gap.dart';
 import 'package:frontend/model/grille_salariale/categorie_paie.dart';
 import 'package:frontend/model/grille_salariale/echelon_model.dart';
@@ -24,7 +25,7 @@ import '../../../../model/personnel/personnel_model.dart';
 import '../../../../model/request_response.dart';
 import '../../../../service/operateur_service.dart';
 import '../../../../service/personnel_service.dart';
-import '../../../../service/rubrique_categorie_conf_service.dart';
+import '../../../../service/rubrique_categorie_bulletin_conf_service.dart';
 import '../../../../service/salarie_service.dart';
 import '../../../../widget/future_dropdown_field.dart';
 import '../../../../widget/validate_button.dart';
@@ -51,7 +52,8 @@ class _EditSalariePageState extends State<EditSalariePage> {
   final TextEditingController _compterController = TextEditingController();
 
   PersonnelModel? personnel;
-  CategoriePaieModel? categoriePaie;
+  CategorieBulletinModel? categorieBulletin;
+  PaieClause? paieClause;
   String? currentPersonnelId;
   String? periodPaieUnit;
   int? periodPaieCompteur;
@@ -89,14 +91,14 @@ class _EditSalariePageState extends State<EditSalariePage> {
 
   void _initializeSelectedValues() async {
     final fetchedPersonnel = widget.salarie.personnel;
-    final fetchedCategorie = widget.salarie.categoriePaie;
+    final fetchedCategorieBulletin = widget.salarie.categorieBulletin;
     final List<GrilleCategoriePaieModel> categorie =
         await GrilleCategoriePaieService.getGrilleCategoriePaies();
 
     setState(() {
       personnel = fetchedPersonnel;
-      categoriePaie = fetchedCategorie;
-      paieManner = widget.salarie.paieManner;
+      categorieBulletin = fetchedCategorieBulletin;
+      // paieManner = widget.salarie.paieManner;
 
       // pré-remplissage période
       if (widget.salarie.periodPaie != null) {
@@ -162,7 +164,7 @@ class _EditSalariePageState extends State<EditSalariePage> {
 
   Future<void> updateSalarieData() async {
     try {
-      if (personnel == null || categoriePaie == null) {
+      if (personnel == null || categorieBulletin == null) {
         MutationRequestContextualBehavior.showPopup(
           status: PopupStatus.information,
           customMessage:
@@ -238,8 +240,9 @@ class _EditSalariePageState extends State<EditSalariePage> {
       RequestResponse result = await SalarieService.updateSalarie(
         key: widget.salarie.id,
         personnelId: personnel?.id,
-        categoriePaieId: categoriePaie?.id,
-        paieManner: paieManner,
+        categorieBulletinId: categorieBulletin?.id,
+        paieClause: paieClause,
+        // paieManner: paieManner,
         moyenPaiement: moyenPaiement,
         numeroMatricule: _numeroMatriculeController.text.isNotEmpty
             ? _numeroMatriculeController.text.trim()
@@ -281,8 +284,11 @@ class _EditSalariePageState extends State<EditSalariePage> {
     }
   }
 
-  Future<List<CategoriePaieModel>> fetchPaieCategorieItems() async {
-    return await CategoriePaieService.getPaieCategories();
+  Future<List<CategorieBulletinModel>> fetchCategorieBulletinItems() async {
+    return (await CategorieBulletinService.getCategoriesBulletin())
+        .where((categorieBulletin) {
+      return categorieBulletin.paieClause == paieClause;
+    }).toList();
   }
 
   Future<List<PersonnelModel>> fetchPersonnelItems() async {
@@ -307,7 +313,7 @@ class _EditSalariePageState extends State<EditSalariePage> {
   }
 
   void onValidate() {
-    if (personnel != null && categoriePaie != null) {
+    if (personnel != null && categorieBulletin != null) {
       updateSalarieData();
     } else {
       MutationRequestContextualBehavior.showPopup(
@@ -353,6 +359,19 @@ class _EditSalariePageState extends State<EditSalariePage> {
             canClose: true,
             itemsAsString: (s) => s.libelle,
           ),
+          EnumRadioSelector<PaieClause>(
+            title: "Clause de paie",
+            selectedValue: paieClause,
+            values: PaieClause.values,
+            getLabel: (value) => value.label,
+            onChanged: (value) {
+              setState(() {
+                paieClause = value;
+                categorieBulletin = null;
+              });
+            },
+            isRequired: true,
+          ),
           FutureCustomDropDownField<OperateurModel>(
             label: "Opérateur",
             selectedItem: _operateur,
@@ -373,16 +392,16 @@ class _EditSalariePageState extends State<EditSalariePage> {
             textController: _numeroDeCompteController,
             required: false,
           ),
-          FutureCustomDropDownField<CategoriePaieModel>(
+          FutureCustomDropDownField<CategorieBulletinModel>(
             label: "Catégorie de paie",
-            selectedItem: categoriePaie,
-            fetchItems: fetchPaieCategorieItems,
-            onChanged: (CategoriePaieModel? value) {
+            selectedItem: categorieBulletin,
+            fetchItems: fetchCategorieBulletinItems,
+            onChanged: (CategorieBulletinModel? value) {
               setState(() {
-                categoriePaie = value;
+                categorieBulletin = value;
               });
             },
-            itemsAsString: (r) => r.categoriePaie,
+            itemsAsString: (r) => r.categorieBulletin,
           ),
           // Ajout sélection grille/classe/échelon
           FutureCustomDropDownField<GrilleCategoriePaieModel>(
@@ -443,13 +462,13 @@ class _EditSalariePageState extends State<EditSalariePage> {
   }
 
   Future<List<RubriqueBulletin>> fetchRubriqueItems() async {
-    if (categoriePaie == null) {
+    if (categorieBulletin == null) {
       throw ("Veuillez sélectionner un personnel et une catégorie de paie.");
     }
 
     final List<RubriqueOnBulletinModel> rubriquePaieResponse =
-        await RubriqueCategorieConfService.getBulletinRubriquesByCategoriePaie(
-      categorie: categoriePaie!,
+        await RubriqueCategorieConfService.getBulletinRubriquesByCategorieBulletin(
+      categorieBulletin: categorieBulletin!,
     );
 
     List<RubriqueBulletin> rubriques = [];

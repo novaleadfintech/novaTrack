@@ -138,7 +138,7 @@ class _ConfigPageState extends State<ConfigPage> {
                                 showResponsiveConfigPageDialogBox(
                                   context,
                                   title: "Catégories de bulletin",
-                                  content: CategoriePaiePage(),
+                                  content: CategorieBulletinPage(),
                                 );
                               },
                             ),
@@ -186,11 +186,11 @@ class _ConfigPageState extends State<ConfigPage> {
                             ),
                             InkWell(
                               child: ResponsiveCard(
-                                  label: "Rubriques - Catégorie de paie"),
+                                  label: "Rubriques - Catégorie de bulletin"),
                               onTap: () {
                                 showResponsiveConfigPageDialogBox(
                                   context,
-                                  title: "Rubriques - Catégorie de paie",
+                                  title: "Rubriques - Catégorie de bulletin",
                                   content: RubriqueCategoriePaie(),
                                 );
                               },

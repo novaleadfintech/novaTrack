@@ -1,10 +1,9 @@
 import 'dart:convert';
+import 'package:frontend/model/bulletin_paie/categorie_bulletin.dart';
 import 'package:frontend/model/bulletin_paie/valeur_rubrique_temporaire.dart';
-
 import '../app/integration/popop_status.dart';
 import '../global/config.dart';
 import '../global/constant/request_management_value.dart';
-import '../model/bulletin_paie/categorie_paie.dart';
 import '../model/bulletin_paie/rubrique_paie.dart';
 import '../model/request_response.dart';
 import 'request_header.dart';
@@ -12,13 +11,13 @@ import 'package:http/http.dart' as http;
 
 class RubriqueCategorieConfService {
   static Future<List<RubriquePaieConfig>>
-      getBulletinRubriquesByCategorieForConfig(
-          {required CategoriePaieModel categoriePaie}) async {
+      getBulletinRubriquesByCategorieBulletinForConfig(
+          {required CategorieBulletinModel categorieBulletin}) async {
     var body = '''
-      query RubriqueBulletinByCategoriePaieForConfiguration {
-    rubriqueBulletinByCategoriePaieForConfiguration(categoriePaieId: "${categoriePaie.id}") {
+      query RubriqueBulletinByCategorieBulletinForConfiguration {
+    rubriqueBulletinByCategorieBulletinForConfiguration(categorieBulletinId: "${categorieBulletin.id}") {
         isChecked
-        rubriqueCategorie {
+        rubriqueOnBulletin {
             value
             rubrique{
            _id
@@ -119,15 +118,18 @@ class RubriqueCategorieConfService {
 
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
-      var data =
-          jsonData['data']['rubriqueBulletinByCategoriePaieForConfiguration'];
 
+      var data = jsonData['data']
+          ['rubriqueBulletinByCategorieBulletinForConfiguration'];
       List<RubriquePaieConfig> rubriques = [];
       if (data != null) {
         for (var rubrique in data) {
-          rubriques.add(RubriquePaieConfig.fromJson(rubrique));
+          try {
+            rubriques.add(RubriquePaieConfig.fromJson(rubrique));
+          } catch (e) {
+            print('Error parsing rubrique: $e');
+          }
         }
-
         return rubriques;
       } else {
         throw RequestMessage.failgettingDataMessage;
@@ -138,11 +140,11 @@ class RubriqueCategorieConfService {
   }
 
   static Future<List<RubriqueOnBulletinModel>>
-      getBulletinRubriquesByCategoriePaie(
-          {required CategoriePaieModel categorie}) async {
+      getBulletinRubriquesByCategorieBulletin(
+          {required CategorieBulletinModel categorieBulletin}) async {
     var body = '''
-    query RubriqueBulletinByCategoriePaie {
-    rubriqueBulletinByCategoriePaie(categoriePaieId: "${categorie.id}") {
+    query RubriqueBulletinByCategorieBulletin {
+    rubriqueBulletinByCategorieBulletin(categorieBulletinId: "${categorieBulletin.id}") {
     value
          rubrique{
            _id
@@ -244,7 +246,7 @@ class RubriqueCategorieConfService {
 
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
-      var data = jsonData['data']['rubriqueBulletinByCategoriePaie'];
+      var data = jsonData['data']['rubriqueBulletinByCategorieBulletin'];
       List<RubriqueOnBulletinModel> rubriques = [];
       if (data != null) {
         for (var rubrique in data) {
@@ -262,11 +264,11 @@ class RubriqueCategorieConfService {
 
   static Future<ValeurRubriqueTemporaire>
       getvariablePaieAndPrimeExceptionnelles(
-          {required CategoriePaieModel categorie,
+          {required CategorieBulletinModel categorieBulletin,
           required String salarieId}) async {
     var body = '''
     query variablePaieAndPrimeExceptionnelles {
-    variablePaieAndPrimeExceptionnelles(categoriePaieId: "${categorie.id}", salarieId: "$salarieId") {
+    variablePaieAndPrimeExceptionnelles(categorieBulletinId: "${categorieBulletin.id}", salarieId: "$salarieId") {
       salarieId
       _id
       rubriques{
@@ -468,16 +470,16 @@ class RubriqueCategorieConfService {
     }
   }
 
-  static Future<RequestResponse> createRubriqueCategorie({
+  static Future<RequestResponse> createCategorieBulletinRubrique({
     required String rubriqueId,
-    required String categorieId,
+    required String categorieBulletinId,
     required double? value,
   }) async {
     var body = '''
     mutation {
-      createRubriqueCategorie(
+      createCategorieBulletinRubrique(
         rubriqueId: "$rubriqueId",
-        categorieId: "$categorieId",
+        categorieBulletinId: "$categorieBulletinId",
         value: $value
       )
     }
@@ -496,8 +498,8 @@ class RubriqueCategorieConfService {
           );
 
       if (response.statusCode == 200) {
-        final data =
-            jsonDecode(response.body)['data']['createRubriqueCategorie'];
+        final data = jsonDecode(response.body)['data']
+            ['createCategorieBulletinRubrique'];
         if (data == RequestMessage.success) {
           return RequestResponse(
             message: RequestMessage.successMessage,
@@ -517,16 +519,16 @@ class RubriqueCategorieConfService {
     }
   }
 
-  static Future<RequestResponse> updateRubriqueCategorie({
+  static Future<RequestResponse> updateCategorieBulletinRubriqueBulletin({
     required String rubriqueId,
-    required String categorieId,
+    required String categorieBulletinId,
     required double? value,
   }) async {
     var body = '''
     mutation {
-      updateRubriqueCategorie(
+      updateCategorieBulletinRubrique(
         rubriqueId: "$rubriqueId",
-        categorieId: "$categorieId",
+        categorieBulletinId: "$categorieBulletinId",
         value: $value
       )
     }
@@ -545,8 +547,8 @@ class RubriqueCategorieConfService {
           );
 
       if (response.statusCode == 200) {
-        final data =
-            jsonDecode(response.body)['data']['updateRubriqueCategorie'];
+        final data = jsonDecode(response.body)['data']
+            ['updateCategorieBulletinRubriqueBulletin'];
         if (data == RequestMessage.success) {
           return RequestResponse(
             message: RequestMessage.successMessage,
@@ -566,15 +568,15 @@ class RubriqueCategorieConfService {
     }
   }
 
-  static Future<RequestResponse> deleteRubriqueCategorie({
+  static Future<RequestResponse> deleteCategorieBulletinRubriqueBulletin({
     required String rubriqueId,
-    required String categorieId,
+    required String categorieBulletinId,
   }) async {
     var body = '''
     mutation {
-      deleteRubriqueCategorie(
+      deleteCategorieBulletinRubrique(
         rubriqueId: "$rubriqueId",
-        categorieId: "$categorieId"
+        categorieBulletinId: "$categorieBulletinId"
       )
     }
   ''';
@@ -592,8 +594,8 @@ class RubriqueCategorieConfService {
           );
 
       if (response.statusCode == 200) {
-        final data =
-            jsonDecode(response.body)['data']['deleteRubriqueCategorie'];
+        final data = jsonDecode(response.body)['data']
+            ['deleteCategorieBulletinRubriqueBulletin'];
         if (data == RequestMessage.success) {
           return RequestResponse(
             message: RequestMessage.successMessage,

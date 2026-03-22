@@ -138,10 +138,10 @@ class CategoriePaieGrille {
       await this.isExistCategoriePaieGrille({ key });
 
       const existingCategorie = await db.query(aql`
-        FOR categorieRubrique IN ${categoriePaieGrilleCollection}
-        FILTER categorieRubrique._from == ${key}
+        FOR categorieBulletinRubrique IN ${categoriePaieGrilleCollection}
+        FILTER categorieBulletinRubrique._from == ${key}
         LIMIT 1
-        RETURN categorieRubrique
+        RETURN categorieBulletinRubrique
       `);
 
       if (existingCategorie.hasNext) {

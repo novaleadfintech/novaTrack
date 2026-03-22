@@ -45,6 +45,13 @@ class _BanquePageState extends State<BanquePage> {
     _loadBanqueData();
   }
 
+  @override
+  void dispose() {
+    _researchController.removeListener(_onSearchChanged);
+    _researchController.dispose();
+    super.dispose();
+  }
+
   Future<void> getRole() async {
     role = await AuthService().getRole();
   }

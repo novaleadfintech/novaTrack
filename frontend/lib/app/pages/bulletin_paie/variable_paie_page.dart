@@ -10,7 +10,7 @@ import 'package:frontend/model/bulletin_paie/salarie_model.dart';
 import 'package:frontend/model/bulletin_paie/tranche_model.dart';
 import 'package:frontend/model/bulletin_paie/valeur_rubrique_temporaire.dart';
 import 'package:frontend/service/bulletin_rubrique_service.dart';
-import 'package:frontend/service/rubrique_categorie_conf_service.dart';
+import 'package:frontend/service/rubrique_categorie_bulletin_conf_service.dart';
 import 'package:frontend/service/valeur_rubrique_temporaire_service.dart';
 import 'package:frontend/style/app_style.dart';
 import 'package:frontend/widget/future_dropdown_field.dart';
@@ -82,7 +82,7 @@ class _VariablePaiePageState extends State<VariablePaiePage> {
       final ValeurRubriqueTemporaire valeurResponse =
           await RubriqueCategorieConfService
               .getvariablePaieAndPrimeExceptionnelles(
-        categorie: widget.salarie.categoriePaie,
+        categorieBulletin: widget.salarie.categorieBulletin,
         salarieId: widget.salarie.id,
       );
 
@@ -218,6 +218,16 @@ class _VariablePaiePageState extends State<VariablePaiePage> {
                       ],
                     ),
                   ),
+                  if (variablePaies.isEmpty)
+                    Text(
+                      "Aucune variable de paie à renseigner pour ce salarié.",
+                      textAlign: TextAlign.center,
+                      style: DestopAppStyle.normalText.copyWith(
+                        color: Theme.of(context).colorScheme.onSecondary,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    )
+                  else
                   ...variablePaies.map((rubrique) {
                     final r = rubrique.rubrique;
                     return SimpleTextField(

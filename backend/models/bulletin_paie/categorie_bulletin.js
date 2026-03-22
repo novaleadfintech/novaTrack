@@ -14,10 +14,10 @@ class CategorieBulletin {
 
   async initializeCollections() {
     if (!(await categorieBulletinCollection.exists())) {
-      categorieBulletinCollection.create();
+    await  categorieBulletinCollection.create();
     }
     if (!(await categorieBulletinRubriqueCollection.exists())) {
-      categorieBulletinRubriqueCollection.create();
+     await categorieBulletinRubriqueCollection.create();
     }
   }
   async getAllCategorieBulletin({ perPage, skip }) {
@@ -57,12 +57,11 @@ class CategorieBulletin {
       return true;
     } catch (err) {
       console.error(err);
-
       throw new Error(`La categorie de bulletin est introuvable`);
     }
   }
 
-  async createCategorieBulletin({ categorieBulletin }) {
+  async createCategorieBulletin({ categorieBulletin, paieClause }) {
     // Validation des données
     isValidValue({ value: [categorieBulletin] });
 
@@ -81,6 +80,7 @@ class CategorieBulletin {
     // Création de la catégorie
     const categorie = {
       categorieBulletin,
+      paieClause,
       timeStamp: Date.now(),
     };
 
@@ -94,7 +94,7 @@ class CategorieBulletin {
     }
   }
 
-  async updateCategorieBulletin({ key, categorieBulletin }) {
+  async updateCategorieBulletin({ key, categorieBulletin, paieClause }) {
     // Vérification que la catégorie existe
     await this.isExistCategorieBulletin({ key });
 
@@ -105,16 +105,22 @@ class CategorieBulletin {
       const existingCategorie = await db.query(aql`
         FOR categorie IN ${categorieBulletinCollection}
         FILTER categorie.categorieBulletin == ${categorieBulletin}
-        AND categorie._key != ${key}
+        AND categorie._id != ${key}
         LIMIT 1
         RETURN categorie
       `);
+      console.log(key);
+      console.log(await existingCategorie.next());
 
       if (existingCategorie.hasNext) {
         throw new Error(`Une catégorie de bulletin avec ce nom existe déjà.`);
       }
 
       updateField.categorieBulletin = categorieBulletin;
+    }
+
+    if (paieClause !== undefined) {
+      updateField.paieClause = paieClause;
     }
 
     if (Object.keys(updateField).length === 0) {
@@ -139,10 +145,10 @@ class CategorieBulletin {
       await this.isExistCategorieBulletin({ key });
 
       const existingCategorie = await db.query(aql`
-        FOR categorieRubrique IN ${categorieBulletinRubriqueCollection}
-        FILTER categorieRubrique._from == ${key}
+        FOR categorieBulletinRubrique IN ${categorieBulletinRubriqueCollection}
+        FILTER categorieBulletinRubrique._from == ${key}
         LIMIT 1
-        RETURN categorieRubrique
+        RETURN categorieBulletinRubrique
       `);
 
       if (existingCategorie.hasNext) {

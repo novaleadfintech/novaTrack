@@ -65,6 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
         password: password,
       );
 
+      if (!mounted) return;
       _dialog.hide();
 
       AuthService().setToken(result.token!);
@@ -76,11 +77,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
         AuthService().setRoles(role);
         if (result.isTheFirstConnection == true) {
-          openEditLoginParameter();
+          if (mounted) openEditLoginParameter();
           return;
         }
-        _navigateToMainLayout(role);
+        if (mounted) _navigateToMainLayout(role);
       } catch (e) {
+        if (!mounted) return;
         _dialog.hide();
         MutationRequestContextualBehavior.showPopup(
           customMessage:
@@ -89,6 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       }
     } catch (e) {
+      if (!mounted) return;
       _dialog.hide();
       MutationRequestContextualBehavior.showPopup(
         customMessage: e.toString(),

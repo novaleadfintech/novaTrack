@@ -1,16 +1,16 @@
+import 'package:frontend/model/bulletin_paie/categorie_bulletin.dart';
 import 'package:frontend/model/bulletin_paie/operateur_model.dart';
 import 'package:frontend/model/grille_salariale/categorie_paie.dart';
 import 'package:frontend/model/grille_salariale/classe_model.dart';
 import 'package:frontend/model/grille_salariale/echelon_model.dart';
 import 'package:frontend/model/moyen_paiement_model.dart';
 import '../personnel/personnel_model.dart';
-import 'categorie_paie.dart';
-import 'tranche_model.dart';
+ import 'tranche_model.dart';
 
 class SalarieModel {
   final String id;
   final PersonnelModel personnel;
-  final CategoriePaieModel categoriePaie;
+  final CategorieBulletinModel categorieBulletin;
   final double dateEnregistrement;
   final int? periodPaie;
   final String? numeroMatricule;
@@ -20,14 +20,15 @@ class SalarieModel {
   final OperateurModel? operateur;
   final ClasseModel? classe;
   final GrilleCategoriePaieModel? grilleCategoriePaie;
-  final PaieManner? paieManner;
+  // final PaieManner? paieManner;
+  final PaieClause? paieClause;
 
   final int? fullCount;
 
   SalarieModel({
     required this.id,
     required this.personnel,
-    required this.categoriePaie,
+    required this.categorieBulletin,
     required this.dateEnregistrement,
     required this.periodPaie,
     this.echelon,
@@ -37,7 +38,8 @@ class SalarieModel {
     this.moyenPaiement,
     this.grilleCategoriePaie,
     this.numeroMatricule,
-    this.paieManner = PaieManner.finMois,
+    // this.paieManner = PaieManner.finMois,
+    this.paieClause,
     this.fullCount,
   });
 
@@ -45,10 +47,11 @@ class SalarieModel {
     return SalarieModel(
       id: json['_id'] ?? "",
       personnel: PersonnelModel.fromJson(json['personnel']),
-      categoriePaie: CategoriePaieModel.fromJson(json['categoriePaie']),
+      categorieBulletin: CategorieBulletinModel.fromJson(json['categorieBulletin']),
       dateEnregistrement: json['dateEnregistrement']?.toDouble() ?? 0.0,
       periodPaie: json['periodPaie']?.toInt(),
-      paieManner: paieMannerFromJson(json['paieManner']),
+      // paieManner: paieMannerFromJson(json['paieManner']),
+      paieClause: PaieClause.paieClauseFromJson(json['paieClause']),
       echelon: json['echelon'] != null
           ? EchelonModel.fromJson(json['echelon'])
           : null,
@@ -73,14 +76,15 @@ class SalarieModel {
     return {
       '_id': id,
       'personnel': personnel.toJson(),
-      'categoriePaie': categoriePaie.toJson(),
+      'categorieBulletin': categorieBulletin.toJson(),
       'dateEnregistrement': dateEnregistrement,
       'periodPaie': periodPaie,
       'echelon': echelon?.toJson(),
       'numeroMatricule': numeroMatricule,
       'classe': classe?.toJson(),
       'grilleCategoriePaie': grilleCategoriePaie?.toJson(),
-      'paieManner': paieMannerToString(paieManner!),
+      // 'paieManner': paieMannerToString(paieManner!),
+      'paieClause': PaieClause.paieClauseToString(paieClause!),
       'fullCount': fullCount,
     };
   }

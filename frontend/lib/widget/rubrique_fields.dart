@@ -43,6 +43,16 @@ class _RubriquesFieldsState extends State<RubriquesFields> {
   }
 
   @override
+  void dispose() {
+    for (var controller in widget.controllers) {
+      controller['libelle']?.dispose();
+      controller['montant']?.dispose();
+      controller['taux']?.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [

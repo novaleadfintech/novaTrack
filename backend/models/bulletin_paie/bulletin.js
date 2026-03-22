@@ -9,7 +9,7 @@ import Salarie from "./salarie.js";
 import RubriqueBulletin from "./rubrique_bulletin.js";
 import User from "../habilitation/user.js";
 import ValeurRubriqueTemporaire from "./valeur_rubrique_temporaire.js";
-import RubriqueCategorieConf from "./rubrique_categorie.js";
+import RubriqueCategorieConf from "./rubrique_categorie_bulletin.js";
 import Entreprise from "../entreprise.js";
 
 const FluxFinancierModel = new FluxFinancier();
@@ -84,10 +84,10 @@ class BulletinPaie {
 
   async initializeCollections() {
     if (!(await bulletinCollection.exists())) {
-      bulletinCollection.create();
+      await bulletinCollection.create();
     }
     if (!(await decouverteCollection.exists())) {
-      decouverteCollection.create();
+      await decouverteCollection.create();
     }
   }
   async getAllCurrentBulletins({ perPage, skip, etat }) {
@@ -553,7 +553,7 @@ class BulletinPaie {
     }
 
     const salarie = await SalarieModel.getSalarie({ key: salarieId });
-     // Étape 1 : Récupérer les découverts impayés ou partiellement payés
+    // Étape 1 : Récupérer les découverts impayés ou partiellement payés
     const decouvertesQuery = await db.query(aql`
     FOR decouvert IN ${decouverteCollection}
       FILTER decouvert.salarie._id == ${salarieId}

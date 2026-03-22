@@ -16,7 +16,7 @@ class PayCalendar {
 
   async initializeCollections() {
     if (!(await payCalendarCollection.exists())) {
-      payCalendarCollection.create();
+    await  payCalendarCollection.create();
     }
   }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/app/pages/grille_salariale/add_categorie_paie.dart';
 import 'package:frontend/app/pages/custom_popup.dart';
 import 'package:frontend/app/pages/grille_salariale/grille_parameter_page.dart';
+import 'package:frontend/app/responsitvity/responsivity.dart';
 import 'package:frontend/model/grille_salariale/categorie_paie.dart';
 import 'package:frontend/widget/app_action_button.dart';
 import 'package:gap/gap.dart';
@@ -101,11 +102,19 @@ class _GrilleCategoriePaiePageState extends State<GrilleCategoriePaiePage> {
   Widget build(BuildContext context) {
     List<GrilleCategoriePaieModel> filteredData = filterGrilleCategoriePaie();
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8).copyWith(top: 4),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+    return Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        floatingActionButton: FloatingActionButton(
+          onPressed: onClickAddCategorieButton,
+          mini: true,
+          child: Icon(Icons.add),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8).copyWith(top: 4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
           FutureBuilder<void>(
             future: _futureRoles,
             builder: (context, snapshot) {
@@ -133,7 +142,8 @@ class _GrilleCategoriePaiePageState extends State<GrilleCategoriePaiePage> {
                       children: [
                         // IconButton.filled(
                         //     onPressed: () {}, icon: Icon(Icons.settings)),
-                        Container(
+                            if (!Responsive.isMobile(context)) ...[
+                              Container(
                           alignment: Alignment.centerRight,
                           child: AddElementButton(
                             addElement: onClickAddCategorieButton,
@@ -143,6 +153,7 @@ class _GrilleCategoriePaiePageState extends State<GrilleCategoriePaiePage> {
                           ),
                         ),
                         Gap(8),
+                            ],
                         AppActionButton(
                           onPressed: () {
                             onClickOnParameter();
@@ -203,7 +214,8 @@ class _GrilleCategoriePaiePageState extends State<GrilleCategoriePaiePage> {
           ),
         ],
       ),
-    );
+      
+        ));
   }
 
   void onClickOnParameter() {

@@ -38,6 +38,15 @@ class _FraisDiversFieldsState extends State<FraisDiversFields> {
   }
 
   @override
+  void dispose() {
+    for (var controller in widget.controllers) {
+      controller['libelle']?.dispose();
+      controller['montant']?.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),

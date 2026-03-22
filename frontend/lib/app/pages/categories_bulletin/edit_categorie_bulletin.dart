@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/model/bulletin_paie/tranche_model.dart';
+import 'package:frontend/widget/enum_selector_radio.dart';
 import '../../../helper/string_helper.dart';
-import '../../../model/bulletin_paie/categorie_paie.dart';
-import '../../../service/categorie_paie_service.dart';
+import '../../../model/bulletin_paie/categorie_bulletin.dart';
+import '../../../service/categorie_bulletin_service.dart';
 import '../../integration/popop_status.dart';
 import '../../integration/request_frot_behavior.dart';
 import '../../../widget/simple_text_field.dart';
@@ -9,39 +11,42 @@ import '../../../widget/validate_button.dart';
 import 'package:gap/gap.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 
-class EditCategoriePaiePage extends StatefulWidget {
+class EditCategorieBulletinPage extends StatefulWidget {
   final Future<void> Function() refresh;
-  final CategoriePaieModel categorie;
-  const EditCategoriePaiePage({
+  final CategorieBulletinModel categorieBulletin;
+  const EditCategorieBulletinPage({
     super.key,
     required this.refresh,
-    required this.categorie,
+    required this.categorieBulletin,
   });
 
   @override
-  State<EditCategoriePaiePage> createState() => _EditCategoriePaiePageState();
+  State<EditCategorieBulletinPage> createState() =>
+      _EditCategorieBulletinPageState();
 }
 
-class _EditCategoriePaiePageState extends State<EditCategoriePaiePage> {
+class _EditCategorieBulletinPageState extends State<EditCategorieBulletinPage> {
   final TextEditingController _libelleController = TextEditingController();
-
+  PaieClause? paieClause;
   late SimpleFontelicoProgressDialog _dialog;
 
   @override
   void initState() {
     super.initState();
-    _libelleController.text = widget.categorie.categoriePaie;
+    _libelleController.text = widget.categorieBulletin.categorieBulletin;
+    paieClause = widget.categorieBulletin.paieClause;
     _dialog = SimpleFontelicoProgressDialog(context: context);
   }
 
-  Future<void> _editCategoriePaie() async {
+  Future<void> _editCategorieBulletin() async {
     String? errMessage;
-    if (_libelleController.text.isEmpty) {
+    if (_libelleController.text.isEmpty && paieClause == null) {
       errMessage = "Veuillez remplir tous les champs marqués.";
     }
 
-    if (_libelleController.text == widget.categorie.categoriePaie) {
-      errMessage = "Veuillez modifier le libellé.";
+    if (_libelleController.text == widget.categorieBulletin.categorieBulletin &&
+        paieClause == widget.categorieBulletin.paieClause) {
+      errMessage = "Aucune modification n'a été faite!";
     }
     if (errMessage != null) {
       MutationRequestContextualBehavior.showCustomInformationPopUp(
@@ -57,10 +62,11 @@ class _EditCategoriePaiePageState extends State<EditCategoriePaiePage> {
     );
 
     try {
-      var result = await CategoriePaieService.upadateCategoriePaie(
-        categoriePaie:
+      var result = await CategorieBulletinService.updateCategorieBulletin(
+        categorieBulletin:
             capitalizeFirstLetter(word: _libelleController.text.toLowerCase()),
-        key: widget.categorie.id,
+        paieClause: paieClause ?? widget.categorieBulletin.paieClause,
+        key: widget.categorieBulletin.id,
       );
 
       _dialog.hide();
@@ -95,6 +101,18 @@ class _EditCategoriePaiePageState extends State<EditCategoriePaiePage> {
           label: "Libellé",
           textController: _libelleController,
         ),
+        EnumRadioSelector<PaieClause>(
+          title: "Clause de paie",
+          selectedValue: paieClause,
+          values: PaieClause.values,
+          getLabel: (value) => value.label,
+          onChanged: (value) {
+            setState(() {
+              paieClause = value;
+            });
+          },
+          isRequired: true,
+        ),
         const Gap(16),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -102,7 +120,7 @@ class _EditCategoriePaiePageState extends State<EditCategoriePaiePage> {
             alignment: Alignment.bottomRight,
             child: ValidateButton(
               onPressed: () async {
-                await _editCategoriePaie();
+                await _editCategorieBulletin();
               },
             ),
           ),

@@ -35,10 +35,10 @@ class RubriqueBulletin {
 
   async initializeCollections() {
     if (!(await rubriqueBulletinCollection.exists())) {
-      rubriqueBulletinCollection.create();
+     await rubriqueBulletinCollection.create();
     }
     if (!(await rubriqueCategorieCollection.exists())) {
-      rubriqueCategorieCollection.create({
+      await rubriqueCategorieCollection.create({
         type: CollectionType.EDGE_COLLECTION,
       });
     }

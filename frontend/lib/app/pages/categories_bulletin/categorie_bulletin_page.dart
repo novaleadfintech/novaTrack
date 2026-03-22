@@ -4,8 +4,8 @@ import 'package:frontend/helper/paginate_data.dart';
 import 'package:frontend/helper/user_helper.dart';
 import 'package:gap/gap.dart';
 import '../../../global/global_value.dart';
-import '../../../model/bulletin_paie/categorie_paie.dart';
-import '../../../service/categorie_paie_service.dart';
+import '../../../model/bulletin_paie/categorie_bulletin.dart';
+import '../../../service/categorie_bulletin_service.dart';
 import '../../../widget/add_element_button.dart';
 import '../../../widget/pagination.dart';
 import '../../../widget/research_bar.dart';
@@ -17,19 +17,19 @@ import '../../../model/habilitation/role_model.dart';
 import 'add_categorie_bulletin.dart';
 import 'categorie_bulletin_table.dart';
 
-class CategoriePaiePage extends StatefulWidget {
-  const CategoriePaiePage({
+class CategorieBulletinPage extends StatefulWidget {
+  const CategorieBulletinPage({
     super.key,
   });
 
   @override
-  State<CategoriePaiePage> createState() => _CategoriePaieClientPageState();
+  State<CategorieBulletinPage> createState() => _CategorieBulletinPageState();
 }
 
-class _CategoriePaieClientPageState extends State<CategoriePaiePage> {
+class _CategorieBulletinPageState extends State<CategorieBulletinPage> {
   final TextEditingController _researchController = TextEditingController();
   int currentPage = GlobalValue.currentPage;
-  List<CategoriePaieModel> categoriePaieData = [];
+  List<CategorieBulletinModel> categorieBulletinData = [];
   bool isLoading = true;
   bool hasError = false;
   String searchQuery = "";
@@ -42,7 +42,7 @@ class _CategoriePaieClientPageState extends State<CategoriePaiePage> {
     super.initState();
     _researchController.addListener(_onSearchChanged);
     _futureRoles = getRole();
-    _loadCategoriePaie();
+    _loadCategorieBulletin();
   }
 
   Future<void> getRole() async {
@@ -55,9 +55,9 @@ class _CategoriePaieClientPageState extends State<CategoriePaiePage> {
     });
   }
 
-  Future<void> _loadCategoriePaie() async {
+  Future<void> _loadCategorieBulletin() async {
     try {
-      categoriePaieData = await CategoriePaieService.getPaieCategories();
+      categorieBulletinData = await CategorieBulletinService.getCategoriesBulletin();
     } catch (error) {
       setState(() {
         errorMessage = error.toString();
@@ -70,9 +70,9 @@ class _CategoriePaieClientPageState extends State<CategoriePaiePage> {
     });
   }
 
-  List<CategoriePaieModel> filterCategoriePaieClient() {
-    return categoriePaieData.where((categoriePaie) {
-      return categoriePaie.categoriePaie
+  List<CategorieBulletinModel> filterCategorieBulletin() {
+    return categorieBulletinData.where((categorieBulletin) {
+      return categorieBulletin.categorieBulletin
           .toLowerCase()
           .contains(searchQuery.toLowerCase().trim());
     }).toList();
@@ -87,16 +87,16 @@ class _CategoriePaieClientPageState extends State<CategoriePaiePage> {
   void onClickAddFluxButton() {
     showResponsiveDialog(
       context,
-      title: "Nouveau catégorie de paie",
-      content: AddCategoriePaiePage(
-        refresh: _loadCategoriePaie,
+      title: "Nouveau catégorie de bulletin",
+      content: AddCategorieBulletinPage(
+        refresh: _loadCategorieBulletin,
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    List<CategoriePaieModel> filteredData = filterCategoriePaieClient();
+    List<CategorieBulletinModel> filteredData = filterCategorieBulletin();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8).copyWith(top: 4),
@@ -115,7 +115,7 @@ class _CategoriePaieClientPageState extends State<CategoriePaiePage> {
               } else {
                 bool canCreate = hasPermission(
                   role: role,
-                  permission: PermissionAlias.createCategoriePaie.label,
+                  permission: PermissionAlias.createCategorieBulletin.label,
                 );
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -132,7 +132,7 @@ class _CategoriePaieClientPageState extends State<CategoriePaiePage> {
                         addElement: onClickAddFluxButton,
                         icon: Icons.add_outlined,
                         isSmall: true,
-                        label: "Ajouter une catégorie de paie",
+                        label: "Ajouter une catégorie de bulletin",
                       ),
                     ),
                   ],
@@ -157,7 +157,7 @@ class _CategoriePaieClientPageState extends State<CategoriePaiePage> {
                     isLoading = true;
                     hasError = false;
                   });
-                  await _loadCategoriePaie();
+                  await _loadCategorieBulletin();
                 },
               ),
             )
@@ -166,17 +166,17 @@ class _CategoriePaieClientPageState extends State<CategoriePaiePage> {
               child: filteredData.isEmpty
                   ? NoDataPage(
                       data: filteredData,
-                      message: "Aucune catégorie de paie",
+                      message: "Aucune catégorie de bulletin",
                     )
                   : Column(
                       children: [
                         Expanded(
                           child: Container(
                             color: Theme.of(context).colorScheme.surface,
-                            child: CategoriePaieTable(
+                            child: CategorieBulletinTable(
                               categories: getPaginatedData(
                                   data: filteredData, currentPage: currentPage),
-                              refresh: _loadCategoriePaie,
+                              refresh: _loadCategorieBulletin,
                             ),
                           ),
                         ),

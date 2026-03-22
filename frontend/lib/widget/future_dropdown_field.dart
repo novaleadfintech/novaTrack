@@ -176,10 +176,12 @@ class _CustomDropDownFieldState<T> extends State<FutureCustomDropDownField<T>> {
                   },
                 ),
                 asyncItems: (String filter) async {
+                  if (!mounted) return [];
                   setState(() {
                     isLoading = true;
                   });
                   final data = await widget.fetchItems();
+                  if (!mounted) return [];
                   setState(() {
                     items = data;
                     isLoading = false;

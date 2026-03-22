@@ -137,7 +137,7 @@ class _AddCommentPageState extends State<AddCommentPage> {
     try {
       user = await AuthService().decodeToken();
     } catch (err) {
- 
+      if (!mounted) return;
       _dialog.hide();
       MutationRequestContextualBehavior.showPopup(
         status: PopupStatus.serverError,
@@ -160,6 +160,8 @@ class _AddCommentPageState extends State<AddCommentPage> {
       reduction: null,
       tva: null,
     );
+    
+    if (!mounted) return;
     _dialog.hide();
     if (response.status == PopupStatus.success) {
       setState(() {

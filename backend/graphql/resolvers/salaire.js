@@ -14,8 +14,8 @@ const salarieResolvers = {
 
   createSalarie: async ({
     personnelId,
-    categoriePaieId,
-    paieManner,
+    categorieBulletinId,
+    paieClause,
     numeroMatricule,
     periodPaie,
     moyenPaiement,
@@ -27,9 +27,9 @@ const salarieResolvers = {
   }) =>
     await salarieModel.createSalarie({
       personnelId: personnelId,
-      categoriePaieId: categoriePaieId,
+      categorieBulletinId: categorieBulletinId,
       periodPaie: periodPaie,
-      paieManner: paieManner,
+      paieClause: paieClause,
       moyenPaiement: moyenPaiement,
       numeroMatricule: numeroMatricule,
       numeroCompte: numeroCompte,
@@ -42,9 +42,9 @@ const salarieResolvers = {
   updateSalarie: async ({
     key,
     personnelId,
-    categoriePaieId,
+    categorieBulletinId,
     periodPaie,
-    paieManner,
+    paieClause,
     numeroCompte,
     operateur,
     moyenPaiement,
@@ -56,12 +56,12 @@ const salarieResolvers = {
     await salarieModel.updateSalarie({
       key: key,
       personnelId,
-      categoriePaieId,
+      categorieBulletinId,
       periodPaie,
       numeroCompte,
       operateur,
       moyenPaiement,
-      paieManner,
+      paieClause,
       classeId,
       echelonId,
       grilleCategoriePaieId,

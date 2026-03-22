@@ -22,7 +22,7 @@ import sectionBulletinResolvers from "./section_bulletin.js";
 import categorieBulletinResolvers from "./categorie_bulletin.js";
 import moyenPaiementResolvers from "./moyen_paiement.js";
 import salaireResolvers from "./salaire.js";
-import rubriqueCategorieRubrique from "./rubrique_categorie.js";
+import rubriqueCategorieBulletinResolvers from "./rubrique_categorie_bulletin.js";
 import clientFactureGlobalValueResolvers from "./client_facture_global_value.js";
 import posteResolvers from "./poste.js";
 import debtResolvers from "./debt.js";
@@ -59,7 +59,7 @@ const graphQlResolvers = {
   ...categorieBulletinResolvers,
   ...salaireResolvers,
   ...moyenPaiementResolvers,
-  ...rubriqueCategorieRubrique,
+  ...rubriqueCategorieBulletinResolvers,
   ...clientFactureGlobalValueResolvers,
   ...posteResolvers,
   ...debtResolvers,

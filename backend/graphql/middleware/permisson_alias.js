@@ -91,7 +91,7 @@ const PermissionAlias = {
   createPoste: "CREATE_POSTE",
   updatePoste: "EDIT_POSTE",
   readPoste: "READ_POSTE",
-  assignRubriqueCategoriePaie: "ASSIGN_RUBRIQUE_TO_CATEGORIE",
+  assignRubriqueCategoriePaie: "ASSIGN_RUBRIQUE_TO_CATEGORIE_BULLETIN",
 };
 
 export default PermissionAlias;

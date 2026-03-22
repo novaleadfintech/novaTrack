@@ -92,7 +92,7 @@ const permissions = shield(
       //protection pour les requete de l'entreprise
       entreprise: or(
         hasPermission(PermissionAlias.manageEntreprise),
-        hasPermission(PermissionAlias.readEntreprise)
+        hasPermission(PermissionAlias.readEntreprise),
       ),
       //protection pour les requete de facture
       paidFactures: hasPermission(PermissionAlias.readFacture),
@@ -104,7 +104,7 @@ const permissions = shield(
       ligneFactureByFacture: hasPermission(PermissionAlias.readFacture),
       payementFacture: or(
         hasPermission(PermissionAlias.readFacture),
-        hasPermission(PermissionAlias.createFluxFinancier)
+        hasPermission(PermissionAlias.createFluxFinancier),
       ),
       //protection pour les fluxfinancier
       fluxFinanciers: hasPermission(PermissionAlias.readFluxFinancier),
@@ -112,10 +112,10 @@ const permissions = shield(
       fluxFinancier: hasPermission(PermissionAlias.readFluxFinancier),
       unValidatedFluxFinanciers: or(
         hasPermission(PermissionAlias.readFluxFinancier),
-        hasPermission(PermissionAlias.validFluxFinancier)
+        hasPermission(PermissionAlias.validFluxFinancier),
       ),
       fluxFinanciersByBank: hasPermission(
-        PermissionAlias.exportBanqueTransaction
+        PermissionAlias.exportBanqueTransaction,
       ),
       fluxFiancierbyFacture: hasPermission(PermissionAlias.readFluxFinancier),
       yearBilan: isAuthenticated,
@@ -144,8 +144,8 @@ const permissions = shield(
       archiveBulletinsPaie: hasPermission(PermissionAlias.readBulletin),
       bulletinPaie: hasPermission(PermissionAlias.readBulletin),
       // Categorie de paie
-      categoriesPaie: hasPermission(PermissionAlias.readCategoriePaie),
-      categoriePaie: hasPermission(PermissionAlias.readCategoriePaie),
+      // categoriesPaie: hasPermission(PermissionAlias.readCategoriePaie),
+      // categoriePaie: hasPermission(PermissionAlias.readCategoriePaie),
       // Categorie de paie
       categories: hasPermission(PermissionAlias.readCategorieClient),
       categorie: hasPermission(PermissionAlias.readCategorieClient),
@@ -171,13 +171,13 @@ const permissions = shield(
     // Mutations
     Mutation: {
       createLibelleFlux: hasPermission(
-        PermissionAlias.createLibelleFluxFinancier
+        PermissionAlias.createLibelleFluxFinancier,
       ),
       updateLibelleFlux: hasPermission(
-        PermissionAlias.updateLibelleFluxFinancier
+        PermissionAlias.updateLibelleFluxFinancier,
       ),
       deleteLibelleFlux: hasPermission(
-        PermissionAlias.deleteLibelleFluxFinancier
+        PermissionAlias.deleteLibelleFluxFinancier,
       ),
       createService: hasPermission(PermissionAlias.createService),
       updateService: hasPermission(PermissionAlias.updateService),
@@ -186,7 +186,7 @@ const permissions = shield(
 
       //Mutation de user
       attribuerRolePersonnel: hasPermission(
-        PermissionAlias.assignRolePersonnel
+        PermissionAlias.assignRolePersonnel,
       ),
       handleRoleEditing: hasPermission(PermissionAlias.handleRoleEditing),
       attribuerRoleUser: hasPermission(PermissionAlias.assignRolePersonnel),
@@ -225,7 +225,7 @@ const permissions = shield(
       // deleteAllByFacture: hasPermission(PermissionAlias.updateFacture),
       updateFactureAccompte: or(
         hasPermission(PermissionAlias.updateFactureAfterSend),
-        hasPermission(PermissionAlias.exonorerFacturePenalty)
+        hasPermission(PermissionAlias.exonorerFacturePenalty),
       ),
       deleteFacture: hasPermission(PermissionAlias.deleteFacture),
       stopperService: hasPermission(PermissionAlias.stopperService),
@@ -238,13 +238,13 @@ const permissions = shield(
       validFluxFinancier: hasPermission(PermissionAlias.validFluxFinancier),
       // Mutation de libelle financier
       createLibelleFlux: hasPermission(
-        PermissionAlias.createLibelleFluxFinancier
+        PermissionAlias.createLibelleFluxFinancier,
       ),
       updateLibelleFlux: hasPermission(
-        PermissionAlias.updateLibelleFluxFinancier
+        PermissionAlias.updateLibelleFluxFinancier,
       ),
       deleteLibelleFlux: hasPermission(
-        PermissionAlias.deleteLibelleFluxFinancier
+        PermissionAlias.deleteLibelleFluxFinancier,
       ),
       // Mutation de proforma
       updateLigneProforma: hasPermission(PermissionAlias.updateProforma),
@@ -270,24 +270,39 @@ const permissions = shield(
       deleteRole: hasPermission(PermissionAlias.createRole),
       updateRole: hasPermission(PermissionAlias.createRole),
       retirerPermissionRole: hasPermission(
-        PermissionAlias.assignPermissionRole
+        PermissionAlias.assignPermissionRole,
       ),
       attribuerPermissionRole: hasPermission(
-        PermissionAlias.assignPermissionRole
+        PermissionAlias.assignPermissionRole,
       ),
       roleByUser: or(
         hasPermission(PermissionAlias.assignRolePersonnel),
-        hasPermission(PermissionAlias.assignPermissionRole)
+        hasPermission(PermissionAlias.assignPermissionRole),
       ),
 
       // Mutation de bulletin
       createBulletinPaie: hasPermission(PermissionAlias.createBulletin),
       updateBulletinPaie: hasPermission(PermissionAlias.updateBulletin),
       validerBulletin: hasPermission(PermissionAlias.validBulletin),
+      // Mutation de categorie de bulletin
+      createCategorieBulletin: hasPermission(
+        PermissionAlias.createCategorieBulletin,
+      ),
+      updateCategorieBulletin: hasPermission(
+        PermissionAlias.updateCategorieBulletin,
+      ),
+      deleteCategorieBulletin: hasPermission(
+        PermissionAlias.deleteCategorieBulletin,
+      ),
+
       // Mutation de categorie de paie
       createCategoriePaie: hasPermission(PermissionAlias.createCategoriePaie),
-      updateCategoriePaie: hasPermission(PermissionAlias.updateCategoriePaie),
-      deleteCategoriePaie: hasPermission(PermissionAlias.deleteCategoriePaie),
+      updateCategoriePaie: hasPermission(
+        PermissionAlias.updateCategorieBulletin,
+      ),
+      deleteCategorieBulletin: hasPermission(
+        PermissionAlias.deleteCategorieBulletin,
+      ),
       // Mutation de categorie de client
       createCategorie: hasPermission(PermissionAlias.createCategorieClient),
       updateCategorie: hasPermission(PermissionAlias.updateCategorieClient),
@@ -298,20 +313,20 @@ const permissions = shield(
       deleteMoyenPaiement: hasPermission(PermissionAlias.deleteMoyenPaiement),
       // Mutation de section de bulletin
       createSectionBulletin: hasPermission(
-        PermissionAlias.createBulletinSection
+        PermissionAlias.createBulletinSection,
       ),
       updateSectionBulletin: hasPermission(
-        PermissionAlias.updateBulletinSection
+        PermissionAlias.updateBulletinSection,
       ),
       deleteSectionBulletin: hasPermission(
-        PermissionAlias.deleteBulletinSection
+        PermissionAlias.deleteBulletinSection,
       ),
       //Rubrique
       createRubriqueBulletin: hasPermission(
-        PermissionAlias.createBulletinRubrique
+        PermissionAlias.createBulletinRubrique,
       ),
       updateRubriqueBulletin: hasPermission(
-        PermissionAlias.updateBulletinRubrique
+        PermissionAlias.updateBulletinRubrique,
       ),
       // salarie
       createSalarie: hasPermission(PermissionAlias.createSalarie),
@@ -324,7 +339,7 @@ const permissions = shield(
   {
     debug: true,
     allowExternalErrors: true,
-  }
+  },
 );
 
 export default permissions;

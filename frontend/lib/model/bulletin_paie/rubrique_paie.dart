@@ -11,7 +11,6 @@ class RubriqueOnBulletinModel {
   });
 
   factory RubriqueOnBulletinModel.fromJson(Map<String, dynamic> json) {
-    
     return RubriqueOnBulletinModel(
       rubrique: RubriqueBulletin.fromJson(json['rubrique']),
       value: json['value'] == null ? null : (json['value'] as num).toDouble(),
@@ -27,25 +26,26 @@ class RubriqueOnBulletinModel {
 }
 
 class RubriquePaieConfig {
-  final RubriqueOnBulletinModel rubriquePaie;
+  final RubriqueOnBulletinModel rubriqueOnBulletin;
   bool isChecked;
 
   RubriquePaieConfig({
-    required this.rubriquePaie,
+    required this.rubriqueOnBulletin,
     required this.isChecked,
   });
 
   factory RubriquePaieConfig.fromJson(Map<String, dynamic> json) {
     return RubriquePaieConfig(
-      rubriquePaie: RubriqueOnBulletinModel.fromJson(json['rubriqueCategorie']),
+      rubriqueOnBulletin:
+          RubriqueOnBulletinModel.fromJson(json['rubriqueOnBulletin']),
       isChecked: json['isChecked'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'rubriqueCategorie': rubriquePaie.toJson(),
-      'isCheck': isChecked,
+      'rubriqueOnBulletin': rubriqueOnBulletin.toJson(),
+      'isChecked': isChecked,
     };
   }
 }

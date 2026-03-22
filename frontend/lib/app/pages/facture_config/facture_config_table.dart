@@ -39,10 +39,10 @@ class _InputTableState extends State<FactureConfigTable> {
     role = await AuthService().getRole();
   }
 
-  // detailCategorieRubrique({required ClientFactureGlobaLValueModel clientFactureGlobaLValue}) {
+  // detailCategorieBulletinRubrique({required ClientFactureGlobaLValueModel clientFactureGlobaLValue}) {
   //   showDetailDialog(
   //     context,
-  //     content: DetailCategorieRubriquePage(
+  //     content: DetailCategorieBulletinRubriquePage(
   //       clientFactureGlobaLValue: clientFactureGlobaLValue,
   //     ),
   //     title: "Détail de moyen de paiement",

@@ -1,29 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/app/pages/configure_page_dialog.dart';
+import 'package:frontend/model/bulletin_paie/categorie_bulletin.dart';
 import 'package:frontend/style/app_color.dart';
 import '../../../../global/constant/permission_alias.dart';
 import '../../../../helper/user_helper.dart';
-import '../../../../model/bulletin_paie/categorie_paie.dart';
 import '../../../../style/app_style.dart';
 import '../../../../widget/table_body_middle.dart';
 import '../../../../auth/authentification_token.dart';
 import '../../../../model/habilitation/role_model.dart';
 import 'rubrique_categorie_config_page.dart';
  
-class CategorieRubriqueTable extends StatefulWidget {
-  final List<CategoriePaieModel> categories;
+class CategorieBulletinRubriqueTable extends StatefulWidget {
+  final List<CategorieBulletinModel> categoriesBulletin;
   final Future<void> Function() refresh;
-  const CategorieRubriqueTable({
+  const CategorieBulletinRubriqueTable({
     super.key,
-    required this.categories,
+    required this.categoriesBulletin,
     required this.refresh,
   });
 
   @override
-  State<CategorieRubriqueTable> createState() => _InputTableState();
+  State<CategorieBulletinRubriqueTable> createState() => _InputTableState();
 }
 
-class _InputTableState extends State<CategorieRubriqueTable> {
+class _InputTableState extends State<CategorieBulletinRubriqueTable> {
   late RoleModel role;
   late Future<void> _futureRoles;
 
@@ -37,10 +37,10 @@ class _InputTableState extends State<CategorieRubriqueTable> {
     role = await AuthService().getRole();
   }
 
-  // detailCategorieRubrique({required CategoriePaieModel categorie}) {
+  // detailCategorieBulletinRubrique({required CategoriePaieModel categorie}) {
   //   showDetailDialog(
   //     context,
-  //     content: DetailCategorieRubriquePage(
+  //     content: DetailCategorieBulletinRubriquePage(
   //       categorie: categorie,
   //     ),
   //     title: "Détail de moyen de paiement",
@@ -74,17 +74,18 @@ class _InputTableState extends State<CategorieRubriqueTable> {
                 1: const IntrinsicColumnWidth()
               },
               children: [
-                ...widget.categories.map(
-                  (categorie) => TableRow(
+                ...widget.categoriesBulletin.map(
+                  (categorieBulletin) => TableRow(
                     decoration: tableDecoration(context),
                     children: [
                       TableBodyMiddle(
-                        valeur: categorie.categoriePaie,
+                        valeur: categorieBulletin.categorieBulletin,
                       ),
                       if (hasPermission(
                         role: role,
                         permission:
-                            PermissionAlias.assignRubriqueCategoriePaie.label,
+                            PermissionAlias
+                            .assignRubriqueCategorieBulletin.label,
                       ))
                       Padding(
                         padding: const EdgeInsets.only(top: 4.0),
@@ -93,10 +94,10 @@ class _InputTableState extends State<CategorieRubriqueTable> {
                             showResponsiveConfigPageDialogBox(
                               context,
                               content: RubriqueCategorieConfigPage(
-                                categoriePaie: categorie,
+                                  categorieBulletin: categorieBulletin,
                               ),
                               title:
-                                  "Configuration des catégories de paie - ${categorie.categoriePaie}",
+                                    "Configuration des catégories de paie - ${categorieBulletin.categorieBulletin}",
                             );
                           },
                           icon: Icon(

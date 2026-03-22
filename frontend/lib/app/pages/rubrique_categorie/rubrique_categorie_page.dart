@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/helper/paginate_data.dart';
+import 'package:frontend/model/bulletin_paie/categorie_bulletin.dart';
+import 'package:frontend/service/categorie_bulletin_service.dart';
 import 'package:gap/gap.dart';
 import '../../../../global/global_value.dart';
-import '../../../../model/bulletin_paie/categorie_paie.dart';
-import '../../../../service/categorie_paie_service.dart';
-import '../../../../widget/pagination.dart';
+ import '../../../../widget/pagination.dart';
 import '../../../../widget/research_bar.dart';
  import '../../../../auth/authentification_token.dart';
 import '../../../../model/habilitation/role_model.dart';
@@ -24,7 +24,7 @@ class RubriqueCategoriePaie extends StatefulWidget {
 class _CategoriePaieClientPageState extends State<RubriqueCategoriePaie> {
   final TextEditingController _researchController = TextEditingController();
   int currentPage = GlobalValue.currentPage;
-  List<CategoriePaieModel> categoriePaieData = [];
+  List<CategorieBulletinModel> categorieBulletinData = [];
   bool isLoading = true;
   bool hasError = false;
   String searchQuery = "";
@@ -37,7 +37,7 @@ class _CategoriePaieClientPageState extends State<RubriqueCategoriePaie> {
     super.initState();
     _researchController.addListener(_onSearchChanged);
     _futureRoles = getRole();
-    _loadCategoriePaie();
+    _loadCategorieBulletin();
   }
 
   Future<void> getRole() async {
@@ -50,9 +50,10 @@ class _CategoriePaieClientPageState extends State<RubriqueCategoriePaie> {
     });
   }
 
-  Future<void> _loadCategoriePaie() async {
+  Future<void> _loadCategorieBulletin() async {
     try {
-      categoriePaieData = await CategoriePaieService.getPaieCategories();
+      categorieBulletinData =
+          await CategorieBulletinService.getCategoriesBulletin();
     } catch (error) {
       setState(() {
         errorMessage = error.toString();
@@ -66,9 +67,9 @@ class _CategoriePaieClientPageState extends State<RubriqueCategoriePaie> {
     });
   }
 
-  List<CategoriePaieModel> filterCategoriePaieClient() {
-    return categoriePaieData.where((categoriePaie) {
-      return categoriePaie.categoriePaie
+  List<CategorieBulletinModel> filterCategorieBulletin() {
+    return categorieBulletinData.where((categorieBulletin) {
+      return categorieBulletin.categorieBulletin
           .toLowerCase()
           .contains(searchQuery.toLowerCase().trim());
     }).toList();
@@ -82,7 +83,7 @@ class _CategoriePaieClientPageState extends State<RubriqueCategoriePaie> {
 
   @override
   Widget build(BuildContext context) {
-    List<CategoriePaieModel> filteredData = filterCategoriePaieClient();
+    List<CategorieBulletinModel> filteredData = filterCategorieBulletin();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8).copyWith(top: 4),
@@ -130,7 +131,7 @@ class _CategoriePaieClientPageState extends State<RubriqueCategoriePaie> {
                     isLoading = true;
                     hasError = false;
                   });
-                  await _loadCategoriePaie();
+                  await _loadCategorieBulletin();
                 },
               ),
             )
@@ -139,17 +140,17 @@ class _CategoriePaieClientPageState extends State<RubriqueCategoriePaie> {
               child: filteredData.isEmpty
                   ? NoDataPage(
                       data: filteredData,
-                      message: "Aucune catégorie de paie",
+                      message: "Aucune catégorie de bulletin trouvée.",
                     )
                   : Column(
                       children: [
                         Expanded(
                           child: Container(
                             color: Theme.of(context).colorScheme.surface,
-                            child: CategorieRubriqueTable(
-                              categories: getPaginatedData(
+                            child: CategorieBulletinRubriqueTable(
+                              categoriesBulletin: getPaginatedData(
                                   data: filteredData, currentPage: currentPage),
-                              refresh: _loadCategoriePaie,
+                              refresh: _loadCategorieBulletin,
                             ),
                           ),
                         ),

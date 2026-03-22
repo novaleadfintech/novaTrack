@@ -29,7 +29,7 @@ class Decouverte {
 
   async initializeCollections() {
     if (!(await decouverteCollection.exists())) {
-      decouverteCollection.create();
+     await decouverteCollection.create();
     }
   }
   getAllDecouvertes = async ({ perPage, skip }) => {

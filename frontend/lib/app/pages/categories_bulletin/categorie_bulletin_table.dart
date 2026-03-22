@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:frontend/app/pages/categories_bulletin/edit_categorie_bulletin.dart';
 import '../../../global/constant/permission_alias.dart';
 import '../../../helper/user_helper.dart';
-import '../../../model/bulletin_paie/categorie_paie.dart';
+import '../../../model/bulletin_paie/categorie_bulletin.dart';
 import '../../../model/request_response.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
-import '../../../service/categorie_paie_service.dart';
+import '../../../service/categorie_bulletin_service.dart';
 import '../../../widget/confirmation_dialog_box.dart';
 import '../../integration/popop_status.dart';
 import '../../integration/request_frot_behavior.dart';
@@ -20,22 +20,22 @@ import '../../../widget/table_body_middle.dart';
 import '../../../widget/table_header.dart';
 import '../../../auth/authentification_token.dart';
 import '../../../model/habilitation/role_model.dart';
- import 'detail_categorie_bulletin.dart';
+import 'detail_categorie_bulletin.dart';
 
-class CategoriePaieTable extends StatefulWidget {
-  final List<CategoriePaieModel> categories;
+class CategorieBulletinTable extends StatefulWidget {
+  final List<CategorieBulletinModel> categories;
   final Future<void> Function() refresh;
-  const CategoriePaieTable({
+  const CategorieBulletinTable({
     super.key,
     required this.categories,
     required this.refresh,
   });
 
   @override
-  State<CategoriePaieTable> createState() => _InputTableState();
+  State<CategorieBulletinTable> createState() => _CategorieBulletinTableState();
 }
 
-class _InputTableState extends State<CategoriePaieTable> {
+class _CategorieBulletinTableState extends State<CategorieBulletinTable> {
   late SimpleFontelicoProgressDialog _dialog;
   late RoleModel role;
   late Future<void> _futureRoles;
@@ -51,36 +51,36 @@ class _InputTableState extends State<CategoriePaieTable> {
     role = await AuthService().getRole();
   }
 
-  editCategoriePaie({
-    required CategoriePaieModel categorie,
+  editCategorieBulletin({
+    required CategorieBulletinModel categorieBulletin,
   }) {
     showResponsiveDialog(
       context,
-      content: EditCategoriePaiePage(
-        categorie: categorie,
+      content: EditCategorieBulletinPage(
+        categorieBulletin: categorieBulletin,
         refresh: widget.refresh,
       ),
-      title: "Modifier une catégorie de paie",
+      title: "Modifier une catégorie de bulletin",
     );
   }
 
-  detailCategoriePaie({required CategoriePaieModel categorie}) {
+  detailCategorieBulletin({required CategorieBulletinModel categorieBulletin}) {
     showDetailDialog(
       context,
-      content: DetailCategoriePaiePage(
-        categorie: categorie,
+      content: DetailCategorieBulletinPage(
+        categorieBulletin: categorieBulletin,
       ),
-      title: "Détail de moyen de paiement",
+      title: "Détail de catégorie de bulletin",
     );
   }
 
-  Future<void> deleteCategoriePaie({
-    required CategoriePaieModel categorie,
+  Future<void> deleteCategorieBulletin({
+    required CategorieBulletinModel categorieBulletin,
   }) async {
     bool confirmed = await handleOperationButtonPress(
       context,
       content:
-          "Voulez-vous vraiment supprimer le moyen de paiement \"${categorie.categoriePaie}\"?",
+          "Voulez-vous vraiment supprimer la catégorie de bulletin \"${categorieBulletin.categorieBulletin}\"?",
     );
     if (confirmed) {
       _dialog.show(
@@ -89,14 +89,14 @@ class _InputTableState extends State<CategoriePaieTable> {
         backgroundColor: Colors.transparent,
       );
 
-      RequestResponse result = await CategoriePaieService.deleteCategoriePaie(
-        key: categorie.id,
+      RequestResponse result = await CategorieBulletinService.deleteCategorieBulletin(
+        key: categorieBulletin.id,
       );
       _dialog.hide();
       if (result.status == PopupStatus.success) {
         MutationRequestContextualBehavior.showPopup(
           status: PopupStatus.success,
-          customMessage: "Le categorie a été supprimé avec succcès",
+          customMessage: "La catégorie a été supprimée avec succès",
         );
         await widget.refresh();
       } else {
@@ -148,44 +148,44 @@ class _InputTableState extends State<CategoriePaieTable> {
               },
               children: [
                 ...widget.categories.map(
-                  (categorie) => TableRow(
+                  (categorieBulletin) => TableRow(
                     decoration: tableDecoration(context),
                     children: [
                       TableBodyMiddle(
-                        valeur: categorie.categoriePaie,
+                        valeur: categorieBulletin.categorieBulletin,
                       ),
                       TableBodyLast(
                         items: [
                           (
                             label: Constant.detail,
                             onTap: () {
-                              detailCategoriePaie(categorie: categorie);
+                              detailCategorieBulletin(categorieBulletin: categorieBulletin);
                             },
-                            color: null, // couleur null
+                            color: null,
                           ),
                           if (hasPermission(
                             role: role,
                             permission: PermissionAlias
-                                .updateCategoriePaie.label,
+                                .updateCategorieBulletin.label,
                           ))
                             (
                               label: Constant.edit,
                               onTap: () {
-                                editCategoriePaie(categorie: categorie);
+                                editCategorieBulletin(categorieBulletin: categorieBulletin);
                               },
-                              color: null, // couleur null
+                              color: null,
                             ),
                           if (hasPermission(
                             role: role,
                             permission: PermissionAlias
-                                .deleteCategoriePaie.label,
+                                .deleteCategorieBulletin.label,
                           ))
                             (
                               label: Constant.delete,
                               onTap: () {
-                                deleteCategoriePaie(categorie: categorie);
+                                deleteCategorieBulletin(categorieBulletin: categorieBulletin);
                               },
-                              color: null, // couleur null
+                              color: null,
                             ),
                         ],
                       )

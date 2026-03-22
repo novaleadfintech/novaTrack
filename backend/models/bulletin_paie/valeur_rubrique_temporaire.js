@@ -10,7 +10,7 @@ class valeurRubriqueTemporaire {
 
   async initializeCollections() {
     if (!(await variablePaieCollection.exists())) {
-      variablePaieCollection.create();
+     await variablePaieCollection.create();
     }
   }
 

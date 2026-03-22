@@ -2,7 +2,7 @@ const typeDef = `#graphql
     type Salarie{
         _id:ID!
         personnel: Personnel!
-        categoriePaie: CategoriePaie!
+        categorieBulletin: CategorieBulletin
         classe: Classe
         numeroMatricule: String
         echelon: Echelon
@@ -12,7 +12,8 @@ const typeDef = `#graphql
         numeroCompte: String
         periodPaie: Float
         moyenPaiement: MoyenPaiement
-        paieManner: PaieManner
+        # paieManner: PaieManner
+        paieClause: PaieClause!
         fullCount: Int
     }
 
@@ -26,6 +27,13 @@ const typeDef = `#graphql
         termeEchu
         finPeriod
     }
+
+    enum PaieClause{
+        forfaitMensuel
+        Journalier
+        horaire
+        grille
+    }
 `;
 
 const query = `#graphql
@@ -36,11 +44,12 @@ const query = `#graphql
 const mutation = `#graphql
         createSalarie(
             personnelId: String!
-            categoriePaieId: String!
+            categorieBulletinId: String!
             periodPaie: Float
-            paieManner: PaieManner!
+            # paieManner: PaieManner!
             numeroMatricule: String!
             classeId: String!
+            paieClause: PaieClause!
             operateur: OperateurInput!
             numeroCompte: String
             moyenPaiement: MoyenPaiementInput!
@@ -51,7 +60,7 @@ const mutation = `#graphql
         updateSalarie(
             key:ID!
             personnelId: String
-            categoriePaieId: String
+            categorieBulletinId: String
             periodPaie: Float
             numeroMatricule: String
             classeId: String
@@ -60,7 +69,7 @@ const mutation = `#graphql
             echelonId: String
             grilleCategoriePaieId: String
             moyenPaiement: MoyenPaiementInput
-            paieManner: PaieManner
+            paieClause: PaieClause
         ):String!,
 `;
 
