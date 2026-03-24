@@ -90,8 +90,9 @@ class _PersonnelTableState extends State<PersonnelTable> {
       );
       var result = isArchived
           ? await PersonnelService.unArchivedPersonnel(
-              personnelId: personnel.id)
-          : await PersonnelService.archivedPersonnel(personnelId: personnel.id);
+              personnelKey: personnel.key)
+          : await PersonnelService.archivedPersonnel(
+              personnelKey: personnel.key);
       _dialog.hide();
       if (result.status == PopupStatus.success) {
         MutationRequestContextualBehavior.showPopup(
@@ -190,7 +191,7 @@ class _PersonnelTableState extends State<PersonnelTable> {
                     },
                     children: widget.paginatedPersonnelData.map((personnel) {
                       bool isCurrentUser =
-                          personnel.id == currentUser!.personnel!.id;
+                          personnel.key == currentUser!.personnel!.key;
                       return TableRow(
                         decoration: tableDecoration(context),
                         children: [
@@ -247,7 +248,7 @@ class _PersonnelTableState extends State<PersonnelTable> {
                     },
                     children: widget.paginatedPersonnelData.map((personnel) {
                       bool isCurrentUser =
-                          personnel.id == currentUser!.personnel!.id;
+                          personnel.key == currentUser!.personnel!.key;
                       return TableRow(
                         decoration: tableDecoration(context),
                         children: [

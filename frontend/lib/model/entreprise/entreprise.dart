@@ -1,7 +1,7 @@
 import 'package:frontend/model/pays_model.dart';
 
 class Entreprise {
-  final String? id;
+  final String? key;
   final String? raisonSociale;
   final String? logo;
   final String? adresse;
@@ -14,7 +14,7 @@ class Entreprise {
   final PaysModel? pays;
 
   Entreprise({
-    required this.id,
+    required this.key,
     required this.raisonSociale,
     required this.logo,
     required this.adresse,
@@ -30,7 +30,7 @@ class Entreprise {
   // Convertir l'objet en JSON
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      'key': key,
       'raisonSociale': raisonSociale,
       'logo': logo,
       'adresse': adresse,
@@ -46,7 +46,7 @@ class Entreprise {
 
   factory Entreprise.fromJson(Map<String, dynamic> json) {
     return Entreprise(
-        id: json["_id"],
+        key: json["_key"],
         raisonSociale: json['raisonSociale'],
         logo: json['logo'],
         adresse: json['adresse'],
@@ -61,7 +61,7 @@ class Entreprise {
 }
 
 class StrictEntreprise {
-  final String id;
+  final String key;
   final String raisonSociale;
   final String logo;
   final String adresse;
@@ -73,7 +73,7 @@ class StrictEntreprise {
   final PaysModel pays;
 
   StrictEntreprise({
-    required this.id,
+    required this.key,
     required this.raisonSociale,
     required this.logo,
     required this.adresse,
@@ -88,7 +88,7 @@ class StrictEntreprise {
   // Convertir en JSON
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      'key': key,
       'raisonSociale': raisonSociale,
       'logo': logo,
       'adresse': adresse,
@@ -103,7 +103,7 @@ class StrictEntreprise {
 
   factory StrictEntreprise.fromJson(Map<String, dynamic> json) {
     return StrictEntreprise(
-      id: json["_id"],
+      key: json["_key"],
       raisonSociale: json['raisonSociale'],
       logo: json['logo'],
       adresse: json['adresse'],

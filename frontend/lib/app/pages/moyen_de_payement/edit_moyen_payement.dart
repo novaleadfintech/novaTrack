@@ -97,7 +97,7 @@ class _EditMoyenPayementState extends State<EditMoyenPayement> {
     );
 
     var result = await MoyenPaiementService.updateMoyenPaiement(
-      key: widget.moyenPaiement.id,
+      key: widget.moyenPaiement.key,
       libelle: capitalizeFirstLetter(word: _libelleController.text.toLowerCase()),
       type: type,
     );

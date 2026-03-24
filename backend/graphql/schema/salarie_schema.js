@@ -1,12 +1,12 @@
 const typeDef = `#graphql
     type Salarie{
-        _id:ID!
+        _keyy:ID!
         personnel: Personnel!
-        categorieBulletin: CategorieBulletin
+        bulletinCategorie: BulletinCategorie
         classe: Classe
         numeroMatricule: String
         echelon: Echelon
-        grilleCategoriePaie: CategoriePaieGrille
+        grillepaieCategorie: paieCategorieGrille
         dateEnregistrement: Float!
         operateur: Operateur
         numeroCompte: String
@@ -43,31 +43,31 @@ const query = `#graphql
 
 const mutation = `#graphql
         createSalarie(
-            personnelId: String!
-            categorieBulletinId: String!
+            personnelKey: String!
+            bulletinCategorieKey: String!
             periodPaie: Float
             # paieManner: PaieManner!
             numeroMatricule: String!
-            classeId: String!
+            classeKey: String!
             paieClause: PaieClause!
             operateur: OperateurInput!
             numeroCompte: String
             moyenPaiement: MoyenPaiementInput!
-            echelonId: String!
-            grilleCategoriePaieId: String!
+            echelonKey: String!
+            grillepaieCategorieKey: String!
         ):String!,
 
         updateSalarie(
             key:ID!
-            personnelId: String
-            categorieBulletinId: String
+            personnelKey: String
+            bulletinCategorieKey: String
             periodPaie: Float
             numeroMatricule: String
-            classeId: String
+            classeKey: String
             operateur: OperateurInput
             numeroCompte: String
-            echelonId: String
-            grilleCategoriePaieId: String
+            echelonKey: String
+            grillepaieCategorieKey: String
             moyenPaiement: MoyenPaiementInput
             paieClause: PaieClause
         ):String!,

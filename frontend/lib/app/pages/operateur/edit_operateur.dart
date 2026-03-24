@@ -78,7 +78,7 @@ class _EditOperateurState extends State<EditOperateur> {
     );
 
     var result = await OperateurService.updateOperateur(
-      key: widget.operateur.id,
+      key: widget.operateur.key,
       libelle:
           capitalizeFirstLetter(word: _libelleController.text.toLowerCase()),
     );

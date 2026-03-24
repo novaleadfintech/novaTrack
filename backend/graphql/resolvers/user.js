@@ -12,11 +12,11 @@ const userResolvers = {
   user: async ({ key }) => await userModel.getUser({ key: key }),
 
   //attribuer un role à un personnel
-  attribuerRolePersonnel: async ({ personnelId, roleId, createBy }) =>
+  attribuerRolePersonnel: async ({ personnelKey, roleKey, createBy }) =>
     await userModel.attribuerRolePersonnel({
-      personnelId: personnelId,
-      roleId: roleId,
-      userId: createBy,
+      personnelKey: personnelKey,
+      roleKey: roleKey,
+      userKey: createBy,
     }),
 
   updateLoginData: async ({ key, login, password, oldPassword }) =>
@@ -33,21 +33,21 @@ const userResolvers = {
   access: async ({ key, canLogin }) =>
     await userModel.access({ key: key, canLogin: canLogin }),
 
-  attribuerRoleUser: async ({ key, roleId }) =>
-    await userModel.attribuerRoleUser({ key: key, roleId: roleId }),
+  attribuerRoleUser: async ({ key, roleKey }) =>
+    await userModel.attribuerRoleUser({ key: key, roleKey: roleKey }),
 
-  retirerRoleUser: async ({ key, roleId }) =>
-    await userModel.retirerRoleUser({ key: key, roleId: roleId }),
+  retirerRoleUser: async ({ key, roleKey }) =>
+    await userModel.retirerRoleUser({ key: key, roleKey: roleKey }),
 
   seConnecter: async ({ login, password }) => {
     return await userModel.seConnecter({ login: login, password: password });
   },
 
-  handleRoleEditing: async ({ userRoleId, roleAuthorization, authorizer }) =>
+  handleRoleEditing: async ({ userRoleKey, roleAuthorization, authorizer }) =>
     await userModel.handleRoleEditing({
-      userRoleId: userRoleId,
+      userRoleKey: userRoleKey,
       decision: roleAuthorization,
-      userId: authorizer,
+      userKey: authorizer,
     }),
 
   seDeconnecter: async ({ key }) => await userModel.seDeconnecter({ key: key }),

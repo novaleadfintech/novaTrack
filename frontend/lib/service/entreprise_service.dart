@@ -17,7 +17,7 @@ class EntrepriseService {
     const String query = '''
     query Entreprise {
     entreprise {
-        _id
+        _key
         logo
         adresse
         email
@@ -27,7 +27,7 @@ class EntrepriseService {
         tamponSignature
         nomDG
         pays {
-            _id
+            _key
             name
             code
         }
@@ -68,7 +68,7 @@ class EntrepriseService {
     const String query = '''
     query Entreprise {
     entreprise {
-        _id
+        _key
         logo
         adresse
         email
@@ -78,7 +78,7 @@ class EntrepriseService {
         tamponSignature
         nomDG
         pays {
-            _id
+            _key
             name
             initiauxPays
             code
@@ -105,7 +105,7 @@ class EntrepriseService {
           return Entreprise.fromJson(data);
         } else {
           return Entreprise(
-            id: null,
+            key: null,
             raisonSociale: null,
             logo: null,
             ville: null,
@@ -198,7 +198,7 @@ class EntrepriseService {
         body += 'raisonSociale: "$raisonSociale",';
       }
       if (pays != null) {
-        body += 'pays: "${pays.id!}",';
+        body += 'pays: "${pays.key!}",';
       }
       if (valeurIndiciaire != null) {
         body += 'valeurIndiciaire: $valeurIndiciaire,';

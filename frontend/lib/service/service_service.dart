@@ -18,7 +18,7 @@ class ServiceService {
     var body = '''
                 query Services {
                   services(etat: archived) {
-                    _id
+                    _key
                     libelle
                     tarif {
                         minQuantity
@@ -28,7 +28,7 @@ class ServiceService {
                     nature
                     prix
                     country {
-                        _id
+                        _key
                         name
                         code
                       }
@@ -77,7 +77,7 @@ class ServiceService {
     var body = '''
                 query Services {
                   services(etat: unarchived) {
-                    _id
+                    _key
                     libelle
                     tarif {
                         minQuantity
@@ -86,7 +86,7 @@ class ServiceService {
                     }
                     prix
                     country {
-                        _id
+                        _key
                         name
                         code
                       }
@@ -210,7 +210,7 @@ class ServiceService {
   }
 
   static Future<RequestResponse> updateService({
-    required String serviceId,
+    required String serviceKey,
     required String? libelle,
     required double? prix,
     required List<ServiceTarifModel>? tarif,
@@ -222,7 +222,7 @@ class ServiceService {
     var body = '''
         mutation UpdateService {
           updateService(
-            key: "$serviceId",
+            key: "$serviceKey",
     ''';
 
     if (libelle != null) {
@@ -298,11 +298,11 @@ class ServiceService {
   }
 
   static Future<RequestResponse> archivedService({
-    required String serviceId,
+    required String serviceKey,
   }) async {
     var body = '''
     mutation ArchivedService {
-      archivedService(key: "$serviceId")
+      archivedService(key: "$serviceKey")
     }
   ''';
 
@@ -349,11 +349,11 @@ class ServiceService {
   }
 
   static Future<RequestResponse> unarchivedService({
-    required String serviceId,
+    required String serviceKey,
   }) async {
     var body = '''
       mutation UnarchivedService {
-        unarchivedService(key: "$serviceId")
+        unarchivedService(key: "$serviceKey")
     }
   ''';
 

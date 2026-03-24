@@ -3,7 +3,7 @@ import '../habilitation/user_model.dart';
 import './type_flux_financier.dart';
 
 class DebtModel {
-  final String id;
+  final String key;
   final String libelle;
   final String? referenceFacture;
   final ClientModel? client;
@@ -17,7 +17,7 @@ class DebtModel {
   final UserModel? user;
 
   DebtModel({
-    required this.id,
+    required this.key,
     required this.libelle,
     required this.montant,
     required this.client,
@@ -33,7 +33,7 @@ class DebtModel {
 
   factory DebtModel.fromJson(Map<String, dynamic> json) {
     return DebtModel(
-      id: json['_id'] as String,
+      key: json['_key'] as String,
       libelle: json['libelle'] as String,
       referenceFacture: json['referenceFacture'] as String?,
       status:
@@ -56,7 +56,7 @@ class DebtModel {
 
   Map<String, dynamic> toJson() {
     return {
-      '_id': id,
+      '_key': key,
       'libelle': libelle,
       'montant': montant,
       'dateEnregistrement': dateEnregistrement?.millisecondsSinceEpoch,

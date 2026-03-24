@@ -5,7 +5,7 @@ import '../moyen_paiement_model.dart';
 import 'etat_bulletin.dart';
 
 class DecouverteModel {
-  final String id;
+  final String key;
   final String justification;
   final double montant;
   final DateTime dateEnregistrement;
@@ -18,7 +18,7 @@ class DecouverteModel {
   final SalarieModel salarie;
 
   DecouverteModel({
-    required this.id,
+    required this.key,
     required this.justification,
     required this.montant,
     required this.dateEnregistrement,
@@ -33,7 +33,7 @@ class DecouverteModel {
 
   factory DecouverteModel.fromJson(Map<String, dynamic> json) {
     return DecouverteModel(
-      id: json["_id"],
+      key: json["_key"],
       justification: json['justification'],
       montant: (json["montant"] as num).toDouble(),
       dateEnregistrement: DateTime.fromMillisecondsSinceEpoch(
@@ -54,7 +54,7 @@ class DecouverteModel {
 
   Map<String, dynamic> toJson() {
     return {
-      "_id": id,
+      "_key": key,
       "justification": justification,
       "montant": montant,
       "dateEnregistrement": dateEnregistrement.millisecondsSinceEpoch,

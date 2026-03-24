@@ -19,7 +19,7 @@ class RubriqueOnBulletinModel {
 
   Map<String, dynamic> toJson() {
     return {
-      'rubriqueId': "\"${rubrique.id}\"",
+      'rubriqueKey': "\"${rubrique.key}\"",
       'value': value,
     };
   }

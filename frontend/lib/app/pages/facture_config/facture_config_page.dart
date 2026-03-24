@@ -18,10 +18,10 @@ class FactureConfigPage extends StatefulWidget {
   });
 
   @override
-  State<FactureConfigPage> createState() => _CategoriePaieClientPageState();
+  State<FactureConfigPage> createState() => _paieCategorieClientPageState();
 }
 
-class _CategoriePaieClientPageState extends State<FactureConfigPage> {
+class _paieCategorieClientPageState extends State<FactureConfigPage> {
   final TextEditingController _researchController = TextEditingController();
   int currentPage = GlobalValue.currentPage;
   List<ClientFactureGlobaLValueModel> clientFactureGlobalValueDate = [];
@@ -37,7 +37,7 @@ class _CategoriePaieClientPageState extends State<FactureConfigPage> {
     super.initState();
     _researchController.addListener(_onSearchChanged);
     _futureRoles = getRole();
-    _loadCategoriePaie();
+    _loadpaieCategorie();
   }
 
   Future<void> getRole() async {
@@ -50,7 +50,7 @@ class _CategoriePaieClientPageState extends State<FactureConfigPage> {
     });
   }
 
-  Future<void> _loadCategoriePaie() async {
+  Future<void> _loadpaieCategorie() async {
     try {
       clientFactureGlobalValueDate =
           await ClientFactureGlobalValuesService.getClientFactureGlobalValues();
@@ -66,7 +66,7 @@ class _CategoriePaieClientPageState extends State<FactureConfigPage> {
     });
   }
 
-  List<ClientFactureGlobaLValueModel> filterCategoriePaieClient() {
+  List<ClientFactureGlobaLValueModel> filterpaieCategorieClient() {
     return clientFactureGlobalValueDate.where((clientFactureGlobalValue) {
       return clientFactureGlobalValue.client
           .toStringify()
@@ -84,7 +84,7 @@ class _CategoriePaieClientPageState extends State<FactureConfigPage> {
   @override
   Widget build(BuildContext context) {
     List<ClientFactureGlobaLValueModel> filteredData =
-        filterCategoriePaieClient();
+        filterpaieCategorieClient();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8).copyWith(top: 4),
@@ -131,7 +131,7 @@ class _CategoriePaieClientPageState extends State<FactureConfigPage> {
                     isLoading = true;
                     hasError = false;
                   });
-                  await _loadCategoriePaie();
+                  await _loadpaieCategorie();
                 },
               ),
             )
@@ -150,7 +150,7 @@ class _CategoriePaieClientPageState extends State<FactureConfigPage> {
                             child: FactureConfigTable(
                               clientFactureGlobaLValues: getPaginatedData(
                                   data: filteredData, currentPage: currentPage),
-                              refresh: _loadCategoriePaie,
+                              refresh: _loadpaieCategorie,
                             ),
                           ),
                         ),

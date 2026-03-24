@@ -1,27 +1,27 @@
 class PosteModel {
-  final String id;
+  final String key;
   final String libelle;
 
   PosteModel({
-    required this.id,
+    required this.key,
     required this.libelle,
   });
 
   factory PosteModel.fromJson(Map<String, dynamic> json) {
     return PosteModel(
-      id: json['_id'],
+      key: json['_key'],
       libelle: json['libelle'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      "_id": "\"$id\"",
+      "_key": "\"$key\"",
       "libelle": "\"$libelle\"",
     };
   }
 
   bool equalTo({required PosteModel poste}) {
-    return poste.id == id;
+    return poste.key == key;
   }
 }

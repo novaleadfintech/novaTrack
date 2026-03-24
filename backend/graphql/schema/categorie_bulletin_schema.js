@@ -1,20 +1,20 @@
 const typeDef = `#graphql
-type CategorieBulletin{
-    _id:ID!
-    categorieBulletin:String!
+type BulletinCategorie{
+    _key:ID!
+    bulletinCategorie:String!
     paieClause: PaieClause!
 }
 `;
 
 const query = `#graphql
-    categoriesBulletin(perPage:Int, skip:Int):[CategorieBulletin]!
-    categorieBulletin(key:ID!):CategorieBulletin!
+    bulletinCategories(perPage:Int, skip:Int):[BulletinCategorie]!
+    bulletinCategorie(key:ID!):BulletinCategorie!
 `;
 
 const mutation = `#graphql
-    createCategorieBulletin(categorieBulletin:String!, paieClause: PaieClause!):String!
-    updateCategorieBulletin(key:ID!, categorieBulletin:String, paieClause: PaieClause):String!
-    deleteCategorieBulletin(key:ID!):String!
+    createBulletinCategorie(bulletinCategorie:String!, paieClause: PaieClause!):String!
+    updateBulletinCategorie(key:ID!, bulletinCategorie:String, paieClause: PaieClause):String!
+    deleteBulletinCategorie(key:ID!):String!
 `;
 
 export default { typeDef, query, mutation };

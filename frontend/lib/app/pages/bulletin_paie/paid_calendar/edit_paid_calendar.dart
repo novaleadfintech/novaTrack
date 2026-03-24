@@ -127,7 +127,7 @@ class _EditPayCalendarState extends State<EditPayCalendar> {
     try {
       // J'assume que PayCalendarService.updatePayCalendar existe et prend ces params
       var result = await PayCalendarService.updatePayCalendar(
-        key: widget.payCalendar.id,
+        key: widget.payCalendar.key,
         libelle:
             capitalizeFirstLetter(word: _libelleController.text.toLowerCase()),
         dateDebut: _dateDebut!,

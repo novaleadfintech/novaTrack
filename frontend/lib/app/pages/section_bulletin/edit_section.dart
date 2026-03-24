@@ -77,7 +77,7 @@ class _EditSectionState extends State<EditSection> {
     );
 
     var result = await SectionService.updateSection(
-      key: widget.section.id,
+      key: widget.section.key,
       section:
           capitalizeFirstLetter(word: _libelleController.text.toLowerCase()),
     );

@@ -22,27 +22,27 @@ class SalarieService {
     var body = '''
      query Salaries {
     salaries {
-        _id
+        _key
         dateEnregistrement
         paieClause
         fullCount
         numeroCompte
-       operateur{_id, libelle}
+       operateur{_key, libelle}
         moyenPaiement{
-          _id
+          _key
           libelle
           type
         }
         numeroMatricule
         personnel {
-            _id
+            _key
             nom
             prenom
             email
             telephone
             adresse
             sexe
-            poste{_id, libelle}
+            poste{_key, libelle}
             situationMatrimoniale
             commentaire
             etat
@@ -57,7 +57,7 @@ class SalarieService {
             typeContrat
             fullCount
             pays {
-                _id
+                _key
                 name
                 code
                 tauxTVA
@@ -71,21 +71,21 @@ class SalarieService {
                 telephone2
             }
         }
-        categorieBulletin {
-            _id
-            categorieBulletin
+        bulletinCategorie {
+            _key
+            bulletinCategorie
             paieClause
         }
         classe {
-            _id
+            _key
             libelle
         }
         echelon {
-            _id
+            _key
             libelle
         }
-        grilleCategoriePaie {
-            _id
+        grillepaieCategorie {
+            _key
             libelle
         }
         periodPaie
@@ -127,26 +127,26 @@ class SalarieService {
     var body = '''
       query Salarie {
     salarie {
-        _id
+        _key
         dateEnregistrement
         fullCount
         paieClause
-        operateur{_id, libelle}
+        operateur{_key, libelle}
         moyenPaiement{
-          _id
+          _key
           libelle
           type
         }
         numeroMatricule
         personnel {
-            _id
+            _key
             nom
             prenom
             email
             telephone
             adresse
             sexe
-            poste{_id, libelle}
+            poste{_key, libelle}
             situationMatrimoniale
             commentaire
             etat
@@ -161,7 +161,7 @@ class SalarieService {
             typeContrat
             fullCount
             pays {
-                _id
+                _key
                 name
                 code
                 tauxTVA
@@ -175,28 +175,28 @@ class SalarieService {
                 telephone2
             }
         }
-        categorieBulletin {
-            _id
-            categorieBulletin
+        bulletinCategorie {
+            _key
+            bulletinCategorie
             paieClause
         }
         periodPaie
         typePaie
         salaire
         classe {
-            _id
+            _key
             libelle
         }
         echelon {
-            _id
+            _key
             libelle
         }
-        grilleCategoriePaie {
-            _id
+        grillepaieCategorie {
+            _key
             libelle
         }
         RubriqueBulletin {
-            _id
+            _key
             rubrique
             code
             type
@@ -227,8 +227,8 @@ class SalarieService {
   }
 
   static Future<RequestResponse> createSalarie({
-    required String personnelId,
-    required String categorieBulletinId,
+    required String personnelKey,
+    required String bulletinCategorieKey,
     required int? periodPaie,
     required PaieClause paieClause,
     required ClasseModel classe,
@@ -236,23 +236,23 @@ class SalarieService {
     required MoyenPaiementModel moyenPaiement,
     required OperateurModel operateur,
     required EchelonModel echelon,
-    required GrilleCategoriePaieModel grilleCategoriePaie,
+    required GrillepaieCategorieModel grillepaieCategorie,
     required String? numeroCompte,
   }) async {
     var body = '''
       mutation CreateSalarie {
           createSalarie(
-              personnelId: "$personnelId"
-              categorieBulletinId: "$categorieBulletinId"
+              personnelKey: "$personnelKey"
+              bulletinCategorieKey: "$bulletinCategorieKey"
               periodPaie: $periodPaie
               paieClause: ${PaieClause.paieClauseToString(paieClause)}
-              classeId: "${classe.id}"
+              classeKey: "${classe.key}"
               moyenPaiement: ${moyenPaiement.toJson()}
               numeroMatricule: "$numeroMatricule"
               operateur: ${operateur.toJson()}
               numeroCompte:${numeroCompte != null ? "\"$numeroCompte\"" : null}
-              echelonId: "${echelon.id}"
-              grilleCategoriePaieId: "${grilleCategoriePaie.id}"
+              echelonKey: "${echelon.key}"
+              grillepaieCategorieKey: "${grillepaieCategorie.key}"
           )
       }
     ''';
@@ -285,8 +285,8 @@ class SalarieService {
 
   static Future<RequestResponse> updateSalarie({
     required String key,
-    required String? personnelId,
-    required String? categorieBulletinId,
+    required String? personnelKey,
+    required String? bulletinCategorieKey,
     required int? periodPaie,
     required MoyenPaiementModel? moyenPaiement,
     // required String? numeroMatricule,
@@ -294,7 +294,7 @@ class SalarieService {
     String? numeroMatricule,
     required OperateurModel? operateur,
     String? numeroCompte,
-    GrilleCategoriePaieModel? grilleCategoriePaie,
+    GrillepaieCategorieModel? grillepaieCategorie,
     required classe,
     EchelonModel? echelon,
   }) async {
@@ -305,11 +305,11 @@ class SalarieService {
       periodPaie: $periodPaie,
 ''';
 
-    if (personnelId != null) {
-      body += 'personnelId: "$personnelId",';
+    if (personnelKey != null) {
+      body += 'personnelKey: "$personnelKey",';
     }
-    if (categorieBulletinId != null) {
-      body += 'categorieBulletinId: "$categorieBulletinId",';
+    if (bulletinCategorieKey != null) {
+      body += 'bulletinCategorieKey: "$bulletinCategorieKey",';
     }
 
     if (paieClause != null) {
@@ -330,14 +330,14 @@ class SalarieService {
     if (numeroCompte != null) {
       body += 'numeroCompte: "$numeroCompte",';
     }
-    if (grilleCategoriePaie != null) {
-      body += 'grilleCategoriePaieId: "${grilleCategoriePaie.id}",';
+    if (grillepaieCategorie != null) {
+      body += 'grillepaieCategorieKey: "${grillepaieCategorie.key}",';
     }
     if (classe != null) {
-      body += 'classeId: "${classe.id}",';
+      body += 'classeKey: "${classe.key}",';
     }
     if (echelon != null) {
-      body += 'echelonId: "${echelon.id}",';
+      body += 'echelonKey: "${echelon.key}",';
     }
 
     body += '''

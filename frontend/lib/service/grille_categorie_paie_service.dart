@@ -8,21 +8,21 @@ import '../model/request_response.dart';
 import 'package:http/http.dart' as http;
 import 'request_header.dart';
 
-class GrilleCategoriePaieService {
-  static Future<List<GrilleCategoriePaieModel>>
-      getGrilleCategoriePaies() async {
+class GrillepaieCategorieService {
+  static Future<List<GrillepaieCategorieModel>>
+      getGrillepaieCategories() async {
     var body = '''
       query CategoriesPaieGrille {
     categoriesPaieGrille {
-        _id
+        _key
         libelle
         classes {
-            _id
+            _key
             libelle
             echelonIndiciciaires {
                 indice
                 echelon {
-                    _id
+                    _key
                     libelle
                 }
             }
@@ -45,15 +45,15 @@ class GrilleCategoriePaieService {
       },
     );
 
-    List<GrilleCategoriePaieModel> grilleCategoriePaies = [];
+    List<GrillepaieCategorieModel> grillepaieCategories = [];
 
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
       var data = jsonData['data']['categoriesPaieGrille'];
       if (data != null) {
-        for (var grilleCategoriePaie in data) {
-          grilleCategoriePaies
-              .add(GrilleCategoriePaieModel.fromJson(grilleCategoriePaie));
+        for (var grillepaieCategorie in data) {
+          grillepaieCategories
+              .add(GrillepaieCategorieModel.fromJson(grillepaieCategorie));
         }
       } else {
         throw RequestMessage.failgettingDataMessage;
@@ -61,16 +61,16 @@ class GrilleCategoriePaieService {
     } else {
       throw jsonDecode(response.body)['errors'][0]['message'];
     }
-    return grilleCategoriePaies;
+    return grillepaieCategories;
   }
 
-  static Future<RequestResponse> createGrilleCategoriePaie({
+  static Future<RequestResponse> createGrillepaieCategorie({
     required String libelle,
     required List<ClasseModel> classes,
   }) async {
     var body = '''
-    mutation CreateCategoriePaieGrille {
-    createCategoriePaieGrille(libelle: "$libelle", classes: ${classes.map((e) => e.toJson()).toList().toString().replaceAll("'", "")}
+    mutation CreatepaieCategorieGrille {
+    createpaieCategorieGrille(libelle: "$libelle", classes: ${classes.map((e) => e.toJson()).toList().toString().replaceAll("'", "")}
     , )
 }
     ''';
@@ -87,7 +87,7 @@ class GrilleCategoriePaieService {
 
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
-        var data = jsonData['data']['createGrilleCategoriePaie'];
+        var data = jsonData['data']['createGrillepaieCategorie'];
         if (data == RequestMessage.success) {
           return RequestResponse(
             message: RequestMessage.successMessage,
@@ -104,13 +104,13 @@ class GrilleCategoriePaieService {
     }
   }
 
-  static Future<RequestResponse> updateGrilleCategoriePaie({
+  static Future<RequestResponse> updateGrillepaieCategorie({
     required String key,
-    required String grilleCategoriePaie,
+    required String grillepaieCategorie,
   }) async {
     var body = '''
-     mutation UpdateGrilleCategoriePaie {
-    updateGrilleCategoriePaie(key: "$key", grilleCategoriePaie: "$grilleCategoriePaie")
+     mutation UpdateGrillepaieCategorie {
+    updateGrillepaieCategorie(key: "$key", grillepaieCategorie: "$grillepaieCategorie")
 }
 
     ''';
@@ -128,7 +128,7 @@ class GrilleCategoriePaieService {
 
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
-        var data = jsonData['data']['updateGrilleCategoriePaie'];
+        var data = jsonData['data']['updateGrillepaieCategorie'];
         if (data == RequestMessage.success) {
           return RequestResponse(
             message: RequestMessage.successMessage,
@@ -145,12 +145,12 @@ class GrilleCategoriePaieService {
     }
   }
 
-  static Future<RequestResponse> deleteGrilleCategoriePaie({
+  static Future<RequestResponse> deleteGrillepaieCategorie({
     required String key,
   }) async {
     var body = '''
-     mutation DeleteGrilleCategoriePaie {
-    deleteGrilleCategoriePaie(key: "$key")
+     mutation DeleteGrillepaieCategorie {
+    deleteGrillepaieCategorie(key: "$key")
 }
 
     ''';
@@ -168,7 +168,7 @@ class GrilleCategoriePaieService {
 
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
-        var data = jsonData['data']['deleteGrilleCategoriePaie'];
+        var data = jsonData['data']['deleteGrillepaieCategorie'];
         if (data == RequestMessage.success) {
           return RequestResponse(
             message: RequestMessage.successMessage,

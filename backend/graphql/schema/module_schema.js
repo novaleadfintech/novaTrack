@@ -1,6 +1,6 @@
 const typeDef = `#graphql
     type Module{
-        _id: ID!
+        _key: ID!
         name: String!
         alias: String!
         # permissions: [Permission]!
@@ -10,7 +10,7 @@ const typeDef = `#graphql
 const query = `#graphql
     Modules: [Module]!
     # Module(key: ID!): Module!
-    # ModuleByUser(userId: String!): [Module]!
+    # ModuleByUser(userKey: String!): [Module]!
 `;
 
 export default { typeDef, query };

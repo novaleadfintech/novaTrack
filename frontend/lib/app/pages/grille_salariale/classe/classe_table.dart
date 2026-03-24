@@ -91,7 +91,7 @@ class _ClasseTableState extends State<ClasseTable> {
       );
 
       RequestResponse result = await ClasseService.deleteClasse(
-        key: classe.id,
+        key: classe.key,
       );
       _dialog.hide();
       if (result.status == PopupStatus.success) {

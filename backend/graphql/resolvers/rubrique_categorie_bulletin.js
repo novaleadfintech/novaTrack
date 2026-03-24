@@ -3,56 +3,56 @@ import RubriqueBulletin from "../../models/bulletin_paie/rubrique_categorie_bull
 const rubriqueBulletinModel = new RubriqueBulletin();
 
 const rubriqueBulletinResolvers = {
-  rubriqueBulletinByCategorieBulletin: async ({ categorieBulletinId }) =>
-    await rubriqueBulletinModel.getRubriqueBulletinByCategorieBulletin({
-      categorieBulletinId: categorieBulletinId,
+  rubriqueBulletinByBulletinCategorie: async ({ bulletinCategorieKey }) =>
+    await rubriqueBulletinModel.getRubriqueBulletinByBulletinCategorie({
+      bulletinCategorieKey: bulletinCategorieKey,
     }),
 
   variablePaieAndPrimeExceptionnelles: async ({
-    categorieBulletinId,
-    salarieId,
+    bulletinCategorieKey,
+    salarieKey,
   }) =>
     await rubriqueBulletinModel.getvariablePaieAndPrimeExceptionnelles({
-      categoriePaieId: categorieBulletinId,
-      salarieId: salarieId,
+      paieCategorieKey: bulletinCategorieKey,
+      salarieKey: salarieKey,
     }),
 
-  rubriqueBulletinByCategorieBulletinForConfiguration: async ({
-    categorieBulletinId,
+  rubriqueBulletinByBulletinCategorieForConfiguration: async ({
+    bulletinCategorieKey,
   }) =>
-    await rubriqueBulletinModel.getRubriqueBulletinByCategorieBulletinForConfiguration(
-      { categorieBulletinId: categorieBulletinId },
+    await rubriqueBulletinModel.getRubriqueBulletinByBulletinCategorieForConfiguration(
+      { bulletinCategorieKey: bulletinCategorieKey },
     ),
 
-  createCategorieBulletinRubrique: async ({
-    rubriqueId,
-    categorieBulletinId,
+  createBulletinCategorieRubrique: async ({
+    rubriqueKey,
+    bulletinCategorieKey,
     value,
   }) =>
-    await rubriqueBulletinModel.createCategorieBulletinRubrique({
-      rubriqueId: rubriqueId,
-      categorieBulletinId: categorieBulletinId,
+    await rubriqueBulletinModel.createBulletinCategorieRubrique({
+      rubriqueKey: rubriqueKey,
+      bulletinCategorieKey: bulletinCategorieKey,
       value: value,
     }),
 
-  updateCategorieBulletinRubrique: async ({
-    rubriqueId,
-    categorieBulletinId,
+  updateBulletinCategorieRubrique: async ({
+    rubriqueKey,
+    bulletinCategorieKey,
     value,
   }) =>
-    await rubriqueBulletinModel.updateCategorieBulletinRubrique({
-      rubriqueId: rubriqueId,
-      categorieBulletinId: categorieBulletinId,
+    await rubriqueBulletinModel.updateBulletinCategorieRubrique({
+      rubriqueKey: rubriqueKey,
+      bulletinCategorieKey: bulletinCategorieKey,
       value: value,
     }),
 
-  deleteCategorieBulletinRubrique: async ({
-    rubriqueId,
-    categorieBulletinId,
+  deleteBulletinCategorieRubrique: async ({
+    rubriqueKey,
+    bulletinCategorieKey,
   }) =>
-    await rubriqueBulletinModel.deleteCategorieBulletinRubrique({
-      rubriqueId: rubriqueId,
-      categorieBulletinId: categorieBulletinId,
+    await rubriqueBulletinModel.deleteBulletinCategorieRubrique({
+      rubriqueKey: rubriqueKey,
+      bulletinCategorieKey: bulletinCategorieKey,
     }),
 };
 

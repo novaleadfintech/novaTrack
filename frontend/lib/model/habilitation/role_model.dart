@@ -2,13 +2,13 @@ import 'permission_model.dart';
 import 'role_enum.dart';
 
 class RoleModel {
-  final String? id;
+  final String? key;
   final String libelle;
   final RoleAuthorization? roleAuthorization;
   final List<PermissionModel>? permissions;
 
   RoleModel({
-    this.id,
+    this.key,
     required this.libelle,
     required this.roleAuthorization,
     this.permissions,
@@ -20,7 +20,7 @@ class RoleModel {
             ?.map((permission) => PermissionModel.fromJson(permission))
             .toList();
     return RoleModel(
-      id: json['_id'],
+      key: json['_key'],
       roleAuthorization: json['roleAuthorization'] != null
           ? RoleAuthorization.roleAuthorizationFromString(
               json['roleAuthorization'])
@@ -32,7 +32,7 @@ class RoleModel {
 
   Map<String, dynamic> toJson() {
     return {
-      '_id': id,
+      '_key': key,
       'libelle': libelle,
       'roleAuthorization': roleAuthorization != null
           ? RoleAuthorization.roleAuthorizationToString(roleAuthorization!)

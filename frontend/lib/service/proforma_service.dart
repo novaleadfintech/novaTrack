@@ -20,7 +20,7 @@ class ProformaService {
     var body = '''
                 query Proformas {
                   proformas {
-                    _id
+                    _key
                     reference
                     reduction{
                       valeur
@@ -35,7 +35,7 @@ class ProformaService {
                     garantyTime
                     dateEnvoie
                     ligneProformas {
-                        _id
+                        _key
                         designation
                         quantite
                         dureeLivraison
@@ -44,7 +44,7 @@ class ProformaService {
                         remise
                         unit
                         service {
-                            _id
+                            _key
                             libelle
                             type
                             etat
@@ -52,7 +52,7 @@ class ProformaService {
                             nature
                             description
                             country {
-                        _id
+                        _key
                         name
                         code
                       }
@@ -70,26 +70,26 @@ class ProformaService {
                         }
                     }
                     client {
-                        _id
+                        _key
                         email
                         telephone
                         adresse
                         pays {
-                     _id
+                     _key
           name
           code
           tauxTVA
           phoneNumber
                   }
                         ... on ClientMoral {
-                            _id
+                            _key
                             raisonSociale
                             logo
                             email
                             telephone
                             adresse
                            pays {
-                     _id
+                     _key
           name
           code
           tauxTVA
@@ -97,7 +97,7 @@ class ProformaService {
                   }
                         }
                         ... on ClientPhysique {
-                            _id
+                            _key
                             nom
                             prenom
                             sexe
@@ -105,7 +105,7 @@ class ProformaService {
                             telephone
                             adresse
                             pays {
-                     _id
+                     _key
           name
           code
           tauxTVA
@@ -158,7 +158,7 @@ class ProformaService {
     var body = '''
                 query ArchivedProformas {
                   archivedProformas {
-                    _id
+                    _key
                     reference
                     reduction{
                       valeur
@@ -173,7 +173,7 @@ class ProformaService {
                     garantyTime
                     dateEnvoie
                     ligneProformas {
-                        _id
+                        _key
                         designation
                         quantite
                         dureeLivraison
@@ -182,7 +182,7 @@ class ProformaService {
                         remise
                         unit
                         service {
-                            _id
+                            _key
                             libelle
                             type
                             etat
@@ -190,7 +190,7 @@ class ProformaService {
                             nature
                             description
                             country {
-                        _id
+                        _key
                         name
                         code
                       }
@@ -208,26 +208,26 @@ class ProformaService {
                         }
                     }
                     client {
-                        _id
+                        _key
                         email
                         telephone
                         adresse
                        pays {
-                     _id
+                     _key
           name
           code
           tauxTVA
           phoneNumber
                   }
                         ... on ClientMoral {
-                            _id
+                            _key
                             raisonSociale
                             logo
                             email
                             telephone
                             adresse
                            pays {
-                     _id
+                     _key
           name
           code
           tauxTVA
@@ -235,7 +235,7 @@ class ProformaService {
                   }
                         }
                         ... on ClientPhysique {
-                            _id
+                            _key
                             nom
                             prenom
                             sexe
@@ -243,7 +243,7 @@ class ProformaService {
                             telephone
                             adresse
                             pays {
-                     _id
+                     _key
           name
           code
           tauxTVA
@@ -292,7 +292,7 @@ class ProformaService {
     var body = '''
                 query Proformas {
                   proformas {
-                    _id
+                    _key
                     reference
                     status
                 }
@@ -335,7 +335,7 @@ class ProformaService {
   }
 
   static Future<RequestResponse> validerProforma({
-    required String proformaId,
+    required String proformaKey,
     DateTime? dateEtablissementFacture,
     required List<FactureAcompteModel> facturesAcompte,
     required List<BanqueModel> banques,
@@ -343,15 +343,15 @@ class ProformaService {
     // Initialisation de la requête
     String body = '''
     mutation ValiderProforma {
-    validerProforma(key: "$proformaId",''';
+    validerProforma(key: "$proformaKey",''';
 
     if (dateEtablissementFacture != null) {
       body +=
           'dateEtablissementFacture: ${dateEtablissementFacture.millisecondsSinceEpoch},';
     }
-    body += 'banquesIds: [';
+    body += 'banquesKeys: [';
     for (var banque in banques) {
-      body += '"${banque.id}"';
+      body += '"${banque.key}"';
     }
     body += '],';
 
@@ -401,7 +401,7 @@ class ProformaService {
   }
 
   static Future<RequestResponse> createProformat({
-    required String clientId,
+    required String clientKey,
     DateTime? dateEtablissementProforma,
     required int garantie,
     required DateTime dateEnvoie,
@@ -412,7 +412,7 @@ class ProformaService {
     String body = '''
     mutation CreateProforma {
       createProforma(
-        clientId: "$clientId",
+        clientKey: "$clientKey",
         tva: $tva,
         ligneProformas: [
   ''';
@@ -481,9 +481,9 @@ class ProformaService {
   }
 
   static Future<RequestResponse> updateProformat({
-    required String id,
+    required String key,
     DateTime? dateEtablissementProforma,
-    String? clientId,
+    String? clientKey,
     int? garantie,
     DateTime? dateEnvoie,
     ReductionModel? reduction,
@@ -493,13 +493,13 @@ class ProformaService {
     var body = '''
     mutation UpdateProforma {
      updateProforma(
-     key:"$id",
+     key:"$key",
   ''';
     if (garantie != null) {
       body += 'garantyTime: $garantie,';
     }
-    if (clientId != null) {
-      body += 'clientId: "$clientId",';
+    if (clientKey != null) {
+      body += 'clientKey: "$clientKey",';
     }
     if (tva != null) {
       body += 'tva: $tva,';

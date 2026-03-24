@@ -61,7 +61,7 @@ class _EditLibellePageState extends State<EditLibellePage> {
     );
     RequestResponse result =
         await LibelleFluxFinancierService.updateLibelleFluxFinancier(
-      key: libelleFlux.id,
+      key: libelleFlux.key,
       libelle: libelle,
       type: newType,
     );

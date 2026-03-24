@@ -77,7 +77,7 @@ class _LigneProformaDetailState extends State<LigneProformaDetail> {
       );
 
       RequestResponse result = await LigneProformaService.retirerLigneProforma(
-        ligneProformaId: ligneProforma.id,
+        ligneProformaKey: ligneProforma.key,
       );
       _dialog.hide();
       if (result.status == PopupStatus.success) {
@@ -106,13 +106,13 @@ class _LigneProformaDetailState extends State<LigneProformaDetail> {
   }
 
   addLigneProforma({
-    required String proformaId,
+    required String proformaKey,
     required PaysModel pays,
   }) {
     showResponsiveDialog(
       context,
       content: AddLigneProforma(
-        proformaId: proformaId,
+        proformaKey: proformaKey,
         pays: pays,
         refresh: widget.refresh,
       ),
@@ -148,7 +148,7 @@ class _LigneProformaDetailState extends State<LigneProformaDetail> {
               : ligneProformaTableTitles,
           onTap: () async {
             addLigneProforma(
-              proformaId: widget.proforma.id,
+              proformaKey: widget.proforma.key,
               pays: widget.proforma.client!.pays!,
             );
           },

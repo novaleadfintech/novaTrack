@@ -15,10 +15,10 @@ class LigneProforma {
 
   async initializeCollections() {
     if (!(await ligneProformaCollection.exists())) {
-      ligneProformaCollection.create({ type: CollectionType.EDGE_COLLECTION });
+      await ligneProformaCollection.create();
     }
     if (!(await proformaCollection.exists())) {
-      proformaCollection.create();
+      await proformaCollection.create();
     }
   }
 
@@ -71,16 +71,21 @@ class LigneProforma {
       console.error(err);
 
       throw new Error(
-        `Erreur lors de la récupération de la ligne de proforma.`
+        `Erreur lors de la récupération de la ligne de proforma.`,
       );
     }
   };
 
-  getLigneProformaByProforma = async ({ proformaId }) => {
+  getLigneProformaByProforma = async ({ proformaKey }) => {
     try {
-      const ligneProformas = await ligneProformaCollection.edges(proformaId);
+      const cursor = await db.query(aql`
+        FOR ligneProforma IN ${ligneProformaCollection}
+          FILTER ligneProforma.proformaKey == ${proformaKey}
+          RETURN ligneProforma
+      `);
+      const ligneProformas = await cursor.all();
       return await Promise.all(
-        ligneProformas.edges
+        ligneProformas
           .sort((a, b) => a.timeStamp - b.timeStamp)
           .map(async (ligneProformaEdge) => {
             const fraisDivers = ligneProformaEdge.fraisDivers ?? [];
@@ -114,7 +119,7 @@ class LigneProforma {
               fraisDivers: fraisDivers,
               montant: montantLigneProforma,
             };
-          })
+          }),
       );
     } catch (err) {
       console.error(err);
@@ -123,21 +128,21 @@ class LigneProforma {
     }
   };
 
-  /*  getLigneProformasByProformaId =async ({serviceId})=>{
+  /*  getLigneProformasByProformaKey =async ({serviceKey})=>{
     const query = await db.query(
-      aql`FOR ligneProforma IN ${ligneProformaCollection} FILTER ligneProforma._from == ${serviceId} AND ligneProforma._to == ${proformaId} RETURN ligneProforma`
+      aql`FOR ligneProforma IN ${ligneProformaCollection} FILTER ligneProforma.serviceKey == ${serviceKey} AND ligneProforma.proformaKey == ${proformaKey} RETURN ligneProforma`
     );
   } */
 
-  updateProformasInLigneProforma = async (serviceId) => {
+  updateProformasInLigneProforma = async (serviceKey) => {
     const query = await db.query(
       aql`
           FOR ligneProforma IN ${ligneProformaCollection}
-          FILTER ligneProforma._from == ${serviceId}
-          LET proforma = DOCUMENT(ligneProforma._to)
+          FILTER ligneProforma.serviceKey == ${serviceKey}
+          LET proforma = DOCUMENT(ligneProforma.proformaKey)
           FILTER proforma.garantyTime == 0
           RETURN ligneProforma
-        `
+        `,
     );
 
     const ligneProformas = await query.all();
@@ -145,20 +150,20 @@ class LigneProforma {
     await Promise.all(
       ligneProformas.map(async (ligneProforma) => {
         const updatedData = {
-          service: await serviceModel.getService({ key: serviceId }),
+          service: await serviceModel.getService({ key: serviceKey }),
         };
 
         await this.updateLigneProformaProformas({
-          key: ligneProforma._id,
+          key: ligneProforma._key,
           updatedData,
         });
-      })
+      }),
     );
   };
 
   ajouterLigneProforma = async ({
-    proformaId,
-    serviceId,
+    proformaKey,
+    serviceKey,
     designation,
     unit,
     quantite = 1,
@@ -168,21 +173,21 @@ class LigneProforma {
     fraisDivers,
   }) => {
     isValidValue({ value: [designation, quantite] });
-    const service = await serviceModel.getService({ key: serviceId });
+    const service = await serviceModel.getService({ key: serviceKey });
     const doublon = await db.query(
-      aql`FOR ligneProforma IN ${ligneProformaCollection} FILTER ligneProforma._from == ${serviceId} AND ligneProforma._to == ${proformaId} RETURN ligneProforma`
+      aql`FOR ligneProforma IN ${ligneProformaCollection} FILTER ligneProforma.serviceKey == ${serviceKey} AND ligneProforma.proformaKey == ${proformaKey} RETURN ligneProforma`,
     );
     if (doublon.hasNext) {
       throw new Error(
-        "Ajout impossible! Ce service est dejà enregistré sur cette proforma"
+        "Ajout impossible! Ce service est dejà enregistré sur cette proforma",
       );
     }
     if (service.prix * quantite <= remise) {
       throw new Error("Attention!!! La remise dépasse le montant du service");
     }
     const newLigneProforma = {
-      _from: serviceId,
-      _to: proformaId,
+      serviceKey: serviceKey,
+      proformaKey: proformaKey,
       designation: designation,
       quantite: quantite,
       prixSupplementaire: prixSupplementaire,
@@ -208,7 +213,7 @@ class LigneProforma {
     key,
     designation,
     quantite,
-    serviceId,
+    serviceKey,
     unit,
     prixSupplementaire,
     dureeLivraison,
@@ -220,9 +225,9 @@ class LigneProforma {
     });
     try {
       const updateField = {};
-      if (serviceId !== undefined) {
-        const service = await serviceModel.getService({ key: serviceId });
-        updateField._from = serviceId;
+      if (serviceKey !== undefined) {
+        const service = await serviceModel.getService({ key: serviceKey });
+        updateField.serviceKey = serviceKey;
         updateField.service = service;
       }
       if (designation !== undefined) {
@@ -259,20 +264,22 @@ class LigneProforma {
           await ligneProformaCollection.update(key, updateField);
 
           const ligneProforma = await this.getLigneProforma({ key: key });
-          if (!ligneProforma || !ligneProforma._to) {
+          if (!ligneProforma || !ligneProforma.proformaKey) {
             throw new Error("Impossible de récupérer la facture liée.");
           }
 
-          const proforma = await proformaCollection.document(ligneProforma._to);
+          const proforma = await proformaCollection.document(
+            ligneProforma.proformaKey,
+          );
           if (!proforma) {
             throw new Error("Facture introuvable.");
           }
 
           const lignesProformas = await this.getLigneProformaByProforma({
-            proformaId: proforma._id,
+            proformaKey: proforma._key,
           });
           lignesProformas.forEach((ligne) => {
-            if (ligne._id === key) {
+            if (ligne._key === key) {
               if (ligne.service.nature === Nature.unique) {
                 ligne.montant = ligne.service.prix * quantite;
               } else {
@@ -296,7 +303,7 @@ class LigneProforma {
           });
           if (montantTotal <= 0) {
             throw new Error(
-              "Le montant total du proforma semble être inférieur ou égal à zéro."
+              "Le montant total du proforma semble être inférieur ou égal à zéro.",
             );
           }
         });
@@ -314,7 +321,7 @@ class LigneProforma {
   updateLigneProformaProformas = async ({ key }) => {
     const ligneProforma = await this.getLigneProforma({ key: key });
     const service = await serviceModel.getService({
-      key: ligneProforma._from,
+      key: ligneProforma.serviceKey,
     });
     await ligneProformaCollection.update(key, { service: service });
     return "OK";
@@ -323,11 +330,11 @@ class LigneProforma {
   deleteLigneProforma = async ({ key }) => {
     const ligneProforma = await this.getLigneProforma({ key: key });
     const allligneProforma = await this.getLigneProformaByProforma({
-      proformaId: ligneProforma._to,
+      proformaKey: ligneProforma.proformaKey,
     });
     if (allligneProforma.length == 1) {
       throw new Error(
-        "Vous ne pouvez pas retirer tous les demandes sur ce proforma"
+        "Vous ne pouvez pas retirer tous les demandes sur ce proforma",
       );
     } else {
       try {
@@ -341,10 +348,15 @@ class LigneProforma {
     return "OK";
   };
 
-  deleteAllByProforma = async ({ proformaId }) => {
+  deleteAllByProforma = async ({ proformaKey }) => {
     try {
-      const ligneProformas = await ligneProformaCollection.edges(proformaId);
-      await ligneProformaCollection.removeAll(ligneProformas.edges);
+      const cursor = await db.query(aql`
+        FOR ligneProforma IN ${ligneProformaCollection}
+          FILTER ligneProforma.proformaKey == ${proformaKey}
+          RETURN ligneProforma
+      `);
+      const ligneProformas = await cursor.all();
+      await ligneProformaCollection.removeAll(ligneProformas);
       return "OK";
     } catch (err) {
       console.error(err);

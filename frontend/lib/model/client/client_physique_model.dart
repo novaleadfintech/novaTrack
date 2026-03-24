@@ -9,7 +9,7 @@ class ClientPhysiqueModel extends ClientModel {
   final Sexe? sexe;
 
   ClientPhysiqueModel({
-    required super.id,
+    required super.key,
     super.email,
     super.telephone,
     super.adresse,
@@ -26,7 +26,7 @@ class ClientPhysiqueModel extends ClientModel {
 
   factory ClientPhysiqueModel.fromJson(Map<String, dynamic> json) {
     return ClientPhysiqueModel(
-      id: json['_id'] ?? '',
+      key: json['_key'] ?? '',
       email: json['email'],
       telephone: (json["telephone"] as num?)?.toInt(),
       adresse: json['adresse'],
@@ -49,7 +49,7 @@ class ClientPhysiqueModel extends ClientModel {
   @override
   Map<String, dynamic> toJson() {
     return {
-      '_id': id,
+      '_key': key,
       'email': email,
       'telephone': telephone,
       'adresse': adresse,

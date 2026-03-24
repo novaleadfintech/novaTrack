@@ -1,28 +1,28 @@
 const typeDef = `#graphql
  
 type ValeurRubriqueTemporaire {
-  _id: ID
-   salarieId: ID!
+  _key: ID
+   salarieKey: ID!
   rubriques: [RubriqueOnBulletin!]!
   primesExceptionnelles: [RubriqueOnBulletin]
 }
 
 input ValeurRubriqueTemporaireInput {
-  id: Int
-  salarieId: ID!
+  key: Int
+  salarieKey: ID!
   rubriques: [RubriqueBulletinInput!]!
   primesExceptionnelles: [RubriqueBulletinInput!]!
 }
 
 `;
 const query = `#graphql
-   getValeurRubriqueTemporaireBySalarie(salarieId: ID!): ValeurRubriqueTemporaire
+   getValeurRubriqueTemporaireBySalarie(salarieKey: ID!): ValeurRubriqueTemporaire
 `;
 
 const mutation = `#graphql
-    createValeurRubriqueTemporaire(salarieId: ID!, rubriques: [RubriqueBulletinInput!]!, primesExceptionnelles: [RubriqueBulletinInput!]!): String!
+    createValeurRubriqueTemporaire(salarieKey: ID!, rubriques: [RubriqueBulletinInput!]!, primesExceptionnelles: [RubriqueBulletinInput!]!): String!
     updateValeurRubriqueTemporaire(id: ID!, input: ValeurRubriqueTemporaireInput!): String!
-    deleteValeurRubriqueTemporaire(id: ID!): Boolean!
+    deleteValeurRubriqueTemporaire(key: ID!): Boolean!
 `;
 
 export default { typeDef, query, mutation };

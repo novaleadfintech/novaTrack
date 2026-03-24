@@ -1,13 +1,13 @@
 const typeDef = `#graphql
 type PayCalendar{
-    _id:ID!
+    _key:ID!
     libelle:String!
     dateDebut: Float!
     dateFin: Float!
     etat: EtatPayCalendar
 }
 input PayCalendarInput{
-    _id:ID!
+    _key:ID!
     libelle:String!
     dateDebut: Float!
     dateFin: Float!

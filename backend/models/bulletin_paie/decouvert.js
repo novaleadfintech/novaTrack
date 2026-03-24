@@ -29,7 +29,7 @@ class Decouverte {
 
   async initializeCollections() {
     if (!(await decouverteCollection.exists())) {
-     await decouverteCollection.create();
+      await decouverteCollection.create();
     }
   }
   getAllDecouvertes = async ({ perPage, skip }) => {
@@ -39,7 +39,7 @@ class Decouverte {
     }
     const query = await db.query(
       aql`FOR decouverte IN ${decouverteCollection} SORT decouverte.dateEnregistrement                                     DESC ${limit} RETURN decouverte`,
-      { fullCount: true }
+      { fullCount: true },
     );
     if (query.hasNext) {
       const decouvertes = await query.all();
@@ -48,10 +48,10 @@ class Decouverte {
           return {
             ...decouverte,
             // salarie: await SalaireModel.getSalarie({
-            //   key: decouverte.salarieId,
+            //   key: decouverte.salarieKey,
             // }),
           };
-        })
+        }),
       );
     } else {
       return [];
@@ -64,7 +64,7 @@ class Decouverte {
       return {
         ...decouverte,
         // salarie: await SalaireModel.getSalarie({
-        //   key: decouverte.salarieId,
+        //   key: decouverte.salarieKey,
         // }),
       };
     } catch (e) {
@@ -77,11 +77,11 @@ class Decouverte {
     justification,
     montant,
     dureeReversement,
-    salarieId,
+    salarieKey,
     moyenPayement,
-    banqueId,
+    banqueKey,
     referenceTransaction,
-    userId,
+    userKey,
   }) => {
     isValidValue({
       value: [
@@ -90,24 +90,24 @@ class Decouverte {
         dureeReversement,
         referenceTransaction,
         moyenPayement,
-        banqueId,
-        userId,
+        banqueKey,
+        userKey,
       ],
     });
 
-    const salarie = await SalaireModel.getSalarie({ key: salarieId });
+    const salarie = await SalaireModel.getSalarie({ key: salarieKey });
     // const bulletin =
     await bulletinModel.verifyMontantDecouvertPossible({
-      id: salarieId,
+      id: salarieKey,
       montantDemande: montant,
     });
     // creer un flux financier si confirmé
-    const banque = await BanqueModel.getBanque({ key: banqueId });
+    const banque = await BanqueModel.getBanque({ key: banqueKey });
     const { logo, ...otherdata } = banque;
     if (logo != null) {
       otherdata.logo = logo.replace(
         process.env.FILE_PREFIX + `${locateBanqueFolder}/`,
-        ""
+        "",
       );
     }
 
@@ -134,11 +134,11 @@ class Decouverte {
         type: FluxFinancierType.output,
         montant: montant,
         moyenPayement: moyenPayement,
-        bankId: banqueId,
+        bankKey: banqueKey,
         isFromSystem: true,
-        userId: userId,
+        userKey: userKey,
         referenceTransaction: referenceTransaction,
-        decouvertId: decouvertResult.new._id,
+        decouvertKey: decouvertResult.new._key,
       });
     } catch (e) {
       console.error(e);
@@ -153,9 +153,9 @@ class Decouverte {
     justification,
     montant,
     dureeReversement,
-    salarieId,
+    salarieKey,
     referenceTransaction,
-    banqueId,
+    banqueKey,
     moyenPayement,
     montantRestant,
   }) => {
@@ -182,23 +182,23 @@ class Decouverte {
 
     if (dureeReversement !== undefined) {
       await bulletinModel.verifyMontantDecouvertPossible({
-        id: salarieId,
+        id: salarieKey,
         montantDemande: montant,
       });
       updateField.dureeReversement = dureeReversement;
     }
 
-    if (banqueId !== undefined) {
-      const banque = await BanqueModel.getBanque({ key: banqueId });
+    if (banqueKey !== undefined) {
+      const banque = await BanqueModel.getBanque({ key: banqueKey });
       const { logo, ...otherdata } = banque;
       if (logo != null) {
         otherdata.logo = logo.replace(
           process.env.FILE_PREFIX + `${locateBanqueFolder}/`,
-          ""
+          "",
         );
       }
       updateField.banque = otherdata;
-      fluxUpateField.bankId = banqueId;
+      fluxUpateField.bankKey = banqueKey;
     }
 
     isValidValue({ value: updateField });
@@ -207,8 +207,8 @@ class Decouverte {
       updateField.montantRestant = montantRestant;
     }
 
-    if (salarieId !== undefined) {
-      const salarie = await SalaireModel.getSalarie({ key: salarieId });
+    if (salarieKey !== undefined) {
+      const salarie = await SalaireModel.getSalarie({ key: salarieKey });
       updateField.salarie = salarie;
     }
 
@@ -218,7 +218,7 @@ class Decouverte {
       }
       const decouvertfluxFinancier =
         await FluxFinancierModel.getFluxFiancierbyDecouvert({
-          decouvertId: key,
+          decouvertKey: key,
         });
       if (decouvertfluxFinancier) {
         if (
@@ -226,12 +226,12 @@ class Decouverte {
           FluxFinancierStatus.valid
         ) {
           throw new Error(
-            "Vous ne pouvez plus modifier cette avance sur salaire"
+            "Vous ne pouvez plus modifier cette avance sur salaire",
           );
         } else {
           await decouverteCollection.update(key, updateField);
           await FluxFinancierModel.updateFluxFinancier({
-            key: decouvertfluxFinancier._id,
+            key: decouvertfluxFinancier._key,
             ...fluxUpateField,
           });
         }
@@ -243,13 +243,13 @@ class Decouverte {
     }
   };
 
-  async getAncienneDecouvertebyId({ salaireId }) {
+  async getAncienneDecouvertebyKey({ salaireKey }) {
     const query = await db.query(
       aql`FOR decouverte IN decouvertes 
-          FILTER decouverte.salaireId == ${salaireId} AND decouverte.montantRestant > 0 
+          FILTER decouverte.salaireKey == ${salaireKey} AND decouverte.montantRestant > 0 
           SORT decouverte.dateEnregistrement ASC 
           LIMIT 1 
-          RETURN decouverte`
+          RETURN decouverte`,
     );
     return query.hasNext ? await query.next() : null;
   }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../helper/string_helper.dart';
 import '../../integration/popop_status.dart';
 import '../../integration/request_frot_behavior.dart';
-import '../../../service/categorie_service.dart';
+import '../../../service/categorie_partner_service.dart';
 import '../../../widget/simple_text_field.dart';
 import '../../../widget/validate_button.dart';
 import 'package:gap/gap.dart';
@@ -49,7 +49,7 @@ class _AddCategoriePageState extends State<AddCategoriePage> {
       backgroundColor: Colors.transparent,
     );
 
-    var result = await CategorieService.createCategorie(
+    var result = await CategorieService.createPartnerCategorie(
       libelle:
           capitalizeFirstLetter(word: _libelleController.text.toLowerCase()),
     );

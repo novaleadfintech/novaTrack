@@ -263,7 +263,7 @@ class _EditBanquePageState extends State<EditBanquePage> {
     );
 
     RequestResponse result = await BanqueService.updateBanque(
-      key: banque.id,
+      key: banque.key,
       cleRIB: _ribController.text.trim().isEmpty
           ? null
           : _ribController.text.trim(),

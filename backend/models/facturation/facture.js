@@ -37,24 +37,23 @@ const TypeFacture = {
 };
 
 class Facture {
-   constructor() {
+  constructor() {
     this.initializeCollections();
   }
 
   async initializeCollections() {
     if (!(await factureCollection.exists())) {
-      factureCollection.create();
+    await factureCollection.create();
     }
     if (!(await ligneFactureCollection.exists())) {
-      ligneFactureCollection.create({ type: CollectionType.EDGE_COLLECTION });
+     await ligneFactureCollection.create();
     }
     if (!(await entrepriseCollection.exists())) {
-      entrepriseCollection.create();
+    await entrepriseCollection.create();
     }
     if (!(await fluxFinancierCollection.exists())) {
-      fluxFinancierCollection.create();
+     await fluxFinancierCollection.create();
     }
-    
   }
   /* getAllFactures = async ({ skip, perPage }) => {
     let limit = aql``;
@@ -76,11 +75,11 @@ class Facture {
           factureCopy.client.logo = path;
           const ligneFactures =
             await ligneFactureModel.getLigneFactureByFacture({
-              factureId: factureCopy._id,
+              factureKey: factureCopy._key,
             });
           const banques = factureCopy.banques ?? [];
           const payements = await fluxFinancierModel.getFluxFiancierbyFacture({
-            factureId: factureCopy._id,
+            factureKey: factureCopy._key,
           });
 
           const montantTotal = utils.calculerMontantTotal({
@@ -114,7 +113,7 @@ class Facture {
     let filtre = aql`FILTER facture.status == ${StatusFacture.paid}`;
 
     const query = await db.query(
-      aql`FOR facture IN ${factureCollection} SORT facture.dateEnregistrement DESC ${filtre} ${limit} RETURN facture`
+      aql`FOR facture IN ${factureCollection} SORT facture.dateEnregistrement DESC ${filtre} ${limit} RETURN facture`,
     );
 
     if (query.hasNext) {
@@ -131,7 +130,7 @@ class Facture {
 
           const ligneFactures =
             await ligneFactureModel.getLigneFactureByFacture({
-              factureId: factureCopy._id,
+              factureKey: factureCopy._key,
             });
           const banques = factureCopy.banques ?? [];
           if (banques.length != 0) {
@@ -144,9 +143,10 @@ class Facture {
                   : null;
             });
           }
-          const payements = await fluxFinancierModel.getFluxFiancierbyforFactureInformation({
-            factureId: factureCopy._id,
-          });
+          const payements =
+            await fluxFinancierModel.getFluxFiancierbyforFactureInformation({
+              factureKey: factureCopy._key,
+            });
 
           // Calculer le montant total de la facture
           const montantTotal = utils.calculerMontantTotal({
@@ -164,7 +164,7 @@ class Facture {
             montant: montantTotal,
             banques: banques,
           };
-        })
+        }),
       );
     } else {
       return [];
@@ -181,7 +181,7 @@ class Facture {
     let filtre = aql`FILTER facture.status == ${StatusFacture.blocked}`;
 
     const query = await db.query(
-      aql`FOR facture IN ${factureCollection} SORT facture.dateEnregistrement DESC ${filtre} ${limit} RETURN facture`
+      aql`FOR facture IN ${factureCollection} SORT facture.dateEnregistrement DESC ${filtre} ${limit} RETURN facture`,
     );
 
     if (query.hasNext) {
@@ -198,7 +198,7 @@ class Facture {
 
           const ligneFactures =
             await ligneFactureModel.getLigneFactureByFacture({
-              factureId: factureCopy._id,
+              factureKey: factureCopy._key,
             });
           const banques = factureCopy.banques ?? [];
           if (banques.length != 0) {
@@ -212,7 +212,7 @@ class Facture {
             });
           }
           const payements = await fluxFinancierModel.getFluxFiancierbyFacture({
-            factureId: factureCopy._id,
+            factureKey: factureCopy._key,
           });
 
           // Calculer le montant total de la facture
@@ -231,7 +231,7 @@ class Facture {
             montant: montantTotal,
             banques: banques,
           };
-        })
+        }),
       );
     } else {
       return [];
@@ -254,7 +254,7 @@ class Facture {
         ${filtre} 
         SORT facture.dateEnregistrement DESC 
         ${limit} 
-        RETURN facture`
+        RETURN facture`,
     );
 
     if (query.hasNext) {
@@ -273,7 +273,7 @@ class Facture {
           // Récupérer les lignes de factures associées
           const ligneFactures =
             await ligneFactureModel.getLigneFactureByFacture({
-              factureId: factureCopy._id,
+              factureKey: factureCopy._key,
             });
 
           // Mise à jour des logos des banques associées
@@ -290,9 +290,10 @@ class Facture {
           }
 
           // Récupérer les flux financiers associés à la facture
-          const payements = await fluxFinancierModel.getFluxFiancierbyforFactureInformation({
-            factureId: factureCopy._id,
-          });
+          const payements =
+            await fluxFinancierModel.getFluxFiancierbyforFactureInformation({
+              factureKey: factureCopy._key,
+            });
 
           // Calculer le montant total de la facture
           const montantTotal = utils.calculerMontantTotal({
@@ -310,7 +311,7 @@ class Facture {
             montant: montantTotal,
             banques: banques,
           };
-        })
+        }),
       );
     } else {
       return [];
@@ -344,12 +345,12 @@ class Facture {
       SORT accompteFiltre[0].datePayementEcheante ASC, facture.dateEnregistrement DESC
       ${limit}
       RETURN facture
-  `
+  `,
     );
 
     if (query.hasNext) {
       const factures = await query.all();
-       return Promise.all(
+      return Promise.all(
         factures.map(async (facture) => {
           let factureCopy = { ...facture };
 
@@ -363,7 +364,7 @@ class Facture {
           // Récupérer les lignes de factures associées
           const ligneFactures =
             await ligneFactureModel.getLigneFactureByFacture({
-              factureId: factureCopy._id,
+              factureKey: factureCopy._key,
             });
 
           // Mise à jour des logos des banques associées
@@ -381,9 +382,9 @@ class Facture {
 
           // Récupérer les flux financiers associés à la facture
           const payements = await fluxFinancierModel.getFluxFiancierbyFacture({
-            factureId: factureCopy._id,
+            factureKey: factureCopy._key,
           });
-           const montantTotal = utils.calculerMontantTotal({
+          const montantTotal = utils.calculerMontantTotal({
             lignes: ligneFactures,
             reduction: factureCopy.reduction,
             tva: factureCopy.tva,
@@ -398,7 +399,7 @@ class Facture {
             montant: montantTotal,
             banques: banques,
           };
-        })
+        }),
       );
     } else {
       return [];
@@ -420,7 +421,7 @@ class Facture {
         ${filtre} 
         SORT facture.dateEnregistrement DESC 
         ${limit} 
-        RETURN facture`
+        RETURN facture`,
     );
 
     if (query.hasNext) {
@@ -438,7 +439,7 @@ class Facture {
 
           const ligneFactures =
             await ligneFactureModel.getLigneFactureByFacture({
-              factureId: factureCopy._id,
+              factureKey: factureCopy._key,
             });
 
           const banques = factureCopy.banques ?? [];
@@ -454,7 +455,7 @@ class Facture {
           }
 
           const payements = await fluxFinancierModel.getFluxFiancierbyFacture({
-            factureId: factureCopy._id,
+            factureKey: factureCopy._key,
           });
 
           const montantTotal = utils.calculerMontantTotal({
@@ -472,7 +473,7 @@ class Facture {
             montant: montantTotal,
             banques: banques,
           };
-        })
+        }),
       );
     } else {
       return [];
@@ -519,7 +520,7 @@ class Facture {
           // Récupérer les lignes de factures associées
           const ligneFactures =
             await ligneFactureModel.getLigneFactureByFacture({
-              factureId: factureCopy._id,
+              factureKey: factureCopy._key,
             });
 
           // Mise à jour des logos des banques associées
@@ -536,7 +537,7 @@ class Facture {
 
           // Récupérer les flux financiers associés à la facture
           const payements = await fluxFinancierModel.getFluxFiancierbyFacture({
-            factureId: factureCopy._id,
+            factureKey: factureCopy._key,
           });
 
           // Calculer le montant total de la facture
@@ -569,7 +570,7 @@ class Facture {
 
       // Récupérer les lignes de services associées à la facture
       const ligneFactures = await ligneFactureModel.getLigneFactureByFacture({
-        factureId: facture._id,
+        factureKey: facture._key,
       });
 
       const montantTotal = utils.calculerMontantTotal({
@@ -582,7 +583,7 @@ class Facture {
         ...facture,
         ligneFactures: ligneFactures,
         payements: await fluxFinancierModel.getFluxFiancierbyFacture({
-          factureId: facture._id,
+          factureKey: facture._key,
         }),
         montant: montantTotal,
       };
@@ -593,14 +594,14 @@ class Facture {
     }
   };
 
-  factureByClient = async ({ clientId }) => {
+  factureByClient = async ({ clientKey }) => {
     let filtre = aql``;
 
-    if (clientId !== undefined) {
-      filtre = aql`FILTER facture.client._id == ${clientId}`;
+    if (clientKey !== undefined) {
+      filtre = aql`FILTER facture.client._key == ${clientKey}`;
     }
     const query = await db.query(
-      aql`FOR facture IN ${factureCollection} SORT facture._key DESC ${filtre} RETURN facture`
+      aql`FOR facture IN ${factureCollection} SORT facture._key DESC ${filtre} RETURN facture`,
     );
     if (query.hasNext) {
       const factures = await query.all();
@@ -613,11 +614,11 @@ class Facture {
 
           const ligneFactures =
             await ligneFactureModel.getLigneFactureByFacture({
-              factureId: factureCopy._id,
+              factureKey: factureCopy._key,
             });
 
           const payements = await fluxFinancierModel.getFluxFiancierbyFacture({
-            factureId: factureCopy._id,
+            factureKey: factureCopy._key,
           });
           const banques = factureCopy.banques ?? [];
           const montantTotal = utils.calculerMontantTotal({
@@ -635,7 +636,7 @@ class Facture {
             montant: montantTotal,
             banques: banques,
           };
-        })
+        }),
       );
     } else {
       return [];
@@ -647,22 +648,22 @@ class Facture {
     datePayementEcheante,
     dateDebutFacturation,
     tva = false,
-    clientId,
+    clientKey,
     facturesAcompte,
     generatePeriod,
     delaisPayment,
     dateEtablissementFacture = Date.now(),
-    banquesIds,
+    banquesKeys,
     ligneFactures,
   }) => {
     if (!ligneFactures || ligneFactures.length === 0) {
       throw new Error(
-        "Vous devez fournir une ligne de service pour créer une facture."
+        "Vous devez fournir une ligne de service pour créer une facture.",
       );
     }
 
     const entrepriseQuery = await db.query(
-      aql`FOR entreprise IN ${entrepriseCollection} LIMIT 1 RETURN entreprise`
+      aql`FOR entreprise IN ${entrepriseCollection} LIMIT 1 RETURN entreprise`,
     );
 
     const session = await db.beginTransaction({
@@ -676,24 +677,24 @@ class Facture {
             throw new Error("Aucune donnée de l'entreprise n'est configurée.");
           })();
 
-      isValidValue({ value: [type, clientId, ligneFactures, banquesIds] });
+      isValidValue({ value: [type, clientKey, ligneFactures, banquesKeys] });
 
-      const client = await clientModel.getClient({ key: clientId });
+      const client = await clientModel.getClient({ key: clientKey });
       if (!client) throw new Error("Client non trouvé.");
 
       if (client.logo) {
         client.logo = client.logo.replace(
           process.env.FILE_PREFIX + `${locateClientFolder}/`,
-          ""
+          "",
         );
       }
 
-      const { categorie, ...otherClientInfo } = client;
+      const { partnerCategorie, ...otherClientInfo } = client;
 
       // Récupération des pénalités impayées
       const oldPenalties =
         type !== TypeFacture.recurrent
-          ? await this.getOldPenaltiesForClient({ clientId })
+          ? await this.getOldPenaltiesForClient({ clientKey })
           : [];
 
       // Préparation de la nouvelle facture
@@ -710,16 +711,16 @@ class Facture {
         dateEnregistrement: Date.now(),
         status: StatusFacture.tobepaid,
         banques: await Promise.all(
-          banquesIds.map(async (banqueId) => {
-            const banque = await BanqueModel.getBanque({ key: banqueId });
+          banquesKeys.map(async (banqueKey) => {
+            const banque = await BanqueModel.getBanque({ key: banqueKey });
             return {
               ...banque,
               logo: banque.logo?.replace(
                 process.env.FILE_PREFIX + `${locateBanqueFolder}/`,
-                ""
+                "",
               ),
             };
-          })
+          }),
         ),
         facturesAcompte: facturesAcompte.map((acompte, index) => {
           if (
@@ -754,16 +755,16 @@ class Facture {
 
         await Promise.all(
           ligneFactures.map(async (ligneFacture) => {
-            const { serviceId, ...lignePro } = ligneFacture;
-            const service = await serviceModel.getService({ key: serviceId });
+            const { serviceKey, ...lignePro } = ligneFacture;
+            const service = await serviceModel.getService({ key: serviceKey });
             const newLigneFacture = {
-              _from: serviceId,
-              _to: factureInsertResult._id,
+              serviceKey: serviceKey,
+              factureKey: factureInsertResult._key,
               service,
               ...lignePro,
             };
             await ligneFactureCollection.save(newLigneFacture);
-          })
+          }),
         );
       });
 
@@ -774,7 +775,7 @@ class Facture {
 
       await session.abort();
       throw new Error(
-        "Une erreur s'est produite lors de la création de la facture."
+        "Une erreur s'est produite lors de la création de la facture.",
       );
     }
   };
@@ -826,13 +827,13 @@ class Facture {
     reduction,
     facturesAcompte,
     tva,
-    clientId,
+    clientKey,
     commentaire,
     delaisPayment,
     dateEtablissementFacture,
     dateDebutFacturation,
     generatePeriod,
-    banquesIds,
+    banquesKeys,
   }) => {
     const updateField = {};
     const facture = await this.getFacture({ key: key });
@@ -862,7 +863,7 @@ class Facture {
         })
       ) {
         throw new Error(
-          "Attention!!! Le montant de la facture est inférieur à sa réduction"
+          "Attention!!! Le montant de la facture est inférieur à sa réduction",
         );
       }
       updateField.reduction = reduction;
@@ -870,16 +871,16 @@ class Facture {
     if (tva !== undefined) {
       updateField.tva = tva;
     }
-    if (clientId !== undefined) {
-      const client = await clientModel.getClient({ key: clientId });
+    if (clientKey !== undefined) {
+      const client = await clientModel.getClient({ key: clientKey });
 
       if (client.logo !== undefined && client.logo != null) {
         client.logo = client.logo.replace(
           process.env.FILE_PREFIX + `${locateClientFolder}/`,
-          ""
+          "",
         );
       }
-      const { categorie, ...otherClientInfo } = client;
+      const { partnerCategorie, ...otherClientInfo } = client;
       updateField.client = otherClientInfo;
     }
 
@@ -926,18 +927,18 @@ class Facture {
       });
     }
 
-    if (banquesIds !== undefined) {
+    if (banquesKeys !== undefined) {
       updateField.banques = await Promise.all(
-        banquesIds.map(async (banqueId) => {
-          const banque = await BanqueModel.getBanque({ key: banqueId });
+        banquesKeys.map(async (banqueKey) => {
+          const banque = await BanqueModel.getBanque({ key: banqueKey });
           return {
             ...banque,
             logo: banque.logo?.replace(
               process.env.FILE_PREFIX + `${locateBanqueFolder}/`,
-              ""
+              "",
             ),
           };
-        })
+        }),
       );
     }
 
@@ -999,7 +1000,7 @@ class Facture {
       throw new Error("Suppression impossible");
     }
     try {
-      await ligneFactureModel.deleteAllByFactureByForce({ factureId: key });
+      await ligneFactureModel.deleteAllByFactureByForce({ factureKey: key });
       await factureCollection.remove(key);
       return "OK";
     } catch (err) {
@@ -1010,8 +1011,8 @@ class Facture {
   };
 
   ajouterLigneFacture = async ({
-    factureId,
-    serviceId,
+    factureKey,
+    serviceKey,
     designation,
     quantite = 1,
     prixSupplementaire = 0.0,
@@ -1020,10 +1021,10 @@ class Facture {
     remise = 0.0,
     fraisDivers,
   }) => {
-    //await this.isExistFacture({ key: factureId });
+    //await this.isExistFacture({ key: factureKey });
     await ligneFactureModel.ajouterLigneFacture({
-      factureId: factureId,
-      serviceId: serviceId,
+      factureKey: factureKey,
+      serviceKey: serviceKey,
       designation: designation,
       prixSupplementaire: prixSupplementaire,
       dureeLivraison: dureeLivraison,
@@ -1056,7 +1057,7 @@ class Facture {
         dateOperation - acomptePaye.datePayementEcheante;
       const daysDifference = Math.max(
         0,
-        Math.floor(differenceInMillis / (1000 * 60 * 60 * 24))
+        Math.floor(differenceInMillis / (1000 * 60 * 60 * 24)),
       );
 
       acomptePaye.penalty = {
@@ -1069,7 +1070,7 @@ class Facture {
         (a) =>
           (a.datePayementEcheante !== null ||
             a.datePayementEcheante !== undefined) &&
-          a.rang === acomptePaye.rang + 1
+          a.rang === acomptePaye.rang + 1,
       );
 
       if (acompteSuivant) {
@@ -1095,16 +1096,16 @@ class Facture {
       return acompte;
     });
 
-    await factureCollection.update(facture._id, {
+    await factureCollection.update(facture._key, {
       facturesAcompte: updatedAcomptes,
     });
   };
 
-  getOldPenaltiesForClient = async ({ clientId }) => {
+  getOldPenaltiesForClient = async ({ clientKey }) => {
     const query = await db.query(aql`
       FOR facture IN ${factureCollection}
         FILTER LENGTH(facture.facturesAcompte) > 0 
-        AND facture.client._id == ${clientId}
+        AND facture.client._key == ${clientKey}
         FOR acompte IN facture.facturesAcompte
           FILTER acompte.penalty.isPaid == false
           RETURN {
@@ -1120,23 +1121,23 @@ class Facture {
         libelle: `Retard de ${acompteImpaye.penalty.nombreRetard} jours du paiement de la facture d'acompte N° ${facturePrincipale.reference}-${acompteImpaye.rang}`,
         nbreRetard: acompteImpaye.penalty.nombreRetard,
         montant: acompteImpaye.penalty.montant,
-      })
+      }),
     );
 
     // Marquer les pénalités comme payées
     await Promise.all(
       facturesPenal.map(async ({ facturePrincipale, acompteImpaye }) => {
         const index = facturePrincipale.facturesAcompte.findIndex(
-          (acompte) => acompte.rang === acompteImpaye.rang
+          (acompte) => acompte.rang === acompteImpaye.rang,
         );
 
         if (index !== -1) {
           facturePrincipale.facturesAcompte[index].penalty.isPaid = true;
-          await factureCollection.update(facturePrincipale._id, {
+          await factureCollection.update(facturePrincipale._key, {
             facturesAcompte: facturePrincipale.facturesAcompte,
           });
         }
-      })
+      }),
     );
 
     return oldPenalties;
@@ -1148,19 +1149,19 @@ class Facture {
     moyenPayement,
     pieceJustificative,
     referenceTransaction,
-    userId,
-    bankId,
-    clientId,
+    userKey,
+    bankKey,
+    clientKey,
     dateOperation = Date.now(),
   }) => {
     let libelle;
-    isValidValue({ value: [montant, referenceTransaction, userId] });
+    isValidValue({ value: [montant, referenceTransaction, userKey] });
     const transaction = await db.beginTransaction({
       write: ["factures", "fluxFinanciers"],
     });
 
     try {
-      await clientModel.isExistClient({ key: clientId });
+      await clientModel.isExistClient({ key: clientKey });
 
       const facture = await this.getFacture({ key: key });
       const count = facture.payements.length;
@@ -1182,7 +1183,7 @@ class Facture {
 
       await fluxFinancierModel.createFluxFinancier(
         {
-          factureId: facture._id,
+          factureKey: facture._key,
           libelle: libelle,
           reference: await fluxFinancierModel.generateNewFuxFinancierReference({
             type: FluxFinancierType.input,
@@ -1193,16 +1194,16 @@ class Facture {
           moyenPayement: moyenPayement,
           referenceTransaction: referenceTransaction,
           pieceJustificative: pieceJustificative,
-          userId: userId,
-          clientId: clientId,
-          bankId: bankId,
+          userKey: userKey,
+          clientKey: clientKey,
+          bankKey: bankKey,
           dateOperation: dateOperation,
         },
-        transaction
+        transaction,
       );
 
       const acomptePaye = facture.facturesAcompte.find(
-        (a) => a.rang === count + 1
+        (a) => a.rang === count + 1,
       );
 
       if (!acomptePaye) {
@@ -1218,7 +1219,7 @@ class Facture {
       } else {
         if (facture.blocked == true) {
           await this.restartService({
-            factureId: facture._id,
+            factureKey: facture._key,
             secretekey: facture.secreteKey,
             dateRestart: dateOperation,
           });
@@ -1245,33 +1246,33 @@ class Facture {
       const flux = await fluxFinancierModel.getFluxFinancier({ key: key });
 
       await userModel.isExistUser({ key: validate.validater });
-      const banque = await BanqueModel.getBanque({ key: flux.bank._id });
+      const banque = await BanqueModel.getBanque({ key: flux.bank._key });
       const sommeBanquaire = banque.soldeReel;
 
       if (validate.isValidValue !== FluxFinancierStatus.wait) {
         if (validate.validateStatus === FluxFinancierStatus.valid) {
           await BanqueModel.resetBanqueAmount({
-            key: banque._id,
+            key: banque._key,
             soldeReel: sommeBanquaire + flux.montant,
           });
 
           // DÉPLACÉ ICI : Changement de statut de la facture lors de la validation
-          if (flux.factureId || flux.factureId != null) {
-            const facture = await this.getFacture({ key: flux.factureId });
+          if (flux.factureKey || flux.factureKey != null) {
+            const facture = await this.getFacture({ key: flux.factureKey });
 
             const acomptesPayes = facture.facturesAcompte.filter(
-              (a) => a.isPaid === true
+              (a) => a.isPaid === true,
             ).length;
-             const prochainAcompte = facture.facturesAcompte.find(
-              (a) => a.rang === acomptesPayes + 1
+            const prochainAcompte = facture.facturesAcompte.find(
+              (a) => a.rang === acomptesPayes + 1,
             );
 
             if (prochainAcompte) {
-               prochainAcompte.isPaid = true;
-                await this.updateFacture({
-                key: facture._id,
+              prochainAcompte.isPaid = true;
+              await this.updateFacture({
+                key: facture._key,
                 facturesAcompte: facture.facturesAcompte,
-               });
+              });
             }
 
             if (
@@ -1281,13 +1282,13 @@ class Facture {
               })
             ) {
               await this.changeStatusFacture({
-                key: facture._id,
+                key: facture._key,
                 status: StatusFacture.paid,
               });
             } else {
               if (facture.status !== StatusFacture.partialpaid) {
                 await this.changeStatusFacture({
-                  key: facture._id,
+                  key: facture._key,
                   status: StatusFacture.partialpaid,
                 });
               }
@@ -1296,7 +1297,7 @@ class Facture {
           status = FluxFinancierStatus.valid;
         } else {
           await BanqueModel.resetBanqueAmount({
-            key: banque._id,
+            key: banque._key,
             soldeTheorique: banque.soldeTheorique - flux.montant,
           });
 
@@ -1306,7 +1307,7 @@ class Facture {
       let newValidate =
         flux.validate?.map((validate) => ({
           ...validate,
-          validater: validate.validater?._id,
+          validater: validate.validater?._key,
         })) ?? [];
       newValidate.push(validate);
       await session.step(async () => {
@@ -1319,10 +1320,13 @@ class Facture {
       await session.commit();
       return "OK";
     } catch (err) {
-    console.error(err);
+      console.error(err);
 
       await session.abort();
-      throw new Error(err.message || "Une erreur s'est produite lors de la validation du flux financier.");
+      throw new Error(
+        err.message ||
+          "Une erreur s'est produite lors de la validation du flux financier.",
+      );
     }
   }
 
@@ -1334,7 +1338,7 @@ class Facture {
 
     const daysDifference = Math.max(
       0,
-      Math.floor(differenceInMillis / (1000 * 60 * 60 * 24))
+      Math.floor(differenceInMillis / (1000 * 60 * 60 * 24)),
     );
 
     const penaltyAmount = daysDifference * (dailyPenaltyPercentage * montant);
@@ -1375,7 +1379,7 @@ class Facture {
             )
             FILTER LENGTH(accompteFiltre) > 0
             RETURN { 
-                id: facture._id,
+                id: facture._key,
             }
     `);
 
@@ -1384,7 +1388,7 @@ class Facture {
 
       // Tri des factures par date la plus ancienne avant traitement
       facturesData.sort(
-        (a, b) => (a.oldestDate || Infinity) - (b.oldestDate || Infinity)
+        (a, b) => (a.oldestDate || Infinity) - (b.oldestDate || Infinity),
       );
 
       for (const { id: factureid } of facturesData) {
@@ -1413,16 +1417,16 @@ class Facture {
           });
 
         if (facture.ligneFactures.length > 0) {
-          const clientId = facture.client._id;
-          if (!clientFactures[clientId]) {
-            clientFactures[clientId] = [];
+          const clientKey = facture.client._key;
+          if (!clientFactures[clientKey]) {
+            clientFactures[clientKey] = [];
           }
-          clientFactures[clientId].push(facture);
+          clientFactures[clientKey].push(facture);
         }
       }
 
-      for (const clientId in clientFactures) {
-        const factures = clientFactures[clientId];
+      for (const clientKey in clientFactures) {
+        const factures = clientFactures[clientKey];
         const client = factures[0].client;
         let montantRestant = 0;
         for (const facture of factures) {
@@ -1464,24 +1468,24 @@ class Facture {
           AND ${filtre}
         RETURN acompte
       ) > 0
-      RETURN facture._id
+      RETURN facture._key
   `);
 
     if (query.hasNext) {
-      const facturesId = await query.all();
-      for (const factureid of facturesId) {
+      const facturesKey = await query.all();
+      for (const factureid of facturesKey) {
         const facture = await this.getFacture({ key: factureid });
         if (facture.ligneFactures.length > 0) {
-          const clientId = facture.client._id;
-          if (!clientFactures[clientId]) {
-            clientFactures[clientId] = [];
+          const clientKey = facture.client._key;
+          if (!clientFactures[clientKey]) {
+            clientFactures[clientKey] = [];
           }
-          clientFactures[clientId].push(facture);
+          clientFactures[clientKey].push(facture);
         }
       }
 
-      for (const clientId in clientFactures) {
-        const factures = clientFactures[clientId];
+      for (const clientKey in clientFactures) {
+        const factures = clientFactures[clientKey];
         const client = factures[0].client;
         let montantRestant = 0;
         for (const facture of factures) {
@@ -1511,7 +1515,7 @@ class Facture {
     // Vérification et définition du filtre des dates
     if (end !== undefined && end > now) {
       throw new Error(
-        "La date de fin doit être inférieure à la date d'aujourd'hui"
+        "La date de fin doit être inférieure à la date d'aujourd'hui",
       );
     }
 
@@ -1539,7 +1543,7 @@ class Facture {
                 RETURN acompte
             )
             FILTER LENGTH(accompteFiltre) > 0
-            RETURN { id: facture._id }
+            RETURN { id: facture._key }
     `);
 
     if (query.hasNext) {
@@ -1563,16 +1567,16 @@ class Facture {
           return true;
         });
         if (facture.ligneFactures.length > 0) {
-          const clientId = facture.client._id;
-          if (!clientFactures[clientId]) {
-            clientFactures[clientId] = [];
+          const clientKey = facture.client._key;
+          if (!clientFactures[clientKey]) {
+            clientFactures[clientKey] = [];
           }
-          clientFactures[clientId].push(facture);
+          clientFactures[clientKey].push(facture);
         }
       }
 
-      for (const clientId in clientFactures) {
-        const factures = clientFactures[clientId];
+      for (const clientKey in clientFactures) {
+        const factures = clientFactures[clientKey];
         const client = factures[0].client;
         let montantRestant = 0;
 
@@ -1597,12 +1601,12 @@ class Facture {
   stopperService = async ({ secretekey }) => {
     try {
       const query = await db.query(
-        aql`FOR facture IN ${factureCollection} FILTER facture.secreteKey == ${secretekey} AND facture.regenerate == true RETURN facture`
+        aql`FOR facture IN ${factureCollection} FILTER facture.secreteKey == ${secretekey} AND facture.regenerate == true RETURN facture`,
       );
       if (query.hasNext) {
         const factures = await query.all();
         factures.forEach(async (facture) => {
-          await factureCollection.update(facture._id, {
+          await factureCollection.update(facture._key, {
             regenerate: false,
           });
         });
@@ -1610,7 +1614,7 @@ class Facture {
       return "OK";
     } catch {
       throw new Error(
-        "La regeneration de cette facture n'a pas pu etre stoppée!"
+        "La regeneration de cette facture n'a pas pu etre stoppée!",
       );
     }
   };
@@ -1618,17 +1622,17 @@ class Facture {
   blockerService = async ({ secretekey }) => {
     try {
       const query = await db.query(
-        aql`FOR facture IN ${factureCollection} FILTER facture.secreteKey == ${secretekey} AND facture.regenerate == true RETURN facture`
+        aql`FOR facture IN ${factureCollection} FILTER facture.secreteKey == ${secretekey} AND facture.regenerate == true RETURN facture`,
       );
       if (query.hasNext) {
         const factures = await query.all();
         factures.forEach(async (facture) => {
-          await factureCollection.update(facture._id, {
+          await factureCollection.update(facture._key, {
             regenerate: false,
             blocked: true,
           });
           await this.changeStatusFacture({
-            key: facture._id,
+            key: facture._key,
             status: StatusFacture.blocked,
           });
         });
@@ -1636,23 +1640,23 @@ class Facture {
       return "OK";
     } catch {
       throw new Error(
-        "La regeneration de cette facture n'a pas pu etre stoppée!"
+        "La regeneration de cette facture n'a pas pu etre stoppée!",
       );
     }
   };
 
   restartService = async ({
-    factureId,
+    factureKey,
     secretekey,
     dateRestart = Date.now(),
   }) => {
     try {
       const query = await db.query(
-        aql`FOR facture IN ${factureCollection} FILTER facture._id == ${factureId} AND facture.secreteKey == ${secretekey} AND facture.regenerate == false SORT facture.dateEnregistrement DESC LIMIT 1 RETURN facture`
+        aql`FOR facture IN ${factureCollection} FILTER facture._key == ${factureKey} AND facture.secreteKey == ${secretekey} AND facture.regenerate == false SORT facture.dateEnregistrement DESC LIMIT 1 RETURN facture`,
       );
       if (query.hasNext) {
         const facture = await query.next();
-        await factureCollection.update(facture._id, {
+        await factureCollection.update(facture._key, {
           regenerate: true,
           blocked: false,
           dateDebutFacturation: dateRestart,
@@ -1662,17 +1666,17 @@ class Facture {
     } catch (e) {
       console.error(e);
       throw new Error(
-        "La regeneration de cette facture n'a pas pu etre activé!"
+        "La regeneration de cette facture n'a pas pu etre activé!",
       );
     }
   };
 
   blockServiceAutomatically = async () => {
-     try {
-       const todayMidnight = new Date();
-       // todayMidnight.setHours(0, 0, 0, 0);
+    try {
+      const todayMidnight = new Date();
+      // todayMidnight.setHours(0, 0, 0, 0);
       const now = Date.now();
- 
+
       const query = await db.query(aql`
         FOR facture IN ${factureCollection}
         FILTER facture.regenerate == true AND (facture.status != ${StatusFacture.paid} AND facture.status != ${StatusFacture.blocked})
@@ -1690,14 +1694,13 @@ class Facture {
       const results = [];
 
       if (query.hasNext) {
- 
         const factures = await query.all();
         for (const facture of factures) {
           // Récupérer la config client (nbreJrMaxPenalty)
 
           const nbreJrMaxPenalty =
             (await clientFactureGlobaLValueModel.clientFactureGlobalValueByClient(
-              { clientId: facture.client._id }
+              { clientKey: facture.client._key },
             )) ?? 0;
           // Vérification : est-ce qu’un acompte est au-delà du délai de grâce ?
           const hasExpired = facture.facturesAcompte.some((acompte) => {
@@ -1714,7 +1717,7 @@ class Facture {
       for (const facture of results) {
         // await this.stopperService({ secretekey: facture.secreteKey });
         await stopServiceEmail({
-          facture: await this.getFacture({ key: facture._id }),
+          facture: await this.getFacture({ key: facture._key }),
         });
         await this.applyPenalty({
           acomptePaye: facture.facturesAcompte[0],
@@ -1723,8 +1726,8 @@ class Facture {
         });
         await this.blockerService({ secretekey: facture.secreteKey });
       }
-     } catch (e) {
-       console.error(e);
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -1747,10 +1750,10 @@ class Facture {
       const factures = await query.all();
 
       for (const facture of factures) {
-        const { _id, _key, _rev, isDeletable, ...fact } = facture;
+        const { _key, _id, _rev, isDeletable, ...fact } = facture;
 
         const oldPenalties = await this.getOldPenaltiesForClient({
-          clientId: facture.client._id,
+          clientKey: facture.client._key,
         });
 
         if (fact.facturesAcompte && fact.facturesAcompte.length > 0) {
@@ -1784,16 +1787,16 @@ class Facture {
           const factureInsertResult = await factureCollection.save(newFacture, {
             returnNew: true,
           });
-           const returnFacture = factureInsertResult.new;
-           const ligneFactures =
+          const returnFacture = factureInsertResult.new;
+          const ligneFactures =
             await ligneFactureModel.getLigneFactureByFacture({
-              factureId: facture._id,
+              factureKey: facture._key,
             });
 
           await Promise.all(
             ligneFactures.map(async (ligneFacture) => {
               const {
-                _from,
+                serviceKey,
                 designation,
                 unit,
                 quantite,
@@ -1806,32 +1809,32 @@ class Facture {
               await this.ajouterLigneFacture({
                 designation,
                 dureeLivraison,
-                factureId: returnFacture._id,
+                factureKey: returnFacture._key,
                 unit,
                 fraisDivers,
-                serviceId: _from,
+                serviceKey: serviceKey,
                 quantite,
                 remise,
                 prixSupplementaire,
               });
-            })
+            }),
           );
 
           if (!facture.isDeletable) {
-            await factureCollection.update(facture._id, { regenerate: false });
+            await factureCollection.update(facture._key, { regenerate: false });
           } else {
-            await this.deleteFacture({ key: facture._id });
+            await this.deleteFacture({ key: facture._key });
           }
-         });
+        });
       }
       await session.commit();
       await reccurentInvoiceReadyEmail({
-        facture: await this.getFacture({ key: returnFacture._id }),
+        facture: await this.getFacture({ key: returnFacture._key }),
       }).catch(() => {
         throw new Error("Échec d'envoi d'e-mail");
       });
-     } catch (error) {
-       await session.abort();
+    } catch (error) {
+      await session.abort();
       console.error("Erreur lors de la régénération des factures", error);
     }
   };
@@ -1852,7 +1855,7 @@ class Facture {
       LIMIT 1
       FILTER facture.dateEnregistrement >= ${startOfMonth}
       RETURN facture
-    `
+    `,
     );
 
     let count = 0;
@@ -1865,32 +1868,33 @@ class Facture {
 
     // Correction ici : Assurer l'incrémentation correcte
     const newCount = (count ?? 0) + 1;
-      return `DG/FAC/${lastTwoDigitsYear}/${String(currentMonth).padStart(
+    return `DG/FAC/${lastTwoDigitsYear}/${String(currentMonth).padStart(
       2,
-      "0"
+      "0",
     )}/${String(newCount).padStart(2, "0")}`;
   };
 }
 
-export const chexkAndChangeStatus = async ({ factureId }) => {
+export const chexkAndChangeStatus = async ({ factureKey }) => {
   const factureModel = new Facture();
-  const facture = await factureModel.getFacture({ key: factureId });
+  const facture = await factureModel.getFacture({ key: factureKey });
   if (
-          this.isInvoicePaidTotaly({
-            facture: facture,
-            montantactuelle: montant,
-          })
-        ) {
-          await this.changeStatusFacture({
-            key: facture._id,
-            status: StatusFacture.paid,
-          });
-        } else {
-          if (facture.status !== StatusFacture.partialpaid) {
-            await this.changeStatusFacture({
-              key: facture._id,
-              status: StatusFacture.partialpaid,
-            });
-          }
-        } };
+    this.isInvoicePaidTotaly({
+      facture: facture,
+      montantactuelle: montant,
+    })
+  ) {
+    await this.changeStatusFacture({
+      key: facture._key,
+      status: StatusFacture.paid,
+    });
+  } else {
+    if (facture.status !== StatusFacture.partialpaid) {
+      await this.changeStatusFacture({
+        key: facture._key,
+        status: StatusFacture.partialpaid,
+      });
+    }
+  }
+};
 export default Facture;

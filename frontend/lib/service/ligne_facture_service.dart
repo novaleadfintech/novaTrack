@@ -9,8 +9,8 @@ import 'request_header.dart';
 
 class LigneFactureService {
   static Future<RequestResponse> createLigneFacture({
-    required String factureId,
-    required String serviceId,
+    required String factureKey,
+    required String serviceKey,
     required String designation,
     required int? dureeLivraison,
     required String unit,
@@ -23,8 +23,8 @@ class LigneFactureService {
     String body = '''
   mutation AjouterLigneFacture {
     ajouterLigneFacture(
-      factureId: "$factureId",
-      serviceId: "$serviceId",
+      factureKey: "$factureKey",
+      serviceKey: "$serviceKey",
       unit: "$unit",
       designation: "$designation",
       
@@ -100,11 +100,11 @@ class LigneFactureService {
   }
 
   static Future<RequestResponse> retirerLigneFacture({
-    required String ligneFactureId,
+    required String ligneFactureKey,
   }) async {
     String body = '''
       mutation DeleteLigneFacture {
-        deleteLigneFacture(key:"$ligneFactureId")
+        deleteLigneFacture(key:"$ligneFactureKey")
       }
   ''';
 
@@ -149,8 +149,8 @@ class LigneFactureService {
   }
 
   static Future<RequestResponse> updateLigneFacture({
-    required String ligneFactureId,
-    String? serviceId,
+    required String ligneFactureKey,
+    String? serviceKey,
     String? designation,
     int? dureeLivraison,
     double? prixSupplementaire,
@@ -162,7 +162,7 @@ class LigneFactureService {
     String body = '''
   mutation UpdateLigneFacture {
     updateLigneFacture(
-      key: "$ligneFactureId",
+      key: "$ligneFactureKey",
   ''';
 
     if (fraisDivers != null && fraisDivers.isNotEmpty) {
@@ -187,8 +187,8 @@ class LigneFactureService {
     if (designation != null) {
       body += 'designation: "$designation",';
     }
-    if (serviceId != null) {
-      body += 'serviceId: "$serviceId",';
+    if (serviceKey != null) {
+      body += 'serviceKey: "$serviceKey",';
     }
     if (dureeLivraison != null && dureeLivraison != 0) {
       body += 'dureeLivraison: $dureeLivraison,';

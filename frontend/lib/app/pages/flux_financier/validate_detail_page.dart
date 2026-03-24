@@ -159,7 +159,7 @@ bool confirmed = await handleOperationButtonPress(
     );
 
     RequestResponse response = await FluxFinancierService.validateFluxFinancier(
-      key: widget.flux.id,
+        key: widget.flux.key,
       validateFlux: ValidateFluxModel(
           validateStatus: selectedValue!,
         date: DateTime.now(),

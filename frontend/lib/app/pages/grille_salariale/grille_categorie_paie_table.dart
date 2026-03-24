@@ -20,21 +20,21 @@ import '../utils/grille_salariale_util.dart';
 import 'detail_grille_categorie_paie.dart';
 import 'edit_grille_categorie_paie.dart';
 
-class GrilleCategoriePaieTable extends StatefulWidget {
-  final List<GrilleCategoriePaieModel> grilleCategoriePaie;
+class GrillepaieCategorieTable extends StatefulWidget {
+  final List<GrillepaieCategorieModel> grillepaieCategorie;
   final Future<void> Function() refresh;
-  const GrilleCategoriePaieTable({
+  const GrillepaieCategorieTable({
     super.key,
-    required this.grilleCategoriePaie,
+    required this.grillepaieCategorie,
     required this.refresh,
   });
 
   @override
-  State<GrilleCategoriePaieTable> createState() =>
-      _GrilleCategoriePaieTableState();
+  State<GrillepaieCategorieTable> createState() =>
+      _GrillepaieCategorieTableState();
 }
 
-class _GrilleCategoriePaieTableState extends State<GrilleCategoriePaieTable> {
+class _GrillepaieCategorieTableState extends State<GrillepaieCategorieTable> {
   late SimpleFontelicoProgressDialog _dialog;
   late RoleModel role;
   late Future<void> _futureRoles;
@@ -54,36 +54,36 @@ class _GrilleCategoriePaieTableState extends State<GrilleCategoriePaieTable> {
   }
 
   editLibelle({
-    required GrilleCategoriePaieModel grilleCategoriePaie,
+    required GrillepaieCategorieModel grillepaieCategorie,
   }) {
     showResponsiveDialog(
       context,
-      content: EditGrilleCategoriePaiePage(
-        // grilleCategoriePaie: grilleCategoriePaie,
+      content: EditGrillepaieCategoriePage(
+        // grillepaieCategorie: grillepaieCategorie,
         refresh: widget.refresh,
       ),
-      title: "Modifier un grilleCategoriePaie",
+      title: "Modifier un grillepaieCategorie",
     );
   }
 
-  detailGrilleCategoriePaie(
-      {required GrilleCategoriePaieModel grilleCategoriePaie}) {
+  detailGrillepaieCategorie(
+      {required GrillepaieCategorieModel grillepaieCategorie}) {
     showDetailDialog(
       context,
-      content: DetailGrilleCategoriePaiePage(
-        grilleCategoriePaie: grilleCategoriePaie,
+      content: DetailGrillepaieCategoriePage(
+        grillepaieCategorie: grillepaieCategorie,
       ),
-      title: "Détail de grilleCategoriePaie",
+      title: "Détail de grillepaieCategorie",
     );
   }
 
-  Future<void> deleteGrilleCategoriePaie({
-    required GrilleCategoriePaieModel grilleCategoriePaie,
+  Future<void> deleteGrillepaieCategorie({
+    required GrillepaieCategorieModel grillepaieCategorie,
   }) async {
     bool confirmed = await handleOperationButtonPress(
       context,
       content:
-          "Voulez-vous vraiment supprimer la grilleCategoriePaie de bulletin \"${grilleCategoriePaie.libelle}\"?",
+          "Voulez-vous vraiment supprimer la grillepaieCategorie de bulletin \"${grillepaieCategorie.libelle}\"?",
     );
     if (confirmed) {
       _dialog.show(
@@ -93,14 +93,14 @@ class _GrilleCategoriePaieTableState extends State<GrilleCategoriePaieTable> {
       );
 
       RequestResponse result =
-          await GrilleCategoriePaieService.deleteGrilleCategoriePaie(
-        key: grilleCategoriePaie.id,
+          await GrillepaieCategorieService.deleteGrillepaieCategorie(
+        key: grillepaieCategorie.key,
       );
       _dialog.hide();
       if (result.status == PopupStatus.success) {
         MutationRequestContextualBehavior.showPopup(
           status: PopupStatus.success,
-          customMessage: "Le grilleCategoriePaie a été supprimé avec succcès",
+          customMessage: "Le grillepaieCategorie a été supprimé avec succcès",
         );
         await widget.refresh();
       } else {
@@ -138,7 +138,7 @@ class _GrilleCategoriePaieTableState extends State<GrilleCategoriePaieTable> {
           },
           children: [
             tableHeader(
-              tablesTitles: grilleCategoriePaieTableTitles,
+              tablesTitles: grillepaieCategorieTableTitles,
               context,
             )
           ],
@@ -151,45 +151,45 @@ class _GrilleCategoriePaieTableState extends State<GrilleCategoriePaieTable> {
                 1: const FixedColumnWidth(50)
               },
               children: [
-                ...widget.grilleCategoriePaie.map(
-                  (grilleCategoriePaie) => TableRow(
+                ...widget.grillepaieCategorie.map(
+                  (grillepaieCategorie) => TableRow(
                     decoration: tableDecoration(context),
                     children: [
                       TableBodyMiddle(
                         valeur: capitalizeFirstLetter(
-                            word: grilleCategoriePaie.libelle),
+                            word: grillepaieCategorie.libelle),
                       ),
                       TableBodyLast(
                         items: [
                           (
                             label: Constant.detail,
                             onTap: () {
-                              detailGrilleCategoriePaie(
-                                  grilleCategoriePaie: grilleCategoriePaie);
+                              detailGrillepaieCategorie(
+                                  grillepaieCategorie: grillepaieCategorie);
                             },
                             color: null, // couleur null
                           ),
                           // if (hasPermission(
                           //   role: role,
-                          //   permission: PermissionAlias.updateGrilleCategoriePaie.label,
+                          //   permission: PermissionAlias.updateGrillepaieCategorie.label,
                           // ))
                           (
                             label: Constant.edit,
                             onTap: () {
                               editLibelle(
-                                  grilleCategoriePaie: grilleCategoriePaie);
+                                  grillepaieCategorie: grillepaieCategorie);
                             },
                             color: null,
                           ),
                           // if (hasPermission(
                           //   role: role,
                           //   permission: PermissionAlias
-                          //       .deleteGrilleCategoriePaie.label,
+                          //       .deleteGrillepaieCategorie.label,
                           // ))
                           //   (
                           //     label: Constant.delete,
                           //     onTap: () {
-                          //       deleteLibelle(grilleCategoriePaie: grilleCategoriePaie);
+                          //       deleteLibelle(grillepaieCategorie: grillepaieCategorie);
                           //     },
                           //     color: null,
                           //   ),

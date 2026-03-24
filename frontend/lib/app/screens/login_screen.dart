@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/app/integration/popop_status.dart';
 import 'package:frontend/app/pages/app_dialog_box.dart';
+import 'package:frontend/model/habilitation/user_role_model.dart';
 import 'package:frontend/style/app_color.dart';
 import '../../helper/user_helper.dart';
 import '../../model/habilitation/role_enum.dart';
@@ -64,6 +65,10 @@ class _LoginScreenState extends State<LoginScreen> {
         login: login,
         password: password,
       );
+      print(result.canLogin);
+      for (UserRoleModel role in result.roles ?? []) {
+        print(role.role.libelle);
+      }
 
       if (!mounted) return;
       _dialog.hide();
@@ -74,6 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 roleAuthorization: RoleAuthorization.accepted,
                 roles: result.roles!)!
             .role;
+        print('je suis quand meme arrivée ici');
 
         AuthService().setRoles(role);
         if (result.isTheFirstConnection == true) {
@@ -86,7 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
         _dialog.hide();
         MutationRequestContextualBehavior.showPopup(
           customMessage:
-              "Vous n'êtes pas encore autorisé faire une action dans ce application.",
+              "Vous n'êtes pas encore autorisé faire une action dans cette application.$e",
           status: PopupStatus.serverError,
         );
       }

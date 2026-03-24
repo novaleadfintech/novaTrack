@@ -1,15 +1,15 @@
 class ProfilModel {
-  final String id;
+  final String key;
   final String libelle;
 
   ProfilModel({
     required this.libelle,
-    required this.id,
+    required this.key,
   });
 
   factory ProfilModel.fromJson(Map<String, dynamic> json) {
     return ProfilModel(
-      id: json['_id'],
+      key: json['_key'],
       libelle: json['libelle'],
     );
   }
@@ -17,7 +17,7 @@ class ProfilModel {
   Map<String, dynamic> toJson() {
     return {
       "libelle": libelle,
-      '_id': id,
+      '_key': key,
     };
   }
 }

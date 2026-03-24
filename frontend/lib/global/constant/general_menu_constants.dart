@@ -77,13 +77,18 @@ final Map<String, List<String>> menuPermissions = {
   ],
   Menu.payement: [ModuleAlias.fluxFinancier.label],
   Menu.fluxFinancier: [ModuleAlias.fluxFinancier.label],
-  Menu.config: [ModuleAlias.config.label],
   Menu.creance: [ModuleAlias.facturation.label],
   Menu.dette: [ModuleAlias.fluxFinancier.label],
-  Menu.utilisation: [ModuleAlias.utilisateur.label],
   Menu.bulletin: [ModuleAlias.bulletin.label],
   Menu.comptebancaires: [ModuleAlias.banque.label],
+  Menu.utilisation: [ModuleAlias.utilisateur.label]
 };
+
+// Menus toujours accessibles (sans vérification de permission)
+final List<String> alwaysAccessibleMenus = [
+  Menu.tableauBord,
+  Menu.config,
+];
 
 // Fonction de filtrage en fonction des rôles
 (List<(String, String, int)>, List<Widget>) getMenuAndPages(
@@ -95,8 +100,11 @@ final Map<String, List<String>> menuPermissions = {
     final menuLabel = allMenuItems[i].$1;
     final modules = menuPermissions[menuLabel];
 
-    final hasAccess = modules == null ||
-        modules.any((m) => hasModule(role: role, module: m));
+    // Toujours accessible si dans la liste alwaysAccessibleMenus
+    final isAlwaysAccessible = alwaysAccessibleMenus.contains(menuLabel);
+    final hasAccess = isAlwaysAccessible ||
+        modules == null ||
+        modules.any((module) => hasModule(role: role, module: module));
 
     if (hasAccess) {
       filteredMenu.add((menuLabel, allMenuItems[i].$2, filteredMenu.length));

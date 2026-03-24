@@ -229,8 +229,8 @@ class _EditFactureState extends State<EditFacture> {
   }) {
     if (list1 == null || list2 == null) return list1 == list2;
     if (list1.length != list2.length) return false;
-    final set1 = list1.map((item) => item.id).toSet();
-    final set2 = list2.map((item) => item.id).toSet();
+    final set1 = list1.map((item) => item.key).toSet();
+    final set2 = list2.map((item) => item.key).toSet();
     return set1.containsAll(set2) && set2.containsAll(set1);
   }
 
@@ -293,8 +293,8 @@ class _EditFactureState extends State<EditFacture> {
     );
 
     RequestResponse result = await FactureService.updateFacture(
-      factureId: widget.facture.id,
-      clientId: newclient?.id,
+      factureKey: widget.facture.key,
+      clientKey: newclient?.key,
       tva: newtva,
       dateEtablissement: newdateEtablissement,
       reduction: reduction == null && selectedFilter == null
@@ -444,7 +444,8 @@ class _EditFactureState extends State<EditFacture> {
                     label: banque.name,
                     value: banque,
                     selected:
-                        selectedItems.any((item) => item.value.id == banque.id),
+                        selectedItems
+                        .any((item) => item.value.key == banque.key),
                   );
                 }).toList();
               }),

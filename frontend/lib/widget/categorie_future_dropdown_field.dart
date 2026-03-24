@@ -5,7 +5,7 @@ import 'package:frontend/app/pages/categories_partenaire/add_categorie.dart';
 import '../app/pages/app_dialog_box.dart';
 import '../helper/assets/asset_icon.dart';
 import '../model/client/categorie_model.dart';
-import '../service/categorie_service.dart';
+import '../service/categorie_partner_service.dart';
 import '../style/app_color.dart';
 import '../style/app_style.dart';
 import 'validate_button.dart';

@@ -18,7 +18,7 @@ class DebtService {
     required double montant,
     DateTime? dateOperation,
     required String? referenceFacture,
-    required String userId,
+    required String userKey,
     required String? partiePrenante,
     PlatformFile? file,
     DateTime? datePayementUlterieur,
@@ -29,14 +29,14 @@ class DebtService {
             createDebt(
                 libelle: "$libelle",
                 montant: $montant,
-                userId: "$userId",               
+                userKey: "$userKey",               
         ''';
 
       if (dateOperation != null) {
         body += 'dateOperation: ${dateOperation.millisecondsSinceEpoch},';
       }
       if (client != null) {
-        body += 'clientId: "${client.id}",';
+        body += 'clientKey: "${client.key}",';
       }
       if (partiePrenante != null && partiePrenante.isNotEmpty) {
         body += 'partiePrenante: "$partiePrenante",';
@@ -152,9 +152,9 @@ class DebtService {
         body += 'montant: $montant,';
       }
       if (client != null) {
-        body += 'clientId: "${client.id}",';
+        body += 'clientKey: "${client.key}",';
       } else {
-        body += 'clientId: ${null},';
+        body += 'clientKey: ${null},';
       }
       if (partiePrenante != null) {
         body += 'partiePrenante: "$partiePrenante",';
@@ -294,7 +294,7 @@ class DebtService {
     var body = '''
                query Debts {
                   debts {
-                      _id
+                      _key
                       libelle
                       montant
                       referenceFacture
@@ -305,21 +305,21 @@ class DebtService {
                       dateEnregistrement
                       pieceJustificative
                       client {
-                          _id
+                          _key
                           ... on ClientMoral {
-                              _id
+                              _key
                               raisonSociale
                           }
                           ... on ClientPhysique {
-                              _id
+                              _key
                               nom
                               prenom
                           }
                       }
                       user {
-                          _id
+                          _key
                           personnel {
-                              _id
+                              _key
                               nom
                               prenom
                               email

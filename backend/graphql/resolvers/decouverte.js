@@ -17,21 +17,21 @@ const decouverteResolvers = {
     justification,
     montant,
     dureeReversement,
-    salarieId,
-    banqueId,
+    salarieKey,
+    banqueKey,
     referenceTransaction,
     moyenPayement,
-    userId,
+    userKey,
   }) => {
     return await decouverteModel.createDecouverte({
       justification,
       montant,
       dureeReversement,
-      salarieId,
+      salarieKey,
       referenceTransaction,
-      banqueId,
+      banqueKey,
       moyenPayement,
-      userId,
+      userKey,
     });
   },
 
@@ -41,9 +41,9 @@ const decouverteResolvers = {
     montant,
     montantRestant,
     dureeReversement,
-    salarieId,
+    salarieKey,
     referenceTransaction,
-    banqueId,
+    banqueKey,
     moyenPayement,
   }) => {
     return await decouverteModel.updateDecouverte({
@@ -52,8 +52,8 @@ const decouverteResolvers = {
       montant,
       montantRestant,
       dureeReversement,
-      salarieId,
-      banqueId,
+      salarieKey,
+      banqueKey,
       referenceTransaction,
       moyenPayement,
     });

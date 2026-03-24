@@ -1,10 +1,10 @@
 const typeDef = `#graphql
 type Poste{
-    _id:ID!
+    _key:ID!
     libelle:String!
 }
 input PosteInput{
-    _id:ID!
+    _key:ID!
     libelle:String!
 }
 `;

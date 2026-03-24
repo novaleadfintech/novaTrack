@@ -1,27 +1,27 @@
-class CategoriePaieModel {
-  final dynamic id;
-  final String categoriePaie;
+class paieCategorieModel {
+  final dynamic key;
+  final String paieCategorie;
 
-  CategoriePaieModel({
-    required this.id,
-    required this.categoriePaie,
+  paieCategorieModel({
+    required this.key,
+    required this.paieCategorie,
   });
 
-  factory CategoriePaieModel.fromJson(Map<String, dynamic> json) {
-    return CategoriePaieModel(
-      id: json["_id"],
-      categoriePaie: json["categoriePaie"] ?? "",
+  factory paieCategorieModel.fromJson(Map<String, dynamic> json) {
+    return paieCategorieModel(
+      key: json["_key"],
+      paieCategorie: json["paieCategorie"] ?? "",
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      "_id": id,
-      "categoriepaie": categoriePaie,
+      "_key": key,
+      "paieCategorie": paieCategorie,
     };
   }
 
-  bool equalTo({required CategoriePaieModel categoriePaie}) {
-    return categoriePaie.id == id;
+  bool equalTo({required paieCategorieModel paieCategorie}) {
+    return paieCategorie.key == key;
   }
 }

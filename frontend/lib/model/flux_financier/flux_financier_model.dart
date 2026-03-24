@@ -7,7 +7,7 @@ import './type_flux_financier.dart';
 import 'validate_flux_model.dart';
 
 class FluxFinancierModel {
-  final String id;
+  final String key;
   final String? libelle;
   final String? reference;
   final String? referenceTransaction;
@@ -23,11 +23,11 @@ class FluxFinancierModel {
   final String? pieceJustificative;
   final List<ValidateFluxModel>? validated;
   final UserModel? user;
-  final String? factureId;
+  final String? factureKey;
   final BanqueModel? bank;
 
   FluxFinancierModel({
-    required this.id,
+    required this.key,
     this.libelle,
     this.type,
     required this.montant,
@@ -42,14 +42,14 @@ class FluxFinancierModel {
     this.isFromSystem = false,
     this.user,
     this.reference,
-    this.factureId,
+    this.factureKey,
     required this.validated,
     required this.status,
   });
 
   factory FluxFinancierModel.fromJson(Map<String, dynamic> json) {
     return FluxFinancierModel(
-      id: json['_id'] as String,
+      key: json['_key'] as String,
       reference: json['reference'] as String?,
       libelle: json['libelle'] as String?,
       type: json['type'] != null
@@ -75,7 +75,7 @@ class FluxFinancierModel {
           json['client'] != null ? ClientModel.fromJson(json['client']) : null,
       partiePrenante: json['partiePrenante'],
       user: json['user'] != null ? UserModel.fromJson(json['user']) : null,
-      factureId: json['factureId'],
+      factureKey: json['factureKey'],
       referenceTransaction: json['referenceTransaction'] ?? "",
       validated: json['validate'] != null
           ? (json['validate'] as List<dynamic>)
@@ -87,7 +87,7 @@ class FluxFinancierModel {
 
   Map<String, dynamic> toJson() {
     return {
-      '_id': id,
+      '_key': key,
       'libelle': libelle,
       'reference': reference,
       'type': type != null ? fluxFinancierTypeToString(type!) : null,
@@ -101,7 +101,7 @@ class FluxFinancierModel {
       'lieuOperation': bank?.toJson,
       'user': user?.toJson(),
       'client': client?.toJson(),
-      'factureId': factureId,
+      'factureKey': factureKey,
       'validated': validated?.map((valide) => valide.toJson()).toList(),  
       'status': status != null ? fluxFinancierStatusToString(status!) : null,
       'isFromSystem': isFromSystem,

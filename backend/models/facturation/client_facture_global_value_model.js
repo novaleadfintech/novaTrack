@@ -13,20 +13,19 @@ class ClientFactureGlobaLValueModel {
 
   async initializeCollections() {
     if (!(await clientFacureGlobalValueCollection.exists())) {
-      clientFacureGlobalValueCollection.create();
+     await clientFacureGlobalValueCollection.create();
     }
   }
-  clientFactureGlobalValues = async () => {
-    // Récupérer toutes les valeurs configurées
+  clientFactureGlobalValues = async () => {    // Récupérer toutes les valeurs configurées
     const query = await db.query(
-      aql`FOR cfg IN ${clientFacureGlobalValueCollection} RETURN cfg`
+      aql`FOR cfg IN ${clientFacureGlobalValueCollection} RETURN cfg`,
     );
     const allValues = await query.all();
 
     // Transformer en Map : { clientId: nbreJrMaxPenalty }
     const valueMap = new Map();
     for (const item of allValues) {
-      valueMap.set(item.clientId, item.nbreJrMaxPenalty);
+      valueMap.set(item.clientKey, item.nbreJrMaxPenalty);
     }
 
     // Récupérer tous les clients (avec tri et filtre si tu veux)
@@ -36,7 +35,7 @@ class ClientFactureGlobaLValueModel {
     });
 
     const result = clients.map((client) => {
-      const penalty = valueMap.get(client._id) ?? null;
+      const penalty = valueMap.get(client._key) ?? null;
       return {
         client,
         nbreJrMaxPenalty: penalty,
@@ -45,48 +44,48 @@ class ClientFactureGlobaLValueModel {
     return result;
   };
 
-  clientFactureGlobalValueByClient = async ({ clientId }) => {
-    if (!clientId) throw new Error("clientId requis");
+  clientFactureGlobalValueByClient = async ({ clientKey }) => {
+    if (!clientKey) throw new Error("clientKey requis");
 
     // Récupère la configuration spécifique pour ce client (si elle existe)
     const configQuery = await db.query(
-      aql`FOR cfg IN ${clientFacureGlobalValueCollection} FILTER cfg.clientId == ${clientId} LIMIT 1 RETURN cfg`
+      aql`FOR cfg IN ${clientFacureGlobalValueCollection} FILTER cfg.clientKey == ${clientKey} LIMIT 1 RETURN cfg`,
     );
     const config = await configQuery.next();
 
     // Récupère les infos du client
-    const client = await clientModel.getClient({ key: clientId });
+    const client = await clientModel.getClient({ key: clientKey });
     if (!client) throw new Error("Client introuvable");
 
     return config?.nbreJrMaxPenalty ?? null;
   };
 
-  configClientFactureGlobaLValue = async ({ clientId, nbreJrMaxPenalty }) => {
-    isValidValue({ value: { clientId, nbreJrMaxPenalty } });
-     // Vérifie que le client existe
+  configClientFactureGlobaLValue = async ({ clientKey, nbreJrMaxPenalty }) => {
+    isValidValue({ value: { clientKey, nbreJrMaxPenalty } });
+    // Vérifie que le client existe
     await clientModel.isExistClient({
-      key: clientId,
+      key: clientKey,
     });
 
     // Vérifie si une config existe déjà pour ce client
     const query = await db.query(aql`
       FOR cfg IN ${clientFacureGlobalValueCollection}
-      FILTER cfg.clientId == ${clientId}
+      FILTER cfg.clientKey == ${clientKey}
       LIMIT 1
       RETURN cfg
     `);
 
     if (query.hasNext) {
       const exist = await query.next();
- 
+
       // Mise à jour
       await clientFacureGlobalValueCollection.update(exist._key, {
         nbreJrMaxPenalty: nbreJrMaxPenalty,
       });
-     } else {
+    } else {
       // Création
       await clientFacureGlobalValueCollection.save({
-        clientId: clientId,
+        clientKey: clientKey,
         nbreJrMaxPenalty: nbreJrMaxPenalty,
       });
     }

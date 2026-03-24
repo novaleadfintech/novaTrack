@@ -204,12 +204,12 @@ class _UpdateLigneFactureState extends State<UpdateLigneFacture> {
         );
       }
       RequestResponse result = await LigneFactureService.updateLigneFacture(
-        ligneFactureId: widget.ligneFacture.id,
+        ligneFactureKey: widget.ligneFacture.key,
         unit: _unitController.text,
         prixSupplementaire: prixSupplementaireString.isEmpty
             ? null
             : double.parse(prixSupplementaireString),
-        serviceId: service == widget.ligneFacture.service ? null : service!.id,
+        serviceKey: service == widget.ligneFacture.service ? null : service!.key,
         designation: designation,
         dureeLivraison: dureeUnit == null || compteur == null
             ? null

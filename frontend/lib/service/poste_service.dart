@@ -13,7 +13,7 @@ class PosteService {
     var body = '''
       query Postes {
           postes {
-              _id
+              _key
               libelle
           }
       }

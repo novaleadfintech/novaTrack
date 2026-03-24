@@ -85,7 +85,7 @@ class _EditPaysPageState extends State<EditPaysPage> {
       backgroundColor: Colors.transparent,
     );
     var result = await PaysService.updatePays(
-      paysId: widget.pays.id!,
+      paysKey: widget.pays.key!,
       nom: nom,
       taux: double.parse(taux),
       nbreNumTel: nbrePhoneTel,

@@ -1,21 +1,20 @@
 import 'dart:convert';
-import 'package:frontend/model/moyen_paiement_model.dart';
-
 import '../app/integration/popop_status.dart';
 import '../global/config.dart';
 import '../global/constant/request_management_value.dart';
+import '../model/client/categorie_model.dart';
 
 import '../model/request_response.dart';
 import 'package:http/http.dart' as http;
 
 import 'request_header.dart';
 
-class MoyenPayementService {
-  static Future<List<MoyenPaiementModel>> getMoyenPayement() async {
+class CategorieService {
+  static Future<List<CategorieModel>> getCategories() async {
     var body = '''
-      query Categories {
-        categories {
-            _id
+      query partnerCategories {
+        partnerCategories {
+            _key
             libelle
         }
     }
@@ -28,39 +27,42 @@ class MoyenPayementService {
       headers: getHeaders(),
     )
         .catchError((onError) {
-      throw onError.toString();
+      throw onError;
     }).timeout(
       const Duration(seconds: reqTimeout),
       onTimeout: () {
-        throw RequestMessage.timeoutMessage;
+        throw RequestMessage.failgettingDataMessage;
       },
     );
-
-    if (response.statusCode == 200) {
-      var jsonData = jsonDecode(response.body);
-      var data = jsonData['data']['moyenPayements'];
-      List<MoyenPaiementModel> categories = [];
-      if (data != null) {
-        for (var moyen in data) {
-          categories.add(MoyenPaiementModel.fromJson(moyen));
+    try {
+      if (response.statusCode == 200) {
+        var jsonData = jsonDecode(response.body);
+        var data = jsonData['data']['partnerCategories'];
+        List<CategorieModel> partnerCategories = [];
+        if (data != null) {
+          for (var category in data) {
+            partnerCategories.add(CategorieModel.fromJson(category));
+          }
+          return partnerCategories;
+        } else {
+          throw RequestMessage.failgettingDataMessage;
         }
-        return categories;
       } else {
-        throw RequestMessage.failgettingDataMessage;
+        throw jsonDecode(response.body)['errors'][0]['message'];
       }
-    } else {
-      throw jsonDecode(response.body)['errors'][0]['message'];
+    } catch (e) {
+      rethrow;
     }
   }
 
   // Méthode pour créer une nouvelle catégorie
-  static Future<RequestResponse> createCategorie({
+  static Future<RequestResponse> createPartnerCategorie({
     required String libelle,
     String? description,
   }) async {
     var body = '''
-      mutation CreateCategorie {
-        createCategorie(
+      mutation CreatePartnerCategorie {
+        createPartnerCategorie(
           libelle: "$libelle",
         )
       }
@@ -79,7 +81,7 @@ class MoyenPayementService {
 
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
-        var data = jsonData['data']['createCategorie'];
+        var data = jsonData['data']['createPartnerCategorie'];
         if (data == RequestMessage.success) {
           return RequestResponse(
             message: RequestMessage.successMessage,
@@ -105,12 +107,62 @@ class MoyenPayementService {
     }
   }
 
-  static Future<RequestResponse> deleteCategorie({
+  static Future<RequestResponse> updatePartnerCategorie({
+    required String key,
+    required String libelle,
+    String? description,
+  }) async {
+    var body = '''
+      mutation UpdatepaieCategorie {
+    updatePartnerCategorie(key: "$key", libelle: "$libelle")
+}
+    ''';
+
+    try {
+      var response = await http
+          .post(
+        Uri.parse(serverUrl),
+        body: json.encode({'query': body}),
+        headers: getHeaders(),
+      )
+          .timeout(const Duration(seconds: reqTimeout), onTimeout: () {
+        throw RequestMessage.timeoutMessage;
+      });
+
+      if (response.statusCode == 200) {
+        var jsonData = jsonDecode(response.body);
+        var data = jsonData['data']['updatePartnerCategorie'];
+        if (data == RequestMessage.success) {
+          return RequestResponse(
+            message: RequestMessage.successMessage,
+            status: PopupStatus.success,
+          );
+        } else {
+          return RequestResponse(
+            message: RequestMessage.serverErrorMessage,
+            status: PopupStatus.serverError,
+          );
+        }
+      } else {
+        return RequestResponse(
+          message: jsonDecode(response.body)['errors'][0]['message'],
+          status: PopupStatus.serverError,
+        );
+      }
+    } catch (error) {
+      return RequestResponse(
+        message: RequestMessage.onCatchErrorMessage,
+        status: PopupStatus.serverError,
+      );
+    }
+  }
+
+  static Future<RequestResponse> deletePartnerCategorie({
     required String key,
   }) async {
     var body = '''
       mutation DeleteCateforie {
-        deleteCateforie(key: $key)
+        deleteCateforie(key: "$key")
       }
     ''';
 

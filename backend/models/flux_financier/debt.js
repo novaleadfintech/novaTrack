@@ -25,7 +25,7 @@ class Debt {
 
   async initializeCollections() {
     if (!(await debtCollection.exists())) {
-      debtCollection.create();
+      await debtCollection.create();
     }
   }
 
@@ -55,12 +55,12 @@ class Debt {
         debts.map(async (debt) => {
           return {
             ...debt,
-            user: await userModel.getUser({ key: debt.userId }),
+            user: await userModel.getUser({ key: debt.userKey }),
             client:
-              debt.clientId == null
+              debt.clientKey == null
                 ? null
                 : await clientModel.getClient({
-                    key: debt.clientId,
+                    key: debt.clientKey,
                   }),
 
             pieceJustificative:
@@ -105,12 +105,12 @@ class Debt {
         debts.map(async (debt) => {
           return {
             ...debt,
-            user: await userModel.getUser({ key: debt.userId }),
+            user: await userModel.getUser({ key: debt.userKey }),
             client:
-              debt.clientId == null
+              debt.clientKey == null
                 ? null
                 : await clientModel.getClient({
-                    key: debt.clientId,
+                    key: debt.clientKey,
                   }),
 
             pieceJustificative: debt.pieceJustificative
@@ -133,11 +133,11 @@ class Debt {
       const debt = await debtCollection.document(key);
       return {
         ...debt,
-        user: await userModel.getUser({ key: debt.userId }),
+        user: await userModel.getUser({ key: debt.userKey }),
         client:
-          debt.clientId == null
+          debt.clientKey == null
             ? null
-            : await clientModel.getClient({ key: debt.clientId }),
+            : await clientModel.getClient({ key: debt.clientKey }),
         pieceJustificative:
           debt.pieceJustificative !== null
             ? process.env.FILE_PREFIX +
@@ -156,19 +156,19 @@ class Debt {
     montant,
     pieceJustificative,
     referenceFacture,
-    userId,
+    userKey,
     partiePrenante,
     datePayementUlterieur,
-    clientId,
+    clientKey,
     dateOperation = Date.now(),
   }) => {
     isValidValue({
       value: [
         libelle,
         montant,
-        userId,
+        userKey,
 
-        // clientId,
+        // clientKey,
         referenceFacture,
       ],
     });
@@ -177,8 +177,8 @@ class Debt {
       write: ["debts", "banques"],
     });
 
-    if (clientId != undefined && clientId !== null) {
-      await clientModel.isExistClient({ key: clientId });
+    if (clientKey != undefined && clientKey !== null) {
+      await clientModel.isExistClient({ key: clientKey });
     }
     const query = await db.query(
       aql`FOR debt IN ${debtCollection} FILTER debt.referenceFacture == ${referenceFacture} LIMIT 1 RETURN debt`,
@@ -215,7 +215,7 @@ class Debt {
         }
       }
 
-      await userModel.isExistUser({ key: userId });
+      await userModel.isExistUser({ key: userKey });
 
       // Étape 3 : Créer le debt financier
       const newDebt = {
@@ -225,16 +225,16 @@ class Debt {
         status: DebtStatus.unpaid,
         dateEnregistrement: Date.now(),
         pieceJustificative: filePath ? filePath.replace(/\\/g, "/") : null,
-        userId: userId,
+        userKey: userKey,
         partiePrenante: partiePrenante,
-        clientId: clientId,
+        clientKey: clientKey,
         datePayementUlterieur: datePayementUlterieur,
         dateOperation: dateOperation,
       };
 
       await session.step(async () => {
         // await this.updateBanqueTheoriqueSolde({
-        //   bankId: bankId,
+        //   bankKey: bankKey,
         //   type: type,
         //   montant: montant,
         // });
@@ -256,7 +256,7 @@ class Debt {
     key,
     libelle,
     montant,
-    clientId,
+    clientKey,
     datePayementUlterieur,
     referenceFacture,
     partiePrenante,
@@ -277,10 +277,10 @@ class Debt {
         if (libelle !== undefined) updateField.libelle = libelle;
         if (datePayementUlterieur !== undefined)
           updateField.datePayementUlterieur = datePayementUlterieur;
-        if (clientId !== undefined) {
-          (await clientId) != null ??
-            clientModel.isExistClient({ key: clientId });
-          updateField.clientId = clientId;
+        if (clientKey !== undefined) {
+          (await clientKey) != null ??
+            clientModel.isExistClient({ key: clientKey });
+          updateField.clientKey = clientKey;
         }
         if (partiePrenante !== undefined) {
           updateField.partiePrenante = partiePrenante;
@@ -289,7 +289,7 @@ class Debt {
 
         if (referenceFacture !== undefined) {
           const query = await db.query(
-            aql`FOR debt IN ${debtCollection} FILTER debt.referenceFacture == ${referenceFacture} AND debt._id != ${key} LIMIT 1 RETURN debt`,
+            aql`FOR debt IN ${debtCollection} FILTER debt.referenceFacture == ${referenceFacture} AND debt._key != ${key} LIMIT 1 RETURN debt`,
           );
 
           if (query.hasNext) {

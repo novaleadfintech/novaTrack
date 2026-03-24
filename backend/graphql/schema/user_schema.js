@@ -1,6 +1,6 @@
 const typeDef = `#graphql
     type User{
-        _id:ID!
+        _key:ID!
         login:String!
         password:String!
         personnel:Personnel! 
@@ -19,12 +19,12 @@ const query = `#graphql
 const mutation = `#graphql
     seConnecter(login:String!, password:String!):User!
     seDeconnecter(key:ID!):String!
-    attribuerRolePersonnel(personnelId:String!, roleId:String!, createBy:String!):String!
-    attribuerRoleUser(key:String!, roleId:String!):String!
-    retirerRoleUser(key:String!, roleId:String!):String!
+    attribuerRolePersonnel(personnelKey:String!, roleKey:String!, createBy:String!):String!
+    attribuerRoleUser(key:String!, roleKey:String!):String!
+    retirerRoleUser(key:String!, roleKey:String!):String!
     updateLoginData(key:ID!, login:String, password:String!, oldPassword:String!):String!
     resetLoginParameter(key:ID!):String!
-    handleRoleEditing(userRoleId:ID!, roleAuthorization: RoleAuthorization!, authorizer: String!):String!
+    handleRoleEditing(userRoleKey:ID!, roleAuthorization: RoleAuthorization!, authorizer: String!):String!
     access(key:ID!, canLogin: Boolean!):String!
 `;
 

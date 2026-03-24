@@ -1,6 +1,6 @@
 const typeDef = `#graphql 
 type Decouverte {
-    _id: ID!
+    _key: ID!
     justification: String!
     montant: Float!
     dateEnregistrement: String!
@@ -27,9 +27,9 @@ input DecouverteInput {
     moyenPayement: MoyenPaiementInput!
     referenceTransaction: String!
     status: DecouverteStatus!
-    banqueId: String!
-    salarieId: String!
-    userId: String!
+    banqueKey: String!
+    salarieKey: String!
+    userKey: String!
 }`;
 const query = `#graphql 
     decouvertes(perPage: Int, skip: Int): [Decouverte]!
@@ -43,9 +43,9 @@ const mutation = `#graphql
         dureeReversement: Int!
         referenceTransaction: String!
         moyenPayement: MoyenPaiementInput!
-        banqueId: String!
-        salarieId: ID!
-        userId: ID!
+        banqueKey: String!
+        salarieKey: ID!
+        userKey: ID!
     ): String!
     updateDecouverte(
         key: ID!,
@@ -54,8 +54,8 @@ const mutation = `#graphql
         dureeReversement: Int
         referenceTransaction: String
         moyenPayement: MoyenPaiementInput
-        banqueId:String
-        salarieId: ID
+        banqueKey:String
+        salarieKey: ID
         montantRestant: Float
     ): String!
     # deleteDecouverte(key: ID!): String!

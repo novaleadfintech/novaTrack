@@ -2,16 +2,16 @@ import { aql } from "arangojs";
 import db from "../../db/database_connection.js";
 import { isValidValue } from "../../utils/util.js";
 
-const categorieCollection = db.collection("categories");
+const categorieCollection = db.collection("partnerCategories");
 
-class Categorie {
+class partnerCategorie {
   constructor() {
     this.initializeCollections();
   }
 
   async initializeCollections() {
     if (!(await categorieCollection.exists())) {
-      categorieCollection.create();
+     await categorieCollection.create();
     }
   }
 
@@ -22,7 +22,7 @@ class Categorie {
     }
     try {
       const query = await db.query(
-        aql`FOR categorie IN ${categorieCollection} SORT categorie.libelle ASC ${limit} RETURN categorie`
+        aql`FOR partnerCategorie IN ${categorieCollection} SORT partnerCategorie.libelle ASC ${limit} RETURN partnerCategorie`,
       );
       if (query.hasNext) {
         return await query.all();
@@ -43,12 +43,12 @@ class Categorie {
       console.error(err);
 
       throw new Error(
-        "Une erreur s'est produite lors de la récupération du catégorie"
+        "Une erreur s'est produite lors de la récupération du catégorie",
       );
     }
   };
 
-  createCategorie = async ({ libelle }) => {
+  createPartnerCategorie = async ({ libelle }) => {
     isValidValue({ value: libelle });
     const newCategorie = { libelle: libelle };
     try {
@@ -58,12 +58,12 @@ class Categorie {
       console.error(err);
 
       throw new Error(
-        "Une erreur s'est produite lors de l'a création de cette catégorie'"
+        "Une erreur s'est produite lors de l'a création de cette catégorie'",
       );
     }
   };
 
-  updateCategorie = async ({ key, libelle }) => {
+  updatePartnerCategorie = async ({ key, libelle }) => {
     isValidValue({ value: libelle });
     const updateField = { libelle: libelle };
     try {
@@ -73,7 +73,7 @@ class Categorie {
       console.error(err);
 
       throw new Error(
-        "Une erreur s'est produite lors de la mise à jour de cette catégorie"
+        "Une erreur s'est produite lors de la mise à jour de cette catégorie",
       );
     }
   };
@@ -86,7 +86,7 @@ class Categorie {
       console.error(err);
 
       throw new Error(
-        "Une erreur s'est produite lors de la suppression de cette catégorie"
+        "Une erreur s'est produite lors de la suppression de cette catégorie",
       );
     }
   };
@@ -99,4 +99,4 @@ class Categorie {
   };
 }
 
-export default Categorie;
+export default partnerCategorie;

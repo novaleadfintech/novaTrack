@@ -97,19 +97,19 @@
 //     try {
 //       final List<RubriqueOnBulletinModel> rubriquePaieResponse =
 //           await RubriqueCategorieConfService
-//               .getBulletinRubriquesByCategoriePaie(
-//         categorie: widget.bulletinPaie.salarie.categoriePaie,
+//               .getBulletinRubriquesBypaieCategorie(
+//         bulletincategorie: widget.bulletinPaie.salarie.paieCategorie,
 //       );
 
 //       // Fusionner les rubriques récupérées avec celles du bulletin existant
 //       final Map<String, double?> existingRubriques = {
-//         for (var r in widget.bulletinPaie.rubriques) r.rubrique.id: r.value
+//         for (var r in widget.bulletinPaie.rubriques) r.rubrique.key: r.value
 //       };
 
 //       // Injecter les valeurs existantes s'il y en a
 //       for (var rubrique in rubriquePaieResponse) {
-//         if (existingRubriques.containsKey(rubrique.rubrique.id)) {
-//           rubrique.value = existingRubriques[rubrique.rubrique.id];
+//         if (existingRubriques.containsKey(rubrique.rubrique.key)) {
+//           rubrique.value = existingRubriques[rubrique.rubrique.key];
 //         }
 //       }
 
@@ -121,7 +121,7 @@
 
 //       for (var rubrique in rubriquePaieResponse) {
 //         if (rubrique.value != null) {
-//           valueControllers[rubrique.rubrique.id] =
+//           valueControllers[rubrique.rubrique.key] =
 //               TextEditingController(text: rubrique.value.toString());
 //         }
 //       }
@@ -250,7 +250,7 @@
 //               return SimpleTextField(
 //                 label: r.rubrique,
 //                 textController:
-//                     valueControllers[r.id] ?? TextEditingController(),
+//                     valueControllers[r.key] ?? TextEditingController(),
 //                 required: true,
 //                 onChanged: (value) {
 //                    final parsed = value.isEmpty
@@ -320,7 +320,7 @@
 //       RequestResponse response = await BulletinService.updateBulletin(
 //         moyenPayement: moyenPayement!,
 //         banque: banque!,
-//         key: widget.bulletinPaie.id,
+//         key: widget.bulletinPaie.key,
 //         referencePaie: referenceFiledContoller.text,
 //         bulletinRubriques: _rubriquesOnBulletin,
 //       );

@@ -5,7 +5,7 @@ import 'tranche_model.dart';
 import 'type_rubrique.dart';
 
 class RubriqueBulletin {
-  final String id;
+  final String key;
   final String rubrique;
   final String code;
   final TypeRubrique? type;
@@ -20,7 +20,7 @@ class RubriqueBulletin {
   final Calcul? calcul;
 
   RubriqueBulletin({
-    required this.id,
+    required this.key,
     required this.rubrique,
     required this.code,
     required this.type,
@@ -37,7 +37,7 @@ class RubriqueBulletin {
 
   factory RubriqueBulletin.fromJson(Map<String, dynamic> json) {
     return RubriqueBulletin(
-      id: json['_id'],
+      key: json['_key'],
       rubrique: json['rubrique'],
       code: json['code'],
       type: json['type'] == null ? null : typeRubriqueFromJson(json['type']),
@@ -65,7 +65,7 @@ class RubriqueBulletin {
 
   Map<String, dynamic> toJson() {
     return {
-      '_id': id,
+      '_key': key,
       'rubrique': rubrique,
       'code': code,
       'type': type == null ? null : typeRubriqueToString(type!),

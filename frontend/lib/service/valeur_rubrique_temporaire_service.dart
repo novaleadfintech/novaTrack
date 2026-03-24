@@ -20,12 +20,12 @@ class ValariablePaieService {
   }) async {
     // Construction du champ "rubriques"
     final rubriquesString = variablePaie.map((r) {
-      final rubriqueId = r.rubrique.id;
+      final rubriqueKey = r.rubrique.key;
       final value = r.value ?? 0;
 
       return '''
       {
-        rubriqueId: "$rubriqueId",
+        rubriqueKey: "$rubriqueKey",
         value: $value
       }
     ''';
@@ -33,12 +33,12 @@ class ValariablePaieService {
 
 
     final primeExceptionnelleString = primesExceptionnelles.map((r) {
-      final rubriqueId = r.rubrique.id;
+      final rubriqueKey = r.rubrique.key;
       final value = r.value ?? 0;
 
       return '''
       {
-        rubriqueId: "$rubriqueId",
+        rubriqueKey: "$rubriqueKey",
         value: $value
       }
     ''';
@@ -48,7 +48,7 @@ class ValariablePaieService {
     final body = '''
     mutation CreateValeurRubriqueTemporaire {
       createValeurRubriqueTemporaire(
-        salarieId: "${salarie.id}",
+        salarieKey: "${salarie.key}",
         rubriques: [$rubriquesString]
         primesExceptionnelles: [$primeExceptionnelleString]
       )
@@ -96,32 +96,32 @@ class ValariablePaieService {
 
 static Future<List<ValeurRubriqueTemporaire>>
       getvariablePaieAndPrimeExceptionnelles(
-          {required CategoriePaieModel categorie,
-          required String salarieId}) async {
+          {required paieCategorieModel bulletincategorie,
+          required String salarieKey}) async {
     var body = '''
     query variablePaieAndPrimeExceptionnelles {
         variablePaieAndPrimeExceptionnelles(
-            categoriePaieId: "${categorie.id}"
-            salarieId: "$salarieId"
+            bulletinCategorieKey: "${bulletincategorie.key}"
+            salarieKey: "$salarieKey"
         ) {
-            salarieId
+            salarieKey
             rubriques {
                 value
                 rubrique {
-                    _id
+                    _key
                     rubrique
                     code
                     type
                     portee
-                    rubriqueIdentity
+                    rubriqueKeyentity
                     nature
                     section {
-                        _id
+                        _key
                         section
                     }
                     taux {
                         base {
-                            _id
+                            _key
                             rubrique
                             code
                             type
@@ -135,7 +135,7 @@ static Future<List<ValeurRubriqueTemporaire>>
                             type
                             valeur
                             rubrique {
-                                _id
+                                _key
                                 rubrique
                                 code
                                 type
@@ -145,7 +145,7 @@ static Future<List<ValeurRubriqueTemporaire>>
                     }
                     bareme {
                         reference {
-                            _id
+                            _key
                             rubrique
                             code
                             type
@@ -159,7 +159,7 @@ static Future<List<ValeurRubriqueTemporaire>>
                                 valeur
                                 taux {
                                     base {
-                                        _id
+                                        _key
                                         rubrique
                                         code
                                         type
@@ -176,7 +176,7 @@ static Future<List<ValeurRubriqueTemporaire>>
                             type
                             valeur
                             rubrique {
-                                _id
+                                _key
                                 rubrique
                                 code
                                 type
@@ -189,20 +189,20 @@ static Future<List<ValeurRubriqueTemporaire>>
             primesExceptionnelles {
                 value
                 rubrique {
-                    _id
+                    _key
                     rubrique
                     code
                     type
                     portee
-                    rubriqueIdentity
+                    rubriqueKeyentity
                     nature
                     section {
-                        _id
+                        _key
                         section
                     }
                     taux {
                         base {
-                            _id
+                            _key
                             rubrique
                             code
                             type
@@ -216,7 +216,7 @@ static Future<List<ValeurRubriqueTemporaire>>
                             type
                             valeur
                             rubrique {
-                                _id
+                                _key
                                 rubrique
                                 code
                                 type
@@ -226,7 +226,7 @@ static Future<List<ValeurRubriqueTemporaire>>
                     }
                     bareme {
                         reference {
-                            _id
+                            _key
                             rubrique
                             code
                             type
@@ -240,7 +240,7 @@ static Future<List<ValeurRubriqueTemporaire>>
                                 valeur
                                 taux {
                                     base {
-                                        _id
+                                        _key
                                         rubrique
                                         code
                                         type
@@ -257,7 +257,7 @@ static Future<List<ValeurRubriqueTemporaire>>
                             type
                             valeur
                             rubrique {
-                                _id
+                                _key
                                 rubrique
                                 code
                                 type
@@ -306,7 +306,7 @@ static Future<List<ValeurRubriqueTemporaire>>
 
 
   static Future<RequestResponse> updateValariablePaie({
-    required String paysId,
+    required String paysKey,
     String? nom,
     double? taux,
     int? nbreNumTel,
@@ -316,7 +316,7 @@ static Future<List<ValeurRubriqueTemporaire>>
     var body = StringBuffer('''
     mutation UpdateCountry {
       updateCountry(
-        key: "$paysId",
+        key: "$paysKey",
   ''');
 
     if (nom != null) {

@@ -32,7 +32,7 @@ const typeDef = `#graphql
 
     #Definition du type client
     interface Client{
-        _id:ID!
+        _key:ID!
         email:String
         telephone:Float
         adresse:String
@@ -44,7 +44,7 @@ const typeDef = `#graphql
     }
 
     type ClientMoral implements Client{
-        _id:ID!
+        _key:ID!
         raisonSociale:String!
         logo:String
         email:String
@@ -52,7 +52,7 @@ const typeDef = `#graphql
         telephone:Float
         pays:Country!
         adresse:String
-        categorie:Categorie!
+        partnerCategorie:partnerCategorie!
         etat:EtatClient!
         responsable:Responsable
         dateEnregistrement:Float!
@@ -60,7 +60,7 @@ const typeDef = `#graphql
     }
 
     type ClientPhysique implements Client {
-        _id: ID!
+        _key: ID!
         nom: String!
         prenom: String
         sexe: Sexe!
@@ -80,7 +80,7 @@ const query = `#graphql
     clients(skip:Int, perPage:Int, etat: EtatClient, nature: NatureClient): [Client]!
     client(key:ID!): Client!
     unarchivedClientsAndProspects(skip:Int, perPage:Int,):[Client]!
-    #clientMoralsByCategorie(skip:Int, perPage:Int, categorieId:String!): [ClientMoral]!
+    #clientMoralsByCategorie(skip:Int, perPage:Int, partnerCategorieKey:String!): [ClientMoral]!
 `;
 
 const mutation = `#graphql
@@ -104,7 +104,7 @@ const mutation = `#graphql
         adresse:String
         nature: NatureClient!      
         pays:CountryInput!
-        categorieId: String!
+        partnerCategorieKey: String!
         etat: EtatClient
         responsable: ResponsableInput
     ):String!
@@ -130,7 +130,7 @@ const mutation = `#graphql
         adresse: String
         nature: NatureClient    
         pays: CountryInput
-        categorieId: String
+        partnerCategorieKey: String
         responsable: ResponsableInput
     ):String!
 

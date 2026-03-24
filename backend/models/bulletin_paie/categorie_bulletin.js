@@ -2,25 +2,25 @@ import { aql } from "arangojs";
 import db from "../../db/database_connection.js";
 import { isValidValue } from "../../utils/util.js";
 
-const categorieBulletinCollection = db.collection("categorieBulletins");
-const categorieBulletinRubriqueCollection = db.collection(
-  "categorieBulletinRubriques",
+const bulletinCategorieCollection = db.collection("bulletinCategories");
+const bulletinCategorieRubriqueCollection = db.collection(
+  "bulletinCategorieRubriques",
 );
 
-class CategorieBulletin {
+class BulletinCategorie {
   constructor() {
     this.initializeCollections();
   }
 
   async initializeCollections() {
-    if (!(await categorieBulletinCollection.exists())) {
-    await  categorieBulletinCollection.create();
+    if (!(await bulletinCategorieCollection.exists())) {
+      await bulletinCategorieCollection.create();
     }
-    if (!(await categorieBulletinRubriqueCollection.exists())) {
-     await categorieBulletinRubriqueCollection.create();
+    if (!(await bulletinCategorieRubriqueCollection.exists())) {
+      await bulletinCategorieRubriqueCollection.create();
     }
   }
-  async getAllCategorieBulletin({ perPage, skip }) {
+  async getAllBulletinCategorie({ perPage, skip }) {
     let limit = aql``;
 
     if (skip !== undefined && perPage !== undefined) {
@@ -28,9 +28,9 @@ class CategorieBulletin {
     }
 
     const query = await db.query(
-      aql`FOR categorie IN ${categorieBulletinCollection} 
-          SORT categorie.timeStamp DESC ${limit} 
-          RETURN categorie`,
+      aql`FOR bulletincategorie IN ${bulletinCategorieCollection} 
+          SORT bulletincategorie.timeStamp DESC ${limit} 
+          RETURN bulletincategorie`,
       { fullCount: true },
     );
 
@@ -41,36 +41,36 @@ class CategorieBulletin {
     }
   }
 
-  async getCategorieBulletin({ key }) {
+  async getBulletinCategorie({ key }) {
     try {
-      const categorie = await categorieBulletinCollection.document(key);
-      return categorie;
+      const bulletincategorie = await bulletinCategorieCollection.document(key);
+      return bulletincategorie;
     } catch (err) {
       console.error(err);
       throw new Error(`La catégorie de bulletin est introuvable`);
     }
   }
 
-  async isExistCategorieBulletin({ key }) {
+  async isExistBulletinCategorie({ key }) {
     try {
-      await categorieBulletinCollection.documentExists(key);
+      await bulletinCategorieCollection.documentExists(key);
       return true;
     } catch (err) {
       console.error(err);
-      throw new Error(`La categorie de bulletin est introuvable`);
+      throw new Error(`La bulletincategorie de bulletin est introuvable`);
     }
   }
 
-  async createCategorieBulletin({ categorieBulletin, paieClause }) {
+  async createBulletinCategorie({ bulletinCategorie, paieClause }) {
     // Validation des données
-    isValidValue({ value: [categorieBulletin] });
+    isValidValue({ value: [bulletinCategorie] });
 
     // Vérification que la catégorie n'existe pas déjà
     const existingCategorie = await db.query(aql`
-      FOR categorie IN ${categorieBulletinCollection}
-      FILTER categorie.categorieBulletin == ${categorieBulletin}
+      FOR bulletincategorie IN ${bulletinCategorieCollection}
+      FILTER bulletincategorie.bulletinCategorie == ${bulletinCategorie}
       LIMIT 1
-      RETURN categorie
+      RETURN bulletincategorie
     `);
 
     if (existingCategorie.hasNext) {
@@ -78,14 +78,14 @@ class CategorieBulletin {
     }
 
     // Création de la catégorie
-    const categorie = {
-      categorieBulletin,
+    const bulletincategorie = {
+      bulletinCategorie,
       paieClause,
       timeStamp: Date.now(),
     };
 
     try {
-      const result = await categorieBulletinCollection.save(categorie);
+      const result = await bulletinCategorieCollection.save(bulletincategorie);
       return "OK";
     } catch (error) {
       console.error(error);
@@ -94,29 +94,27 @@ class CategorieBulletin {
     }
   }
 
-  async updateCategorieBulletin({ key, categorieBulletin, paieClause }) {
+  async updateBulletinCategorie({ key, bulletinCategorie, paieClause }) {
     // Vérification que la catégorie existe
-    await this.isExistCategorieBulletin({ key });
+    await this.isExistBulletinCategorie({ key });
 
     const updateField = {};
 
-    if (categorieBulletin !== undefined) {
+    if (bulletinCategorie !== undefined) {
       // Vérification que le nouveau nom n'existe pas déjà
       const existingCategorie = await db.query(aql`
-        FOR categorie IN ${categorieBulletinCollection}
-        FILTER categorie.categorieBulletin == ${categorieBulletin}
-        AND categorie._id != ${key}
+        FOR bulletincategorie IN ${bulletinCategorieCollection}
+        FILTER bulletincategorie.bulletinCategorie == ${bulletinCategorie}
+        AND bulletincategorie._keyy != ${key}
         LIMIT 1
-        RETURN categorie
+        RETURN bulletincategorie
       `);
-      console.log(key);
-      console.log(await existingCategorie.next());
-
+ 
       if (existingCategorie.hasNext) {
         throw new Error(`Une catégorie de bulletin avec ce nom existe déjà.`);
       }
 
-      updateField.categorieBulletin = categorieBulletin;
+      updateField.bulletinCategorie = bulletinCategorie;
     }
 
     if (paieClause !== undefined) {
@@ -130,7 +128,7 @@ class CategorieBulletin {
     // updateField.dateModification = Date.now();
 
     try {
-      await categorieBulletinCollection.update(key, updateField);
+      await bulletinCategorieCollection.update(key, updateField);
       return "OK";
     } catch (e) {
       console.error(e);
@@ -140,15 +138,15 @@ class CategorieBulletin {
     }
   }
 
-  async deleteCategorieBulletin({ key }) {
+  async deleteBulletinCategorie({ key }) {
     try {
-      await this.isExistCategorieBulletin({ key });
+      await this.isExistBulletinCategorie({ key });
 
       const existingCategorie = await db.query(aql`
-        FOR categorieBulletinRubrique IN ${categorieBulletinRubriqueCollection}
-        FILTER categorieBulletinRubrique._from == ${key}
+        FOR bulletinCategorieRubrique IN ${bulletinCategorieRubriqueCollection}
+        FILTER bulletinCategorieRubrique.rubriqueKey == ${key}
         LIMIT 1
-        RETURN categorieBulletinRubrique
+        RETURN bulletinCategorieRubrique
       `);
 
       if (existingCategorie.hasNext) {
@@ -157,7 +155,7 @@ class CategorieBulletin {
         );
       }
 
-      await categorieBulletinCollection.remove(key);
+      await bulletinCategorieCollection.remove(key);
       return "OK";
     } catch (error) {
       console.error(error);
@@ -169,4 +167,4 @@ class CategorieBulletin {
   }
 }
 
-export default CategorieBulletin;
+export default BulletinCategorie;

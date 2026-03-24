@@ -1,17 +1,17 @@
 class ModuleModel {
-  final String? id;
+  final String? key;
   final String name;
   final String alias;
 
   ModuleModel({
-    this.id,
+    this.key,
     required this.name,
     required this.alias,
   });
 
   factory ModuleModel.fromJson(Map<String, dynamic> json) {
     return ModuleModel(
-      id: json['_id'],
+      key: json['_key'],
       name: json['name'],
       alias: json['alias'],
     );
@@ -19,7 +19,7 @@ class ModuleModel {
 
   Map<String, dynamic> toJson() {
     return {
-      '_id': id,
+      '_key': key,
       'name': name,
       'alias': alias,
     };

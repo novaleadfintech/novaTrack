@@ -57,7 +57,7 @@ void dispose() {
 **Corrections appliquées:**
 ```dart
 // ✅ AVANT (PROBLÉMATIQUE)
-void addComment({required String factureId}) async {
+void addComment({required String factureKey}) async {
   try {
     user = await AuthService().decodeToken();  // FUTURE
     // setState sans vérifier mounted ❌
@@ -72,7 +72,7 @@ void addComment({required String factureId}) async {
 }
 
 // ✅ APRÈS (CORRIGÉ)
-void addComment({required String factureId}) async {
+void addComment({required String factureKey}) async {
   try {
     user = await AuthService().decodeToken();
     

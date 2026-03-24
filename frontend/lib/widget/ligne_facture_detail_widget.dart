@@ -80,7 +80,7 @@ class _LigneFactureDetailState extends State<LigneFactureDetail> {
       );
 
       RequestResponse result = await LigneFactureService.retirerLigneFacture(
-        ligneFactureId: ligneFacture.id,
+        ligneFactureKey: ligneFacture.key,
       );
       _dialog.hide();
       if (result.status == PopupStatus.success) {

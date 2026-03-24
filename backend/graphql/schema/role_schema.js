@@ -7,13 +7,13 @@ enum RoleAuthorization {
 }
 #Definition du type role
     type Role{
-        _id: ID!
+        _key: ID!
         libelle: String!
         permissions: [Permission]!
     }
 
     type UserRole{
-        _id: ID!
+        _key: ID!
         roleAuthorization: RoleAuthorization
         role: Role!
         authorizer: User
@@ -26,13 +26,13 @@ enum RoleAuthorization {
 const query = `#graphql
     roles: [Role]!
     role(key: ID!): Role!
-    roleByUser(userId: String!): [Role]!
+    roleByUser(userKeyy: String!): [Role]!
 `;
 
 const mutation = `#graphql
     createRole(libelle: String!): String!
-    attribuerPermissionRole(rolekey: ID!, permissionId: String!): String!
-    retirerPermissionRole(rolekey: ID!, permissionId: String!): String!
+    attribuerPermissionRole(rolekey: ID!, permissionKey: String!): String!
+    retirerPermissionRole(rolekey: ID!, permissionKey: String!): String!
     updateRole(key: ID!, libelle: String): String!
     deleteRole(key: ID!): String!
  `;

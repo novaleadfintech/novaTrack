@@ -71,8 +71,8 @@ class _EditFluxFiancierPageState extends State<EditFluxFiancierPage> {
   }) {
     if (list1 == null || list2 == null) return list1 == list2;
     if (list1.length != list2.length) return false;
-    final set1 = list1.map((item) => item.id).toSet();
-    final set2 = list2.map((item) => item.id).toSet();
+    final set1 = list1.map((item) => item.key).toSet();
+    final set2 = list2.map((item) => item.key).toSet();
     return set1.containsAll(set2) && set2.containsAll(set1);
   }
 
@@ -106,7 +106,7 @@ class _EditFluxFiancierPageState extends State<EditFluxFiancierPage> {
       newdateOperation = dateOperation;
     }
 
-if (client?.id != widget.flux.client?.id) {
+if (client?.key != widget.flux.client?.key) {
       isClientModified = true;
       newclient = client; 
     }
@@ -148,7 +148,7 @@ if (client?.id != widget.flux.client?.id) {
     );
 
     RequestResponse result = await FluxFinancierService.updateFluxFinancier(
-      key: flux.id,
+      key: flux.key,
       dateOperation: newdateOperation,
       montant: montant,
       moyenPayement: newmoyenPayement,
@@ -279,7 +279,7 @@ if (client?.id != widget.flux.client?.id) {
             SimpleTextField(
               label: "Montant",
               textController: amountFieldController,
-              readOnly: widget.flux.factureId != null,
+              readOnly: widget.flux.factureKey != null,
               keyboardType: TextInputType.number,
             ),
             FutureCustomDropDownField<MoyenPaiementModel>(

@@ -20,7 +20,7 @@ class Banque {
 
   async initializeCollections() {
     if (!(await banqueCollection.exists())) {
-      banqueCollection.create();
+     await banqueCollection.create();
     }
   }
   getAllBanques = async ({ skip, perPage }) => {

@@ -4,7 +4,7 @@ import 'package:frontend/helper/paginate_data.dart';
 import 'package:frontend/helper/user_helper.dart';
 import 'package:gap/gap.dart';
 import '../../../global/global_value.dart';
-import '../../../model/bulletin_paie/categorie_bulletin.dart';
+import '../../../model/bulletin_paie/bulletin_categorie.dart';
 import '../../../service/categorie_bulletin_service.dart';
 import '../../../widget/add_element_button.dart';
 import '../../../widget/pagination.dart';
@@ -17,19 +17,19 @@ import '../../../model/habilitation/role_model.dart';
 import 'add_categorie_bulletin.dart';
 import 'categorie_bulletin_table.dart';
 
-class CategorieBulletinPage extends StatefulWidget {
-  const CategorieBulletinPage({
+class BulletinCategoriePage extends StatefulWidget {
+  const BulletinCategoriePage({
     super.key,
   });
 
   @override
-  State<CategorieBulletinPage> createState() => _CategorieBulletinPageState();
+  State<BulletinCategoriePage> createState() => _BulletinCategoriePageState();
 }
 
-class _CategorieBulletinPageState extends State<CategorieBulletinPage> {
+class _BulletinCategoriePageState extends State<BulletinCategoriePage> {
   final TextEditingController _researchController = TextEditingController();
   int currentPage = GlobalValue.currentPage;
-  List<CategorieBulletinModel> categorieBulletinData = [];
+  List<BulletinCategorieModel> bulletinCategorieData = [];
   bool isLoading = true;
   bool hasError = false;
   String searchQuery = "";
@@ -42,7 +42,7 @@ class _CategorieBulletinPageState extends State<CategorieBulletinPage> {
     super.initState();
     _researchController.addListener(_onSearchChanged);
     _futureRoles = getRole();
-    _loadCategorieBulletin();
+    _loadBulletinCategorie();
   }
 
   Future<void> getRole() async {
@@ -55,9 +55,10 @@ class _CategorieBulletinPageState extends State<CategorieBulletinPage> {
     });
   }
 
-  Future<void> _loadCategorieBulletin() async {
+  Future<void> _loadBulletinCategorie() async {
     try {
-      categorieBulletinData = await CategorieBulletinService.getCategoriesBulletin();
+      bulletinCategorieData =
+          await BulletinCategorieservice.getBulletinCategories();
     } catch (error) {
       setState(() {
         errorMessage = error.toString();
@@ -70,9 +71,9 @@ class _CategorieBulletinPageState extends State<CategorieBulletinPage> {
     });
   }
 
-  List<CategorieBulletinModel> filterCategorieBulletin() {
-    return categorieBulletinData.where((categorieBulletin) {
-      return categorieBulletin.categorieBulletin
+  List<BulletinCategorieModel> filterBulletinCategorie() {
+    return bulletinCategorieData.where((bulletinCategorie) {
+      return bulletinCategorie.bulletinCategorie
           .toLowerCase()
           .contains(searchQuery.toLowerCase().trim());
     }).toList();
@@ -88,15 +89,15 @@ class _CategorieBulletinPageState extends State<CategorieBulletinPage> {
     showResponsiveDialog(
       context,
       title: "Nouveau catégorie de bulletin",
-      content: AddCategorieBulletinPage(
-        refresh: _loadCategorieBulletin,
+      content: AddBulletinCategoriePage(
+        refresh: _loadBulletinCategorie,
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    List<CategorieBulletinModel> filteredData = filterCategorieBulletin();
+    List<BulletinCategorieModel> filteredData = filterBulletinCategorie();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8).copyWith(top: 4),
@@ -115,7 +116,7 @@ class _CategorieBulletinPageState extends State<CategorieBulletinPage> {
               } else {
                 bool canCreate = hasPermission(
                   role: role,
-                  permission: PermissionAlias.createCategorieBulletin.label,
+                  permission: PermissionAlias.createBulletinCategorie.label,
                 );
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -157,7 +158,7 @@ class _CategorieBulletinPageState extends State<CategorieBulletinPage> {
                     isLoading = true;
                     hasError = false;
                   });
-                  await _loadCategorieBulletin();
+                  await _loadBulletinCategorie();
                 },
               ),
             )
@@ -173,10 +174,10 @@ class _CategorieBulletinPageState extends State<CategorieBulletinPage> {
                         Expanded(
                           child: Container(
                             color: Theme.of(context).colorScheme.surface,
-                            child: CategorieBulletinTable(
+                            child: BulletinCategorieTable(
                               categories: getPaginatedData(
                                   data: filteredData, currentPage: currentPage),
-                              refresh: _loadCategorieBulletin,
+                              refresh: _loadBulletinCategorie,
                             ),
                           ),
                         ),

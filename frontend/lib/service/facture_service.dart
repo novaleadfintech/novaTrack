@@ -20,7 +20,7 @@ class FactureService {
     var body = '''
     query UnpaidFacture {
     unpaidFacture {
-        _id
+        _key
         reference
         reduction{
         unite
@@ -41,7 +41,7 @@ class FactureService {
         isConvertFromProforma
         type
         client {
-            _id
+            _key
             email
             telephone
             adresse
@@ -50,14 +50,14 @@ class FactureService {
             dateEnregistrement
             fullCount
             pays {
-                     _id
+                     _key
           name
           code
           tauxTVA
           phoneNumber
                   }
             ... on ClientMoral {
-                _id
+                _key
                 raisonSociale
                 logo
                 email
@@ -68,7 +68,7 @@ class FactureService {
                 dateEnregistrement
                 fullCount
                 pays {
-                     _id
+                     _key
           name
           code
           tauxTVA
@@ -76,7 +76,7 @@ class FactureService {
                   }
             }
             ... on ClientPhysique {
-                _id
+                _key
                 nom
                 prenom
                 sexe
@@ -88,7 +88,7 @@ class FactureService {
                 dateEnregistrement
                 fullCount
                 pays {
-                     _id
+                     _key
           name
           code
           tauxTVA
@@ -97,7 +97,7 @@ class FactureService {
             }
         }
         ligneFactures {
-            _id
+            _key
             designation
             unit
             quantite
@@ -106,7 +106,7 @@ class FactureService {
             prixSupplementaire
             remise
             service {
-                _id
+                _key
                 libelle
                 type
                 etat
@@ -114,7 +114,7 @@ class FactureService {
                 nature
                 description
                 country {
-                        _id
+                        _key
                         name
                         code
                       }
@@ -132,7 +132,7 @@ class FactureService {
             }
         }
         banques {
-            _id
+            _key
             name
             codeGuichet
             codeBanque
@@ -144,7 +144,7 @@ class FactureService {
             soldeReel
             soldeTheorique
             country {
-                        _id
+                        _key
                         name
                         code
                       }
@@ -169,7 +169,7 @@ class FactureService {
             }
         }
         payements {
-          _id
+          _key
           libelle
           type
           reference
@@ -177,16 +177,16 @@ class FactureService {
           status
           montant
           moyenPayement{
-            _id
+            _key
             libelle
           }
           validate {
               validateStatus
               date
               validater {
-                  _id
+                  _key
                   personnel {
-                      _id
+                      _key
                       nom
                       prenom
                   }
@@ -195,9 +195,9 @@ class FactureService {
           }
           pieceJustificative
           user {
-              _id
+              _key
               personnel {
-                  _id
+                  _key
                   nom
                   prenom
                   email
@@ -206,7 +206,7 @@ class FactureService {
           }
           dateOperation
           bank {
-              _id
+              _key
               name
               codeGuichet
               codeBanque
@@ -261,7 +261,7 @@ class FactureService {
     var body = '''
     query NewRecurrentFacture {
     newRecurrentFacture {
-        _id
+        _key
         reference
         reduction{
         unite
@@ -283,7 +283,7 @@ class FactureService {
         isConvertFromProforma
         type
         client {
-            _id
+            _key
             email
             telephone
             adresse
@@ -292,14 +292,14 @@ class FactureService {
             dateEnregistrement
             fullCount
             pays {
-                     _id
+                     _key
           name
           code
           tauxTVA
           phoneNumber
                   }
             ... on ClientMoral {
-                _id
+                _key
                 raisonSociale
                 logo
                 email
@@ -310,7 +310,7 @@ class FactureService {
                 dateEnregistrement
                 fullCount
                 pays {
-                     _id
+                     _key
           name
           code
           tauxTVA
@@ -318,7 +318,7 @@ class FactureService {
                   }
             }
             ... on ClientPhysique {
-                _id
+                _key
                 nom
                 prenom
                 sexe
@@ -330,7 +330,7 @@ class FactureService {
                 dateEnregistrement
                 fullCount
                 pays {
-                     _id
+                     _key
           name
           code
           tauxTVA
@@ -339,7 +339,7 @@ class FactureService {
             }
         }
         ligneFactures {
-            _id
+            _key
             designation
             unit
             quantite
@@ -348,7 +348,7 @@ class FactureService {
             prixSupplementaire
             remise
             service {
-                _id
+                _key
                 libelle
                 type
                 etat
@@ -356,7 +356,7 @@ class FactureService {
                 prix
                 description
                 country {
-                        _id
+                        _key
                         name
                         code
                       }
@@ -374,7 +374,7 @@ class FactureService {
             }
         }
         banques {
-            _id
+            _key
             name
             codeGuichet
             codeBanque
@@ -386,7 +386,7 @@ class FactureService {
             soldeReel
             soldeTheorique
             country {
-              _id
+              _key
               name
               code
             }
@@ -451,7 +451,7 @@ class FactureService {
       var body = '''
     query PaidFactures {
     paidFactures {
-        _id
+        _key
         reference
                 reduction{
         unite
@@ -470,7 +470,7 @@ class FactureService {
         isConvertFromProforma
         type
         client {
-            _id
+            _key
             email
             telephone
             adresse
@@ -479,14 +479,14 @@ class FactureService {
             dateEnregistrement
             fullCount
             pays {
-                     _id
+                     _key
           name
           code
           tauxTVA
           phoneNumber
                   }
             ... on ClientMoral {
-                _id
+                _key
                 raisonSociale
                 logo
                 email
@@ -497,7 +497,7 @@ class FactureService {
                 dateEnregistrement
                 fullCount
                 pays {
-                     _id
+                     _key
           name
           code
           tauxTVA
@@ -505,7 +505,7 @@ class FactureService {
                   }
             }
             ... on ClientPhysique {
-                _id
+                _key
                 nom
                 prenom
                 sexe
@@ -517,7 +517,7 @@ class FactureService {
                 dateEnregistrement
                 fullCount
                pays {
-                     _id
+                     _key
           name
           code
           tauxTVA
@@ -526,7 +526,7 @@ class FactureService {
             }
         }
         ligneFactures {
-            _id
+            _key
             designation
             unit
             quantite
@@ -535,7 +535,7 @@ class FactureService {
             prixSupplementaire
             remise
             service {
-              _id
+              _key
               libelle
               type                                      
               etat
@@ -543,7 +543,7 @@ class FactureService {
               prix
               description
               country {
-                        _id
+                        _key
                         name
                         code
                       }
@@ -561,7 +561,7 @@ class FactureService {
             }
         }
         payements {
-            _id
+            _key
             libelle
             type
             montant
@@ -569,9 +569,9 @@ class FactureService {
             referenceTransaction
 status
             user {
-              _id
+              _key
               personnel {
-                  _id
+                  _key
                   nom
                   prenom
                   email
@@ -582,9 +582,9 @@ status
             validateStatus
             date
             validater {
-                _id
+                _key
                 personnel {
-                    _id
+                    _key
                     nom
                     prenom
                 }
@@ -593,13 +593,13 @@ status
         }
             pieceJustificative
             moyenPayement{
-                      _id
+                      _key
                       libelle
                       }
             dateOperation
             dateEnregistrement
             bank {
-                _id
+                _key
                 name
                 codeGuichet
                             codeBIC
@@ -612,7 +612,7 @@ status
             }
         }
         banques {
-            _id
+            _key
             name
             codeGuichet
             codeBanque
@@ -688,7 +688,7 @@ status
     var body = '''
               query PayementFacture {
                 payementFacture {
-                    _id
+                    _key
                     reference
                             reduction{
         unite
@@ -710,19 +710,19 @@ status
                         isPaid
                     }
                     client {
-                        _id
+                        _key
                         ... on ClientMoral {
-                            _id
+                            _key
                             raisonSociale
                         }
                         ... on ClientPhysique {
-                            _id
+                            _key
                             nom
                             prenom
                         }
                     }
                     payements {
-                      _id
+                      _key
                       libelle
                       type
                       reference
@@ -730,7 +730,7 @@ status
 status
                       montant
                       moyenPayement{
-                      _id
+                      _key
                       libelle
                       type
                       }
@@ -738,9 +738,9 @@ status
                           validateStatus
                           date
                           validater {
-                              _id
+                              _key
                               personnel {
-                                  _id
+                                  _key
                                   nom
                                   prenom
                               }
@@ -749,9 +749,9 @@ status
                       }
                       pieceJustificative
                       user {
-                          _id
+                          _key
                           personnel {
-                              _id
+                              _key
                               nom
                               prenom
                               email
@@ -760,7 +760,7 @@ status
                       }
                       dateOperation
                       bank {
-                          _id
+                          _key
                           type
                           name
                           codeGuichet
@@ -823,7 +823,7 @@ status
     var body = '''
               query UnpaidFacture {
                 unpaidFacture {
-                    _id
+                    _key
                     reference
                     facturesAcompte {
                       rang
@@ -874,7 +874,7 @@ status
   }
 
   static Future<RequestResponse> createFacture({
-    required String clientId,
+    required String clientKey,
     DateTime? dateEtablissementFacture,
     DateTime? dateDebutFacturation,
     required bool tva,
@@ -888,7 +888,7 @@ status
     String body = '''
     mutation CreateFacture {
       createFacture(
-        clientId: "$clientId",
+        clientKey: "$clientKey",
         tva: $tva,
         type: ${type.name},
         ligneFactures: [
@@ -898,9 +898,9 @@ status
     }).toList();
     body += '],';
 
-    body += 'banquesIds: [';
+    body += 'banquesKeys: [';
     for (var banque in banques) {
-      body += '"${banque.id}"';
+      body += '"${banque.key}"';
     }
     body += '],';
     if (dateEtablissementFacture != null) {
@@ -973,15 +973,15 @@ status
   }
 
   static Future<dynamic> getRecurrentFactureByClient(
-      {required String clientId}) async {
+      {required String clientKey}) async {
     var body = '''
                query RecurrentFactureByClient {
-                  recurrentFactureByClient(clientId: "$clientId") {
-                      _id
+                  recurrentFactureByClient(clientKey: "$clientKey") {
+                      _key
                       reference
                       secreteKey
                       ligneFactures {
-                          _id
+                          _key
                           designation
                           montant
                       }
@@ -1026,8 +1026,8 @@ status
   }
 
   static Future<RequestResponse> updateFacture({
-    required String factureId,
-    String? clientId,
+    required String factureKey,
+    String? clientKey,
     DateTime? dateEtablissement,
     ReductionModel? reduction,
     int? generatePeriod,
@@ -1041,11 +1041,11 @@ status
     var body = '''
     mutation UpdateFacture {
       updateFacture(
-        key: "$factureId",
+        key: "$factureKey",
   ''';
 
-    if (clientId != null) {
-      body += 'clientId: "$clientId", ';
+    if (clientKey != null) {
+      body += 'clientKey: "$clientKey", ';
     }
     if (dateEtablissement != null) {
       body +=
@@ -1067,15 +1067,15 @@ status
           'reduction: {unite: ${reduction.unite != null ? '"${reduction.unite}"' : null}, valeur: ${reduction.valeur}}';
     }
     if (banques != null) {
-      body += 'banquesIds: [';
+      body += 'banquesKeys: [';
       for (var banque in banques) {
-        body += '"${banque.id}"';
+        body += '"${banque.key}"';
       }
       body += '],';
     }
     if (comment != null) {
       body +=
-          'commentaire: {message: "${comment.message}",editer: "${comment.editer!.id!}", date: ${comment.date.millisecondsSinceEpoch}}, ';
+          'commentaire: {message: "${comment.message}",editer: "${comment.editer!.key!}", date: ${comment.date.millisecondsSinceEpoch}}, ';
     }
     if (facturesAcompte != null) {
       body += 'facturesAcompte: [';
@@ -1141,12 +1141,12 @@ status
   }
 
   static Future<RequestResponse> deleteFacture({
-    required String factureId,
+    required String factureKey,
   }) async {
     var body = '''
     mutation DeleteFacture {
       deleteFacture(
-        key: "$factureId",
+        key: "$factureKey",
       ) 
     }
   ''';
@@ -1193,7 +1193,7 @@ status
   }
 
   static Future<RequestResponse> updateFactureAccompte({
-    required String factureId,
+    required String factureKey,
     bool? canPenalty,
     DateTime? datePayementEcheante,
     DateTime? dateEnvoieFacture,
@@ -1203,7 +1203,7 @@ status
   }) async {
     var body = '''
    mutation UpdateFactureAccompte {
-    updateFactureAccompte(key: "$factureId", rang: $rang,
+    updateFactureAccompte(key: "$factureKey", rang: $rang,
     ''';
     if (datePayementEcheante != null) {
       body +=
@@ -1329,7 +1329,7 @@ status
   }) async {
     var body = '''
   mutation RestartService {
-    restartService(factureId: "${facture.id}", secretekey: "${facture.secreteKey}")
+    restartService(factureKey: "${facture.key}", secretekey: "${facture.secreteKey}")
 }
   ''';
     try {

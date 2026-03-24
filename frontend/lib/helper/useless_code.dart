@@ -1,12 +1,12 @@
 //  static Future<BulletinPaieModel?> getPreviousBulletins(
-//       {required String salarieId}) async {
+//       {required String salarieKey}) async {
 //     var body = '''
 //               query PreviousBulletinsPaie {
-//     previousBulletinsPaie(salarieId: "$salarieId") {
-//         _id
+//     previousBulletinsPaie(salarieKey: "$salarieKey") {
+//         _key
 //         etat
 //         moyenPayement{
-//           _id
+//           _key
 //           libelle
 //         }
 //         datePayement
@@ -15,7 +15,7 @@
 //         referencePaie
 //         dateEdition
 //         banque {
-//             _id
+//             _key
 //             name
 //             codeGuichet
 //             codeBanque
@@ -26,26 +26,26 @@
 //             soldeTheorique
 //             soldeReel
 //             country {
-//                 _id
+//                 _key
 //                 name
 //                 code
 //             }
 //         }
 //         salarie {
-//             _id
+//             _key
 //             dateEnregistrement
 //             periodPaie
 //             paieManner
 //             fullCount
 //             personnel {
-//                 _id
+//                 _key
 //                 nom
 //                 prenom
 //                 email
 //                 telephone
 //                 adresse
 //                 sexe
-//                 poste{_id, libelle}
+//                 poste{_key, libelle}
 //                 situationMatrimoniale
 //                 commentaire
 //                 etat
@@ -60,7 +60,7 @@
 //                 typeContrat
 //                 fullCount
 //                 pays {
-//                     _id
+//                     _key
 //                     name
 //                     code
 //                     tauxTVA
@@ -74,9 +74,9 @@
 //                     telephone2
 //                 }
 //             }
-//             categoriePaie {
-//                 _id
-//                 categoriePaie
+//             paieCategorie {
+//                 _key
+//                 paieCategorie
 //             }
 //         }
 //         validate {
@@ -84,21 +84,21 @@
 //             date
 //             commentaire
 //             validater {
-//                 _id
+//                 _key
 //                 login
 //                 password
 //                 canLogin
 //                 _token
 //                 dateEnregistrement
 //                 personnel {
-//                     _id
+//                     _key
 //                     nom
 //                     prenom
 //                     email
 //                     telephone
 //                     adresse
 //                     sexe
-//                     poste{_id, libelle}
+//                     poste{_key, libelle}
 //                     situationMatrimoniale
 //                     commentaire
 //                     etat
@@ -118,7 +118,7 @@
 //         rubriques {
 //             value
 //             rubrique {
-//                 _id
+//                 _key
 //                 rubrique
 //                 code
 //                 type
@@ -127,7 +127,7 @@
 //                 rubriqueIdentity
 //                 portee
 //                 section {
-//                     _id
+//                     _key
 //                     section
 //                 }
 //                 calcul {
@@ -136,7 +136,7 @@
 //                         type
 //                         valeur
 //                         rubrique {
-//                             _id
+//                             _key
 //                             rubrique
 //                             code
 //                             type
@@ -152,7 +152,7 @@
 //                         type
 //                         valeur
 //                         rubrique {
-//                             _id
+//                             _key
 //                             rubrique
 //                             code
 //                             type
@@ -165,7 +165,7 @@
 //                 taux {
 //                     taux
 //                     base {
-//                         _id
+//                         _key
 //                         rubrique
 //                         code
 //                         type
@@ -176,7 +176,7 @@
 //                 }
 //                 bareme {
 //                     reference {
-//                         _id
+//                         _key
 //                         rubrique
 //                         code
 //                         type
@@ -193,7 +193,7 @@
 //                             taux {
 //                                 taux
 //                                 base {
-//                                     _id
+//                                     _key
 //                                     rubrique
 //                                     code
 //                                     type
@@ -258,8 +258,8 @@
 //     mutation CreateBulletinPaie {
 //     createBulletinPaie(
 //         dateEdition: ${dateEdition.millisecondsSinceEpoch},
-//         banqueId: "${banque.id}",
-//         salarieId: "${salarie.id}",
+//         banqueKey: "${banque.key}",
+//         salarieKey: "${salarie.key}",
 //         rubriques: [$rubriquesStr],
 //         referencePaie:"$referencePaie"
 //         moyenPayement:${moyenPayement.toJson()},
@@ -326,7 +326,7 @@
 //       mutation UpdateBulletinPaie {
 //           updateBulletinPaie(
 //               key: "$key",
-//               banqueId: "${banque.id}",
+//               banqueKey: "${banque.key}",
 //               rubriques: [$rubriquesStr],
 //               referencePaie: "$referencePaie",
 //               moyenPayement: ${moyenPayement.toJson()},

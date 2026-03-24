@@ -5,7 +5,7 @@ import { isValidValue } from "../../utils/util.js";
 
 const permissionCollection = db.collection("permissions");
 const moduleCollection = db.collection("modules");
-const rolePermissionEdges = db.collection("rolePermissions");
+const rolePermissionCollection  = db.collection("rolePermissions");
 
 class Permission {
   constructor() {
@@ -14,33 +14,34 @@ class Permission {
 
   async initializeCollections() {
     if (!(await permissionCollection.exists())) {
-      permissionCollection.create();
+     await permissionCollection.create();
     }
     if (!(await moduleCollection.exists())) {
-      moduleCollection.create();
+     await moduleCollection.create();
     }
-    if (!(await rolePermissionEdges.exists())) {
-      rolePermissionEdges.create({ type: CollectionType.EDGE_COLLECTION });
+    if (!(await rolePermissionCollection.exists())) {
+      console.log('ça nexiste pas!')
+     await rolePermissionCollection.create();
     }
   }
 
   getAllPermissions = async () => {
     const query = await db.query(
-      aql`FOR permission IN ${permissionCollection} SORT permission._key DESC RETURN permission`
+      aql`FOR permission IN ${permissionCollection} SORT permission._key DESC RETURN permission`,
     );
 
     const permissions = query.hasNext ? await query.all() : [];
-
+    console.log(permissions);
     const groupedPermissions = permissions.reduce(async (acc, perm) => {
-      const { moduleId } = perm;
-      if (!acc[moduleId]) {
-        acc[moduleId] = {
-          module: await moduleCollection.document(moduleId),
+      const { moduleKey } = perm;
+      if (!acc[moduleKey]) {
+        acc[moduleKey] = {
+          module: await moduleCollection.document(moduleKey),
           permissions: [],
         };
       }
 
-      acc[moduleId].permissions.push(perm);
+      acc[moduleKey].permissions.push(perm);
       return acc;
     }, {});
 
@@ -69,22 +70,27 @@ class Permission {
     }
   };
 
-  getPermissionByRole = async ({ roleId }) => {
+  getPermissionByRole = async ({ roleKey }) => {
     try {
-      if (!roleId) return [];
+      if (!roleKey) return [];
 
       const query = await db.query(
-        aql`FOR module IN ${moduleCollection} RETURN module`
+        aql`FOR module IN ${moduleCollection} RETURN module`,
       );
       const allModules = query.hasNext ? await query.all() : [];
+      console.log(roleKey);
+       const permCursor = await db.query(aql`
+        FOR rolePermission IN ${rolePermissionCollection}
+        FILTER rolePermission.roleKey == ${roleKey}
+        RETURN rolePermission
+      `);
 
-      const results = await rolePermissionEdges.edges(roleId);
-      const rolePermissions = results?.edges || [];
+      const rolePermissions = await permCursor.all();
 
       const modulesWithPermissions = await Promise.all(
         allModules.map(async (module) => {
           const modulePermissionsQuery = await db.query(
-            aql`FOR permission IN permissions FILTER permission.moduleId == ${module._id} RETURN permission`
+            aql`FOR permission IN permissions FILTER permission.moduleKey == ${module._key} OR permission.moduleId==${module._id} RETURN permission`,
           );
           const allPermissions = modulePermissionsQuery.hasNext
             ? await modulePermissionsQuery.all()
@@ -92,7 +98,7 @@ class Permission {
 
           const permissionsWithCheck = allPermissions.map((perm) => {
             const isChecked = rolePermissions.some(
-              (rolePerm) => rolePerm._to === perm._id
+              (rolePerm) => rolePerm.permissionKey === perm._key,
             );
             return {
               ...perm,
@@ -104,7 +110,7 @@ class Permission {
             module: module,
             permissions: permissionsWithCheck,
           };
-        })
+        }),
       );
 
       return modulesWithPermissions;
@@ -116,33 +122,40 @@ class Permission {
     }
   };
 
-  getAllPermissionsByRoleForUser = async ({ roleId }) => {
-    try {
-      const results = await rolePermissionEdges.edges(roleId);
-      const permissions = results.edges;
-
+  getAllPermissionsByRoleForUser = async ({ roleKey }) => {
+     try {
+      const cursor = await db.query(aql`
+        FOR rolePermission IN ${rolePermissionCollection }
+        FILTER rolePermission.roleKey == ${roleKey}
+        RETURN rolePermission
+      `);
+       const permissions = await cursor.all();
+       console.log('-------------------------------------------------')
+      console.log(permissions);
       const permissionsDetails = [];
 
       for (let i = 0; i < permissions.length; i++) {
         const perm = permissions[i];
+        console.log(perm.permissionkey)
         try {
-          const permissionDetails = await permissionCollection.document(
-            perm._to
-          );
+ 
 
-          if (permissionDetails.moduleId) {
+  const permissionDetails = await permissionCollection.document(perm.permissionKey);
+
+
+          if (permissionDetails.moduleKey) {
             try {
               const moduleDetails = await moduleCollection.document(
-                permissionDetails.moduleId
+                permissionDetails.moduleKey,
               );
               permissionDetails.module = moduleDetails;
             } catch (moduleError) {
               console.error(
-                `Erreur lors de la récupération du module ID: ${permissionDetails.moduleId}`,
-                moduleError
+                `Erreur lors de la récupération du module ID: ${permissionDetails.moduleKey}`,
+                moduleError,
               );
               permissionDetails.module = {
-                id: permissionDetails.moduleId,
+                id: permissionDetails.moduleKey,
                 name: "Module inaccessible",
                 alias: "MODULE_INCONNU",
                 error: moduleError.message,
@@ -152,8 +165,8 @@ class Permission {
           permissionsDetails.push(permissionDetails);
         } catch (permError) {
           console.error(
-            `Erreur lors de la récupération de la permission ${perm._to}:`,
-            permError
+            `Erreur lors de la récupération de la permission ${perm.permissionKey}:`,
+            permError,
           );
         }
       }
@@ -187,8 +200,13 @@ class Permission {
 
   deletePermission = async ({ key }) => {
     try {
-      const results = await rolePermissionEdges.edges(key);
-      if (results.edges.length !== 0) {
+      const cursor = await db.query(aql`
+        FOR rolePermission IN ${rolePermission }
+        FILTER rolePermission.permissionKey == ${key}
+        RETURN rolePermission
+      `);
+      const results = await cursor.all();
+      if (results.length !== 0) {
         throw new Error("Suppression impossible");
       }
     } catch (err) {

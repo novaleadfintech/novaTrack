@@ -1,12 +1,12 @@
 import 'entreprise/type_canaux_paiement.dart';
 
 class MoyenPaiementModel {
-  final dynamic id;
+  final dynamic key;
   final String libelle;
   final CanauxPaiement? type;
 
   MoyenPaiementModel({
-    required this.id,
+    required this.key,
     required this.libelle,
     this.type,
 
@@ -14,7 +14,7 @@ class MoyenPaiementModel {
 
   factory MoyenPaiementModel.fromJson(Map<String, dynamic> json) {
     return MoyenPaiementModel(
-      id: json["_id"],
+      key: json["_key"],
       type:
           json["type"] == null ? null : canauxPaiementFromString(json["type"]),
       libelle: json["libelle"],
@@ -23,13 +23,13 @@ class MoyenPaiementModel {
 
   Map<String, dynamic> toJson() {
     return {
-      "_id": "\"$id\"",
+      "_key": "\"$key\"",
       "libelle": "\"$libelle\"",
       'type': type == null ? null : canauxPaiementToString(type!),
     };
   }
 
   bool equalTo({required MoyenPaiementModel libelle}) {
-    return libelle.id == id;
+    return libelle.key == key;
   }
 }

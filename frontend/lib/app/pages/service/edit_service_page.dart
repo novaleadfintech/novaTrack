@@ -235,7 +235,7 @@ class _EditServicePageState extends State<EditServicePage> {
     // Envoi des modifications
     try {
       var result = await ServiceService.updateService(
-      serviceId: initialService.id,
+        serviceKey: initialService.key,
       libelle: newLibelle,
       tarif: newTarif,
       type: newType,

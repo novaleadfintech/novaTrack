@@ -12,13 +12,13 @@ import 'request_header.dart';
 
 class PayementService {
   static Future<RequestResponse> ajouterPayement({
-    required String factureId,
+    required String factureKey,
     required double montant,
     required DateTime? dateOperation,
     required MoyenPaiementModel moyenPayement,
     required String referenceTransaction,
-    required String userId,
-    required String clientId,
+    required String userKey,
+    required String clientKey,
     required BanqueModel bank,
     required PlatformFile? file,
   }) async {
@@ -26,16 +26,16 @@ class PayementService {
       String body = '''
       mutation AjouterPayement(\$pieceJustificative: Upload) {
           ajouterPayement(
-              key: "$factureId",
+              key: "$factureKey",
               montant: $montant,
               moyenPayement: ${moyenPayement.toJson()},
               referenceTransaction: "$referenceTransaction",
-              userId: "$userId",
-              clientId: "$clientId",
+              userKey: "$userKey",
+              clientKey: "$clientKey",
               
       ''';
 
-      body += 'bankId: "${bank.id}"';
+      body += 'bankKey: "${bank.key}"';
       
 
       if (dateOperation != null) {

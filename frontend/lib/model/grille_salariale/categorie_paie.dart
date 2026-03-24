@@ -1,19 +1,19 @@
 import 'package:frontend/model/grille_salariale/classe_model.dart';
 
-class GrilleCategoriePaieModel {
-  final String id;
+class GrillepaieCategorieModel {
+  final String key;
   final String libelle;
   final List<ClasseModel>? classes;
 
-  GrilleCategoriePaieModel({
-    required this.id,
+  GrillepaieCategorieModel({
+    required this.key,
     required this.libelle,
     required this.classes,
   });
 
-  factory GrilleCategoriePaieModel.fromJson(Map<String, dynamic> json) {
-    return GrilleCategoriePaieModel(
-      id: json['_id'],
+  factory GrillepaieCategorieModel.fromJson(Map<String, dynamic> json) {
+    return GrillepaieCategorieModel(
+      key: json['_key'],
       libelle: json['libelle'],
       classes: json['classes'] != null
           ? List<ClasseModel>.from(
@@ -24,7 +24,7 @@ class GrilleCategoriePaieModel {
 
   Map<String, dynamic> toJson() {
     return {
-      "_id": "\"$id\"",
+      "_key": "\"$key\"",
       "libelle": "\"$libelle\"",
       "classes": classes != null
           ? List<dynamic>.from(classes!.map((e) => e.toJson()))
@@ -32,7 +32,7 @@ class GrilleCategoriePaieModel {
     };
   }
 
-  bool equalTo({required GrilleCategoriePaieModel grilleCategoriePaie}) {
-    return grilleCategoriePaie.id == id;
+  bool equalTo({required GrillepaieCategorieModel grillepaieCategorie}) {
+    return grillepaieCategorie.key == key;
   }
 }

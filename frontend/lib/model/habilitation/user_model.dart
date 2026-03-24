@@ -3,7 +3,7 @@ import '../personnel/personnel_model.dart';
 import 'user_role_model.dart';
 
 class UserModel {
-  final String? id;
+  final String? key;
   final String? login;
   final String? password;
   final PersonnelModel? personnel;
@@ -14,7 +14,7 @@ class UserModel {
   final DateTime? dateEnregistrement;
 
   UserModel({
-    this.id,
+    this.key,
     this.login,
     this.password,
     this.personnel,
@@ -27,7 +27,7 @@ class UserModel {
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      id: json['_id'],
+      key: json['_key'],
       login: json['login'],
       password: json['password'],
       personnel: json['personnel'] != null
@@ -49,7 +49,7 @@ class UserModel {
 
   Map<String, dynamic> toJson() {
     return {
-      '_id': id,
+      '_key': key,
       'login': login,
       'password': password,
       'personnel': personnel?.toJson(),
@@ -66,6 +66,6 @@ class UserModel {
 
   bool equalTo({required UserModel? user}) {
     if (user == null) return false;
-    return user.id == id;
+    return user.key == key;
   }
 }

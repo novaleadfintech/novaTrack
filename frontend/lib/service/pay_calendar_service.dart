@@ -15,7 +15,7 @@ class PayCalendarService {
     var body = '''
       query PayCalendars {
           payCalendars {
-              _id
+              _key
               libelle
               dateDebut
               dateFin

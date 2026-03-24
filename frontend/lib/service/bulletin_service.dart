@@ -16,19 +16,19 @@ class BulletinService {
     var body = '''
               query CurrentBulletinsPaie {
     currentBulletinsPaie {
-        _id
+        _key
         etat
         debutPeriodePaie
         finPeriodePaie
         dateEdition
         salarie {
-            _id
+            _key
             dateEnregistrement
             periodPaie
-            paieManner
+            paieClause
             fullCount
             personnel {
-                _id
+                _key
                 nom
                 prenom
                 email
@@ -36,7 +36,7 @@ class BulletinService {
                 adresse
                 sexe
                 poste {
-                    _id
+                    _key
                     libelle
                 }
                 situationMatrimoniale
@@ -53,7 +53,7 @@ class BulletinService {
                 typeContrat
                 fullCount
                 pays {
-                    _id
+                    _key
                     name
                     code
                     tauxTVA
@@ -67,9 +67,9 @@ class BulletinService {
                     telephone2
                 }
             }
-            categorieBulletin {
-                _id
-                categorieBulletin
+            bulletinCategorie {
+                _key
+                bulletinCategorie
             }
         }
         validate {
@@ -77,14 +77,14 @@ class BulletinService {
             date
             commentaire
             validater {
-                _id
+                _key
                 login
                 password
                 canLogin
                 _token
                 dateEnregistrement
                 personnel {
-                    _id
+                    _key
                     nom
                     prenom
                     email
@@ -92,7 +92,7 @@ class BulletinService {
                     adresse
                     sexe
                     poste {
-                        _id
+                        _key
                         libelle
                     }
                     situationMatrimoniale
@@ -114,7 +114,7 @@ class BulletinService {
         rubriques {
             value
             rubrique {
-                _id
+                _key
                 rubrique
                 code
                 type
@@ -123,7 +123,7 @@ class BulletinService {
                 rubriqueIdentity
                 portee
                 section {
-                    _id
+                    _key
                     section
                 }
                 calcul {
@@ -132,7 +132,7 @@ class BulletinService {
                         type
                         valeur
                         rubrique {
-                            _id
+                            _key
                             rubrique
                             code
                             type
@@ -148,7 +148,7 @@ class BulletinService {
                         type
                         valeur
                         rubrique {
-                            _id
+                            _key
                             rubrique
                             code
                             type
@@ -161,7 +161,7 @@ class BulletinService {
                 taux {
                     taux
                     base {
-                        _id
+                        _key
                         rubrique
                         code
                         type
@@ -172,7 +172,7 @@ class BulletinService {
                 }
                 bareme {
                     reference {
-                        _id
+                        _key
                         rubrique
                         code
                         type
@@ -189,7 +189,7 @@ class BulletinService {
                             taux {
                                 taux
                                 base {
-                                    _id
+                                    _key
                                     rubrique
                                     code
                                     type
@@ -244,26 +244,26 @@ class BulletinService {
     var body = '''
               query CrrentValidateBulletin {
     currentValidateBulletin {
-        _id
+        _key
         etat
         debutPeriodePaie
         finPeriodePaie
         dateEdition
         salarie {
-            _id
+            _key
             dateEnregistrement
             periodPaie
-            paieManner
+            paieClause
             fullCount
             personnel {
-                _id
+                _key
                 nom
                 prenom
                 email
                 telephone
                 adresse
                 sexe
-                poste{_id, libelle}
+                poste{_key, libelle}
                 situationMatrimoniale
                 commentaire
                 etat
@@ -278,7 +278,7 @@ class BulletinService {
                 typeContrat
                 fullCount
                 pays {
-                    _id
+                    _key
                     name
                     code
                     tauxTVA
@@ -292,9 +292,9 @@ class BulletinService {
                     telephone2
                 }
             }
-            categorieBulletin {
-                _id
-                categorieBulletin
+            bulletinCategorie {
+                _key
+                bulletinCategorie
             }
         }
         validate {
@@ -302,21 +302,21 @@ class BulletinService {
             date
             commentaire
             validater {
-                _id
+                _key
                 login
                 password
                 canLogin
                 _token
                 dateEnregistrement
                 personnel {
-                    _id
+                    _key
                     nom
                     prenom
                     email
                     telephone
                     adresse
                     sexe
-                    poste{_id, libelle}
+                    poste{_key, libelle}
                     situationMatrimoniale
                     commentaire
                     etat
@@ -336,7 +336,7 @@ class BulletinService {
         rubriques {
             value
             rubrique {
-                _id
+                _key
                 rubrique
                 code
                 type
@@ -345,7 +345,7 @@ class BulletinService {
                 rubriqueIdentity
                 portee
                 section {
-                    _id
+                    _key
                     section
                 }
                 calcul {
@@ -354,7 +354,7 @@ class BulletinService {
                         type
                         valeur
                         rubrique {
-                            _id
+                            _key
                             rubrique
                             code
                             type
@@ -370,7 +370,7 @@ class BulletinService {
                         type
                         valeur
                         rubrique {
-                            _id
+                            _key
                             rubrique
                             code
                             type
@@ -383,7 +383,7 @@ class BulletinService {
                 taux {
                     taux
                     base {
-                        _id
+                        _key
                         rubrique
                         code
                         type
@@ -394,7 +394,7 @@ class BulletinService {
                 }
                 bareme {
                     reference {
-                        _id
+                        _key
                         rubrique
                         code
                         type
@@ -411,7 +411,7 @@ class BulletinService {
                             taux {
                                 taux
                                 base {
-                                    _id
+                                    _key
                                     rubrique
                                     code
                                     type
@@ -531,27 +531,27 @@ static Future<RequestResponse> generateBulletinsForPeriod({
     var body = '''
               query ArchiveBulletinsPaie {
     archiveBulletinsPaie {
-        _id
+        _key
         etat
          
         debutPeriodePaie
         finPeriodePaie
          dateEdition
         salarie {
-            _id
+            _key
             dateEnregistrement
             periodPaie
-            paieManner
+            paieClause
             fullCount
             personnel {
-                _id
+                _key
                 nom
                 prenom
                 email
                 telephone
                 adresse
                 sexe
-                poste{_id, libelle}
+                poste{_key, libelle}
                 situationMatrimoniale
                 commentaire
                 etat
@@ -566,7 +566,7 @@ static Future<RequestResponse> generateBulletinsForPeriod({
                 typeContrat
                 fullCount
                 pays {
-                    _id
+                    _key
                     name
                     code
                     tauxTVA
@@ -580,9 +580,9 @@ static Future<RequestResponse> generateBulletinsForPeriod({
                     telephone2
                 }
             }
-            categorieBulletin {
-                _id
-                categorieBulletin
+            bulletinCategorie {
+                _key
+                bulletinCategorie
             }
         }
         validate {
@@ -590,21 +590,21 @@ static Future<RequestResponse> generateBulletinsForPeriod({
             date
             commentaire
             validater {
-                _id
+                _key
                 login
                 password
                 canLogin
                 _token
                 dateEnregistrement
                 personnel {
-                    _id
+                    _key
                     nom
                     prenom
                     email
                     telephone
                     adresse
                     sexe
-                    poste{_id, libelle}
+                    poste{_key, libelle}
                     situationMatrimoniale
                     commentaire
                     etat
@@ -624,7 +624,7 @@ static Future<RequestResponse> generateBulletinsForPeriod({
         rubriques {
             value
             rubrique {
-                _id
+                _key
                 rubrique
                 code
                 type
@@ -633,7 +633,7 @@ static Future<RequestResponse> generateBulletinsForPeriod({
                 rubriqueIdentity
                 portee
                 section {
-                    _id
+                    _key
                     section
                 }
                 calcul {
@@ -642,7 +642,7 @@ static Future<RequestResponse> generateBulletinsForPeriod({
                         type
                         valeur
                         rubrique {
-                            _id
+                            _key
                             rubrique
                             code
                             type
@@ -658,7 +658,7 @@ static Future<RequestResponse> generateBulletinsForPeriod({
                         type
                         valeur
                         rubrique {
-                            _id
+                            _key
                             rubrique
                             code
                             type
@@ -671,7 +671,7 @@ static Future<RequestResponse> generateBulletinsForPeriod({
                 taux {
                     taux
                     base {
-                        _id
+                        _key
                         rubrique
                         code
                         type
@@ -682,7 +682,7 @@ static Future<RequestResponse> generateBulletinsForPeriod({
                 }
                 bareme {
                     reference {
-                        _id
+                        _key
                         rubrique
                         code
                         type
@@ -699,7 +699,7 @@ static Future<RequestResponse> generateBulletinsForPeriod({
                             taux {
                                 taux
                                 base {
-                                    _id
+                                    _key
                                     rubrique
                                     code
                                     type
@@ -807,22 +807,22 @@ static Future<RequestResponse> generateBulletinsForPeriod({
   }
 
   // static Future<BulletinModel> payer({
-//     required String id,
+//     required String key,
 //     required List<BanqueModel> banques,
 //     required String moyenPayement,
-//     required String userId,
+//     required String userKey,
 //   }) async {
 //     BulletinModel? bulletin;
 //     var body = '''
 //                mutation ValiderBulletin {
-//                   validerBulletin(id: "$id", ''';
-//     body += 'banqueId: [';
+//                   validerBulletin(key: "$key", ''';
+//     body += 'banqueKey: [';
 //     for (var banque in banques) {
-//       body += '"${banque.id}"';
+//       body += '"${banque.key}"';
 //     }
 //     body += '],';
-//     body += '''moyenPayement: "$moyenPayement", userId: "$userId") {
-//                     _id
+//     body += '''moyenPayement: "$moyenPayement", userKey: "$userKey") {
+//                     _key
 //                     etat
 //                     moyenPayement
 //                     datePayement
@@ -839,7 +839,7 @@ static Future<RequestResponse> generateBulletinsForPeriod({
 //                         taux
 //                     }
 //                     banque {
-//                         _id
+//                         _key
 //                         name
 //                         codeGuichet
 //                         codeBanque
@@ -847,14 +847,14 @@ static Future<RequestResponse> generateBulletinsForPeriod({
 //                         logo
 //                     }
 //                     personnel {
-//                         _id
+//                         _key
 //                         nom
 //                         prenom
 //                         email
 //                         telephone
 //                         adresse
 //                         sexe
-//                         poste{_id, libelle}
+//                         poste{_key, libelle}
 //                         pays {
 //                             name
 //                             code

@@ -129,7 +129,7 @@ class _AddInitialLigneServiceState extends State<AddInitialLigne> {
         );
         return;
       }
-      if (widget.controllers.any((ligne) => ligne.serviceId == service!.id)) {
+      if (widget.controllers.any((ligne) => ligne.serviceKey == service!.key)) {
         MutationRequestContextualBehavior.showPopup(
           status: PopupStatus.customError,
           customMessage:
@@ -154,7 +154,7 @@ class _AddInitialLigneServiceState extends State<AddInitialLigne> {
               : double.parse(prixSupplementaireString),
           quantite: int.parse(quantiteString),
           unit: _unitController.text,
-          serviceId: service!.id,
+          serviceKey: service!.key,
           service: service,
         ),
       );

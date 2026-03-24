@@ -89,7 +89,7 @@ class _AddDebtPageState extends State<AddDebtPage> {
       partiePrenante: partiePrenanteFieldController.text,
       datePayementUlterieur: _datePayementUlterieur,
       file: _file,
-      userId: _user!.id!,
+      userKey: _user!.key!,
     );
     _dialog.hide();
     if (result.status == PopupStatus.success) {

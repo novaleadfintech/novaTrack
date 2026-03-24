@@ -82,8 +82,8 @@ class _VariablePaiePageState extends State<VariablePaiePage> {
       final ValeurRubriqueTemporaire valeurResponse =
           await RubriqueCategorieConfService
               .getvariablePaieAndPrimeExceptionnelles(
-        categorieBulletin: widget.salarie.categorieBulletin,
-        salarieId: widget.salarie.id,
+        bulletinCategorie: widget.salarie.bulletinCategorie,
+        salarieKey: widget.salarie.key,
       );
 
       // Si rien reçu, on initialise avec listes vides
@@ -105,7 +105,7 @@ class _VariablePaiePageState extends State<VariablePaiePage> {
           if (rubriqueBulletin.value != null) {
             controller.text = rubriqueBulletin.value.toString();
           }
-          valueControllers[r.id] = controller;
+          valueControllers[r.key] = controller;
         }
       }
 
@@ -173,7 +173,7 @@ class _VariablePaiePageState extends State<VariablePaiePage> {
                     return SimpleTextField(
                       label: r.rubrique,
                       textController:
-                          valueControllers[r.id] ?? TextEditingController(),
+                          valueControllers[r.key] ?? TextEditingController(),
                       required: true,
                       onChanged: (value) {
                         final parsed = value.isEmpty
@@ -233,7 +233,7 @@ class _VariablePaiePageState extends State<VariablePaiePage> {
                     return SimpleTextField(
                       label: r.rubrique,
                       textController:
-                          valueControllers[r.id] ?? TextEditingController(),
+                            valueControllers[r.key] ?? TextEditingController(),
                       required: true,
                       onChanged: (value) {
                         final parsed = value.isEmpty

@@ -7,7 +7,7 @@ import 'etat_bulletin.dart';
 import 'rubrique_paie.dart';
 
 class BulletinPaieModel {
-  final String id;
+  final String key;
   final EtatBulletin etat;
   final MoyenPaiementModel? moyenPayement;
   final String? referencePaie;
@@ -21,7 +21,7 @@ class BulletinPaieModel {
   final List<ValidateBulletinModel>? validated;
 
   BulletinPaieModel({
-    required this.id,
+    required this.key,
     required this.etat,
     this.moyenPayement,
     required this.referencePaie,
@@ -37,7 +37,7 @@ class BulletinPaieModel {
 
   factory BulletinPaieModel.fromJson(Map<String, dynamic> json) {
     return BulletinPaieModel(
-      id: json['_id'],
+      key: json['_key'],
       etat: etatBulletinFromJson(json['etat']),
       moyenPayement: json['moyenPayement'] != null
           ? MoyenPaiementModel.fromJson(json["moyenPayement"])
@@ -67,7 +67,7 @@ class BulletinPaieModel {
 
   Map<String, dynamic> toJson() {
     return {
-      '_id': id,
+      '_key': key,
       'etat': etatBulletinToString(etat),
       'moyenPayement': moyenPayement?.toJson(),
       'debutPeriodePaie': debutPeriodePaie,

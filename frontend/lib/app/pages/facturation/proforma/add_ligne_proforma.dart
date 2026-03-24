@@ -23,12 +23,12 @@ import '../../../integration/popop_status.dart';
 import '../../../integration/request_frot_behavior.dart';
 
 class AddLigneProforma extends StatefulWidget {
-  final String proformaId;
+  final String proformaKey;
   final PaysModel pays;
   final Future<void> Function() refresh;
   const AddLigneProforma({
     super.key,
-    required this.proformaId,
+    required this.proformaKey,
     required this.pays,
     required this.refresh,
   });
@@ -101,9 +101,9 @@ class _AddLigneProformaState extends State<AddLigneProforma> {
       );
     }
     RequestResponse result = await LigneProformaService.createLigneProforma(
-      proformaId: widget.proformaId,
+      proformaKey: widget.proformaKey,
       unit: _unitController.text,
-      serviceId: service!.id,
+      serviceKey: service!.key,
       prixSupplementaire: (prixSupplementaireString.isEmpty)
           ? null
           : double.parse(prixSupplementaireString),

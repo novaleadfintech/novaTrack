@@ -91,7 +91,7 @@ class _OperateurTableState extends State<OperateurTable> {
       );
 
       RequestResponse result = await OperateurService.deleteOperateur(
-        key: operateur.id,
+        key: operateur.key,
       );
       _dialog.hide();
       if (result.status == PopupStatus.success) {

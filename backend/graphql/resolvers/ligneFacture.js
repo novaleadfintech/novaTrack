@@ -3,15 +3,17 @@ import LigneFacture from "../../models/facturation/ligneFacture.js";
 const ligneFactureModel = new LigneFacture();
 
 const ligneFactureResolvers = {
-  ligneFactureByFacture: async ({ factureId }) =>
-    await ligneFactureModel.getLigneFactureByFacture({ factureId: factureId }),
+  ligneFactureByFacture: async ({ factureKey }) =>
+    await ligneFactureModel.getLigneFactureByFacture({
+      factureKey: factureKey,
+    }),
 
   updateLigneFacture: async ({
     key,
     designation,
     quantite,
     unit,
-    serviceId,
+    serviceKey,
     dureeLivraison,
     prixSupplementaire,
     remise,
@@ -19,7 +21,7 @@ const ligneFactureResolvers = {
   }) =>
     await ligneFactureModel.updateLigneFacture({
       key: key,
-      serviceId: serviceId,
+      serviceKey: serviceKey,
       designation: designation,
       unit: unit,
       prixSupplementaire: prixSupplementaire,
@@ -32,8 +34,8 @@ const ligneFactureResolvers = {
   deleteLigneFacture: async ({ key }) =>
     await ligneFactureModel.deleteLigneFacture({ key: key }),
 
-  deleteAllByFacture: async ({ factureId }) =>
-    await ligneFactureModel.deleteAllByFacture({ factureId: factureId }),
+  deleteAllByFacture: async ({ factureKey }) =>
+    await ligneFactureModel.deleteAllByFacture({ factureKey: factureKey }),
 };
 
 export default ligneFactureResolvers;

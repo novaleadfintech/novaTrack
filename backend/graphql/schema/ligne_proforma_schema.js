@@ -1,6 +1,6 @@
 const typeDef = `#graphql
     type LigneProforma{
-        _id:ID!
+        _key:ID!
         designation:String!
         unit: String!
         quantite:Int!
@@ -19,12 +19,12 @@ const typeDef = `#graphql
         prixSupplementaire: Float,
         dureeLivraison:Float
         # remise:Float
-        serviceId:String!
+        serviceKeyy:String!
         fraisDivers: [FraisDiversInput]
     }
 `;
 const query = `#graphql
-    ligneProformaByProforma(proformaId:String!): [LigneProforma]!  
+    ligneProformaByProforma(proformaKeyy:String!): [LigneProforma]!  
     ligneProforma(key:ID!): LigneProforma!    
 `;
 
@@ -33,7 +33,7 @@ const mutation = `#graphql
         key: ID!
         designation: String
         quantite: Int
-        serviceId: String
+        serviceKeyy: String
         unit: String
         prixSupplementaire: Float,
         dureeLivraison:Float
@@ -42,7 +42,7 @@ const mutation = `#graphql
     ):String!
     
     deleteLigneProforma(key:ID!):String!
-    # deleteAllByProforma(proformaId:String!):String!
+    # deleteAllByProforma(proformaKeyy:String!):String!
 `;
 
 export default { typeDef, query, mutation };

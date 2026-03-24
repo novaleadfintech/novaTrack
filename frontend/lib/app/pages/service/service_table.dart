@@ -117,10 +117,10 @@ class _ServiceTableState extends State<ServiceTable> {
 
       var result = service.etat == EtatService.unarchived
           ? await ServiceService.archivedService(
-              serviceId: service.id,
+              serviceKey: service.key,
             )
           : await ServiceService.unarchivedService(
-              serviceId: service.id,
+              serviceKey: service.key,
             );
       _dialog.hide();
       if (result.status == PopupStatus.success) {

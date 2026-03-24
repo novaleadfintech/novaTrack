@@ -27,7 +27,7 @@ class FluxFinancierService {
     String? partiePrenante,
     required MoyenPaiementModel moyenPayement,
     required referenceTransaction,
-    required String userId,
+    required String userKey,
     PlatformFile? file,
   }) async {
     try {
@@ -40,10 +40,10 @@ class FluxFinancierService {
                 montant: $montant,
                 partiePrenante: "$partiePrenante",
                 moyenPayement: ${moyenPayement.toJson()},
-                userId: "$userId",        
-                clientId: ${client != null ? '"${client.id}"' : null},        
+                userKey: "$userKey",        
+                clientKey: ${client != null ? '"${client.key}"' : null},        
         ''';
-      body += 'bankId: "${banque.id}",';
+      body += 'bankKey: "${banque.key}",';
 
       if (dateOperation != null) {
         body += 'dateOperation: ${dateOperation.millisecondsSinceEpoch},';
@@ -151,12 +151,12 @@ class FluxFinancierService {
         body += 'moyenPayement: ${moyenPayement.toJson()},';
       }
       if (banque != null) {
-        body += 'bankId: "${banque.id}",';
+        body += 'bankKey: "${banque.key}",';
       }
       if (client != null) {
-        body += 'clientId: "${client.id}",';
+        body += 'clientKey: "${client.key}",';
       } else {
-        body += 'clientId: $client,';
+        body += 'clientKey: $client,';
       }
       if (partiePrenante != null) {
         body += 'partiePrenante: "$partiePrenante",';
@@ -249,7 +249,7 @@ class FluxFinancierService {
        mutation ValidateFluxFinancier {
         validateFluxFinancier(
         key: "$key"
-        validate: { validateStatus: ${fluxFinancierStatusToString(validateFlux.validateStatus)}, validater: "${validateFlux.validater.id!}", date: ${DateTime.now().millisecondsSinceEpoch}, commentaire:"${validateFlux.commentaire}"}
+        validate: { validateStatus: ${fluxFinancierStatusToString(validateFlux.validateStatus)}, validater: "${validateFlux.validater.key!}", date: ${DateTime.now().millisecondsSinceEpoch}, commentaire:"${validateFlux.commentaire}"}
       )
     }
   ''';
@@ -344,7 +344,7 @@ class FluxFinancierService {
     var body = '''
                query FluxFinanciers {
                   fluxFinanciers(type: input) {
-                      _id
+                      _key
                       libelle
                       type
                       montant
@@ -352,22 +352,22 @@ class FluxFinancierService {
                       partiePrenante
                       referenceTransaction
                       status
-                      factureId
+                      factureKey
                       moyenPayement{
-                      _id
+                      _key
                       libelle
                       type
                       }
                       pieceJustificative
                       isFromSystem
                       client {
-                        _id
+                        _key
                         ... on ClientMoral {
-                            _id
+                            _key
                             raisonSociale
                         }
                         ... on ClientPhysique {
-                            _id
+                            _key
                             nom
                             prenom
                         }
@@ -376,9 +376,9 @@ class FluxFinancierService {
                           validateStatus
                           date
                           validater {
-                              _id
+                              _key
                               personnel {
-                                  _id
+                                  _key
                                   nom
                                   prenom
                               }
@@ -387,9 +387,9 @@ class FluxFinancierService {
                       }
                       
                       user {
-                          _id
+                          _key
                           personnel {
-                              _id
+                              _key
                               nom
                               prenom
                               email
@@ -398,7 +398,7 @@ class FluxFinancierService {
                       }
                       dateOperation
                       bank {
-            _id
+            _key
             name
             type
             codeGuichet
@@ -450,7 +450,7 @@ class FluxFinancierService {
     var body = '''
                query DebtFluxFinanciers {
                   debtFluxFinanciers {
-                      _id
+                      _key
                       libelle
                       type
                       montant
@@ -458,22 +458,22 @@ class FluxFinancierService {
                       partiePrenant
                       referenceTransaction
                       status
-                      factureId
+                      factureKey
                       moyenPayement {
-                          _id
+                          _key
                           libelle
                           type
                       }
                       pieceJustificative
                       isFromSystem
                       client {
-                          _id
+                          _key
                           ... on ClientMoral {
-                              _id
+                              _key
                               raisonSociale
                           }
                           ... on ClientPhysique {
-                              _id
+                              _key
                               nom
                               prenom
                           }
@@ -482,9 +482,9 @@ class FluxFinancierService {
                           validateStatus
                           date
                           validater {
-                              _id
+                              _key
                               personnel {
-                                  _id
+                                  _key
                                   nom
                                   prenom
                               }
@@ -492,9 +492,9 @@ class FluxFinancierService {
                           commentaire
                       }
                       user {
-                          _id
+                          _key
                           personnel {
-                              _id
+                              _key
                               nom
                               prenom
                               email
@@ -503,7 +503,7 @@ class FluxFinancierService {
                       }
                       dateOperation
                       bank {
-                          _id
+                          _key
                           name
                           type
                           codeGuichet
@@ -555,7 +555,7 @@ class FluxFinancierService {
     var body = '''
                query UnValidatedFluxFinanciers {
                   unValidatedFluxFinanciers {
-                      _id
+                      _key
                       libelle
                       reference
                       referenceTransaction
@@ -564,7 +564,7 @@ class FluxFinancierService {
                       type
                       montant
                       moyenPayement{
-                      _id
+                      _key
                       libelle
                       type
                       }
@@ -572,13 +572,13 @@ class FluxFinancierService {
                       dateEnregistrement
                       pieceJustificative
                       client {
-                        _id
+                        _key
                         ... on ClientMoral {
-                            _id
+                            _key
                             raisonSociale
                         }
                         ... on ClientPhysique {
-                            _id
+                            _key
                             nom
                             prenom
                         }
@@ -587,9 +587,9 @@ class FluxFinancierService {
                             validateStatus
                             date
                             validater {
-                                _id
+                                _key
                                 personnel {
-                                    _id
+                                    _key
                                     nom
                                     prenom
                                 }
@@ -597,7 +597,7 @@ class FluxFinancierService {
                             commentaire
                         }                
                       bank {
-            _id
+            _key
             name
             type
             codeGuichet
@@ -609,9 +609,9 @@ class FluxFinancierService {
             soldeTheorique
         }
                       user {
-                          _id
+                          _key
                           personnel {
-                              _id
+                              _key
                               nom
                               prenom
                           }
@@ -658,7 +658,7 @@ class FluxFinancierService {
     var body = '''
                query ArchiveFluxFinanciers {
                   archiveFluxFinanciers {
-                      _id
+                      _key
                       libelle
                       reference
                       referenceTransaction
@@ -666,9 +666,9 @@ class FluxFinancierService {
                       type
                       montant
                       partiePrenante
-                      factureId
+                      factureKey
                       moyenPayement{
-                      _id
+                      _key
                       libelle
                       type
                       }
@@ -676,13 +676,13 @@ class FluxFinancierService {
                       dateEnregistrement
                       pieceJustificative
                       client {
-                        _id
+                        _key
                         ... on ClientMoral {
-                            _id
+                            _key
                             raisonSociale
                         }
                         ... on ClientPhysique {
-                            _id
+                            _key
                             nom
                             prenom
                         }
@@ -691,9 +691,9 @@ class FluxFinancierService {
                             validateStatus
                             date
                             validater {
-                                _id
+                                _key
                                 personnel {
-                                    _id
+                                    _key
                                     nom
                                     prenom
                                 }
@@ -701,7 +701,7 @@ class FluxFinancierService {
                             commentaire
                         }                
                       bank {
-            _id
+            _key
             name
             codeGuichet
             type
@@ -713,9 +713,9 @@ class FluxFinancierService {
             soldeTheorique
         }
                       user {
-                          _id
+                          _key
                           personnel {
-                              _id
+                              _key
                               nom
                               prenom
                           }
@@ -758,14 +758,14 @@ class FluxFinancierService {
   }
 
   static Future<List<FluxFinancierModel>> getBanqueTransaction({
-    required String banqueId,
+    required String banqueKey,
     required DateTime debut,
     required DateTime fin,
     required FluxFinancierStatus? status,
   }) async {
     var body = '''
                query FluxFinanciersByBank {
-                  fluxFinanciersByBank(banque: "$banqueId", debut: ${debut.millisecondsSinceEpoch}, fin: ${fin.millisecondsSinceEpoch},
+                  fluxFinanciersByBank(banque: "$banqueKey", debut: ${debut.millisecondsSinceEpoch}, fin: ${fin.millisecondsSinceEpoch},
                   ''';
     if (status != null) {
       body += 'status: ${fluxFinancierStatusToString(status)}';
@@ -773,7 +773,7 @@ class FluxFinancierService {
     body += '''
                   
                   ) {
-                      _id
+                      _key
                       libelle
                       type
                       montant
@@ -782,27 +782,27 @@ class FluxFinancierService {
                       status
                       partiePrenante
                       moyenPayement{
-                      _id
+                      _key
                       libelle
                       type
                       }
                       client {
-                        _id
+                        _key
                         ... on ClientMoral {
-                            _id
+                            _key
                             raisonSociale
                         }
                         ... on ClientPhysique {
-                            _id
+                            _key
                             nom
                             prenom
                         }
                     }
                       pieceJustificative
                       user {
-                          _id
+                          _key
                           personnel {
-                              _id
+                              _key
                               nom
                               prenom
                               email
@@ -811,7 +811,7 @@ class FluxFinancierService {
                       }
                       dateOperation
                       bank {
-            _id
+            _key
             name
             type
             codeGuichet
@@ -878,7 +878,7 @@ class FluxFinancierService {
                       output
                       partiePrenante
                       fluxFinanciers {
-                      _id
+                      _key
                       libelle
                       type
                       montant
@@ -886,27 +886,27 @@ class FluxFinancierService {
                       referenceTransaction
                       status
                       client {
-                        _id
+                        _key
                         ... on ClientMoral {
-                            _id
+                            _key
                             raisonSociale
                         }
                         ... on ClientPhysique {
-                            _id
+                            _key
                             nom
                             prenom
                         }
                     }
                       moyenPayement{
-                      _id
+                      _key
                       libelle
                       type
                       }
                       pieceJustificative
                       user {
-                          _id
+                          _key
                           personnel {
-                              _id
+                              _key
                               nom
                               prenom
                               email
@@ -916,7 +916,7 @@ class FluxFinancierService {
                       
                       dateOperation
                       bank {
-                        _id
+                        _key
                         name
                         type
                                     codeBIC
@@ -967,10 +967,10 @@ class FluxFinancierService {
     var body = '''
                query FluxFinanciers {
                   fluxFinanciers(type: output) {
-                      _id
+                      _key
                       libelle
                       type
-                      factureId
+                      factureKey
                       montant
                       reference
                       isFromSystem
@@ -978,21 +978,21 @@ class FluxFinancierService {
                       partiePrenante                      
                       status
                       client {
-                        _id
+                        _key
                         ... on ClientMoral {
-                            _id
+                            _key
                             raisonSociale
                         }
                         ... on ClientPhysique {
-                            _id
+                            _key
                             nom
                             prenom
                         }
                     }
                       user {
-                        _id
+                        _key
                         personnel {
-                            _id
+                            _key
                             nom
                             prenom
                             email
@@ -1003,9 +1003,9 @@ class FluxFinancierService {
                         validateStatus
                         date
                         validater {
-                            _id
+                            _key
                             personnel {
-                                _id
+                                _key
                                 prenom
                                 nom
                             }
@@ -1014,14 +1014,14 @@ class FluxFinancierService {
                     }
                    
                       moyenPayement{
-                      _id
+                      _key
                       libelle
                       type
                       }
                       pieceJustificative
                       dateOperation
                       bank {
-            _id
+            _key
             name
             type
             codeGuichet

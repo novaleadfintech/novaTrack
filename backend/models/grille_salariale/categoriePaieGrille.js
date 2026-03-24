@@ -2,20 +2,20 @@ import { aql } from "arangojs";
 import db from "../../db/database_connection.js";
 import { isValidValue } from "../../utils/util.js";
 
-const categoriePaieGrilleCollection = db.collection("grilleCategoriePaies");
+const paieCategorieGrilleCollection = db.collection("grillepaieCategories");
 
-class CategoriePaieGrille {
+class paieCategorieGrille {
   constructor() {
     this.initializeCollections();
   }
 
   async initializeCollections() {
-    if (!(await categoriePaieGrilleCollection.exists())) {
-      categoriePaieGrilleCollection.create();
+    if (!(await paieCategorieGrilleCollection.exists())) {
+      await paieCategorieGrilleCollection.create();
     }
   }
 
-  async getAllCategoriePaieGrille({ perPage, skip }) {
+  async getAllpaieCategorieGrille({ perPage, skip }) {
     let limit = aql``;
 
     if (skip !== undefined && perPage !== undefined) {
@@ -23,10 +23,10 @@ class CategoriePaieGrille {
     }
 
     const query = await db.query(
-      aql`FOR categorie IN ${categoriePaieGrilleCollection} 
-          SORT categorie.libelle ASC ${limit} 
-          RETURN categorie`,
-      { fullCount: true }
+      aql`FOR paieCategorie IN ${paieCategorieGrilleCollection} 
+          SORT paieCategorie.libelle ASC ${limit} 
+          RETURN paieCategorie`,
+      { fullCount: true },
     );
     if (query.hasNext) {
       return await query.all();
@@ -35,10 +35,10 @@ class CategoriePaieGrille {
     }
   }
 
-  async getCategoriePaieGrille({ key }) {
+  async getpaieCategorieGrille({ key }) {
     try {
-      const categorie = await categoriePaieGrilleCollection.document(key);
-      return categorie;
+      const paieCategorie = await paieCategorieGrilleCollection.document(key);
+      return paieCategorie;
     } catch (err) {
       console.error(err);
       return null;
@@ -46,9 +46,9 @@ class CategoriePaieGrille {
     }
   }
 
-  async isExistCategoriePaieGrille({ key }) {
+  async isExistpaieCategorieGrille({ key }) {
     try {
-      await categoriePaieGrilleCollection.documentExists(key);
+      await paieCategorieGrilleCollection.documentExists(key);
       return true;
     } catch (err) {
       console.error(err);
@@ -57,35 +57,35 @@ class CategoriePaieGrille {
     }
   }
 
-  async createCategoriePaieGrille({ libelle, classes }) {
-     // Validation des données
+  async createpaieCategorieGrille({ libelle, classes }) {
+    // Validation des données
     isValidValue({ value: libelle });
     isValidValue({ value: classes });
 
     // Vérification que la catégorie n'existe pas déjà
     const existingCategorie = await db.query(aql`
-      FOR categorie IN ${categoriePaieGrilleCollection}
-      FILTER categorie.libelle == ${libelle}
+      FOR paieCategorie IN ${paieCategorieGrilleCollection}
+      FILTER paieCategorie.libelle == ${libelle}
       LIMIT 1
-      RETURN categorie
+      RETURN paieCategorie
     `);
-     if (existingCategorie.hasNext) {
+    if (existingCategorie.hasNext) {
       throw new Error(`Une catégorie de paie avec ce nom existe déjà.`);
     }
 
     // Création de la catégorie
-    const categorie = {
+    const paieCategorie = {
       libelle: libelle,
       classes: classes,
       timeStamp: Date.now(),
     };
 
     try {
-      await categoriePaieGrilleCollection.save(categorie);
+      await paieCategorieGrilleCollection.save(paieCategorie);
       return "OK";
     } catch (error) {
       console.log(
-        "---------------------------------------------------------------------"
+        "---------------------------------------------------------------------",
       );
       console.error(error);
 
@@ -93,27 +93,27 @@ class CategoriePaieGrille {
     }
   }
 
-  async updateCategoriePaieGrille({ key, categoriePaieGrille }) {
+  async updatepaieCategorieGrille({ key, paieCategorieGrille }) {
     // Vérification que la catégorie existe
-    await this.isExistCategoriePaieGrille({ key });
+    await this.isExistpaieCategorieGrille({ key });
 
     const updateField = {};
 
-    if (categoriePaieGrille !== undefined) {
+    if (paieCategorieGrille !== undefined) {
       // Vérification que le nouveau nom n'existe pas déjà
       const existingCategorie = await db.query(aql`
-        FOR categorie IN ${categoriePaieGrilleCollection}
-        FILTER categorie.categoriePaieGrille == ${categoriePaieGrille}
-        AND categorie._key != ${key}
+        FOR paieCategorie IN ${paieCategorieGrilleCollection}
+        FILTER paieCategorie.paieCategorieGrille == ${paieCategorieGrille}
+        AND paieCategorie._key != ${key}
         LIMIT 1
-        RETURN categorie
+        RETURN paieCategorie
       `);
 
       if (existingCategorie.hasNext) {
         throw new Error(`Une catégorie de paie avec ce nom existe déjà.`);
       }
 
-      updateField.categoriePaieGrille = categoriePaieGrille;
+      updateField.paieCategorieGrille = paieCategorieGrille;
     }
 
     if (Object.keys(updateField).length === 0) {
@@ -123,34 +123,34 @@ class CategoriePaieGrille {
     // updateField.dateModification = Date.now();
 
     try {
-      await categoriePaieGrilleCollection.update(key, updateField);
+      await paieCategorieGrilleCollection.update(key, updateField);
       return "OK";
     } catch (e) {
       console.error(e);
       throw new Error(
-        `Une erreur s'est produite lors de la mise à jour de la catégorie de paie`
+        `Une erreur s'est produite lors de la mise à jour de la catégorie de paie`,
       );
     }
   }
 
-  async deleteCategoriePaieGrille({ key }) {
+  async deletepaieCategorieGrille({ key }) {
     try {
-      await this.isExistCategoriePaieGrille({ key });
+      await this.isExistpaieCategorieGrille({ key });
 
       const existingCategorie = await db.query(aql`
-        FOR categorieBulletinRubrique IN ${categoriePaieGrilleCollection}
-        FILTER categorieBulletinRubrique._from == ${key}
+        FOR bulletinCategorieRubrique IN ${paieCategorieGrilleCollection}
+        FILTER bulletinCategorieRubrique.serviceKey == ${key}
         LIMIT 1
-        RETURN categorieBulletinRubrique
+        RETURN bulletinCategorieRubrique
       `);
 
       if (existingCategorie.hasNext) {
         throw new Error(
-          `Une catégorie est déjà utiliser, vous ne pourvez donc pas le supprimer.`
+          `Une catégorie est déjà utiliser, vous ne pourvez donc pas le supprimer.`,
         );
       }
 
-      await categoriePaieGrilleCollection.remove(key);
+      await paieCategorieGrilleCollection.remove(key);
       return "OK";
     } catch (error) {
       console.error(error);
@@ -160,4 +160,4 @@ class CategoriePaieGrille {
   }
 }
 
-export default CategoriePaieGrille;
+export default paieCategorieGrille;

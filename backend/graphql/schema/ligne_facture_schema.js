@@ -1,6 +1,6 @@
 const typeDef = `#graphql
     type LigneFacture{
-        _id:ID!
+        _key:ID!
         designation:String!
         unit: String!
         quantite:Int!
@@ -19,12 +19,12 @@ const typeDef = `#graphql
         prixSupplementaire: Float,
         dureeLivraison:Float
         remise:Float
-        serviceId:String!
+        serviceKey:String!
         fraisDivers: [FraisDiversInput]
     }
 `;
 const query = `#graphql
-    ligneFactureByFacture(factureId:String!): [LigneFacture]!  
+    ligneFactureByFacture(factureKey:String!): [LigneFacture]!  
     ligneFacture(key:ID!): LigneFacture!    
 `;
 
@@ -33,7 +33,7 @@ const mutation = `#graphql
         key: ID!
         designation: String
         quantite: Int
-        serviceId: String
+        serviceKey: String
         prixSupplementaire: Float,
         unit: String
         dureeLivraison: Float
@@ -42,7 +42,7 @@ const mutation = `#graphql
     ):String!
     
     deleteLigneFacture(key:ID!):String!
-    # deleteAllByFacture(factureId:String!):String!
+    # deleteAllByFacture(factureKey:String!):String!
 `;
 
 export default { typeDef, query, mutation };

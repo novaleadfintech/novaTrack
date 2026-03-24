@@ -12,7 +12,7 @@ bool hasPermission({required RoleModel role, required String permission}) {
 
 bool hasModule({required RoleModel role, required String module}) {
   return role.permissions!.any((perm) {
-    return perm.module!.alias == module;
+    return perm.module != null ? perm.module!.alias == module : false;
   });
 }
 

@@ -301,7 +301,7 @@ class BulletinPdfGenerator {
           (section) {
             final rubriquesDeSection = bulletin.rubriques
                 .where((r) =>
-                    r.rubrique.section?.id == section.id &&
+                    r.rubrique.section?.key == section.key &&
                     r.rubrique.rubriqueRole != RubriqueRole.variable &&
                     r.rubrique.rubriqueIdentity != RubriqueIdentity.netPayer &&
                     r.value != null &&
@@ -478,7 +478,7 @@ class BulletinPdfGenerator {
                           (el) => el.rubrique.code == bareme.reference.code,
                           orElse: () => RubriqueOnBulletinModel(
                             rubrique: RubriqueBulletin(
-                              id: "id",
+                              key: "key",
                               rubrique: "rubrique",
                               code: "code",
                               type: TypeRubrique.gain,
@@ -551,7 +551,7 @@ class BulletinPdfGenerator {
                             (el) => el.rubrique.code == bareme.reference.code,
                             orElse: () => RubriqueOnBulletinModel(
                               rubrique: RubriqueBulletin(
-                                id: "id",
+                                key: "key",
                                 rubrique: "rubrique",
                                 code: "code",
                                 type: TypeRubrique.gain,
@@ -655,7 +655,7 @@ class BulletinPdfGenerator {
                                 RubriqueIdentity.netPayer,
                             orElse: () => RubriqueOnBulletinModel(
                               rubrique: RubriqueBulletin(
-                                id: '',
+                                key: '',
                                 rubrique: '',
                                 code: '',
                                 type: TypeRubrique.gain,

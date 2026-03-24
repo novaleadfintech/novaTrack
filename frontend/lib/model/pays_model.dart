@@ -1,5 +1,5 @@
 class PaysModel {
-  final String? id;
+  final String? key;
   final int code;
   final String name;
   final List<int> initiauxPays;
@@ -7,7 +7,7 @@ class PaysModel {
   final int? phoneNumber;
 
   PaysModel({
-    this.id,
+    this.key,
     required this.name,
     required this.code,
     required this.initiauxPays,
@@ -18,7 +18,7 @@ class PaysModel {
   factory PaysModel.fromJson(Map<String, dynamic> json) {
     return PaysModel(
       code: json["code"],
-      id: json["_id"] ?? "",
+      key: json["_key"] ?? "",
       name: json["name"] ?? "",
       initiauxPays: json["initiauxPays"] == null
           ? []
@@ -32,7 +32,7 @@ class PaysModel {
   Map<String, dynamic> toJson() {
     return {
       "code": code,
-      "_id": "\"$id\"",
+      "_key": "\"$key\"",
       "initiauxPays": initiauxPays,
       "tauxTVA": tauxTVA,
       "phoneNumber": phoneNumber,

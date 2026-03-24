@@ -94,7 +94,7 @@ class _PosteTableState extends State<PosteTable> {
       );
 
       RequestResponse result = await PosteService.deletePoste(
-        key: poste.id,
+        key: poste.key,
       );
       _dialog.hide();
       if (result.status == PopupStatus.success) {

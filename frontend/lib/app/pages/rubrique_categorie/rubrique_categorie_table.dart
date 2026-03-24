@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/app/pages/configure_page_dialog.dart';
-import 'package:frontend/model/bulletin_paie/categorie_bulletin.dart';
+import 'package:frontend/model/bulletin_paie/bulletin_categorie.dart';
 import 'package:frontend/style/app_color.dart';
 import '../../../../global/constant/permission_alias.dart';
 import '../../../../helper/user_helper.dart';
@@ -10,20 +10,20 @@ import '../../../../auth/authentification_token.dart';
 import '../../../../model/habilitation/role_model.dart';
 import 'rubrique_categorie_config_page.dart';
  
-class CategorieBulletinRubriqueTable extends StatefulWidget {
-  final List<CategorieBulletinModel> categoriesBulletin;
+class BulletinCategorieRubriqueTable extends StatefulWidget {
+  final List<BulletinCategorieModel> bulletinCategories;
   final Future<void> Function() refresh;
-  const CategorieBulletinRubriqueTable({
+  const BulletinCategorieRubriqueTable({
     super.key,
-    required this.categoriesBulletin,
+    required this.bulletinCategories,
     required this.refresh,
   });
 
   @override
-  State<CategorieBulletinRubriqueTable> createState() => _InputTableState();
+  State<BulletinCategorieRubriqueTable> createState() => _InputTableState();
 }
 
-class _InputTableState extends State<CategorieBulletinRubriqueTable> {
+class _InputTableState extends State<BulletinCategorieRubriqueTable> {
   late RoleModel role;
   late Future<void> _futureRoles;
 
@@ -37,11 +37,11 @@ class _InputTableState extends State<CategorieBulletinRubriqueTable> {
     role = await AuthService().getRole();
   }
 
-  // detailCategorieBulletinRubrique({required CategoriePaieModel categorie}) {
+  // detailBulletinCategorieRubrique({required paieCategorieModel bulletincategorie}) {
   //   showDetailDialog(
   //     context,
-  //     content: DetailCategorieBulletinRubriquePage(
-  //       categorie: categorie,
+  //     content: DetailBulletinCategorieRubriquePage(
+  //       bulletincategorie: bulletincategorie,
   //     ),
   //     title: "Détail de moyen de paiement",
   //   );
@@ -74,18 +74,18 @@ class _InputTableState extends State<CategorieBulletinRubriqueTable> {
                 1: const IntrinsicColumnWidth()
               },
               children: [
-                ...widget.categoriesBulletin.map(
-                  (categorieBulletin) => TableRow(
+                ...widget.bulletinCategories.map(
+                  (bulletinCategorie) => TableRow(
                     decoration: tableDecoration(context),
                     children: [
                       TableBodyMiddle(
-                        valeur: categorieBulletin.categorieBulletin,
+                        valeur: bulletinCategorie.bulletinCategorie,
                       ),
                       if (hasPermission(
                         role: role,
                         permission:
                             PermissionAlias
-                            .assignRubriqueCategorieBulletin.label,
+                            .assignRubriqueBulletinCategorie.label,
                       ))
                       Padding(
                         padding: const EdgeInsets.only(top: 4.0),
@@ -94,10 +94,10 @@ class _InputTableState extends State<CategorieBulletinRubriqueTable> {
                             showResponsiveConfigPageDialogBox(
                               context,
                               content: RubriqueCategorieConfigPage(
-                                  categorieBulletin: categorieBulletin,
+                                  bulletinCategorie: bulletinCategorie,
                               ),
                               title:
-                                    "Configuration des catégories de paie - ${categorieBulletin.categorieBulletin}",
+                                    "Configuration des catégories de paie - ${bulletinCategorie.bulletinCategorie}",
                             );
                           },
                           icon: Icon(

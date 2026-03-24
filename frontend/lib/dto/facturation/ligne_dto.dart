@@ -7,7 +7,7 @@ class LigneDto {
   final int? dureeLivraison;
   final double? prixSupplementaire;
   final String unit;
-  final String serviceId;
+  final String serviceKey;
   final ServiceModel? service;
   final List<FraisDiversDto>? fraisDivers;
 
@@ -16,7 +16,7 @@ class LigneDto {
     required this.quantite,
     this.prixSupplementaire,
     this.dureeLivraison,
-    required this.serviceId,
+    required this.serviceKey,
     required this.unit,
     this.service,
     this.fraisDivers,
@@ -33,7 +33,7 @@ class LigneDto {
       service: json['service'] != null
           ? ServiceModel.fromJson(json['service'])
           : null,
-      serviceId: json['serviceId'],
+      serviceKey: json['serviceKey'],
       fraisDivers: (json['fraisDivers'] as List?)
               ?.map((frais) => FraisDiversDto.fromJson(frais))
               .toList() ??
@@ -48,7 +48,7 @@ class LigneDto {
       'quantite': quantite,
       'dureeLivraison': dureeLivraison,
       'prixSupplementaire': prixSupplementaire,
-      'serviceId': "\"$serviceId\"",
+      'serviceKey': "\"$serviceKey\"",
       'fraisDivers': fraisDivers?.map((frais) => frais.toJson()).toList(),
     };
   }

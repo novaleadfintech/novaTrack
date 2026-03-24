@@ -131,7 +131,7 @@ class _ChooseTransactionDurationState extends State<ChooseTransactionDuration> {
     List<FluxFinancierModel> flux = [];
     try {
       flux = await FluxFinancierService.getBanqueTransaction(
-        banqueId: widget.banque.id,
+        banqueKey: widget.banque.key,
         debut: dateDebut!,
         fin: dateFin!,
         status: status,

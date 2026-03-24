@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:frontend/app/pages/error_page.dart';
 import 'package:frontend/app/pages/no_data_page.dart';
 import 'package:frontend/helper/amout_formatter.dart';
-import 'package:frontend/model/bulletin_paie/categorie_bulletin.dart'
-    show CategorieBulletinModel;
+import 'package:frontend/model/bulletin_paie/bulletin_categorie.dart'
+    show BulletinCategorieModel;
 import 'package:frontend/model/bulletin_paie/nature_rubrique.dart';
 import 'package:frontend/model/bulletin_paie/rubrique.dart';
 import 'package:frontend/model/bulletin_paie/type_rubrique.dart';
@@ -18,10 +18,10 @@ import '../../integration/popop_status.dart';
 import '../../integration/request_frot_behavior.dart';
 
 class RubriqueCategorieConfigPage extends StatefulWidget {
-  final CategorieBulletinModel categorieBulletin;
+  final BulletinCategorieModel bulletinCategorie;
 
   const RubriqueCategorieConfigPage(
-      {super.key, required this.categorieBulletin});
+      {super.key, required this.bulletinCategorie});
 
   @override
   State<RubriqueCategorieConfigPage> createState() =>
@@ -42,20 +42,20 @@ class _RubriqueCategorieConfigPageState
   @override
   void initState() {
     super.initState();
-    _loadCategorieBulletinRubriques();
+    _loadBulletinCategorieRubriques();
     _researchController.addListener(_onSearchChanged);
 
     _dialog = SimpleFontelicoProgressDialog(context: context);
   }
 
-  Future<void> _loadCategorieBulletinRubriques() async {
+  Future<void> _loadBulletinCategorieRubriques() async {
      setState(() {
       isLoading = true;
     });
     try {
       rubriqueCategories = await RubriqueCategorieConfService
-          .getBulletinRubriquesByCategorieBulletinForConfig(
-              categorieBulletin: widget.categorieBulletin);
+          .getBulletinRubriquesByBulletinCategorieForConfig(
+              bulletinCategorie: widget.bulletinCategorie);
 
       // Créer une deep copy pour oldRubriqueCategories
       oldRubriqueCategories = rubriqueCategories
@@ -71,7 +71,7 @@ class _RubriqueCategorieConfigPageState
       // Initialiser les contrôleurs avec les valeurs existantes
       for (var rubrique in rubriqueCategories) {
         if (rubrique.rubriqueOnBulletin.value != null) {
-          valueControllers[rubrique.rubriqueOnBulletin.rubrique.id] =
+          valueControllers[rubrique.rubriqueOnBulletin.rubrique.key] =
               TextEditingController(
                   text: rubrique.rubriqueOnBulletin.value?.toString() ?? "");
         }
@@ -90,9 +90,9 @@ class _RubriqueCategorieConfigPageState
   }
 
   String searchQuery = "";
-  List<RubriquePaieConfig> filterCategorieBulletinRubrique() {
-    return rubriqueCategories.where((categorieBulletin) {
-      return categorieBulletin.rubriqueOnBulletin.rubrique.rubrique
+  List<RubriquePaieConfig> filterBulletinCategorieRubrique() {
+    return rubriqueCategories.where((bulletinCategorie) {
+      return bulletinCategorie.rubriqueOnBulletin.rubrique.rubrique
           .toLowerCase()
           .contains(searchQuery.toLowerCase().trim());
     }).toList();
@@ -157,8 +157,8 @@ class _RubriqueCategorieConfigPageState
       try {
         oldRubrique = oldRubriqueCategories.firstWhere(
           (rc) =>
-              rc.rubriqueOnBulletin.rubrique.id ==
-              newRubrique.rubriqueOnBulletin.rubrique.id,
+              rc.rubriqueOnBulletin.rubrique.key ==
+              newRubrique.rubriqueOnBulletin.rubrique.key,
         );
       } catch (_) {}
 
@@ -188,27 +188,27 @@ class _RubriqueCategorieConfigPageState
 
     try {
       for (var rubrique in createdRubriques) {
-        await RubriqueCategorieConfService.createCategorieBulletinRubrique(
-          rubriqueId: rubrique.rubriqueOnBulletin.rubrique.id,
-          categorieBulletinId: widget.categorieBulletin.id,
+        await RubriqueCategorieConfService.createBulletinCategorieRubrique(
+          rubriqueKey: rubrique.rubriqueOnBulletin.rubrique.key,
+          bulletinCategorieKey: widget.bulletinCategorie.key,
           value: rubrique.rubriqueOnBulletin.value,
         );
       }
 
       for (var rubrique in updatedRubriques) {
         await RubriqueCategorieConfService
-            .updateCategorieBulletinRubriqueBulletin(
-          rubriqueId: rubrique.rubriqueOnBulletin.rubrique.id,
-          categorieBulletinId: widget.categorieBulletin.id,
+            .updateBulletinCategorieRubriqueBulletin(
+          rubriqueKey: rubrique.rubriqueOnBulletin.rubrique.key,
+          bulletinCategorieKey: widget.bulletinCategorie.key,
           value: rubrique.rubriqueOnBulletin.value,
         );
       }
 
       for (var rubrique in deletedRubriques) {
         await RubriqueCategorieConfService
-            .deleteCategorieBulletinRubriqueBulletin(
-          rubriqueId: rubrique.rubriqueOnBulletin.rubrique.id,
-          categorieBulletinId: widget.categorieBulletin.id,
+            .deleteBulletinCategorieRubriqueBulletin(
+          rubriqueKey: rubrique.rubriqueOnBulletin.rubrique.key,
+          bulletinCategorieKey: widget.bulletinCategorie.key,
         );
       }
 
@@ -229,14 +229,14 @@ class _RubriqueCategorieConfigPageState
 
   @override
   Widget build(BuildContext context) {
-    List<RubriquePaieConfig> filteredData = filterCategorieBulletinRubrique();
+    List<RubriquePaieConfig> filteredData = filterBulletinCategorieRubrique();
     if (isLoading) return const Center(child: CircularProgressIndicator());
     if (hasError) {
       return Center(
         child: ErrorPage(
           message: errMessage ?? "Erreur lors du chargement",
           onPressed: () async {
-            _loadCategorieBulletinRubriques();
+            _loadBulletinCategorieRubriques();
           },
         ),
       );
@@ -299,15 +299,15 @@ class _RubriqueCategorieConfigPageState
   Widget _buildValueField(
       RubriqueBulletin rubrique, RubriquePaieConfig rubriqueConfig) {
     // S'assurer que nous avons un contrôleur pour cette rubrique
-    if (!valueControllers.containsKey(rubrique.id)) {
-      valueControllers[rubrique.id] = TextEditingController(
+    if (!valueControllers.containsKey(rubrique.key)) {
+      valueControllers[rubrique.key] = TextEditingController(
           text: rubriqueConfig.rubriqueOnBulletin.value?.toString() ?? "");
     }
 
     if (rubrique.portee != null && rubrique.portee == PorteeRubrique.commun) {
       return SimpleTextField(
         label: "Valeur de la rubrique",
-        textController: valueControllers[rubrique.id]!,
+        textController: valueControllers[rubrique.key]!,
         required: false,
         onChanged: (value) {
           final parsed = value.isEmpty

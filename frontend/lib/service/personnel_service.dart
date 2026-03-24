@@ -20,7 +20,7 @@ class PersonnelService {
     var body = '''
               query Personnels {
                   personnels(etat: unarchived) {
-                      _id
+                      _key
                       nom
                       prenom
                       email
@@ -47,7 +47,7 @@ class PersonnelService {
                     }
                       adresse
                       sexe
-                      poste{_id, libelle}
+                      poste{_key, libelle}
                       commentaire
                       etat
                       situationMatrimoniale
@@ -95,7 +95,7 @@ class PersonnelService {
     var body = '''
               query Personnels {
                 personnels(etat: archived) {
-                    _id
+                    _key
                     nom
                     prenom
                     email
@@ -108,7 +108,7 @@ class PersonnelService {
                     telephone
                     adresse
                     sexe
-                    poste{_id, libelle}
+                    poste{_key, libelle}
                     dateNaissance
                     dateDebut
                     dateFin
@@ -173,7 +173,7 @@ class PersonnelService {
     var body = '''
               query Personnel {
                   personnel(key: "$key") {
-                      _id
+                      _key
                       nom
                       prenom
                       email
@@ -186,7 +186,7 @@ class PersonnelService {
                           phoneNumber
                           initiauxPays
                       }
-                      poste{_id, libelle}
+                      poste{_key, libelle}
                       situationMatrimoniale
                       commentaire
                       etat
@@ -267,7 +267,7 @@ class PersonnelService {
           nom: "$nom"
           prenom: "$prenom"
           email: "$email"
-          pays: "${pays.id}",
+          pays: "${pays.key}",
           telephone: $telephone
           sexe: ${sexeToString(sexe)}
           poste: "${poste.toJson()}"
@@ -387,7 +387,7 @@ mutation UpdatePersonnel {
       body += 'adresse: "$adresse",';
     }
     if (pays != null) {
-      body += 'pays: "${pays.id}"';
+      body += 'pays: "${pays.key}"';
     }
     if (situationMatrimoniale != null) {
       body +=
@@ -475,11 +475,11 @@ mutation UpdatePersonnel {
   }
 
   static Future<RequestResponse> archivedPersonnel({
-    required String personnelId,
+    required String personnelKey,
   }) async {
     var body = '''
     mutation ArchivedPersonnel {
-      archivedPersonnel(key: "$personnelId")
+      archivedPersonnel(key: "$personnelKey")
     }
   ''';
 
@@ -526,11 +526,11 @@ mutation UpdatePersonnel {
   }
 
   static Future<RequestResponse> unArchivedPersonnel({
-    required String personnelId,
+    required String personnelKey,
   }) async {
     var body = '''
     mutation UnarchivedPersonnel {
-      unarchivedPersonnel(key: "$personnelId")
+      unarchivedPersonnel(key: "$personnelKey")
     }
   ''';
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/model/bulletin_paie/categorie_bulletin.dart';
+import 'package:frontend/model/bulletin_paie/bulletin_categorie.dart';
 import 'package:frontend/model/bulletin_paie/operateur_model.dart';
 import 'package:frontend/model/grille_salariale/classe_model.dart';
 import 'package:frontend/model/grille_salariale/echelon_indice_model.dart';
@@ -52,9 +52,9 @@ class _EditSalariePageState extends State<EditSalariePage> {
   final TextEditingController _compterController = TextEditingController();
 
   PersonnelModel? personnel;
-  CategorieBulletinModel? categorieBulletin;
+  BulletinCategorieModel? bulletinCategorie;
   PaieClause? paieClause;
-  String? currentPersonnelId;
+  String? currentPersonnelKey;
   String? periodPaieUnit;
   int? periodPaieCompteur;
   TypePaie? typePaie;
@@ -68,7 +68,7 @@ class _EditSalariePageState extends State<EditSalariePage> {
   final TextEditingController _numeroMatriculeController =
       TextEditingController();
   MoyenPaiementModel? moyenPaiement;
-  GrilleCategoriePaieModel? grilleCategoriePaie;
+  GrillepaieCategorieModel? grillepaieCategorie;
   ClasseModel? classe;
   EchelonModel? echelon;
   EchelonIndiceModel? echelonIndiciciaires;
@@ -85,19 +85,19 @@ class _EditSalariePageState extends State<EditSalariePage> {
   Future<void> _loadCurrentUser() async {
     UserModel? user = await AuthService().decodeToken();
     setState(() {
-      currentPersonnelId = user!.personnel!.id;
+      currentPersonnelKey = user!.personnel!.key;
     });
   }
 
   void _initializeSelectedValues() async {
     final fetchedPersonnel = widget.salarie.personnel;
-    final fetchedCategorieBulletin = widget.salarie.categorieBulletin;
-    final List<GrilleCategoriePaieModel> categorie =
-        await GrilleCategoriePaieService.getGrilleCategoriePaies();
+    final fetchedBulletinCategorie = widget.salarie.bulletinCategorie;
+    final List<GrillepaieCategorieModel> paieCategorie =
+        await GrillepaieCategorieService.getGrillepaieCategories();
 
     setState(() {
       personnel = fetchedPersonnel;
-      categorieBulletin = fetchedCategorieBulletin;
+      bulletinCategorie = fetchedBulletinCategorie;
       // paieManner = widget.salarie.paieManner;
 
       // pré-remplissage période
@@ -120,21 +120,22 @@ class _EditSalariePageState extends State<EditSalariePage> {
       _operateur = widget.salarie.operateur;
 
       // Trouver la grille complète correspondant à celle du salarié (si présente)
-      if (widget.salarie.grilleCategoriePaie != null) {
-        final matches = categorie
+      if (widget.salarie.grillepaieCategorie != null) {
+        final matches = paieCategorie
             .where(
-                (grille) => grille.id == widget.salarie.grilleCategoriePaie!.id)
+                (grille) =>
+                grille.key == widget.salarie.grillepaieCategorie!.key)
             .toList();
-        grilleCategoriePaie = matches.isNotEmpty
+        grillepaieCategorie = matches.isNotEmpty
             ? matches.first
-            : widget.salarie.grilleCategoriePaie;
+            : widget.salarie.grillepaieCategorie;
       } else {
-        grilleCategoriePaie = null;
+        grillepaieCategorie = null;
       }
 
       if (widget.salarie.classe != null) {
-        final matches = grilleCategoriePaie!.classes!
-            .where((classe) => classe.id == widget.salarie.classe!.id)
+        final matches = grillepaieCategorie!.classes!
+            .where((classe) => classe.key == widget.salarie.classe!.key)
             .toList();
         classe = matches.isNotEmpty ? matches.first : widget.salarie.classe;
       } else {
@@ -144,7 +145,7 @@ class _EditSalariePageState extends State<EditSalariePage> {
       if (widget.salarie.echelon != null) {
         final matches = classe!.echelonIndiciciaires!
             .where((echelonIndiciciaire) =>
-                echelonIndiciciaire.echelon.id == widget.salarie.echelon!.id)
+                echelonIndiciciaire.echelon.key == widget.salarie.echelon!.key)
             .toList();
         echelon =
             matches.isNotEmpty ? matches.first.echelon : widget.salarie.echelon;
@@ -164,7 +165,7 @@ class _EditSalariePageState extends State<EditSalariePage> {
 
   Future<void> updateSalarieData() async {
     try {
-      if (personnel == null || categorieBulletin == null) {
+      if (personnel == null || bulletinCategorie == null) {
         MutationRequestContextualBehavior.showPopup(
           status: PopupStatus.information,
           customMessage:
@@ -173,7 +174,7 @@ class _EditSalariePageState extends State<EditSalariePage> {
         return;
       }
       // if (personnel!.equalTo(personnel: widget.salarie.personnel) &&
-      //     categoriePaie!.equalTo(categoriePaie: widget.salarie.categoriePaie) &&
+      //     paieCategorie!.equalTo(paieCategorie: widget.salarie.paieCategorie) &&
       //     paieManner == widget.salarie.paieManner &&
       //     _compterController.text ==
       //         convertDuration(
@@ -217,7 +218,7 @@ class _EditSalariePageState extends State<EditSalariePage> {
 
       if (paieManner == null ||
           moyenPaiement == null ||
-          grilleCategoriePaie == null ||
+          grillepaieCategorie == null ||
           classe == null ||
           echelon == null ||
           _operateur == null) {
@@ -238,9 +239,9 @@ class _EditSalariePageState extends State<EditSalariePage> {
       );
 
       RequestResponse result = await SalarieService.updateSalarie(
-        key: widget.salarie.id,
-        personnelId: personnel?.id,
-        categorieBulletinId: categorieBulletin?.id,
+        key: widget.salarie.key,
+        personnelKey: personnel?.key,
+        bulletinCategorieKey: bulletinCategorie?.key,
         paieClause: paieClause,
         // paieManner: paieManner,
         moyenPaiement: moyenPaiement,
@@ -251,7 +252,7 @@ class _EditSalariePageState extends State<EditSalariePage> {
         numeroCompte: _numeroDeCompteController.text.isNotEmpty
             ? _numeroDeCompteController.text.trim()
             : null,
-        grilleCategoriePaie: grilleCategoriePaie,
+        grillepaieCategorie: grillepaieCategorie,
         classe: classe,
         echelon: echelon,
         periodPaie: (periodPaieCompteur != null && periodPaieUnit != null)
@@ -284,10 +285,10 @@ class _EditSalariePageState extends State<EditSalariePage> {
     }
   }
 
-  Future<List<CategorieBulletinModel>> fetchCategorieBulletinItems() async {
-    return (await CategorieBulletinService.getCategoriesBulletin())
-        .where((categorieBulletin) {
-      return categorieBulletin.paieClause == paieClause;
+  Future<List<BulletinCategorieModel>> fetchBulletinCategorieItems() async {
+    return (await BulletinCategorieservice.getBulletinCategories())
+        .where((bulletinCategorie) {
+      return bulletinCategorie.paieClause == paieClause;
     }).toList();
   }
 
@@ -295,8 +296,8 @@ class _EditSalariePageState extends State<EditSalariePage> {
     List<PersonnelModel> personnels =
         await PersonnelService.getUnarchivedPersonnels();
 
-    if (currentPersonnelId != null) {
-      personnels.removeWhere((p) => p.id == currentPersonnelId);
+    if (currentPersonnelKey != null) {
+      personnels.removeWhere((p) => p.key == currentPersonnelKey);
     }
 
     return personnels;
@@ -307,13 +308,13 @@ class _EditSalariePageState extends State<EditSalariePage> {
     return await MoyenPaiementService.getMoyenPaiements();
   }
 
-  Future<List<GrilleCategoriePaieModel>>
-      _fetchGrilleCategoriePaieItems() async {
-    return await GrilleCategoriePaieService.getGrilleCategoriePaies();
+  Future<List<GrillepaieCategorieModel>>
+      _fetchGrillepaieCategorieItems() async {
+    return await GrillepaieCategorieService.getGrillepaieCategories();
   }
 
   void onValidate() {
-    if (personnel != null && categorieBulletin != null) {
+    if (personnel != null && bulletinCategorie != null) {
       updateSalarieData();
     } else {
       MutationRequestContextualBehavior.showPopup(
@@ -367,7 +368,7 @@ class _EditSalariePageState extends State<EditSalariePage> {
             onChanged: (value) {
               setState(() {
                 paieClause = value;
-                categorieBulletin = null;
+                bulletinCategorie = null;
               });
             },
             isRequired: true,
@@ -392,34 +393,34 @@ class _EditSalariePageState extends State<EditSalariePage> {
             textController: _numeroDeCompteController,
             required: false,
           ),
-          FutureCustomDropDownField<CategorieBulletinModel>(
+          FutureCustomDropDownField<BulletinCategorieModel>(
             label: "Catégorie de paie",
-            selectedItem: categorieBulletin,
-            fetchItems: fetchCategorieBulletinItems,
-            onChanged: (CategorieBulletinModel? value) {
+            selectedItem: bulletinCategorie,
+            fetchItems: fetchBulletinCategorieItems,
+            onChanged: (BulletinCategorieModel? value) {
               setState(() {
-                categorieBulletin = value;
+                bulletinCategorie = value;
               });
             },
-            itemsAsString: (r) => r.categorieBulletin,
+            itemsAsString: (r) => r.bulletinCategorie,
           ),
           // Ajout sélection grille/classe/échelon
-          FutureCustomDropDownField<GrilleCategoriePaieModel>(
-            label: "Categorie de paie (Grille)",
-            selectedItem: grilleCategoriePaie,
-            fetchItems: _fetchGrilleCategoriePaieItems,
-            onChanged: (GrilleCategoriePaieModel? value) {
+          FutureCustomDropDownField<GrillepaieCategorieModel>(
+            label: "paieCategorie de paie (Grille)",
+            selectedItem: grillepaieCategorie,
+            fetchItems: _fetchGrillepaieCategorieItems,
+            onChanged: (GrillepaieCategorieModel? value) {
               setState(() {
-                grilleCategoriePaie = value;
+                grillepaieCategorie = value;
                 classe = null;
                 echelon = null;
               });
             },
             itemsAsString: (r) => r.libelle,
           ),
-          if (grilleCategoriePaie != null)
+          if (grillepaieCategorie != null)
             CustomDropDownField(
-              items: grilleCategoriePaie!.classes ?? [],
+              items: grillepaieCategorie!.classes ?? [],
               selectedItem: classe,
               onChanged: (value) {
                 setState(() {
@@ -462,19 +463,20 @@ class _EditSalariePageState extends State<EditSalariePage> {
   }
 
   Future<List<RubriqueBulletin>> fetchRubriqueItems() async {
-    if (categorieBulletin == null) {
+    if (bulletinCategorie == null) {
       throw ("Veuillez sélectionner un personnel et une catégorie de paie.");
     }
 
     final List<RubriqueOnBulletinModel> rubriquePaieResponse =
-        await RubriqueCategorieConfService.getBulletinRubriquesByCategorieBulletin(
-      categorieBulletin: categorieBulletin!,
+        await RubriqueCategorieConfService
+            .getBulletinRubriquesByBulletinCategorie(
+      bulletinCategorie: bulletinCategorie!,
     );
 
     List<RubriqueBulletin> rubriques = [];
 
-    for (final categorie in rubriquePaieResponse) {
-      rubriques.add(categorie.rubrique);
+    for (final bulletincategorie in rubriquePaieResponse) {
+      rubriques.add(bulletincategorie.rubrique);
     }
 
     return rubriques;

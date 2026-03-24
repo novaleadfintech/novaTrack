@@ -38,7 +38,7 @@ class _EditProformatState extends State<EditProformat> {
   final TextEditingController _compterController = TextEditingController();
   final TextEditingController _reductionController = TextEditingController();
   ClientModel? client;
-  String? newClientId;
+  String? newClientKey;
   DateTime? dateEtablissement;
   DateTime? dateEnvoie;
   bool tva = false;
@@ -109,10 +109,10 @@ class _EditProformatState extends State<EditProformat> {
       return true;
     }
 
-    if (client!.id != widget.proforma.client!.id) {
+    if (client!.key != widget.proforma.client!.key) {
       return true;
     } else {
-      newClientId = client!.id;
+      newClientKey = client!.key;
     }
     if (widget.proforma.reduction!.valeur !=
         double.tryParse(_reductionController.text)) {
@@ -172,9 +172,9 @@ class _EditProformatState extends State<EditProformat> {
       );
 
       RequestResponse result = await ProformaService.updateProformat(
-        id: widget.proforma.id,
+        key: widget.proforma.key,
         dateEtablissementProforma: dateEtablissement,
-        clientId: client!.id,
+        clientKey: client!.key,
         dateEnvoie: dateEnvoie,
         garantie: garantyPeriode,
         tva: tva,

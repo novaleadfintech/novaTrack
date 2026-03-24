@@ -91,7 +91,7 @@ class _MoyenPaiementTableState extends State<MoyenPayementTable> {
       );
 
       RequestResponse result = await MoyenPaiementService.deleteMoyenPaiement(
-        key: moyenPayement.id,
+        key: moyenPayement.key,
       );
       _dialog.hide();
       if (result.status == PopupStatus.success) {

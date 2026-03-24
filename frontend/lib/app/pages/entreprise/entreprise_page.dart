@@ -292,7 +292,7 @@ class _EntreprisePageState extends State<EntreprisePage> {
 
     try {
       RequestResponse result = await EntrepriseService.updateEntreprise(
-        key: entreprise!.id,
+        key: entreprise!.key,
         adresse: adresseController.text.trim().isEmpty
             ? null
             : adresseController.text.trim(),

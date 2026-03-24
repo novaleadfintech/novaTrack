@@ -129,7 +129,7 @@
 //   }
 
 //   _updateBulletin() async {
-//     bool isPersonnelModified = personnel?.id != widget.bulletin.personnel.id;
+//     bool isPersonnelModified = personnel?.key != widget.bulletin.personnel.key;
 //     bool isDateModified = dateEdition != widget.bulletin.dateEdition;
 //     List<RubriqueModel> updatedGains = _gainsControllers
 //         .where((e) {
@@ -192,8 +192,8 @@
 //     }
     
 //       RequestResponse result = await BulletinService.updateBulletin(
-//         key: widget.bulletin.id,
-//       personnelId: isPersonnelModified ? personnel!.id : null,
+//         key: widget.bulletin.key,
+//       personnelKey: isPersonnelModified ? personnel!.key : null,
 //       retenus: updatedRetenus,
 //       gains: updatedGains,
 //       dateEdition: isDateModified ? dateEdition : null,

@@ -1,19 +1,19 @@
 const typeDef = `#graphql
-type CategoriePaie{
-    _id:ID!
-    categoriePaie:String!
+type paieCategorie{
+    _key:ID!
+    paieCategorie:String!
 }
 `;
 
 const query = `#graphql
-    categoriesPaie(perPage:Int, skip:Int):[CategoriePaie]!
-    categoriePaie(key:ID!):CategoriePaie!
+    categoriesPaie(perPage:Int, skip:Int):[paieCategorie]!
+    paieCategorie(key:ID!):paieCategorie!
 `;
 
 const mutation = `#graphql
-    createCategoriePaie(categoriePaie:String!):String!
-    updateCategoriePaie(key:ID!, categoriePaie:String):String!
-    deleteCategoriePaie(key:ID!):String!
+    createpaieCategorie(paieCategorie:String!):String!
+    updatepaieCategorie(key:ID!, paieCategorie:String):String!
+    deletepaieCategorie(key:ID!):String!
 `;
 
 export default { typeDef, query, mutation };

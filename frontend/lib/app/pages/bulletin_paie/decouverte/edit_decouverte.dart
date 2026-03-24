@@ -114,7 +114,7 @@ class _EditDecouvertePageState extends State<EditDecouvertePage> {
       backgroundColor: Colors.transparent,
     );
     RequestResponse result = await DecouverteService.updateDecouverte(
-        key: decouverte.id,
+        key: decouverte.key,
         dureeReversement: dureeReversement,
         justification: justification,
         montant: montant,

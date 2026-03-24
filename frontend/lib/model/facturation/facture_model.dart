@@ -8,7 +8,7 @@ import 'facture_acompte.dart';
 import '../flux_financier/flux_financier_model.dart';
 
 class FactureModel {
-  final String id;
+  final String key;
   final String reference;
   final DateTime? dateEtablissementFacture;
   final TypeFacture? type;
@@ -35,7 +35,7 @@ class FactureModel {
   static dynamic factureErr;
 
   FactureModel({
-    required this.id,
+    required this.key,
     required this.reference,
     required this.facturesAcompte,
     this.dateEtablissementFacture,
@@ -64,7 +64,7 @@ class FactureModel {
   factory FactureModel.fromJson(Map<String, dynamic> json) {
    
     return FactureModel(
-      id: json['_id'],
+      key: json['_key'],
       reference: json['reference'],
       dateEtablissementFacture: json['dateEtablissementFacture'] != null
           ? DateTime.fromMillisecondsSinceEpoch(
@@ -124,7 +124,7 @@ class FactureModel {
 
   Map<String, dynamic> toJson() {
     return {
-      '_id': id,
+      '_key': key,
       'reference': reference,
       'dateEtablissementFacture':
           dateEtablissementFacture?.millisecondsSinceEpoch,

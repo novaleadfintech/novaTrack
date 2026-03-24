@@ -101,9 +101,9 @@ class _AddLigneFactureState extends State<AddLigneFacture> {
       return;
     }
     RequestResponse result = await LigneFactureService.createLigneFacture(
-      factureId: widget.facture.id,
+      factureKey: widget.facture.key,
       unit: _unitController.text,
-      serviceId: service!.id,
+      serviceKey: service!.key,
       prixSupplementaire: (prixSupplementaireString.isEmpty)
           ? null
           : double.parse(prixSupplementaireString),

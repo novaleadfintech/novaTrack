@@ -77,7 +77,7 @@ class _EditPosteState extends State<EditPoste> {
     );
 
     var result = await PosteService.updatePoste(
-      key: widget.poste.id,
+      key: widget.poste.key,
       libelle:
           capitalizeFirstLetter(word: _libelleController.text.toLowerCase()),
     );

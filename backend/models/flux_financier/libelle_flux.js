@@ -11,7 +11,7 @@ class LibelleFlux {
 
   async initializeCollections() {
     if (!(await libelleFluxCollection.exists())) {
-      libelleFluxCollection.create();
+     await libelleFluxCollection.create();
     }
   }
 

@@ -1,37 +1,37 @@
-import CategorieBulletin from "../../models/bulletin_paie/categorie_bulletin.js";
+import bulletinCategorie from "../../models/bulletin_paie/categorie_bulletin.js";
 
-const categorieBulletinModel = new CategorieBulletin();
+const bulletinCategorieModel = new bulletinCategorie();
 
-const categorieBulletinResolvers = {
-  categoriesBulletin: async ({ perPage, skip }) => {
-    return await categorieBulletinModel.getAllCategorieBulletin({
+const bulletinCategorieResolvers = {
+  bulletinCategories: async ({ perPage, skip }) => {
+    return await bulletinCategorieModel.getAllBulletinCategorie({
       perPage,
       skip,
     });
   },
 
-  categorieBulletin: async ({ key }) => {
-    return await categorieBulletinModel.getCategorieBulletin({ key });
+  bulletinCategorie: async ({ key }) => {
+    return await bulletinCategorieModel.getBulletinCategorie({ key });
   },
 
-  createCategorieBulletin: async ({ categorieBulletin, paieClause }) => {
-    return await categorieBulletinModel.createCategorieBulletin({
-      categorieBulletin,
+  createBulletinCategorie: async ({ bulletinCategorie, paieClause }) => {
+    return await bulletinCategorieModel.createBulletinCategorie({
+      bulletinCategorie,
       paieClause,
     });
   },
 
-  updateCategorieBulletin: async ({ key, categorieBulletin, paieClause }) => {
-    return await categorieBulletinModel.updateCategorieBulletin({
+  updateBulletinCategorie: async ({ key, bulletinCategorie, paieClause }) => {
+    return await bulletinCategorieModel.updateBulletinCategorie({
       key,
-      categorieBulletin,
+      bulletinCategorie,
       paieClause,
     });
   },
 
-  deleteCategorieBulletin: async ({ key }) => {
-    return await categorieBulletinModel.deleteCategorieBulletin({ key });
+  deleteBulletinCategorie: async ({ key }) => {
+    return await bulletinCategorieModel.deleteBulletinCategorie({ key });
   },
 };
 
-export default categorieBulletinResolvers;
+export default bulletinCategorieResolvers;

@@ -21,12 +21,12 @@ import '../../../integration/request_frot_behavior.dart';
 class EditFactureAccompte extends StatefulWidget {
   final FactureAcompteModel factureAcompte;
   final DateTime dateEtablissement;
-  final String factureId;
+  final String factureKey;
   final RoleModel role;  
   final VoidCallback refresh;
   const EditFactureAccompte({
     super.key,
-    required this.factureId,
+    required this.factureKey,
     required this.refresh,
     required this.role,
     required this.dateEtablissement,
@@ -291,7 +291,7 @@ class _EditFactureAccompteState extends State<EditFactureAccompte> {
     }
 
     RequestResponse result = await FactureService.updateFactureAccompte(
-      factureId: widget.factureId,
+      factureKey: widget.factureKey,
       dateEnvoieFacture: newDateEnvoieFacture,
       datePayementEcheante: newDateEcheantePayement,
       canPenalty: canPenalty,

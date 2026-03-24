@@ -108,7 +108,7 @@ class _CurrentBulletinTableState extends State<ArchiveBulletinTable> {
   //                 SingleChildScrollView(
   //                   child: ValidateCurrentBulletintPage(
   //                     refresh: widget.refresh,
-  //                     currentBulletinId: bulletin.id,
+  //                     currentBulletinKey: bulletin.key,
   //                   ),
   //                 ),
   //               ],

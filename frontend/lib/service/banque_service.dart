@@ -293,7 +293,7 @@ class BanqueService {
     var body = '''
                query Banques {
                   banques (perPage: $perPage, skip: $skip){
-                      _id
+                      _key
                       name
                       codeGuichet
                       codeBanque
@@ -303,7 +303,7 @@ class BanqueService {
                       type
                       logo
                       country {
-                        _id
+                        _key
                         name
                         code
                       }

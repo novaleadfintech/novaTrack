@@ -75,12 +75,12 @@
 //   Future<void> _initRubriques() async {
 //     // try {
 //     previousBulletin = await BulletinService.getPreviousBulletins(
-//       salarieId: widget.salarie.id,
+//       salarieKey: widget.salarie.key,
 //     );
 
 //     final List<RubriqueOnBulletinModel> rubriquePaieResponse =
-//         await RubriqueCategorieConfService.getBulletinRubriquesByCategoriePaie(
-//       categorie: widget.salarie.categoriePaie,
+//         await RubriqueCategorieConfService.getBulletinRubriquesBypaieCategorie(
+//       bulletincategorie: widget.salarie.paieCategorie,
 //     );
 
 //     setState(() {
@@ -100,7 +100,7 @@
 //     for (var rubrique in rubriquePaieResponse) {
 //       final previousValue = previousBulletin?.rubriques
 //           .firstWhere(
-//             (r) => r.rubrique.id == rubrique.rubrique.id,
+//             (r) => r.rubrique.key == rubrique.rubrique.key,
 //             orElse: () => RubriqueOnBulletinModel(rubrique: rubrique.rubrique),
 //           )
 //           .value;
@@ -108,7 +108,7 @@
 //       final valueToSet = previousValue ?? rubrique.value;
 //       rubrique.value = valueToSet;
 //       if (valueToSet != null) {
-//         valueControllers[rubrique.rubrique.id] =
+//         valueControllers[rubrique.rubrique.key] =
 //             TextEditingController(text: valueToSet.toString());
 //       }
 //     }
@@ -261,7 +261,7 @@
 //                 return SimpleTextField(
 //                   label: r.rubrique,
 //                   textController:
-//                       valueControllers[r.id] ?? TextEditingController(),
+//                       valueControllers[r.key] ?? TextEditingController(),
 //                   required: true,
 //                   onChanged: (value) {
 //                     final parsed = value.isEmpty

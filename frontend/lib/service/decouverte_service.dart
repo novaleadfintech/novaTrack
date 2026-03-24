@@ -19,7 +19,7 @@ class DecouverteService {
     var body = '''
                query Decouvertes {
     decouvertes {
-        _id
+        _key
         justification
         montant
         referenceTransaction
@@ -28,11 +28,11 @@ class DecouverteService {
         dureeReversement
         status
         moyenPayement{
-          _id
+          _key
           libelle
         }
         banque {
-            _id
+            _key
             name
             codeGuichet
             codeBanque
@@ -43,7 +43,7 @@ class DecouverteService {
             soldeReel
             soldeTheorique
             country {
-                _id
+                _key
                 name
                 code
                 tauxTVA
@@ -52,20 +52,20 @@ class DecouverteService {
             }
         }
         salarie {
-            _id
+            _key
             dateEnregistrement
             periodPaie
-            paieManner
+            paieClause
             fullCount
             personnel {
-                _id
+                _key
                 nom
                 prenom
                 email
                 telephone
                 adresse
                 sexe
-                poste{_id, libelle}
+                poste{_key, libelle}
                 situationMatrimoniale
                 commentaire
                 etat
@@ -80,7 +80,7 @@ class DecouverteService {
                 typeContrat
                 fullCount
                 pays {
-                    _id
+                    _key
                     name
                     code
                     tauxTVA
@@ -88,9 +88,9 @@ class DecouverteService {
                     initiauxPays
                 }
             }
-            categoriePaie {
-                _id
-                categoriePaie
+            paieCategorie {
+                _key
+                paieCategorie
             }
         }
     }
@@ -129,11 +129,11 @@ class DecouverteService {
 
   static Future<RequestResponse> createDecouverte({
     required String justification,
-    required String salarieId,
+    required String salarieKey,
     required String referenceTransaction,
     required double montant,
     required int dureeReversement,
-    required String userId,
+    required String userKey,
     required MoyenPaiementModel moyenPayement,
     required BanqueModel banque,
   }) async {
@@ -144,10 +144,10 @@ class DecouverteService {
               montant: $montant
               dureeReversement: $dureeReversement,
               referenceTransaction: "$referenceTransaction",
-              salarieId: "$salarieId"
-              userId: "$userId"
+              salarieKey: "$salarieKey"
+              userKey: "$userKey"
               moyenPayement: ${moyenPayement.toJson()}
-              banqueId: "${banque.id}"
+              banqueKey: "${banque.key}"
       ''';
     body += '''
           )
@@ -218,7 +218,7 @@ class DecouverteService {
       body += 'justification: "$justification"';
     }
     if (salarie != null) {
-      body += 'salarieId: "${salarie.id}"';
+      body += 'salarieKey: "${salarie.key}"';
     }
     if (moyenPayement != null) {
       body += 'moyenPayement: ${moyenPayement.toJson()}';
@@ -228,7 +228,7 @@ class DecouverteService {
       body += 'referenceTransaction: "$referenceTransaction",';
     }
     if (banque != null) {
-      body += 'banqueId: "${banque.id}"';
+      body += 'banqueKey: "${banque.key}"';
     }
     if (montant != null) {
       body += 'montant: $montant';

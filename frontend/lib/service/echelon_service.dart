@@ -15,7 +15,7 @@ class EchelonService {
     var body = '''
       query Echelons {
         echelons {
-          _id
+          _key
           libelle
         }
       }

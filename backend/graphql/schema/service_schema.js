@@ -24,7 +24,7 @@ const typeDef = `#graphql
     }
     
     type Service {
-        _id: ID!
+        _key: ID!
         libelle: String!
         tarif: [ServiceTarif]
         type: ServiceType!

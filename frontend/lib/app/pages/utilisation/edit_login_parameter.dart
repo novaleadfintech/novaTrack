@@ -90,7 +90,7 @@ class _EditLoginParametterState extends State<EditLoginParametter> {
       backgroundColor: Colors.transparent,
     );
     RequestResponse result = await UserService.updateLoginData(
-        userId: user!.id!,
+          userKey: user!.key!,
         login: newLogin,
         password: newPassword!,
         ancienMotdepasse: _oldPasswordController.text);
@@ -104,7 +104,7 @@ class _EditLoginParametterState extends State<EditLoginParametter> {
         backgroundColor: Colors.transparent,
       );
       RequestResponse result =
-          await UserService.seDeconnecter(userId: user!.id!);
+            await UserService.seDeconnecter(userKey: user!.key!);
       _dialog.hide();
       if (result.status == PopupStatus.success) {
         MutationRequestContextualBehavior.showPopup(
@@ -163,7 +163,7 @@ class _EditLoginParametterState extends State<EditLoginParametter> {
           SimpleTextField(
             textController: _loginController,
             readOnly: true,
-            label: "Identifiant",
+            label: "Keyentifiant",
             color: Theme.of(context).colorScheme.secondary,
           ),
           SimpleTextField(

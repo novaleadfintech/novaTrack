@@ -68,11 +68,11 @@ class DetailSalariePage extends StatelessWidget {
               isbold: true,
             ),
             TabledetailBodyMiddle(
-              valeur: salarie.categorieBulletin.categorieBulletin,
+              valeur: salarie.bulletinCategorie.bulletinCategorie,
             ),
           ],
         ),
-        if (salarie.grilleCategoriePaie != null)
+        if (salarie.grillepaieCategorie != null)
           TableRow(
             decoration: tableDecoration(context),
             children: [
@@ -81,7 +81,7 @@ class DetailSalariePage extends StatelessWidget {
                 isbold: true,
               ),
               TabledetailBodyMiddle(
-                valeur: salarie.grilleCategoriePaie!.libelle,
+                valeur: salarie.grillepaieCategorie!.libelle,
               ),
             ],
           ),

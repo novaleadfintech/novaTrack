@@ -126,7 +126,7 @@ class _ConfigPageState extends State<ConfigPage> {
                                 showResponsiveConfigPageDialogBox(
                                   context,
                                   title: "Catégories de partenaire",
-                                  content: CategorieClientPage(),
+                                  content: PartnerCategoriePage(),
                                 );
                               },
                             ),
@@ -138,7 +138,7 @@ class _ConfigPageState extends State<ConfigPage> {
                                 showResponsiveConfigPageDialogBox(
                                   context,
                                   title: "Catégories de bulletin",
-                                  content: CategorieBulletinPage(),
+                                  content: BulletinCategoriePage(),
                                 );
                               },
                             ),
@@ -191,7 +191,7 @@ class _ConfigPageState extends State<ConfigPage> {
                                 showResponsiveConfigPageDialogBox(
                                   context,
                                   title: "Rubriques - Catégorie de bulletin",
-                                  content: RubriqueCategoriePaie(),
+                                  content: RubriquepaieCategorie(),
                                 );
                               },
                             ),
@@ -206,10 +206,11 @@ class _ConfigPageState extends State<ConfigPage> {
                                 );
                               },
                             ),
-                            if (hasPermission(
-                                role: role,
-                                permission:
-                                    PermissionAlias.assignPermissionRole.label))
+                            // TODO: revenir decommenter ceci.
+                            // if (hasPermission(
+                            //     role: role,
+                            //     permission:
+                            //         PermissionAlias.assignPermissionRole.label))
                               InkWell(
                                 child: ResponsiveCard(label: "Habilitations"),
                                 onTap: () {
@@ -258,7 +259,7 @@ class _ConfigPageState extends State<ConfigPage> {
                                 showResponsiveConfigPageDialogBox(
                                   context,
                                   title: "Catégorie de paie",
-                                  content: GrilleCategoriePaiePage(),
+                                  content: GrillepaieCategoriePage(),
                                 );
                               },
                             ),

@@ -5,7 +5,7 @@ import './client_physique_model.dart';
 import './enum_client.dart';
 
 class ClientModel {
-  final dynamic id;
+  final dynamic key;
   final dynamic email;
   final int? telephone;
   final dynamic adresse;
@@ -18,7 +18,7 @@ class ClientModel {
   static dynamic clientErr;
 
   ClientModel({
-    required this.id,
+    required this.key,
     this.typeName,
     this.email,
     this.nature,
@@ -37,7 +37,7 @@ class ClientModel {
       return ClientPhysiqueModel.fromJson(json);
     } else {
       return ClientModel(
-        id: json['_id'],
+        key: json['_key'],
         email: json['email'],
         telephone: json['telephone'],
         adresse: json['adresse'],
@@ -55,7 +55,7 @@ class ClientModel {
 
   Map<String, dynamic> toJson() {
     return {
-      '_id': id,
+      '_key': key,
       'email': email,
       'telephone': telephone,
       'adresse': adresse,
@@ -76,6 +76,6 @@ class ClientModel {
   }
   bool equalTo({required ClientModel? client}) {
     if (client == null) return false;
-    return client.id == id;
+    return client.key == key;
   }
 }

@@ -5,7 +5,7 @@ import 'package:frontend/model/request_response.dart';
 import 'package:frontend/service/pays_service.dart';
 import 'package:frontend/style/app_color.dart';
 import '../../../helper/telephone_number_helper.dart';
-import '../../../service/categorie_service.dart';
+import '../../../service/categorie_partner_service.dart';
 import '../../../widget/future_dropdown_field.dart';
 import '../../integration/popop_status.dart';
 import '../../integration/request_frot_behavior.dart';
@@ -57,7 +57,7 @@ class _AddClientPageState extends State<AddClientPage> {
   NatureClient nature = NatureClient.client;
   Sexe? sexe;
   Civilite? responsableCivilite;
-  CategorieModel? categorie;
+  CategorieModel? partnerCategorie;
   Sexe? responsableSexe;
   PlatformFile? file;
   PaysModel? _selectedCountry;
@@ -83,7 +83,7 @@ class _AddClientPageState extends State<AddClientPage> {
     }
 
     if (type == TypeClient.moral) {
-      if (_raisonSocialeController.text.isEmpty || categorie == null) {
+      if (_raisonSocialeController.text.isEmpty || partnerCategorie == null) {
         return "Veuillez remplir tous les champs marqués.";
       }
 
@@ -165,7 +165,7 @@ class _AddClientPageState extends State<AddClientPage> {
               nature: nature,
               raisonSociale: _raisonSocialeController.text.trim(),
               responsable: buildResponsable(),
-              categorieId: categorie!.id,
+              partnerCategorieKey: partnerCategorie!.key,
               email: _emailController.text.trim(),
               telephone: int.tryParse(_telephoneController.text.trim()),
               adresse: _adresseController.text.trim(),
@@ -316,10 +316,10 @@ class _AddClientPageState extends State<AddClientPage> {
                 },
               ),
               MoralFields(
-                categorie: categorie,
+                partnerCategorie: partnerCategorie,
                 onCategorieChanged: (newCategorie) {
                   setState(() {
-                    categorie = newCategorie;
+                    partnerCategorie = newCategorie;
                   });
                 },
                 raisonSocialeController: _raisonSocialeController,
@@ -413,7 +413,7 @@ class MoralFields extends StatefulWidget {
   final TextEditingController responsableEmailController;
   final TextEditingController responsablePosteController;
   final TextEditingController responsableTelephoneController;
-  final CategorieModel? categorie;
+  final CategorieModel? partnerCategorie;
   final Sexe? responsableSexe;
   final bool isNotFournisseur;
   final PaysModel? country;
@@ -430,7 +430,7 @@ class MoralFields extends StatefulWidget {
     required this.responsablePosteController,
     required this.responsablePrenomControlller,
     required this.isNotFournisseur,
-    this.categorie,
+    this.partnerCategorie,
     required this.country,
     required this.onCategorieChanged,
     this.responsableSexe,
@@ -474,7 +474,7 @@ class _MoralFieldsState extends State<MoralFields> {
           ),
           FutureCustomDropDownField(
             label: "Catégorie",
-            selectedItem: widget.categorie,
+          selectedItem: widget.partnerCategorie,
             fetchItems: fetchCategorieItems,
             onChanged: _handleCategoryChange,
             itemsAsString: (CategorieModel c) => c.libelle,

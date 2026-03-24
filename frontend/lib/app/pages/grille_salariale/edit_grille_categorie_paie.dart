@@ -10,18 +10,20 @@ import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 
 import 'add_class_categorie_space.dart';
 
-class EditGrilleCategoriePaiePage extends StatefulWidget {
+class EditGrillepaieCategoriePage extends StatefulWidget {
   final Future<void> Function() refresh;
-  const EditGrilleCategoriePaiePage({
+  const EditGrillepaieCategoriePage({
     super.key,
     required this.refresh,
   });
 
   @override
-  State<EditGrilleCategoriePaiePage> createState() => _EditGrilleCategoriePaiePageState();
+  State<EditGrillepaieCategoriePage> createState() =>
+      _EditGrillepaieCategoriePageState();
 }
 
-class _EditGrilleCategoriePaiePageState extends State<EditGrilleCategoriePaiePage> {
+class _EditGrillepaieCategoriePageState
+    extends State<EditGrillepaieCategoriePage> {
   final TextEditingController _libelleController = TextEditingController();
 
   late SimpleFontelicoProgressDialog _dialog;
@@ -32,7 +34,7 @@ class _EditGrilleCategoriePaiePageState extends State<EditGrilleCategoriePaiePag
     _dialog = SimpleFontelicoProgressDialog(context: context);
   }
 
-  Future<void> _addCategoriePaie() async {
+  Future<void> _addpaieCategorie() async {
     String? errMessage;
     if (_libelleController.text.isEmpty) {
       errMessage = "Veuillez remplir tous les champs marqués.";
@@ -51,8 +53,8 @@ class _EditGrilleCategoriePaiePageState extends State<EditGrilleCategoriePaiePag
       backgroundColor: Colors.transparent,
     );
 
-    var result = await CategoriePaieService.createCategoriePaie(
-      categoriePaie:
+    var result = await paieCategorieService.createpaieCategorie(
+      paieCategorie:
           capitalizeFirstLetter(word: _libelleController.text.toLowerCase()),
     );
 
@@ -95,7 +97,7 @@ class _EditGrilleCategoriePaiePageState extends State<EditGrilleCategoriePaiePag
             alignment: Alignment.bottomRight,
             child: ValidateButton(
               onPressed: () async {
-                await _addCategoriePaie();
+                await _addpaieCategorie();
               },
             ),
           ),

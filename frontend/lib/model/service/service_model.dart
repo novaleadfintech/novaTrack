@@ -3,7 +3,7 @@ import 'service_prix_model.dart';
 import 'enum_service.dart';
 
 class ServiceModel {
-  final String id;
+  final String key;
   final String libelle;
   final double? prix;
   final List<ServiceTarifModel?> tarif;
@@ -15,7 +15,7 @@ class ServiceModel {
   final int? fullCount;
 
   ServiceModel({
-    required this.id,
+    required this.key,
     required this.libelle,
     required this.tarif,
     required this.country,
@@ -29,7 +29,7 @@ class ServiceModel {
 
   factory ServiceModel.fromJson(Map<String, dynamic> json) {
     return ServiceModel(
-      id: json['_id'],
+      key: json['_key'],
       libelle: json['libelle'],
 country: PaysModel.fromJson(json["country"]),
       prix: json['prix']==null?null:(json['prix'] as num).toDouble(),
@@ -50,7 +50,7 @@ country: PaysModel.fromJson(json["country"]),
 
   Map<String, dynamic> toJson() {
     return {
-      '_id': id,
+      '_key': key,
       'libelle': libelle,
       'tarif': tarif.map((t) => t?.toJson()).toList(),
       'prix': prix,

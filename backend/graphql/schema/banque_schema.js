@@ -7,7 +7,7 @@ enum CanalType{
     }
 
    type Banque {
-        _id:ID!
+        _key:ID!
         name:String!
         codeGuichet: String!
         codeBanque: String!

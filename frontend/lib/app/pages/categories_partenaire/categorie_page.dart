@@ -5,7 +5,7 @@ import 'package:frontend/helper/user_helper.dart';
 import 'package:gap/gap.dart';
 import '../../../global/global_value.dart';
 import '../../../model/client/categorie_model.dart';
-import '../../../service/categorie_service.dart';
+import '../../../service/categorie_partner_service.dart';
 import '../../../widget/add_element_button.dart';
 import '../../../widget/pagination.dart';
 import '../../../widget/research_bar.dart';
@@ -17,19 +17,19 @@ import '../../../model/habilitation/role_model.dart';
  import 'add_categorie.dart';
 import 'categorie_table.dart';
 
-class CategorieClientPage extends StatefulWidget {
-  const CategorieClientPage({
+class PartnerCategoriePage extends StatefulWidget {
+  const PartnerCategoriePage({
     super.key,
   });
 
   @override
-  State<CategorieClientPage> createState() => _CategorieClientPageState();
+  State<PartnerCategoriePage> createState() => _PartnerCategoriePageState();
 }
 
-class _CategorieClientPageState extends State<CategorieClientPage> {
+class _PartnerCategoriePageState extends State<PartnerCategoriePage> {
   final TextEditingController _researchController = TextEditingController();
   int currentPage = GlobalValue.currentPage;
-  List<CategorieModel> categorieClientData = [];
+  List<CategorieModel> partnerCategorieData = [];
   bool isLoading = true;
   bool hasError = false;
   String searchQuery = "";
@@ -57,7 +57,7 @@ class _CategorieClientPageState extends State<CategorieClientPage> {
 
   Future<void> _loadCategorie() async {
     try {
-      categorieClientData = await CategorieService.getCategories();
+      partnerCategorieData = await CategorieService.getCategories();
     } catch (error) {
       setState(() {
         errorMessage = error.toString();
@@ -71,8 +71,8 @@ class _CategorieClientPageState extends State<CategorieClientPage> {
     });
   }
 
-  List<CategorieModel> filterCategorieClient() {
-    return categorieClientData.where((flux) {
+  List<CategorieModel> filterPartnerCategorie() {
+    return partnerCategorieData.where((flux) {
       return flux.libelle
           .toLowerCase()
           .contains(searchQuery.toLowerCase().trim());
@@ -97,7 +97,7 @@ class _CategorieClientPageState extends State<CategorieClientPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<CategorieModel> filteredData = filterCategorieClient();
+    List<CategorieModel> filteredData = filterPartnerCategorie();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8).copyWith(top: 4),
@@ -116,7 +116,7 @@ class _CategorieClientPageState extends State<CategorieClientPage> {
               } else {
                 bool canCreate = hasPermission(
                   role: role,
-                  permission: PermissionAlias.createCategorieClient.label,
+                  permission: PermissionAlias.createPartnerCategorie.label,
                 );
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -175,7 +175,7 @@ class _CategorieClientPageState extends State<CategorieClientPage> {
                           child: Container(
                             color: Theme.of(context).colorScheme.surface,
                             child: CategorieTable(
-                              categories: getPaginatedData(
+                              partnerCategories: getPaginatedData(
                                   data: filteredData, currentPage: currentPage),
                               refresh: _loadCategorie,
                             ),

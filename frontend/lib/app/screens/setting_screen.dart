@@ -29,9 +29,10 @@ class _SettingScreenState extends State<SettingScreen> {
   Future<void> getUser() async {
     UserModel? utilisation = await AuthService().decodeToken();
     role = await AuthService().getRole();
-    user = await UserService.getUser(key: utilisation!.id!);
+    user = await UserService.getUser(key: utilisation!.key!);
     if (user != null && user!.personnel != null) {
-      personnel = await PersonnelService.getPersonnel(key: user!.personnel!.id);
+      personnel =
+          await PersonnelService.getPersonnel(key: user!.personnel!.key);
     }
   }
 

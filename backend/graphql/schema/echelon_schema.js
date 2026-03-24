@@ -1,10 +1,10 @@
 const typeDef = `#graphql
 type Echelon{
-    _id:ID!
+    _key:ID!
     libelle:String!
 }
 input EchelonInput{
-    _id:ID!
+    _key:ID!
     libelle:String!
 }
 `;

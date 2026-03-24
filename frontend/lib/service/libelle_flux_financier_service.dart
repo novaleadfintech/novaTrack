@@ -17,7 +17,7 @@ class LibelleFluxFinancierService {
     var body = '''
       query LibelleFlux {
       libelleFlux${type != null ? '(type: ${fluxFinancierTypeToString(type)})' : ''} {
-        _id
+        _key
         libelle
         type
       }

@@ -2,16 +2,16 @@ import { aql } from "arangojs";
 import db from "../../db/database_connection.js";
 import { isValidValue } from "../../utils/util.js";
 import Personnel from "../../models/habilitation/personnel.js";
-import CategorieBulletin from "./categorie_bulletin.js";
-import CategoriePaieGrille from "./../grille_salariale/categoriePaieGrille.js";
+import BulletinCategorie from "./categorie_bulletin.js";
+import paieCategorieGrille from "./../grille_salariale/categoriePaieGrille.js";
 import Classe from "./../grille_salariale/classe.js";
 import Echelon from "./../grille_salariale/echelon.js";
 
 const salarieCollection = db.collection("salaries");
 
 const PersonnelModel = new Personnel();
-const CategorieBulletinModel = new CategorieBulletin();
-const CategoriePaieGrilleModel = new CategoriePaieGrille();
+const BulletinCategorieModel = new BulletinCategorie();
+const paieCategorieGrilleModel = new paieCategorieGrille();
 const ClasseModel = new Classe();
 const EchelonModel = new Echelon();
 
@@ -49,37 +49,37 @@ class Salarie {
           salaries.map(async (salarie) => {
             try {
               const personnel = await PersonnelModel.getPersonnel({
-                key: salarie.personnelId,
+                key: salarie.personnelKey,
               });
-              const categorieBulletin =
-                await CategorieBulletinModel.getCategorieBulletin({
-                  key: salarie.categorieBulletinId,
+              const bulletinCategorie =
+                await BulletinCategorieModel.getBulletinCategorie({
+                  key: salarie.bulletinCategorieKey,
                 });
-              const grilleCategoriePaie =
-                await CategoriePaieGrilleModel.getCategoriePaieGrille({
-                  key: salarie.grilleCategoriePaieId,
+              const grillepaieCategorie =
+                await paieCategorieGrilleModel.getpaieCategorieGrille({
+                  key: salarie.grillepaieCategorieKey,
                 });
               let classe;
               let echelon;
-              if (grilleCategoriePaie != null) {
-                if (grilleCategoriePaie.classes) {
-                  console.log(grilleCategoriePaie.classes);
-                  classe = grilleCategoriePaie.classes.find(
-                    (c) => c && c._id == salarie.classeId,
+              if (grillepaieCategorie != null) {
+                if (grillepaieCategorie.classes) {
+                  console.log(grillepaieCategorie.classes);
+                  classe = grillepaieCategorie.classes.find(
+                    (c) => c && c._key == salarie.classeKey,
                   );
                 }
                 if (classe && Array.isArray(classe.echelonIndiciciaires)) {
                   echelon = classe.echelonIndiciciaires.find(
                     (e) =>
-                      e && e.echelon && e.echelon._id === salarie.echelonId,
+                      e && e.echelon && e.echelon._key === salarie.echelonKey,
                   )?.echelon;
                 }
               }
               return {
                 ...salarie,
                 personnel: personnel ?? null,
-                categorieBulletin: categorieBulletin ?? null,
-                grilleCategoriePaie: grilleCategoriePaie ?? null,
+                bulletinCategorie: bulletinCategorie ?? null,
+                grillepaieCategorie: grillepaieCategorie ?? null,
                 classe: classe ?? null,
                 echelon: echelon ?? null,
               };
@@ -132,7 +132,7 @@ class Salarie {
         salaries.map(async (salarie) => {
           try {
             const personnel = await PersonnelModel.getPersonnel({
-              key: salarie.personnelId,
+              key: salarie.personnelKey,
             });
             if (dateDebut && dateFin && personnel) {
               const debut =
@@ -160,15 +160,15 @@ class Salarie {
               }
             }
 
-            const categorieBulletin =
-              await CategorieBulletinModel.getCategorieBulletin({
-                key: salarie.categorieBulletinId,
+            const bulletinCategorie =
+              await BulletinCategorieModel.getBulletinCategorie({
+                key: salarie.bulletinCategorieKey,
               });
-            let grilleCategoriePaie;
-            if (salarie.grilleCategoriePaieId) {
-              grilleCategoriePaie =
-                await CategoriePaieGrilleModel.getCategoriePaieGrille({
-                  key: salarie.grilleCategoriePaieId,
+            let grillepaieCategorie;
+            if (salarie.grillepaieCategorieKey) {
+              grillepaieCategorie =
+                await paieCategorieGrilleModel.getpaieCategorieGrille({
+                  key: salarie.grillepaieCategorieKey,
                 });
             }
 
@@ -176,16 +176,17 @@ class Salarie {
             let echelon = null;
 
             if (
-              grilleCategoriePaie &&
-              Array.isArray(grilleCategoriePaie.classes)
+              grillepaieCategorie &&
+              Array.isArray(grillepaieCategorie.classes)
             ) {
-              classe = grilleCategoriePaie.classes.find(
-                (c) => c && c._id === salarie.classeId,
+              classe = grillepaieCategorie.classes.find(
+                (c) => c && c._key === salarie.classeKey,
               );
 
               if (classe && Array.isArray(classe.echelonIndiciciaires)) {
                 const foundEchelon = classe.echelonIndiciciaires.find(
-                  (e) => e && e.echelon && e.echelon._id === salarie.echelonId,
+                  (e) =>
+                    e && e.echelon && e.echelon._key === salarie.echelonKey,
                 );
                 echelon = foundEchelon ? foundEchelon.echelon : null;
               }
@@ -194,8 +195,8 @@ class Salarie {
             return {
               ...salarie,
               personnel: personnel ?? null,
-              categorieBulletin: categorieBulletin ?? null,
-              grilleCategoriePaie: grilleCategoriePaie ?? null,
+              bulletinCategorie: bulletinCategorie ?? null,
+              grillepaieCategorie: grillepaieCategorie ?? null,
               classe: classe ?? null,
               echelon: echelon ?? null,
             };
@@ -222,31 +223,31 @@ class Salarie {
     try {
       const salarie = await salarieCollection.document(key);
       const personnel = await PersonnelModel.getPersonnel({
-        key: salarie.personnelId,
+        key: salarie.personnelKey,
       });
-      const categorieBulletin =
-        await CategorieBulletinModel.getCategorieBulletin({
-          key: salarie.categorieBulletinId,
+      const bulletinCategorie =
+        await BulletinCategorieModel.getBulletinCategorie({
+          key: salarie.bulletinCategorieKey,
         });
-      let grilleCategoriePaie;
-      if (salarie.grilleCategoriePaieId) {
-        grilleCategoriePaie =
-          await CategoriePaieGrilleModel.getCategoriePaieGrille({
-            key: salarie.grilleCategoriePaieId,
+      let grillepaieCategorie;
+      if (salarie.grillepaieCategorieKey) {
+        grillepaieCategorie =
+          await paieCategorieGrilleModel.getpaieCategorieGrille({
+            key: salarie.grillepaieCategorieKey,
           });
       }
 
       let classe = null;
       let echelon = null;
 
-      if (grilleCategoriePaie && Array.isArray(grilleCategoriePaie.classes)) {
-        classe = grilleCategoriePaie.classes.find(
-          (c) => c && c._id === salarie.classeId,
+      if (grillepaieCategorie && Array.isArray(grillepaieCategorie.classes)) {
+        classe = grillepaieCategorie.classes.find(
+          (c) => c && c._key === salarie.classeKey,
         );
 
         if (classe && Array.isArray(classe.echelonIndiciciaires)) {
           const foundEchelon = classe.echelonIndiciciaires.find(
-            (e) => e && e.echelon && e.echelon._id === salarie.echelonId,
+            (e) => e && e.echelon && e.echelon._key === salarie.echelonKey,
           );
           echelon = foundEchelon ? foundEchelon.echelon : null;
         }
@@ -255,8 +256,8 @@ class Salarie {
       return {
         ...salarie,
         personnel: personnel ?? null,
-        categorieBulletin: categorieBulletin ?? null,
-        grilleCategoriePaie: grilleCategoriePaie ?? null,
+        bulletinCategorie: bulletinCategorie ?? null,
+        grillepaieCategorie: grillepaieCategorie ?? null,
         classe: classe ?? null,
         echelon: echelon ?? null,
       };
@@ -270,45 +271,45 @@ class Salarie {
   };
 
   createSalarie = async ({
-    personnelId,
-    categorieBulletinId,
+    personnelKey,
+    bulletinCategorieKey,
     periodPaie,
     paieClause,
     numeroMatricule,
     numeroCompte,
     operateur,
-    classeId,
-    echelonId,
+    classeKey,
+    echelonKey,
     moyenPaiement,
-    grilleCategoriePaieId,
+    grillepaieCategorieKey,
   }) => {
-    isValidValue({
+    isValkeyValue({
       value: [
-        personnelId,
-        categorieBulletinId,
+        personnelKey,
+        bulletinCategorieKey,
         paieClause,
         moyenPaiement,
-        classeId,
+        classeKey,
         numeroMatricule,
         operateur,
-        echelonId,
-        grilleCategoriePaieId,
+        echelonKey,
+        grillepaieCategorieKey,
       ],
     });
 
-    await PersonnelModel.isExistPersonnel({ key: personnelId });
-    await CategorieBulletinModel.isExistCategorieBulletin({
-      key: categorieBulletinId,
+    await PersonnelModel.isExistPersonnel({ key: personnelKey });
+    await BulletinCategorieModel.isExistBulletinCategorie({
+      key: bulletinCategorieKey,
     });
-    await CategoriePaieGrilleModel.isExistCategoriePaieGrille({
-      key: grilleCategoriePaieId,
+    await paieCategorieGrilleModel.isExistpaieCategorieGrille({
+      key: grillepaieCategorieKey,
     });
-    await ClasseModel.isExistClasse({ key: classeId });
-    await EchelonModel.isExistEchelon({ key: echelonId });
+    await ClasseModel.isExistClasse({ key: classeKey });
+    await EchelonModel.isExistEchelon({ key: echelonKey });
     const query = await db.query(
       aql`
           FOR salarie IN ${salarieCollection}
-          FILTER salarie.personnelId == ${personnelId}
+          FILTER salarie.personnelKey == ${personnelKey}
           RETURN salarie
         `,
     );
@@ -316,18 +317,18 @@ class Salarie {
       throw new Error("Le salarie existe déjà pour ce personnel");
     }
     const newSalarie = {
-      personnelId: personnelId,
-      categorieBulletinId: categorieBulletinId,
+      personnelKey: personnelKey,
+      bulletinCategorieKey: bulletinCategorieKey,
       dateEnregistrement: Date.now(),
       paieClause: paieClause,
       periodPaie: periodPaie,
-      classeId: classeId,
+      classeKey: classeKey,
       moyenPaiement: moyenPaiement,
       numeroMatricule: numeroMatricule,
       numeroCompte: numeroCompte,
       operateur: operateur,
-      echelonId: echelonId,
-      grilleCategoriePaieId: grilleCategoriePaieId,
+      echelonKey: echelonKey,
+      grillepaieCategorieKey: grillepaieCategorieKey,
       timeStamp: Date.now(),
     };
     try {
@@ -342,29 +343,29 @@ class Salarie {
 
   updateSalarie = async ({
     key,
-    personnelId,
-    categorieBulletinId,
+    personnelKey,
+    bulletinCategorieKey,
     periodPaie,
     moyenPaiement,
     paieClause,
     numeroCompte,
     operateur,
-    classeId,
-    echelonId,
-    grilleCategoriePaieId,
+    classeKey,
+    echelonKey,
+    grillepaieCategorieKey,
     numeroMatricule,
   }) => {
     const updateField = {};
-    if (personnelId !== undefined) {
-      await PersonnelModel.isExistPersonnel({ key: personnelId });
-      updateField.personnelId = personnelId;
+    if (personnelKey !== undefined) {
+      await PersonnelModel.isExistPersonnel({ key: personnelKey });
+      updateField.personnelKey = personnelKey;
     }
 
-    if (categorieBulletinId !== undefined) {
-      await CategorieBulletinModel.isExistCategorieBulletin({
-        key: categorieBulletinId,
+    if (bulletinCategorieKey !== undefined) {
+      await BulletinCategorieModel.isExistBulletinCategorie({
+        key: bulletinCategorieKey,
       });
-      updateField.categorieBulletinId = categorieBulletinId;
+      updateField.bulletinCategorieKey = bulletinCategorieKey;
     }
 
     if (paieClause !== undefined) {
@@ -380,19 +381,19 @@ class Salarie {
     if (operateur !== undefined) {
       updateField.operateur = operateur;
     }
-    if (classeId !== undefined) {
-      await ClasseModel.isExistClasse({ key: classeId });
-      updateField.classeId = classeId;
+    if (classeKey !== undefined) {
+      await ClasseModel.isExistClasse({ key: classeKey });
+      updateField.classeKey = classeKey;
     }
-    if (echelonId !== undefined) {
-      await EchelonModel.isExistEchelon({ key: echelonId });
-      updateField.echelonId = echelonId;
+    if (echelonKey !== undefined) {
+      await EchelonModel.isExistEchelon({ key: echelonKey });
+      updateField.echelonKey = echelonKey;
     }
-    if (grilleCategoriePaieId !== undefined) {
-      await CategoriePaieGrilleModel.isExistCategoriePaieGrille({
-        key: grilleCategoriePaieId,
+    if (grillepaieCategorieKey !== undefined) {
+      await paieCategorieGrilleModel.isExistpaieCategorieGrille({
+        key: grillepaieCategorieKey,
       });
-      updateField.grilleCategoriePaieId = grilleCategoriePaieId;
+      updateField.grillepaieCategorieKey = grillepaieCategorieKey;
     }
 
     if (numeroMatricule !== undefined) {

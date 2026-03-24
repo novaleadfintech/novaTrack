@@ -1,7 +1,7 @@
 
 const typeDef = `#graphql
     type Entreprise{
-        _id:ID!
+        _key:ID!
         logo:String
         adresse:String
         ville:String

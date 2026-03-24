@@ -35,8 +35,8 @@ class _EditUserPageState extends State<EditUserPage> {
   late SimpleFontelicoProgressDialog _dialog;
   PersonnelModel? personnel;
   RoleModel? role;
-  String? currentPersonnelId;
-  String? currentUserId;
+  String? currentPersonnelKey;
+  String? currentUserKey;
 
   @override
   void initState() {
@@ -52,8 +52,8 @@ class _EditUserPageState extends State<EditUserPage> {
   Future<void> _loadCurrentUser() async {
     UserModel? user = await AuthService().decodeToken();
     setState(() {
-      currentPersonnelId = user!.personnel!.id;
-      currentUserId = user.id;
+      currentPersonnelKey = user!.personnel!.key;
+      currentUserKey = user.key;
     });
   }
 
@@ -76,9 +76,9 @@ class _EditUserPageState extends State<EditUserPage> {
       );
 
       RequestResponse result = await UserService.assignRoleToPersonnel(
-        personnelId: personnel.id,
-        roleId: role.id!,
-        createBy: currentUserId!,
+        personnelKey: personnel.key,
+        roleKey: role.key!,
+        createBy: currentUserKey!,
       );
       _dialog.hide();
 
@@ -108,8 +108,8 @@ class _EditUserPageState extends State<EditUserPage> {
         await PersonnelService.getUnarchivedPersonnels();
 
     // Exclure l'utilisateur connecté de la liste
-    if (currentPersonnelId != null) {
-      personnels.removeWhere((p) => p.id == currentPersonnelId);
+    if (currentPersonnelKey != null) {
+      personnels.removeWhere((p) => p.key == currentPersonnelKey);
     }
 
     return personnels;
@@ -117,7 +117,7 @@ class _EditUserPageState extends State<EditUserPage> {
 
   onvalidate() {
     if (personnel != null && role != null) {
-      if (role!.id == widget.user.roles!.first.id) {
+      if (role!.key == widget.user.roles!.first.key) {
         MutationRequestContextualBehavior.showPopup(
           status: PopupStatus.information,
           customMessage: "Aucune modification n'a été faite.",

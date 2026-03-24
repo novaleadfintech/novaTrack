@@ -4,7 +4,7 @@ import { isValidValue } from "../../utils/util.js";
 import SectionBulletin from "./section_bulletin.js";
 
 const rubriqueBulletinCollection = db.collection("rubriqueBulletins");
-const rubriqueCategorieCollection = db.collection("categoriePaieRubriques");
+const rubriqueCategorieCollection = db.collection("paieCategorieRubriques");
 
 const sectionBulletinModel = new SectionBulletin();
 const NatureRubrique = {
@@ -35,12 +35,10 @@ class RubriqueBulletin {
 
   async initializeCollections() {
     if (!(await rubriqueBulletinCollection.exists())) {
-     await rubriqueBulletinCollection.create();
+      await rubriqueBulletinCollection.create();
     }
     if (!(await rubriqueCategorieCollection.exists())) {
-      await rubriqueCategorieCollection.create({
-        type: CollectionType.EDGE_COLLECTION,
-      });
+      await rubriqueCategorieCollection.create();
     }
   }
 
@@ -103,9 +101,9 @@ class RubriqueBulletin {
 
             return {
               ...rubrique,
-              section: rubrique.sectionId
+              section: rubrique.sectionKeyy
                 ? await sectionBulletinModel.getSectionBulletin({
-                    key: rubrique.sectionId,
+                    key: rubrique.sectionKeyy,
                   })
                 : null,
             };
@@ -180,9 +178,9 @@ class RubriqueBulletin {
 
             return {
               ...rubrique,
-              section: rubrique.sectionId
+              section: rubrique.sectionKey
                 ? await sectionBulletinModel.getSectionBulletin({
-                    key: rubrique.sectionId,
+                    key: rubrique.sectionKey,
                   })
                 : null,
             };
@@ -236,9 +234,9 @@ class RubriqueBulletin {
       }
       return {
         ...rubrique,
-        section: rubrique.sectionId
+        section: rubrique.sectionKey
           ? await sectionBulletinModel.getSectionBulletin({
-              key: rubrique.sectionId,
+              key: rubrique.sectionKey,
             })
           : null,
       };
@@ -260,9 +258,9 @@ class RubriqueBulletin {
         const rubrique = await query.next();
         return {
           ...rubrique,
-          section: rubrique.sectionId
+          section: rubrique.sectionKey
             ? await sectionBulletinModel.getSectionBulletin({
-                key: rubrique.sectionId,
+                key: rubrique.sectionKey,
               })
             : null,
         };
@@ -280,7 +278,7 @@ class RubriqueBulletin {
     rubrique,
     code,
     type,
-    sectionId,
+    sectionKey,
     calcul,
     rubriqueIdentity,
     taux,
@@ -326,9 +324,9 @@ class RubriqueBulletin {
     } else {
       sommeRubrique = null;
     }
-    if (sectionId) {
-      isValidValue({ value: sectionId });
-      await sectionBulletinModel.isExistSectionBulletin({ key: sectionId });
+    if (sectionKey) {
+      isValidValue({ value: sectionKey });
+      await sectionBulletinModel.isExistSectionBulletin({ key: sectionKey });
     }
     if (rubriqueIdentity != undefined) {
       rubriquesExistant = await this.getAllRubriqueBulletin();
@@ -343,7 +341,7 @@ class RubriqueBulletin {
       code: code,
       type: type,
       nature: nature,
-      sectionId: sectionId,
+      sectionKey: sectionKey,
       taux: taux,
       rubriqueRole: rubriqueRole,
       portee: portee,
@@ -370,7 +368,7 @@ class RubriqueBulletin {
     rubrique,
     // code,
     type,
-    sectionId,
+    sectionKey,
     rubriqueRole,
     calcul,
     taux,
@@ -390,10 +388,10 @@ class RubriqueBulletin {
     if (type != undefined) {
       updateField.type = type;
     }
-    if (sectionId != undefined) {
-      await sectionBulletinModel.isExistSectionBulletin({ key: sectionId });
+    if (sectionKey != undefined) {
+      await sectionBulletinModel.isExistSectionBulletin({ key: sectionKey });
     }
-    updateField.sectionId = sectionId;
+    updateField.sectionKeyy = sectionKeyy;
 
     if (rubriqueIdentity !== undefined) {
       updateField.rubriqueIdentity = rubriqueIdentity;

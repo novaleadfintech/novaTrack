@@ -3,7 +3,7 @@ import db from "../../db/database_connection.js";
 import { isValidValue } from "../../utils/util.js";
 import Echelon from "./echelon.js";
 const classeCollection = db.collection("classes");
-const categoriePaieGrilleCollection = db.collection("categoriePaieGrille");
+const paieCategorieGrilleCollection = db.collection("paieCategorieGrille");
 
 const EchelonModel = new Echelon();
 class Classe {
@@ -13,10 +13,10 @@ class Classe {
 
   async initializeCollections() {
     if (!(await classeCollection.exists())) {
-      classeCollection.create();
+     await classeCollection.create();
     }
     if (!(await classeCollection.exists())) {
-      classeCollection.create();
+     await classeCollection.create();
     }
   }
   async getAllClasse({ perPage, skip }) {
@@ -30,7 +30,7 @@ class Classe {
       aql`FOR classe IN ${classeCollection} 
           SORT classe.libelle ASC ${limit} 
           RETURN classe`,
-      { fullCount: true }
+      { fullCount: true },
     );
 
     if (query.hasNext) {
@@ -67,11 +67,11 @@ class Classe {
 
     for (const echelonIndiciciaire of echelonIndiciciaires) {
       const exists = await EchelonModel.isExistEchelon({
-        key: echelonIndiciciaire.echelon._id,
+        key: echelonIndiciciaire.echelon._key,
       });
       if (!exists) {
         throw new Error(
-          `L'échelon avec le libellé ${echelonIndiciciaire.echelon.libelle} n'existe pas`
+          `L'échelon avec le libellé ${echelonIndiciciaire.echelon.libelle} n'existe pas`,
         );
       }
     }
@@ -151,7 +151,7 @@ class Classe {
     } catch (e) {
       console.error(e);
       throw new Error(
-        `Une erreur s'est produite lors de la mise à jour de la classe`
+        `Une erreur s'est produite lors de la mise à jour de la classe`,
       );
     }
   }
@@ -161,11 +161,11 @@ class Classe {
       await this.isExistClasse({ key });
 
       const existingClasse = await db.query(aql`
-        FOR categorie IN ${categoriePaieGrilleCollection}
-            FOR classe IN categorie.classes
-                FILTER classe._id == ${key}
+        FOR paieCategorie IN ${paieCategorieGrilleCollection}
+            FOR classe IN paieCategorie.classes
+                FILTER classe._key == ${key}
         LIMIT 1
-        RETURN categorie
+        RETURN paieCategorie
       `);
 
       if (existingClasse.hasNext) {

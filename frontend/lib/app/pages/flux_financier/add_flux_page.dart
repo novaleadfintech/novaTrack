@@ -101,7 +101,7 @@ class _AddFluxPageState extends State<AddFluxPage> {
       client: client,
       file: file,
       banque: banque!,
-      userId: user!.id!,
+      userKey: user!.key!,
     );
     _dialog.hide();
     if (result.status == PopupStatus.success) {

@@ -93,10 +93,10 @@ class _ClientTableState extends State<ClientTable> {
 
       var result = client.etat == EtatClient.unarchived
           ? await ClientService.archiveClient(
-              clientId: client.id,
+              clientKey: client.key,
             )
           : await ClientService.unarchiveClient(
-              clientId: client.id,
+              clientKey: client.key,
             );
       _dialog.hide();
       if (result.status == PopupStatus.success) {

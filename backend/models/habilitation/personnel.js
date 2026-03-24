@@ -20,10 +20,10 @@ class Personnel {
 
   async initializeCollections() {
     if (!(await personnelCollection.exists())) {
-      personnelCollection.create();
+     await personnelCollection.create();
     }
     if (!(await bulletinCollection.exists())) {
-      bulletinCollection.create();
+     await bulletinCollection.create();
     }
   }
 
@@ -61,7 +61,10 @@ class Personnel {
   //récuperer un personnel
   getPersonnel = async ({ key }) => {
     try {
-      const personnel = await personnelCollection.document(key);
+      console.log(key);
+      const personnel = await personnelCollection.document(`${key}`, {
+        graceful: true,
+      });
       return personnel;
     } catch (e) {
       console.error(e);
@@ -302,9 +305,9 @@ class Personnel {
       await trx.step(() =>
         db.query(aql`
           FOR bulletin IN ${bulletinCollection}
-          FILTER bulletin.personnelId == ${key}
+          FILTER bulletin.personnelKey == ${key}
           UPDATE bulletin WITH { regenerate: false } IN ${bulletinCollection}
-        `)
+        `),
       );
       await trx.commit();
       return "OK";
@@ -313,7 +316,7 @@ class Personnel {
 
       await trx.abort();
       throw new Error(
-        `Une erreur s'est produite lors de l'archivage du personnel et de la mise à jour des bulletins`
+        `Une erreur s'est produite lors de l'archivage du personnel et de la mise à jour des bulletins`,
       );
     }
   };
@@ -330,9 +333,9 @@ class Personnel {
       await trx.step(() =>
         db.query(aql`
           FOR bulletin IN ${bulletinCollection}
-          FILTER bulletin.personnelId == ${key}
+          FILTER bulletin.personnelKey == ${key}
           UPDATE bulletin WITH { regenerate: true } IN ${bulletinCollection}
-        `)
+        `),
       );
       await trx.commit();
       return "OK";
@@ -341,7 +344,7 @@ class Personnel {
 
       await trx.abort();
       throw new Error(
-        `Une erreur s'est produite lors du désarchivage du personnel et de la mise à jour des bulletins`
+        `Une erreur s'est produite lors du désarchivage du personnel et de la mise à jour des bulletins`,
       );
     }
   };

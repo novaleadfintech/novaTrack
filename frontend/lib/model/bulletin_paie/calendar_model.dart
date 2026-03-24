@@ -1,12 +1,12 @@
 class PayCalendarModel {
-  final dynamic id;
+  final dynamic key;
   final String libelle;
   final DateTime dateDebut;
   final DateTime dateFin;
   final EtatPayCalendar? etat;
 
   PayCalendarModel({
-    required this.id,
+    required this.key,
     required this.libelle,
     required this.dateDebut,
     required this.dateFin,
@@ -15,7 +15,7 @@ class PayCalendarModel {
 
   factory PayCalendarModel.fromJson(Map<String, dynamic> json) {
     return PayCalendarModel(
-      id: json["_id"],
+      key: json["_key"],
       libelle: json["libelle"] ?? "",
       dateDebut: DateTime.fromMillisecondsSinceEpoch(json["dateDebut"]),
       dateFin: DateTime.fromMillisecondsSinceEpoch(json["dateFin"]),
@@ -27,15 +27,15 @@ class PayCalendarModel {
 
   Map<String, dynamic> toJson() {
     return {
-      "_id": id,
-      "categoriepaie": libelle,
+      "_key": key,
+      "paieCategorie": libelle,
       "dateDebut": dateDebut.toIso8601String(),
       "dateFin": dateFin.toIso8601String(),
     };
   }
 
   bool equalTo({required PayCalendarModel libelle}) {
-    return libelle.id == id;
+    return libelle.key == key;
   }
 }
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/model/bulletin_paie/tranche_model.dart';
 import 'package:frontend/widget/enum_selector_radio.dart';
 import '../../../helper/string_helper.dart';
-import '../../../model/bulletin_paie/categorie_bulletin.dart';
+import '../../../model/bulletin_paie/bulletin_categorie.dart';
 import '../../../service/categorie_bulletin_service.dart';
 import '../../integration/popop_status.dart';
 import '../../integration/request_frot_behavior.dart';
@@ -11,21 +11,21 @@ import '../../../widget/validate_button.dart';
 import 'package:gap/gap.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 
-class EditCategorieBulletinPage extends StatefulWidget {
+class EditBulletinCategoriePage extends StatefulWidget {
   final Future<void> Function() refresh;
-  final CategorieBulletinModel categorieBulletin;
-  const EditCategorieBulletinPage({
+  final BulletinCategorieModel bulletinCategorie;
+  const EditBulletinCategoriePage({
     super.key,
     required this.refresh,
-    required this.categorieBulletin,
+    required this.bulletinCategorie,
   });
 
   @override
-  State<EditCategorieBulletinPage> createState() =>
-      _EditCategorieBulletinPageState();
+  State<EditBulletinCategoriePage> createState() =>
+      _EditBulletinCategoriePageState();
 }
 
-class _EditCategorieBulletinPageState extends State<EditCategorieBulletinPage> {
+class _EditBulletinCategoriePageState extends State<EditBulletinCategoriePage> {
   final TextEditingController _libelleController = TextEditingController();
   PaieClause? paieClause;
   late SimpleFontelicoProgressDialog _dialog;
@@ -33,19 +33,19 @@ class _EditCategorieBulletinPageState extends State<EditCategorieBulletinPage> {
   @override
   void initState() {
     super.initState();
-    _libelleController.text = widget.categorieBulletin.categorieBulletin;
-    paieClause = widget.categorieBulletin.paieClause;
+    _libelleController.text = widget.bulletinCategorie.bulletinCategorie;
+    paieClause = widget.bulletinCategorie.paieClause;
     _dialog = SimpleFontelicoProgressDialog(context: context);
   }
 
-  Future<void> _editCategorieBulletin() async {
+  Future<void> _editBulletinCategorie() async {
     String? errMessage;
     if (_libelleController.text.isEmpty && paieClause == null) {
       errMessage = "Veuillez remplir tous les champs marqués.";
     }
 
-    if (_libelleController.text == widget.categorieBulletin.categorieBulletin &&
-        paieClause == widget.categorieBulletin.paieClause) {
+    if (_libelleController.text == widget.bulletinCategorie.bulletinCategorie &&
+        paieClause == widget.bulletinCategorie.paieClause) {
       errMessage = "Aucune modification n'a été faite!";
     }
     if (errMessage != null) {
@@ -62,11 +62,11 @@ class _EditCategorieBulletinPageState extends State<EditCategorieBulletinPage> {
     );
 
     try {
-      var result = await CategorieBulletinService.updateCategorieBulletin(
-        categorieBulletin:
+      var result = await BulletinCategorieservice.updateBulletinCategorie(
+        bulletinCategorie:
             capitalizeFirstLetter(word: _libelleController.text.toLowerCase()),
-        paieClause: paieClause ?? widget.categorieBulletin.paieClause,
-        key: widget.categorieBulletin.id,
+        paieClause: paieClause ?? widget.bulletinCategorie.paieClause,
+        key: widget.bulletinCategorie.key,
       );
 
       _dialog.hide();
@@ -120,7 +120,7 @@ class _EditCategorieBulletinPageState extends State<EditCategorieBulletinPage> {
             alignment: Alignment.bottomRight,
             child: ValidateButton(
               onPressed: () async {
-                await _editCategorieBulletin();
+                await _editBulletinCategorie();
               },
             ),
           ),

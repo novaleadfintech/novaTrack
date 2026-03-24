@@ -54,7 +54,7 @@ class _FactureValueConfigPageState extends State<FactureValueConfigPage> {
             child: ValidateButton(
               onPressed: () {
                 addConfigValue(
-                    clientId: widget.clientFactureGlobaLValue!.client.id);
+                    clientKey: widget.clientFactureGlobaLValue!.client.key);
               },
             ),
           ),
@@ -63,7 +63,7 @@ class _FactureValueConfigPageState extends State<FactureValueConfigPage> {
     );
   }
 
-  void addConfigValue({required clientId}) async {
+  void addConfigValue({required clientKey}) async {
     try {
       if (nombreJrPenaliteController.text.isEmpty) {
         MutationRequestContextualBehavior.showCustomInformationPopUp(

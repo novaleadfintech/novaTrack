@@ -388,7 +388,7 @@ class _EditPersonnelPageState extends State<EditPersonnelPage> {
 
     // Envoyer la requête de modification
     RequestResponse result = await PersonnelService.updatePersonnel(
-      key: personnel.id,
+      key: personnel.key,
       adresse: newadresse,
       commentaire: newcommentaire,
       email: newemail,

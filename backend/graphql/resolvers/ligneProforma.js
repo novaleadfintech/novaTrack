@@ -3,15 +3,17 @@ import LigneProforma from "../../models/facturation/ligneProforma.js";
 const ligneProformaModel = new LigneProforma();
 
 const ligneProformaResolvers = {
-  ligneProformaByProforma: async ({ proformaId }) =>
-    await ligneProformaModel.getLigneProformaByProforma({ proformaId: proformaId }),
+  ligneProformaByProforma: async ({ proformaKey }) =>
+    await ligneProformaModel.getLigneProformaByProforma({
+      proformaKey: proformaKey,
+    }),
 
   updateLigneProforma: async ({
     key,
     designation,
     quantite,
     unit,
-    serviceId,
+    serviceKey,
     prixSupplementaire,
     dureeLivraison,
     remise,
@@ -19,7 +21,7 @@ const ligneProformaResolvers = {
   }) =>
     await ligneProformaModel.updateLigneProforma({
       key: key,
-      serviceId: serviceId,
+      serviceKey: serviceKey,
       designation: designation,
       unit: unit,
       prixSupplementaire: prixSupplementaire,
@@ -32,8 +34,8 @@ const ligneProformaResolvers = {
   deleteLigneProforma: async ({ key }) =>
     await ligneProformaModel.deleteLigneProforma({ key: key }),
 
-  deleteAllByProforma: async ({ factureId }) =>
-    await ligneProformaModel.deleteAllByProforma({ factureId: factureId }),
+  deleteAllByProforma: async ({ factureKey }) =>
+    await ligneProformaModel.deleteAllByProforma({ factureKey: factureKeyy }),
 };
 
 export default ligneProformaResolvers;

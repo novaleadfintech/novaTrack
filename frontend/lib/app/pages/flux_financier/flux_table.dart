@@ -84,7 +84,7 @@ class _InputTableState extends State<FinanceTable> {
 
     try {
       RequestResponse result =
-          await FluxFinancierService.deleteFluxFinancier(key: flux.id);
+          await FluxFinancierService.deleteFluxFinancier(key: flux.key);
       _dialog.hide();
       MutationRequestContextualBehavior.showPopup(
         status: result.status,
@@ -197,7 +197,7 @@ class _InputTableState extends State<FinanceTable> {
                                         (fluxFinancier.status !=
                                             FluxFinancierStatus.valid) &&
                                         !fluxFinancier.isFromSystem! &&
-                                        fluxFinancier.factureId == null) ...[
+                                        fluxFinancier.factureKey == null) ...[
                                       if (hasPermission(
                                           role: role,
                                           permission: PermissionAlias
@@ -214,7 +214,7 @@ class _InputTableState extends State<FinanceTable> {
                                               permission: PermissionAlias
                                                   .deleteFluxFinancier.label) &&
                                           !fluxFinancier.isFromSystem! &&
-                                          fluxFinancier.factureId == null &&
+                                          fluxFinancier.factureKey == null &&
                                           fluxFinancier.status !=
                                               FluxFinancierStatus.wait)
                                         (
@@ -288,7 +288,7 @@ class _InputTableState extends State<FinanceTable> {
                                             fluxFinancier.status !=
                                                 FluxFinancierStatus.reject) &&
                                         !fluxFinancier.isFromSystem! &&
-                                        fluxFinancier.factureId == null) ...[
+                                        fluxFinancier.factureKey == null) ...[
                                       if (hasPermission(
                                           role: role,
                                           permission: PermissionAlias
@@ -305,7 +305,7 @@ class _InputTableState extends State<FinanceTable> {
                                               permission: PermissionAlias
                                                   .deleteFluxFinancier.label) &&
                                           !fluxFinancier.isFromSystem! &&
-                                          fluxFinancier.factureId == null &&
+                                          fluxFinancier.factureKey == null &&
                                           fluxFinancier.status !=
                                               FluxFinancierStatus.wait)
                                         (

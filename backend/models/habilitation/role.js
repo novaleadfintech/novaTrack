@@ -4,7 +4,7 @@ import Permission from "./permission.js";
 import { isValidValue } from "../../utils/util.js";
 
 const roleCollection = db.collection("roles");
-const rolePermissionEdges = db.collection("rolePermissions");
+const rolePermissionCollection  = db.collection("rolePermissions");
 const permissionModel = new Permission();
 
 class Role {
@@ -14,27 +14,27 @@ class Role {
 
   async initializeCollections() {
     if (!(await roleCollection.exists())) {
-      roleCollection.create();
+      await roleCollection.create();
     }
-    if (!(await rolePermissionEdges.exists())) {
-      roleCollection.create({ type: CollectionType.EDGE_COLLECTION });
+    if (!(await rolePermissionCollection.exists())) {
+      await rolePermissionCollection.create();
     }
   }
   getAllRoles = async () => {
     const query = await db.query(
-      aql`FOR role IN ${roleCollection} RETURN role`
+      aql`FOR role IN ${roleCollection} RETURN role`,
     );
     if (query.hasNext) {
       const roles = await query.all();
       return await Promise.all(
         roles.map(async (role) => {
-           return {
+          return {
             ...role,
             permissions: await permissionModel.getPermissionByRole({
-              roleId: role._id,
+              roleKey: role._key,
             }),
           };
-        })
+        }),
       );
     } else {
       return [];
@@ -42,12 +42,13 @@ class Role {
   };
 
   getRole = async ({ key }) => {
+    
     try {
       const role = await roleCollection.document(key);
       return {
         ...role,
         permissions: await permissionModel.getAllPermissionsByRoleForUser({
-          roleId: key,
+          roleKey: key,
         }),
       };
     } catch (err) {
@@ -71,23 +72,23 @@ class Role {
     }
   };
 
-  attribuerPermissionRole = async ({ key, permissionId }) => {
-    await this.isExistRole({ key: key });
-    await permissionModel.isExistPermission({ key: permissionId });
+  attribuerPermissionRole = async ({ roleKey, permissionKey }) => {
+    await this.isExistRole({ key: roleKey });
+    await permissionModel.isExistPermission({ key: permissionKey });
     const query = await db.query(aql`
-        FOR rolePermission IN ${rolePermissionEdges}
-        FILTER rolePermission._from == ${key} AND rolePermission._to == ${permissionId}
+        FOR rolePermission IN ${rolePermissionCollection }
+        FILTER rolePermission.roleKey == ${roleKey} AND rolePermission.permissionkey == ${permissionKey}
         RETURN rolePermission
       `);
     if (query.hasNext) {
       return "OK";
     } else {
       try {
-        const rolePermission = {
-          _from: key,
-          _to: permissionId,
+        const newRolePermission = {
+          roleKey: roleKey,
+          permissionkey: permissionKey,
         };
-        await rolePermissionEdges.save(rolePermission);
+        await rolePermissionCollection.save(newRolePermission);
         return "OK";
       } catch (err) {
         console.error(err);
@@ -97,15 +98,15 @@ class Role {
     }
   };
 
-  retirerPermissionRole = async ({ key, permissionId }) => {
+  retirerPermissionRole = async ({ roleKey, permissionKey }) => {
     try {
       const query = await db.query(aql`
-      FOR rolePermission IN ${rolePermissionEdges}
-      FILTER rolePermission._from == ${key} AND rolePermission._to == ${permissionId}
+      FOR rolePermission IN ${rolePermissionCollection }
+      FILTER rolePermission.roleKey == ${roleKey} AND rolePermission.permissionkey == ${permissionKey}
       RETURN rolePermission
     `);
       if (query.hasNext) {
-        await rolePermissionEdges.remove(await query.next());
+        await rolePermissionCollection .remove(await query.next());
       }
       return "OK";
     } catch (err) {
@@ -139,8 +140,13 @@ class Role {
 
   deleteRole = async ({ key }) => {
     try {
-      const result = await rolePermissionEdges.edges(key);
-      if (result.edges.length !== 0) {
+      const cursor = await db.query(aql`
+        FOR rolePermission IN ${rolePermissionCollection }
+          FILTER rolePermission.roleKey == ${key}
+          RETURN rolePermission
+      `);
+      const result = await cursor.all();
+      if (result.length !== 0) {
         throw new Error("Suppression impossible");
       }
     } catch (err) {

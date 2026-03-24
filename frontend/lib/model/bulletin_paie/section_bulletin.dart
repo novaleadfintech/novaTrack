@@ -1,22 +1,22 @@
 class SectionBulletin {
-  final String id;
+  final String key;
   final String section;
 
   SectionBulletin({
-    required this.id,
+    required this.key,
     required this.section,
   });
 
   factory SectionBulletin.fromJson(Map<String, dynamic> json) {
     return SectionBulletin(
-      id: json['_id'],
+      key: json['_key'],
       section: json['section'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      '_id': id,
+      '_key': key,
       'section': section,
     };
   }

@@ -118,7 +118,7 @@ class _SalarieTableState extends State<SalarieTable> {
                         children: widget.paginatedPersonnelData.map((salarie) {
                           PersonnelModel personnel = salarie.personnel;
                           // bool isCurrentUser =
-                          //     personnel.id == currentUser!.personnel!.id;
+                          //     personnel.key == currentUser!.personnel!.key;
                           return TableRow(
                             decoration: tableDecoration(context),
                             children: [
@@ -200,7 +200,7 @@ class _SalarieTableState extends State<SalarieTable> {
                         children: widget.paginatedPersonnelData.map((salarie) {
                           PersonnelModel personnel = salarie.personnel;
                           // bool isCurrentUser =
-                          //     personnel.id == currentUser!.personnel!.id;
+                          //     personnel.key == currentUser!.personnel!.key;
                           return TableRow(
                             decoration: tableDecoration(context),
                             children: [
@@ -331,7 +331,7 @@ class _SalarieTableState extends State<SalarieTable> {
   //     //     DateTime.now().year, DateTime.now().month, DateTime.now().day);
   //     BulletinPaieModel? previousBulletin =
   //         await BulletinService.getPreviousBulletins(
-  //       salarieId: salarie.id,
+  //       salarieKey: salarie.key,
   //     );
 
   //     List<DateTime>? periode = getCurrentBulletinPeriod(

@@ -10,7 +10,7 @@ class valeurRubriqueTemporaire {
 
   async initializeCollections() {
     if (!(await variablePaieCollection.exists())) {
-     await variablePaieCollection.create();
+      await variablePaieCollection.create();
     }
   }
 
@@ -23,27 +23,21 @@ class valeurRubriqueTemporaire {
     return await cursor.all();
   }
 
-  /**
-   * 🔍 Récupérer les valeurs rubriques d’un salarié
-   */
-  async getBySalarieId({ salarieId }) {
+  async getBySalarieKey({ salarieKey }) {
     const cursor = await db.query(aql`
       FOR v IN ${variablePaieCollection}
-        FILTER v.salarieId == ${salarieId}
+        FILTER v.salarieKey == ${salarieKey}
         RETURN v
     `);
     const result = await cursor.next();
     return result || null;
   }
 
-  /**
-   * ⚙️ Vérifie si un enregistrement temporaire existe déjà
-   */
-  async existsForSalarie(salarieId) {
+  async existsForSalarie(salarieKey) {
     const cursor = await db.query(aql`
       RETURN LENGTH(
         FOR v IN ${variablePaieCollection}
-          FILTER v.salarieId == ${salarieId}
+          FILTER v.salarieKey == ${salarieKey}
           RETURN 1
       ) > 0
     `);
@@ -54,20 +48,20 @@ class valeurRubriqueTemporaire {
   /**
    * ➕ Créer une valeur rubrique temporaire
    */
-  async createVariablesPaies({ salarieId, rubriques, primesExceptionnelles }) {
+  async createVariablesPaies({ salarieKey, rubriques, primesExceptionnelles }) {
     // Vérifie si déjà existant pour éviter doublon
-    const exists = await this.existsForSalarie(salarieId);
+    const exists = await this.existsForSalarie(salarieKey);
     let existVariablePaie;
     const doc = {
-      salarieId,
+      salarieKey,
       rubriques,
       primesExceptionnelles,
       createdAt: Date.now(),
     };
     if (exists) {
-      existVariablePaie = await this.getBySalarieId({ salarieId: salarieId });
+      existVariablePaie = await this.getBySalarieKey({ salarieKey: salarieKey });
       if (existVariablePaie) {
-        await variablePaieCollection.update(existVariablePaie._id, doc);
+        await variablePaieCollection.update(existVariablePaie._key, doc);
         return "OK";
       }
     }
@@ -75,33 +69,32 @@ class valeurRubriqueTemporaire {
     return "OK";
   }
 
-  async updateBySalarieId(salarieId, rubriques) {
+  async updateBySalarieKey(salarieKey, rubriques) {
     const cursor = await db.query(aql`
       FOR v IN ${collection}
-        FILTER v.salarieId == ${salarieId}
+        FILTER v.salarieKey == ${salarieKey}
         UPDATE v WITH { rubriques: ${rubriques}, updatedAt: DATE_NOW() } IN ${collection}
         RETURN NEW
     `);
     const result = await cursor.next();
     if (!result) {
       throw new Error(
-        `Aucune valeur temporaire trouvée pour le salarié ${salarieId}`
+        `Aucune valeur temporaire trouvée pour le salarié ${salarieKey}`,
       );
     }
     return result;
   }
 
-  async deleteBySalarieId(salarieId) {
+  async deleteBySalarieKey(salarieKey) {
     const cursor = await db.query(aql`
       FOR v IN ${collection}
-        FILTER v.salarieId == ${salarieId}
+        FILTER v.salarieKey == ${salarieKey}
         REMOVE v IN ${collection}
         RETURN OLD
     `);
     const result = await cursor.next();
     return result || null;
   }
-  
 }
 
 export default valeurRubriqueTemporaire;

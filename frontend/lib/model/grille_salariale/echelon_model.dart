@@ -1,28 +1,28 @@
 class EchelonModel {
-  final String id;
+  final String key;
   final String libelle;
 
   EchelonModel({
-    required this.id,
+    required this.key,
     required this.libelle,
   });
 
   factory EchelonModel.fromJson(Map<String, dynamic> json) {
     return EchelonModel(
-      id: json['_id'],
+      key: json['_key'],
       libelle: json['libelle'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      "_id": "\"$id\"",
+      "_key": "\"$key\"",
       "libelle": "\"$libelle\"",
     };
   }
 
   bool equalTo({required EchelonModel echelon}) {
-    return echelon.id == id;
+    return echelon.key == key;
   }
 
   @override

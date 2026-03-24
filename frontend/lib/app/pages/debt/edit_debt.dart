@@ -102,7 +102,7 @@ class _EditDebtPageState extends State<EditDebtPage> {
       client: _client,
       partiePrenante: partiePrenanteFieldController.text,
       file: _file,
-      key: widget.debt.id,
+      key: widget.debt.key,
     );
     _dialog.hide();
     if (result.status == PopupStatus.success) {

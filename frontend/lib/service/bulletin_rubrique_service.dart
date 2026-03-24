@@ -17,7 +17,7 @@ class BulletinRubriqueService {
     var body = '''
       query RubriquesBulletin {
     rubriquesBulletin {
-        _id
+        _key
         rubrique
         code
         type
@@ -26,12 +26,12 @@ class BulletinRubriqueService {
         rubriqueRole
         rubriqueIdentity
         section {
-            _id
+            _key
             section
         }
         taux {
             base {
-                _id
+                _key
                 rubrique
                 code
                 type
@@ -45,7 +45,7 @@ class BulletinRubriqueService {
                 type
                 valeur
                 rubrique {
-                    _id
+                    _key
                     rubrique
                     code
                     type
@@ -55,7 +55,7 @@ class BulletinRubriqueService {
         }
         bareme {
             reference{
-                _id
+                _key
                 rubrique
                 code
                 type
@@ -69,7 +69,7 @@ class BulletinRubriqueService {
                     valeur
                     taux {
                         base {
-                            _id
+                            _key
                             rubrique
                             code
                             type
@@ -86,7 +86,7 @@ class BulletinRubriqueService {
                 type
                 valeur
                 rubrique {
-                    _id
+                    _key
                     rubrique
                     code
                     type
@@ -139,7 +139,7 @@ class BulletinRubriqueService {
     var body = '''
       query PrimesExceptionnelles {
     primesExceptionnelles {
-        _id
+        _key
         rubrique
         code
         type
@@ -148,12 +148,12 @@ class BulletinRubriqueService {
         rubriqueRole
         rubriqueIdentity
         section {
-            _id
+            _key
             section
         }
         taux {
             base {
-                _id
+                _key
                 rubrique
                 code
                 type
@@ -167,7 +167,7 @@ class BulletinRubriqueService {
                 type
                 valeur
                 rubrique {
-                    _id
+                    _key
                     rubrique
                     code
                     type
@@ -177,7 +177,7 @@ class BulletinRubriqueService {
         }
         bareme {
             reference{
-                _id
+                _key
                 rubrique
                 code
                 type
@@ -191,7 +191,7 @@ class BulletinRubriqueService {
                     valeur
                     taux {
                         base {
-                            _id
+                            _key
                             rubrique
                             code
                             type
@@ -208,7 +208,7 @@ class BulletinRubriqueService {
                 type
                 valeur
                 rubrique {
-                    _id
+                    _key
                     rubrique
                     code
                     type
@@ -279,7 +279,7 @@ class BulletinRubriqueService {
             portee: ${portee == null ? null : porteeRubriqueToString(portee)}
             nature: ${natureRubriqueToString(nature)},
             type: ${type == null ? null : typeRubriqueToString(type)},
-            sectionId: ${section == null ? null : "\"${section.id}\""},
+            sectionId: ${section == null ? null : "\"${section.key}\""},
             bareme: ${bareme?.toJson()},
             taux: ${taux?.toJson()},
             rubriqueIdentity: ${rubriqueIdentity == null ? null : constantIdentityToString(rubriqueIdentity)}
@@ -351,7 +351,7 @@ class BulletinRubriqueService {
               portee: ${portee == null ? null : porteeRubriqueToString(portee)}
               nature: ${nature == null ? null : natureRubriqueToString(nature)},
               type: ${type == null ? null : typeRubriqueToString(type)},
-              sectionId: ${section == null ? null : "\"${section.id}\""},
+              sectionId: ${section == null ? null : "\"${section.key}\""},
               bareme: ${bareme?.toJson()},
               taux: ${taux?.toJson()},
               rubriqueIdentity: ${rubriqueIdentity == null ? null : constantIdentityToString(rubriqueIdentity)}

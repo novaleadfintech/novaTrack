@@ -109,12 +109,12 @@ class _PayDebtState extends State<PayDebt> {
       client: client!,
       file: _file,
       banque: banque!,
-      userId: user!.id!,
+      userKey: user!.key!,
     );
     _dialog.hide();
     if (result.status == PopupStatus.success) {
       RequestResponse debtUpdateresult = await DebtService.updateDebt(
-        key: widget.debt.id,
+        key: widget.debt.key,
         montant: widget.debt.montant -
             double.parse(montantPayeTextFieldController.text),
         referenceFacture: null,

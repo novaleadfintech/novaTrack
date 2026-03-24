@@ -2,44 +2,45 @@ import { aql, CollectionType } from "arangojs";
 import db from "../../db/database_connection.js";
 import { isValidValue } from "../../utils/util.js";
 import RubriqueBulletin from "./rubrique_bulletin.js";
-import CategorieBulletin from "./categorie_bulletin.js";
+import BulletinCategorie from "./categorie_bulletin.js";
 import ValeurRubriqueTemporaire from "./valeur_rubrique_temporaire.js";
-const categorieBulletinRubriqueCollection = db.collection(
-  "categorieBulletinRubriques",
+const bulletinCategorieRubriqueCollection = db.collection(
+  "bulletinCategorieRubriques",
 );
 import { PorteeRubrique } from "./bulletin.js";
 const rubriqueBulletin = new RubriqueBulletin();
-const categorieBulletinModel = new CategorieBulletin();
+const bulletinCategorieModel = new BulletinCategorie();
 const valeurRubriqueTemporaireModel = new ValeurRubriqueTemporaire();
 
-class CategorieBulletinRubrique {
+class BulletinCategorieRubrique {
   constructor() {
     this.initializeCollections();
   }
 
   async initializeCollections() {
-    if (!(await categorieBulletinRubriqueCollection.exists())) {
-      await categorieBulletinRubriqueCollection.create({
-        type: CollectionType.EDGE_COLLECTION,
-      });
+    if (!(await bulletinCategorieRubriqueCollection.exists())) {
+      await bulletinCategorieRubriqueCollection.create();
     }
   }
 
-  getRubriqueBulletinByCategorieBulletin = async ({ categorieBulletinId }) => {
+  getRubriqueBulletinByBulletinCategorie = async ({ bulletinCategorieKey }) => {
     try {
-      const categorieBulletinRubriqueEdges =
-        await categorieBulletinRubriqueCollection.edges(categorieBulletinId);
-      const rubriqueConfiforCategorie = categorieBulletinRubriqueEdges.edges;
+      const cursor = await db.query(aql`
+        FOR rubriqueBulletion IN ${bulletinCategorieRubriqueCollection}
+          FILTER rubriqueBulletion.bulletinCategorieKey == ${bulletinCategorieKey}
+          RETURN rubriqueBulletion
+      `);
+      const rubriqueConfiforCategorie = await cursor.all();
       console.log(rubriqueConfiforCategorie);
       // Attendre la récupération des rubriques
       const result = await Promise.all(
-        rubriqueConfiforCategorie.map(async (categorieBulletinRubrique) => {
+        rubriqueConfiforCategorie.map(async (bulletinCategorieRubrique) => {
           const rubrique = await rubriqueBulletin.getRubriqueBulletin({
-            key: categorieBulletinRubrique._from,
+            key: bulletinCategorieRubrique.rubriqueKey,
           });
 
           return {
-            ...categorieBulletinRubrique,
+            ...bulletinCategorieRubrique,
             rubrique: rubrique,
           };
         }),
@@ -60,20 +61,22 @@ class CategorieBulletinRubrique {
 
   //selection des valeurs
   getvariablePaieAndPrimeExceptionnelles = async ({
-    categorieBulletinId,
-    salarieId,
+    bulletinCategorieKey,
+    salarieKey,
   }) => {
     try {
-      const categorieBulletinRubriqueEdges =
-        await categorieBulletinRubriqueCollection.edges(categorieBulletinId);
-
-      const rubriqueConfiforCategorie = categorieBulletinRubriqueEdges.edges;
+      const cursor = await db.query(aql`
+        FOR variablePaie IN ${bulletinCategorieRubriqueCollection}
+          FILTER variablePaie.bulletinCategorieKey == ${bulletinCategorieKey}
+          RETURN variablePaie
+      `);
+      const rubriqueConfiforCategorie = await cursor.all();
 
       const existingVariable =
-        await valeurRubriqueTemporaireModel.getBySalarieId({
-          salarieId: salarieId,
+        await valeurRubriqueTemporaireModel.getBySalarieKey({
+          salarieKey: salarieKey,
         });
-      // existingVariable is a document with shape { salarieId, rubriques: [{ rubriqueId, value }], primesExceptionnelles: [...] }
+      // existingVariable is a document with shape { salarieKey, rubriques: [{ rubriqueKey, value }], primesExceptionnelles: [...] }
       const rubriquesVariables = existingVariable?.rubriques || [];
       const primesVariables = existingVariable?.primesExceptionnelles || [];
       // A REMPLACER PAR LA LISTE DE IDENTITE DEFINI DANS BULLETIN
@@ -87,9 +90,9 @@ class CategorieBulletinRubrique {
       ];
 
       const rubriqueEntries = [];
-      for (const categorieBulletinRubrique of rubriqueConfiforCategorie) {
+      for (const bulletinCategorieRubrique of rubriqueConfiforCategorie) {
         const rubrique = await rubriqueBulletin.getRubriqueBulletin({
-          key: categorieBulletinRubrique._from,
+          key: bulletinCategorieRubrique.rubriqueKey,
         });
 
         // Garder uniquement les rubriques de nature constante et valeur nulle, et exclure certaines identités
@@ -107,8 +110,8 @@ class CategorieBulletinRubrique {
         // Chercher une valeur personnalisée (si déjà définie)
         const variableForRubrique = rubriquesVariables.find(
           (v) =>
-            v.rubriqueId === rubrique._id ||
-            v.rubriqueId === categorieBulletinRubrique._from,
+            v.rubriqueKey === rubrique._keyyy ||
+            v.rubriqueKey === bulletinCategorieRubrique.rubriqueKey,
         );
 
         const entry = {
@@ -133,7 +136,7 @@ class CategorieBulletinRubrique {
       const primesFromExistingPromises = (primesVariables || []).map(
         async (pe) => {
           const rubrique = await rubriqueBulletin.getRubriqueBulletin({
-            key: pe.rubriqueId,
+            key: pe.rubriqueKey,
           });
           return { value: pe.value, rubrique };
         },
@@ -144,7 +147,7 @@ class CategorieBulletinRubrique {
 
       return {
         ...existingVariable,
-        salarieId: salarieId,
+        salarieKey: salarieKey,
         paieVariables: rubriqueEntries,
         primesExceptionnelles: primesFromExisting,
       };
@@ -156,19 +159,21 @@ class CategorieBulletinRubrique {
     }
   };
 
-  getRubriqueBulletinByCategorieBulletinForConfiguration = async ({
-    categorieBulletinId,
+  getRubriqueBulletinByBulletinCategorieForConfiguration = async ({
+    bulletinCategorieKey,
   }) => {
     try {
-      const categorieBulletinRubriqueEdges =
-        await categorieBulletinRubriqueCollection.edges(categorieBulletinId);
-
-      const rubriqueConfigforCategorie = categorieBulletinRubriqueEdges.edges;
+      const cursor = await db.query(aql`
+        FOR rubriqueBulletin IN ${bulletinCategorieRubriqueCollection}
+          FILTER rubriqueBulletin.bulletinCategorieKey == ${bulletinCategorieKey}
+          RETURN rubriqueBulletin
+      `);
+      const rubriqueConfigforCategorie = await cursor.all();
       const allRubriques = await rubriqueBulletin.getAllRubriqueBulletin();
 
       const result = allRubriques.map((rubrique) => {
         const config = rubriqueConfigforCategorie.find(
-          (conf) => conf._from === rubrique._id,
+          (conf) => conf.rubriqueKey === rubrique._key,
         );
         return {
           rubriqueOnBulletin: {
@@ -192,30 +197,30 @@ class CategorieBulletinRubrique {
     }
   };
 
-  createCategorieBulletinRubrique = async ({
-    rubriqueId,
-    categorieBulletinId,
+  createBulletinCategorieRubrique = async ({
+    rubriqueKey,
+    bulletinCategorieKey,
     value,
   }) => {
-    isValidValue({ value: [rubriqueId, categorieBulletinId] });
+    isValkeyValue({ value: [rubriqueKey, bulletinCategorieKey] });
     try {
-      await rubriqueBulletin.isExistRubriqueBulletin({ key: rubriqueId });
-      await categorieBulletinModel.isExistCategorieBulletin({
-        key: categorieBulletinId,
+      await rubriqueBulletin.isExistRubriqueBulletin({ key: rubriqueKey });
+      await bulletinCategorieModel.isExistBulletinCategorie({
+        key: bulletinCategorieKey,
       });
 
       if (
-        !!!(await this.getCategorieBulletinRubriqueByLink({
-          categorieId: categorieBulletinId,
-          rubriqueId: rubriqueId,
+        !!!(await this.getBulletinCategorieRubriqueByLink({
+          bulletinCategorieKey: bulletinCategorieKey,
+          rubriqueKey: rubriqueKey,
         }))
       ) {
         const newRubriqueCategrie = {
-          _from: rubriqueId,
-          _to: categorieBulletinId,
+          rubriqueKey: rubriqueKey,
+          bulletinCategorieKey: bulletinCategorieKey,
           value: value,
         };
-        await categorieBulletinRubriqueCollection.save(newRubriqueCategrie);
+        await bulletinCategorieRubriqueCollection.save(newRubriqueCategrie);
       }
       return "OK";
     } catch (e) {
@@ -224,15 +229,15 @@ class CategorieBulletinRubrique {
     }
   };
 
-  getCategorieBulletinRubriqueByLink = async ({
-    rubriqueId,
-    categorieBulletinId,
+  getBulletinCategorieRubriqueByLink = async ({
+    rubriqueKey,
+    bulletinCategorieKey,
   }) => {
     const query = await db.query(aql`
-      FOR doc IN ${categorieBulletinRubriqueCollection}
-        FILTER doc._from == ${rubriqueId} AND doc._to == ${categorieBulletinId}
+      FOR bulletinCategorieRubrique IN ${bulletinCategorieRubriqueCollection}
+        FILTER bulletinCategorieRubrique.rubriqueKey == ${rubriqueKey} AND bulletinCategorieRubrique.bulletinCategorieKey == ${bulletinCategorieKey}
         LIMIT 1
-        RETURN doc
+        RETURN bulletinCategorieRubrique
     `);
 
     if (query.hasNext) {
@@ -240,18 +245,18 @@ class CategorieBulletinRubrique {
     }
   };
 
-  updateCategorieBulletinRubrique = async ({
-    rubriqueId,
-    categorieBulletinId,
+  updateBulletinCategorieRubrique = async ({
+    rubriqueKey,
+    bulletinCategorieKey,
     value,
   }) => {
     try {
-      const data = await this.getCategorieBulletinRubriqueByLink({
-        categorieId: categorieBulletinId,
-        rubriqueId: rubriqueId,
+      const data = await this.getBulletinCategorieRubriqueByLink({
+        bulletinCategorieKey: bulletinCategorieKey,
+        rubriqueKey: rubriqueKey,
       });
       if (data) {
-        await categorieBulletinRubriqueCollection.update(data._id, {
+        await bulletinCategorieRubriqueCollection.update(data._key, {
           value: value,
         });
       }
@@ -262,17 +267,17 @@ class CategorieBulletinRubrique {
     }
   };
 
-  deleteCategorieBulletinRubrique = async ({
-    rubriqueId,
-    categorieBulletinId,
+  deleteBulletinCategorieRubrique = async ({
+    rubriqueKey,
+    bulletinCategorieKey,
   }) => {
     try {
-      const data = await this.getCategorieBulletinRubriqueByLink({
-        categorieBulletinId: categorieBulletinId,
-        rubriqueId: rubriqueId,
+      const data = await this.getBulletinCategorieRubriqueByLink({
+        bulletinCategorieKey: bulletinCategorieKey,
+        rubriqueKey: rubriqueKey,
       });
       if (!!data) {
-        await categorieBulletinRubriqueCollection.remove(data._id);
+        await bulletinCategorieRubriqueCollection.remove(data._key);
       }
       return "OK";
     } catch (e) {
@@ -282,4 +287,4 @@ class CategorieBulletinRubrique {
   };
 }
 
-export default CategorieBulletinRubrique;
+export default BulletinCategorieRubrique;

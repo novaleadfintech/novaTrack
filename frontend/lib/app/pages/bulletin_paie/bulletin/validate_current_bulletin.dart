@@ -168,7 +168,7 @@ class _ValidateCurrentBulletintPageState
       );
 
       RequestResponse response = await BulletinService.validerBulletin(
-        key: widget.currentBulletin.id,
+        key: widget.currentBulletin.key,
         datePayement: datePayement,
         validateBulletin: ValidateBulletinModel(
           validateStatus: etatBulletin!,

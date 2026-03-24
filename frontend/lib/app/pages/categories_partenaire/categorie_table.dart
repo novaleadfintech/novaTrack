@@ -5,7 +5,7 @@ import '../../../global/constant/permission_alias.dart';
 import '../../../helper/user_helper.dart';
 import '../../../model/request_response.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
-import '../../../service/categorie_service.dart';
+import '../../../service/categorie_partner_service.dart';
 import '../../../widget/confirmation_dialog_box.dart';
 import '../../integration/popop_status.dart';
 import '../../integration/request_frot_behavior.dart';
@@ -23,11 +23,11 @@ import '../../../model/habilitation/role_model.dart';
  import 'detail_categorie.dart';
 
 class CategorieTable extends StatefulWidget {
-  final List<CategorieModel> categories;
+  final List<CategorieModel> partnerCategories;
   final Future<void> Function() refresh;
   const CategorieTable({
     super.key,
-    required this.categories,
+    required this.partnerCategories,
     required this.refresh,
   });
 
@@ -52,35 +52,35 @@ class _InputTableState extends State<CategorieTable> {
   }
 
   editLibelle({
-    required CategorieModel categorie,
+    required CategorieModel partnerCategorie,
   }) {
     showResponsiveDialog(
       context,
       content: EditCategoriePage(
-        categorie: categorie,
+        partnerCategorie: partnerCategorie,
         refresh: widget.refresh,
       ),
       title: "Modifier un moyen de paiement",
     );
   }
 
-  detailCategorie({required CategorieModel categorie}) {
+  detailCategorie({required CategorieModel partnerCategorie}) {
     showDetailDialog(
       context,
       content: DetailCategoriePage(
-        categorie: categorie,
+        partnerCategorie: partnerCategorie,
       ),
       title: "Détail de moyen de paiement",
     );
   }
 
   Future<void> deleteLibelle({
-    required CategorieModel categorie,
+    required CategorieModel partnerCategorie,
   }) async {
     bool confirmed = await handleOperationButtonPress(
       context,
       content:
-          "Voulez-vous vraiment supprimer le moyen de paiement \"${categorie.libelle}\"?",
+          "Voulez-vous vraiment supprimer le moyen de paiement \"${partnerCategorie.libelle}\"?",
     );
     if (confirmed) {
       _dialog.show(
@@ -89,14 +89,14 @@ class _InputTableState extends State<CategorieTable> {
         backgroundColor: Colors.transparent,
       );
 
-      RequestResponse result = await CategorieService.deleteCategorie(
-        key: categorie.id,
+      RequestResponse result = await CategorieService.deletePartnerCategorie(
+        key: partnerCategorie.key,
       );
       _dialog.hide();
       if (result.status == PopupStatus.success) {
         MutationRequestContextualBehavior.showPopup(
           status: PopupStatus.success,
-          customMessage: "Le categorie a été supprimé avec succcès",
+          customMessage: "Le partnerCategorie a été supprimé avec succcès",
         );
         await widget.refresh();
       } else {
@@ -147,43 +147,45 @@ class _InputTableState extends State<CategorieTable> {
                 1: const FixedColumnWidth(50)
               },
               children: [
-                ...widget.categories.map(
-                  (categorie) => TableRow(
+                ...widget.partnerCategories.map(
+                  (partnerCategorie) => TableRow(
                     decoration: tableDecoration(context),
                     children: [
                       TableBodyMiddle(
-                        valeur: categorie.libelle.toUpperCase(),
+                        valeur: partnerCategorie.libelle.toUpperCase(),
                       ),
                       TableBodyLast(
                         items: [
                           (
                             label: Constant.detail,
                             onTap: () {
-                              detailCategorie(categorie: categorie);
+                              detailCategorie(
+                                  partnerCategorie: partnerCategorie);
                             },
                             color: null, // couleur null
                           ),
                           if (hasPermission(
                             role: role,
                             permission: PermissionAlias
-                                .updateCategorieClient.label,
+                                .updatePartnerCategorie.label,
                           ))
                             (
                               label: Constant.edit,
                               onTap: () {
-                                editLibelle(categorie: categorie);
+                                editLibelle(partnerCategorie: partnerCategorie);
                               },
                               color: null, // couleur null
                             ),
                           if (hasPermission(
                             role: role,
                             permission: PermissionAlias
-                                .deleteCategorieClient.label,
+                                .deletePartnerCategorie.label,
                           ))
                             (
                               label: Constant.delete,
                               onTap: () {
-                                deleteLibelle(categorie: categorie);
+                                deleteLibelle(
+                                    partnerCategorie: partnerCategorie);
                               },
                               color: null, // couleur null
                             ),

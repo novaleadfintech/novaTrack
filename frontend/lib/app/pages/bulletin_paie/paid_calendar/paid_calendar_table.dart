@@ -95,7 +95,7 @@ class _PayCalendarTableState extends State<PayCalendarTable> {
 
       try {
         RequestResponse result = await PayCalendarService.changePeriodEtat(
-          key: periode.id!,
+          key: periode.key!,
           etat: etat,
         );
         _dialog.hide();
@@ -138,7 +138,7 @@ class _PayCalendarTableState extends State<PayCalendarTable> {
       );
 
       RequestResponse result = await PayCalendarService.deletePayCalendar(
-        key: payCalendar.id,
+        key: payCalendar.key,
       );
       _dialog.hide();
       if (result.status == PopupStatus.success) {

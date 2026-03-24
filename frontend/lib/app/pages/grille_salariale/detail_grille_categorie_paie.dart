@@ -2,22 +2,22 @@
  import '../../../../style/app_style.dart';
 import '../../../../widget/table_body_middle.dart';
 import '../../../model/grille_salariale/categorie_paie.dart'
-    show GrilleCategoriePaieModel;
+    show GrillepaieCategorieModel;
 
-class DetailGrilleCategoriePaiePage extends StatefulWidget {
-  final GrilleCategoriePaieModel grilleCategoriePaie;
-  const DetailGrilleCategoriePaiePage({
+class DetailGrillepaieCategoriePage extends StatefulWidget {
+  final GrillepaieCategorieModel grillepaieCategorie;
+  const DetailGrillepaieCategoriePage({
     super.key,
-    required this.grilleCategoriePaie,
+    required this.grillepaieCategorie,
   });
 
   @override
-  State<DetailGrilleCategoriePaiePage> createState() =>
-      _DetailGrilleCategoriePaiePageState();
+  State<DetailGrillepaieCategoriePage> createState() =>
+      _DetailGrillepaieCategoriePageState();
 }
 
-class _DetailGrilleCategoriePaiePageState
-    extends State<DetailGrilleCategoriePaiePage> {
+class _DetailGrillepaieCategoriePageState
+    extends State<DetailGrillepaieCategoriePage> {
   @override
   Widget build(BuildContext context) {
     return Table(
@@ -30,7 +30,7 @@ class _DetailGrilleCategoriePaiePageState
               isbold: true,
             ),
             TabledetailBodyMiddle(
-              valeur: widget.grilleCategoriePaie.libelle,
+              valeur: widget.grillepaieCategorie.libelle,
             ),
           ],
         ),
@@ -43,7 +43,7 @@ class _DetailGrilleCategoriePaiePageState
             ),
             Column(
               children: [
-                ...widget.grilleCategoriePaie.classes!.map(
+                ...widget.grillepaieCategorie.classes!.map(
                     (classe) => TabledetailBodyMiddle(valeur: classe.libelle))
               ],
             )

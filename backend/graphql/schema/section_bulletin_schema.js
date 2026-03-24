@@ -1,6 +1,6 @@
 const typeDef = `#graphql
 type SectionBulletin{
-    _id:ID!
+    _key:ID!
     section:String!
 }
 `;

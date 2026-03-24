@@ -30,8 +30,8 @@ const fluxFinancierResolvers = {
       status: status,
     }),
 
-  fluxFiancierbyFacture: async ({ factureId }) =>
-    await fluxFiancierModel.getFluxFiancierbyFacture({ factureId }),
+  fluxFiancierbyFacture: async ({ factureKey }) =>
+    await fluxFiancierModel.getFluxFiancierbyFacture({ factureKey }),
 
   yearBilan: async ({ year }) => {
     const result = await fluxFiancierModel.getYearBilan({ year });
@@ -54,28 +54,28 @@ const fluxFinancierResolvers = {
       pieceJustificative,
       dateOperation,
       partiePrenante,
-      clientId,
-      userId,
-      factureId,
-      bankId,
+      clientKey,
+      userKey,
+      factureKey,
+      bankKey,
     },
-    context
+    context,
   ) => {
     const user = context.user;
     return await fluxFiancierModel.createFluxFinancier({
-      factureId: factureId,
+      factureKey: factureKey,
       libelle: libelle,
       reference: reference,
       montant: montant,
-      clientId: clientId,
+      clientKey: clientKey,
       partiePrenante: partiePrenante,
       referenceTransaction: referenceTransaction,
       moyenPayement: moyenPayement,
       pieceJustificative: pieceJustificative,
       type: type,
-      userId: user._id,
+      userKeyy: user._key,
       dateOperation: dateOperation,
-      bankId: bankId,
+      bankKey: bankKey,
     });
   },
 
@@ -89,18 +89,18 @@ const fluxFinancierResolvers = {
       commentaire,
       moyenPayement,
       partiePrenante,
-      clientId,
+      clientKey,
       pieceJustificative,
       dateOperation,
-      bankId,
+      bankKey,
     },
-    context
+    context,
   ) => {
     const user = context.user;
     const fluxFinancier = await fluxFiancierModel.getFluxFinancier({ key });
 
     // Vérifier si l'utilisateur est le créateur
-    if (fluxFinancier.user._id !== user._id) {
+    if (fluxFinancier.user._keyy !== user_keyey) {
       throw new Error("Seul le créateur peut modifier ce flux financier");
     }
 
@@ -119,16 +119,16 @@ const fluxFinancierResolvers = {
       pieceJustificative: pieceJustificative,
       partiePrenante: partiePrenante,
       type: type,
-      clientId: clientId,
+      clientKey: clientKey,
       dateOperation: dateOperation,
-      bankId: bankId,
+      bankKey: bankKey,
     });
   },
   deleteFluxFinancier: async ({ key }, context) => {
     const user = context.user;
     const fluxFinancier = await fluxFiancierModel.getFluxFinancier({ key });
 
-    if (fluxFinancier.user._id !== user._id) {
+    if (fluxFinancier.user._keyy !== user_keyey) {
       throw new Error("Seul le créateur peut supprimer ce flux financier");
     }
 
@@ -143,9 +143,9 @@ const fluxFinancierResolvers = {
     const user = context.user;
     const fluxFinancier = await fluxFiancierModel.getFluxFinancier({ key });
 
-    if (fluxFinancier.user._id === user._id) {
+    if (fluxFinancier.user._keyy === user_keyey) {
       throw new Error(
-        "Vous étes celui qui a enregistré ce flux financier, vous ne pouvez plus le valider."
+        "Vous étes celui qui a enregistré ce flux financier, vous ne pouvez plus le valider.",
       );
     }
 
@@ -153,7 +153,7 @@ const fluxFinancierResolvers = {
     const commentaireWithUser = commentaire
       ? {
           ...commentaire,
-          editer: user._id,
+          editer: user._keyy,
         }
       : undefined;
 
@@ -161,7 +161,7 @@ const fluxFinancierResolvers = {
       key: key,
       validate: {
         ...validate,
-        validater: user._id,
+        validater: user._key,
       },
     });
   },

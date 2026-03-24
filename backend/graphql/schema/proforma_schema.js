@@ -8,7 +8,7 @@ enum StatusProforma {
 }
 
 type Proforma {
-    _id: ID!
+    _key: ID!
     reference: String! 
     reduction: Reduction!
     tva: Boolean!
@@ -27,7 +27,7 @@ const query = `#graphql
    proformas(skip: Int, perPage: Int,): [Proforma]!
    archivedProformas: [Proforma]!
    Proforma(key: String!): Proforma!
-   proformaByClient(clientId: String!): [Proforma]!
+   proformaByClient(clientKey: String!): [Proforma]!
 `;
 
 const mutation = `#graphql
@@ -36,7 +36,7 @@ const mutation = `#graphql
         garantyTime: Float
         dateEnvoie: Float
         tva: Boolean
-        clientId: String!
+        clientKey: String!
         ligneProformas: [LigneProformaInput!]
     ): String!
 
@@ -47,21 +47,21 @@ const mutation = `#graphql
         dateEnvoie: Float
         reduction: ReductionInput
         tva: Boolean
-        clientId: String
+        clientKeyy: String
         status: StatusProforma
     ): String!
     
     deleteProforma(key: ID!): String!
     
-    validerProforma(key: ID!, dateEtablissementFacture: Float, facturesAcompte: [FactureAcompteInput!]!, banquesIds: [String!]!,): String!
+    validerProforma(key: ID!, dateEtablissementFacture: Float, facturesAcompte: [FactureAcompteInput!]!, banquesKeys: [String!]!,): String!
 
     annulerValidationProforma(key: ID!): String!
 
     annulerProformaProformat(key: ID!): String!
 
     ajouterLigneProforma(
-        proformaId: String!,
-        serviceId: String!,
+        proformaKey: String!,
+        serviceKeyy: String!,
         designation: String!,
         unit: String!
         prixSupplementaire: Float,

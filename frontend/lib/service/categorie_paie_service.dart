@@ -9,13 +9,13 @@ import 'package:http/http.dart' as http;
 
 import 'request_header.dart';
 
-class CategoriePaieService {
-  static Future<List<CategoriePaieModel>> getPaieCategories() async {
+class paieCategorieService {
+  static Future<List<paieCategorieModel>> getPaieCategories() async {
     var body = '''
       query CategoriesPaie {
     categoriesPaie {
-        _id
-        categoriePaie
+        _key
+        paieCategorie
     }
 }
     ''';
@@ -38,12 +38,12 @@ class CategoriePaieService {
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
       var data = jsonData['data']['categoriesPaie'];
-      List<CategoriePaieModel> categoriepaies = [];
+      List<paieCategorieModel> paieCategories = [];
       if (data != null) {
         for (var category in data) {
-          categoriepaies.add(CategoriePaieModel.fromJson(category));
+          paieCategories.add(paieCategorieModel.fromJson(category));
         }
-        return categoriepaies;
+        return paieCategories;
       } else {
         throw RequestMessage.failgettingDataMessage;
       }
@@ -52,12 +52,12 @@ class CategoriePaieService {
     }
   }
 
-  static Future<RequestResponse> createCategoriePaie({
-    required String categoriePaie,
+  static Future<RequestResponse> createpaieCategorie({
+    required String paieCategorie,
   }) async {
     var body = '''
-      mutation CreateCategoriePaie {
-    createCategoriePaie(categoriePaie: "$categoriePaie")
+      mutation CreatepaieCategorie {
+    createpaieCategorie(paieCategorie: "$paieCategorie")
 }
 
     ''';
@@ -75,7 +75,7 @@ class CategoriePaieService {
 
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
-        var data = jsonData['data']['createCategoriePaie'];
+        var data = jsonData['data']['createpaieCategorie'];
         if (data == RequestMessage.success) {
           return RequestResponse(
             message: RequestMessage.successMessage,
@@ -102,11 +102,11 @@ class CategoriePaieService {
   }
 
   // Méthode pour créer une nouvelle catégorie
-  static Future<RequestResponse> upadateCategoriePaie(
-      {required String categoriePaie, required String key}) async {
+  static Future<RequestResponse> upadatepaieCategorie(
+      {required String paieCategorie, required String key}) async {
     var body = '''
-mutation UpdateCategoriePaie {
-    updateCategoriePaie(key: "$key", categoriePaie: "$categoriePaie")
+mutation UpdatepaieCategorie {
+    updatepaieCategorie(key: "$key", paieCategorie: "$paieCategorie")
 }
     ''';
 
@@ -123,7 +123,7 @@ mutation UpdateCategoriePaie {
 
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
-        var data = jsonData['data']['updateCategoriePaie'];
+        var data = jsonData['data']['updatepaieCategorie'];
         if (data == RequestMessage.success) {
           return RequestResponse(
             message: RequestMessage.successMessage,
@@ -149,12 +149,12 @@ mutation UpdateCategoriePaie {
     }
   }
 
-  static Future<RequestResponse> deleteCategoriePaie({
+  static Future<RequestResponse> deletepaieCategorie({
     required String key,
   }) async {
     var body = '''
-      mutation DeleteCategoriePaie {
-    deleteCategoriePaie(key: "$key")
+      mutation DeletepaieCategorie {
+    deletepaieCategorie(key: "$key")
 }
     ''';
 

@@ -280,7 +280,7 @@ class _EditRubriquePageState extends State<EditRubriquePage> {
 
     try {
       var result = await BulletinRubriqueService.updateBulletinRubrique(
-        key: widget.rubrique.id,
+        key: widget.rubrique.key,
         rubrique: _rubriqueController.text,
         bareme: _bareme,
         calcul: _calcul,

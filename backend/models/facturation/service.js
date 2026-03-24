@@ -19,7 +19,7 @@ class Service {
 
   async initializeCollections() {
     if (!(await serviceCollection.exists())) {
-      serviceCollection.create();
+     await serviceCollection.create();
     }
   }
 
@@ -166,8 +166,8 @@ class Service {
       //     const query = await db.query(
       //       aql`
       //         FOR ligneProforma IN ${ligneProformaCollection}
-      //           FILTER ligneProforma._from == ${updatedService._id}
-      //           LET proforma = DOCUMENT(ligneProforma._to)
+      //           FILTER ligneProforma.serviceKey == ${updatedService._key}
+      //           LET proforma = DOCUMENT(ligneProforma.proformaKey)
       //           FILTER proforma.garantyTime == 0
       //           OR (${Date.now()} - proforma.dateEnvoie) >= proforma.garantyTime
       //           RETURN ligneProforma
@@ -180,11 +180,10 @@ class Service {
       //           service: updatedService,
       //         };
 
-      //         ligneProformaCollection.update(ligneProforma._id, updatedData);
+      //         ligneProformaCollection.update(ligneProforma._key, updatedData);
       //       })
       //     );
-      //     print("Ok");
-      //   } catch (error) {}
+       //   } catch (error) {}
       // }, 0);
       await serviceCollection.update(key, updateField);
       return "OK";

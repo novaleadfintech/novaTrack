@@ -128,7 +128,7 @@ class _FactureTileState extends State<FactureTile> {
                           refresh: widget.refresh,
                           factureAcompte: acompte,
                           dateEtablissement: facture.dateEtablissementFacture!,
-                          factureId: widget.facture.id,
+                          factureKey: widget.facture.key,
                         ),
                         title:
                             "Modifier la facture d'acompte N°${acompte.rang}",
@@ -175,7 +175,7 @@ class _FactureTileState extends State<FactureTile> {
 
     try {
       RequestResponse result =
-          await FactureService.deleteFacture(factureId: facture.id);
+          await FactureService.deleteFacture(factureKey: facture.key);
       _dialog.hide();
       MutationRequestContextualBehavior.showPopup(
         status: result.status,
@@ -352,7 +352,7 @@ class _FactureTileState extends State<FactureTile> {
                     RequestResponse result =
                         await FactureService.updateFactureAccompte(
                       datePayementEcheante: delaisPayement!,
-                      factureId: widget.facture.id,
+                      factureKey: widget.facture.key,
                       rang: rang,
                     );
                     if (result.status == PopupStatus.success) {

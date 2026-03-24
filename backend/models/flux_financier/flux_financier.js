@@ -32,7 +32,7 @@ class FluxFinancier {
 
   async initializeCollections() {
     if (!(await fluxFinancierCollection.exists())) {
-      fluxFinancierCollection.create();
+      await fluxFinancierCollection.create();
     }
   }
   getAllFluxFinanciers = async ({ perPage, skip, type }) => {
@@ -82,12 +82,12 @@ class FluxFinancier {
           return {
             ...fluxFinancier,
             validate: validate,
-            user: await userModel.getUser({ key: fluxFinancier.userId }),
+            user: await userModel.getUser({ key: fluxFinancier.userKey }),
             client:
-              fluxFinancier.clientId == null
+              fluxFinancier.clientKey == null
                 ? null
                 : await clientModel.getClient({
-                    key: fluxFinancier.clientId,
+                    key: fluxFinancier.clientKey,
                   }),
 
             pieceJustificative:
@@ -135,12 +135,12 @@ class FluxFinancier {
           return {
             ...fluxFinancier,
             validate: validate,
-            user: await userModel.getUser({ key: fluxFinancier.userId }),
+            user: await userModel.getUser({ key: fluxFinancier.userKey }),
             client:
-              fluxFinancier.clientId == null
+              fluxFinancier.clientKey == null
                 ? null
                 : await clientModel.getClient({
-                    key: fluxFinancier.clientId,
+                    key: fluxFinancier.clientKey,
                   }),
 
             pieceJustificative:
@@ -196,12 +196,12 @@ class FluxFinancier {
           return {
             ...fluxFinancier,
             validate: validate,
-            user: await userModel.getUser({ key: fluxFinancier.userId }),
+            user: await userModel.getUser({ key: fluxFinancier.userKey }),
             client:
-              fluxFinancier.clientId == null
+              fluxFinancier.clientKey == null
                 ? null
                 : await clientModel.getClient({
-                    key: fluxFinancier.clientId,
+                    key: fluxFinancier.clientKey,
                   }),
 
             pieceJustificative: fluxFinancier.pieceJustificative
@@ -257,12 +257,12 @@ class FluxFinancier {
           return {
             ...fluxFinancier,
             validate: validate,
-            user: await userModel.getUser({ key: fluxFinancier.userId }),
+            user: await userModel.getUser({ key: fluxFinancier.userKey }),
             client:
-              fluxFinancier.clientId == null
+              fluxFinancier.clientKey == null
                 ? null
                 : await clientModel.getClient({
-                    key: fluxFinancier.clientId,
+                    key: fluxFinancier.clientKey,
                   }),
 
             pieceJustificative: fluxFinancier.pieceJustificative
@@ -282,7 +282,7 @@ class FluxFinancier {
   getFluxFinanciersByDateAndBank = async ({ debut, fin, banque, status }) => {
     try {
       const filtre = aql`
-      FILTER fluxFinancier.bank._id == ${banque}
+      FILTER fluxFinancier.bank._key == ${banque}
       AND fluxFinancier.dateOperation >= ${debut}
       AND fluxFinancier.dateOperation <= ${fin}
       ${
@@ -306,12 +306,12 @@ class FluxFinancier {
         fluxFinanciers.map(async (fluxFinancier) => {
           return {
             ...fluxFinancier,
-            user: await userModel.getUser({ key: fluxFinancier.userId }),
+            user: await userModel.getUser({ key: fluxFinancier.userKey }),
             client:
-              fluxFinancier.clientId == null
+              fluxFinancier.clientKey == null
                 ? null
                 : await clientModel.getClient({
-                    key: fluxFinancier.clientId,
+                    key: fluxFinancier.clientKey,
                   }),
 
             pieceJustificative:
@@ -363,10 +363,10 @@ class FluxFinancier {
             ...fluxFinancier,
             validate: validate,
             client:
-              fluxFinancier.clientId == null
+              fluxFinancier.clientKey == null
                 ? null
                 : await clientModel.getClient({
-                    key: fluxFinancier.clientId,
+                    key: fluxFinancier.clientKey,
                   }),
             pieceJustificative:
               fluxFinancier.pieceJustificative !== null
@@ -399,11 +399,11 @@ class FluxFinancier {
       return {
         ...fluxFinancier,
         validate: validate,
-        user: await userModel.getUser({ key: fluxFinancier.userId }),
+        user: await userModel.getUser({ key: fluxFinancier.userKey }),
         client:
-          fluxFinancier.clientId == null
+          fluxFinancier.clientKey == null
             ? null
-            : await clientModel.getClient({ key: fluxFinancier.clientId }),
+            : await clientModel.getClient({ key: fluxFinancier.clientKey }),
         pieceJustificative:
           fluxFinancier.pieceJustificative !== null
             ? process.env.FILE_PREFIX +
@@ -417,10 +417,10 @@ class FluxFinancier {
     }
   };
 
-  getFluxFiancierbyDecouvert = async ({ decouvertId }) => {
+  getFluxFiancierbyDecouvert = async ({ decouvertKey }) => {
     let precision = aql`SORT payement.dateEnregistrement DESC`;
-    if (decouvertId !== undefined) {
-      precision = aql`FILTER payement.decouvertId == ${decouvertId} SORT payement.dateEnregistrement ASC`;
+    if (decouvertKey !== undefined) {
+      precision = aql`FILTER payement.decouvertKey == ${decouvertKey} SORT payement.dateEnregistrement ASC`;
     }
     const query = await db.query(
       aql`FOR payement IN ${fluxFinancierCollection} ${precision} RETURN payement`,
@@ -440,11 +440,11 @@ class FluxFinancier {
       return {
         ...fluxFinancier,
         validate: validate,
-        user: await userModel.getUser({ key: fluxFinancier.userId }),
+        user: await userModel.getUser({ key: fluxFinancier.userKey }),
         client:
-          fluxFinancier.clientId == null
+          fluxFinancier.clientKey == null
             ? null
-            : await clientModel.getClient({ key: fluxFinancier.clientId }),
+            : await clientModel.getClient({ key: fluxFinancier.clientKey }),
         pieceJustificative:
           fluxFinancier.pieceJustificative !== null
             ? process.env.FILE_PREFIX +
@@ -455,10 +455,10 @@ class FluxFinancier {
     }
   };
 
-  getFluxFiancierbyforFactureInformation = async ({ factureId }) => {
+  getFluxFiancierbyforFactureInformation = async ({ factureKey }) => {
     let precision = aql`SORT payement.dateEnregistrement DESC`;
-    if (factureId !== undefined) {
-      precision = aql`FILTER payement.factureId == ${factureId} SORT payement.dateEnregistrement ASC`;
+    if (factureKey !== undefined) {
+      precision = aql`FILTER payement.factureKey == ${factureKey} SORT payement.dateEnregistrement ASC`;
     }
     const query = await db.query(
       aql`FOR payement IN ${fluxFinancierCollection} ${precision}  RETURN payement`,
@@ -483,11 +483,11 @@ class FluxFinancier {
           return {
             ...payement,
             validate: validate,
-            user: await userModel.getUser({ key: payement.userId }),
+            user: await userModel.getUser({ key: payement.userKey }),
             client:
-              payement.clientId == null
+              payement.clientKey == null
                 ? null
-                : await clientModel.getClient({ key: payement.clientId }),
+                : await clientModel.getClient({ key: payement.clientKey }),
             pieceJustificative:
               payement.pieceJustificative !== null
                 ? process.env.FILE_PREFIX +
@@ -502,10 +502,10 @@ class FluxFinancier {
     }
   };
 
-  getFluxFiancierbyFacture = async ({ factureId }) => {
+  getFluxFiancierbyFacture = async ({ factureKey }) => {
     let precision = aql`SORT payement.dateEnregistrement DESC`;
-    if (factureId !== undefined) {
-      precision = aql`FILTER payement.factureId == ${factureId} AND payement.status != ${FluxFinancierStatus.reject}  SORT payement.dateEnregistrement ASC`;
+    if (factureKey !== undefined) {
+      precision = aql`FILTER payement.factureKey == ${factureKey} AND payement.status != ${FluxFinancierStatus.reject}  SORT payement.dateEnregistrement ASC`;
     }
     const query = await db.query(
       aql`FOR payement IN ${fluxFinancierCollection} ${precision}  RETURN payement`,
@@ -530,11 +530,11 @@ class FluxFinancier {
           return {
             ...payement,
             validate: validate,
-            user: await userModel.getUser({ key: payement.userId }),
+            user: await userModel.getUser({ key: payement.userKey }),
             client:
-              payement.clientId == null
+              payement.clientKey == null
                 ? null
-                : await clientModel.getClient({ key: payement.clientId }),
+                : await clientModel.getClient({ key: payement.clientKey }),
             pieceJustificative:
               payement.pieceJustificative !== null
                 ? process.env.FILE_PREFIX +
@@ -556,14 +556,14 @@ class FluxFinancier {
     moyenPayement,
     pieceJustificative,
     referenceTransaction,
-    userId,
+    userKey,
     partiePrenante,
-    clientId,
-    factureId,
-    decouvertId,
+    clientKey,
+    factureKey,
+    decouvertKey,
     isFromSystem = false,
-    bankId,
-    bulletinId,
+    bankKey,
+    bulletinKey,
     dateOperation = Date.now(),
   }) => {
     isValidValue({
@@ -571,9 +571,9 @@ class FluxFinancier {
         libelle,
         montant,
         moyenPayement,
-        userId,
-        // clientId,
-        bankId,
+        userKey,
+        // clientKey,
+        bankKey,
         referenceTransaction,
       ],
     });
@@ -582,8 +582,8 @@ class FluxFinancier {
       write: ["fluxFinanciers", "banques"],
     });
 
-    if (clientId != undefined) {
-      await clientModel.isExistClient({ key: clientId });
+    if (clientKey != undefined) {
+      await clientModel.isExistClient({ key: clientKey });
     }
 
     const query = await db.query(
@@ -621,7 +621,7 @@ class FluxFinancier {
         }
       }
       // Étape 2 : Vérifier l'existence des sources de paiement
-      const banque = await BanqueModel.getBanque({ key: bankId });
+      const banque = await BanqueModel.getBanque({ key: bankKey });
       const { logo, ...otherdata } = banque;
       if (logo != null) {
         otherdata.logo = logo.replace(
@@ -630,7 +630,7 @@ class FluxFinancier {
         );
       }
 
-      await userModel.isExistUser({ key: userId });
+      await userModel.isExistUser({ key: userKey });
 
       // Étape 3 : Créer le flux financier
       const newFluxfinancier = {
@@ -642,21 +642,21 @@ class FluxFinancier {
         moyenPayement: moyenPayement,
         dateEnregistrement: Date.now(),
         pieceJustificative: filePath ? filePath.replace(/\\/g, "/") : null,
-        userId: userId,
+        userKey: userKey,
         partiePrenante: partiePrenante,
-        clientId: clientId,
+        clientKey: clientKey,
         status: FluxFinancierStatus.wait,
-        factureId: factureId,
+        factureKey: factureKey,
         bank: otherdata,
         isFromSystem: isFromSystem,
-        decouvertId: decouvertId,
+        decouvertKey: decouvertKey,
         dateOperation: dateOperation,
-        bulletinId: bulletinId,
+        bulletinKey: bulletinKey,
       };
 
       await session.step(async () => {
         await this.updateBanqueTheoriqueSolde({
-          bankId: bankId,
+          bankKey: bankKey,
           type: type,
           montant: montant,
         });
@@ -678,9 +678,9 @@ class FluxFinancier {
     key,
     libelle,
     montant,
-    bankId,
+    bankKey,
     partiePrenante,
-    clientId,
+    clientKey,
     referenceTransaction,
     moyenPayement,
     pieceJustificative,
@@ -698,36 +698,36 @@ class FluxFinancier {
         throw new Error("Ce flux financier n'est pas modifiable");
       }
       const ancienMontant = flux.montant;
-      const ancienneBanqueId = flux.bank?._id;
+      const ancienneBanqueKey = flux.bank?._key;
       const montantUtilise = montant ?? ancienMontant;
 
       await session.step(async () => {
         if (flux.status === FluxFinancierStatus.wait) {
-          if (bankId) {
-            const nouvelleBanqueId = bankId;
-            // const ancienneBanque = await BanqueModel.getBanque({ key: ancienneBanqueId });
+          if (bankKey) {
+            const nouvelleBanqueKey = bankKey;
+            // const ancienneBanque = await BanqueModel.getBanque({ key: ancienneBanqueKey });
             const nouvelleBanque = await BanqueModel.getBanque({
-              key: nouvelleBanqueId,
+              key: nouvelleBanqueKey,
             });
             if (flux.type === FluxFinancierType.input) {
               await this.updateBanqueTheoriqueSolde({
-                bankId: ancienneBanqueId,
+                bankKey: ancienneBanqueKey,
                 montant: ancienMontant,
                 type: FluxFinancierType.output,
               });
               await this.updateBanqueTheoriqueSolde({
-                bankId: nouvelleBanqueId,
+                bankKey: nouvelleBanqueKey,
                 montant: montantUtilise,
                 type: FluxFinancierType.input,
               });
             } else if (flux.type === FluxFinancierType.output) {
               await this.updateBanqueTheoriqueSolde({
-                bankId: ancienneBanqueId,
+                bankKey: ancienneBanqueKey,
                 montant: ancienMontant,
                 type: FluxFinancierType.input,
               });
               await this.updateBanqueTheoriqueSolde({
-                bankId: nouvelleBanqueId,
+                bankKey: nouvelleBanqueKey,
                 montant: montantUtilise,
                 type: FluxFinancierType.output,
               });
@@ -743,16 +743,16 @@ class FluxFinancier {
             updateField.bank = otherdata;
           }
         } else {
-          bankId = flux.bank._id;
+          bankKey = flux.bank._key;
           if (flux.type === FluxFinancierType.input) {
             await this.updateBanqueTheoriqueSolde({
-              bankId: bankId,
+              bankKey: bankKey,
               montant: montantUtilise,
               type: FluxFinancierType.input,
             });
           } else if (flux.type === FluxFinancierType.output) {
             await this.updateBanqueTheoriqueSolde({
-              bankId: bankId,
+              bankKey: bankKey,
               montant: montantUtilise,
               type: FluxFinancierType.output,
             });
@@ -762,10 +762,10 @@ class FluxFinancier {
 
         if (libelle !== undefined) updateField.libelle = libelle;
         console.log();
-        if (clientId !== undefined) {
-          (await clientId) != null ??
-            clientModel.isExistClient({ key: clientId });
-          updateField.clientId = clientId;
+        if (clientKey !== undefined) {
+          (await clientKey) != null ??
+            clientModel.isExistClient({ key: clientKey });
+          updateField.clientKey = clientKey;
         }
         if (partiePrenante !== undefined)
           updateField.partiePrenante = partiePrenante;
@@ -875,29 +875,29 @@ class FluxFinancier {
     }
   };
 
-  async updateBanqueTheoriqueSolde({ bankId, type, montant }) {
-    const banque = await BanqueModel.getBanque({ key: bankId });
+  async updateBanqueTheoriqueSolde({ bankKey, type, montant }) {
+    const banque = await BanqueModel.getBanque({ key: bankKey });
 
     if (type === FluxFinancierType.output) {
       await BanqueModel.resetBanqueAmount({
-        key: banque._id,
+        key: banque._key,
         soldeTheorique: banque.soldeTheorique - montant,
       });
     } else {
       await BanqueModel.resetBanqueAmount({
-        key: banque._id,
+        key: banque._key,
         soldeTheorique: banque.soldeTheorique + montant,
       });
     }
   }
 
-  async updateBanqueReelSolde({ bankId, type, montant }) {
-    const banque = await BanqueModel.getBanque({ key: bankId });
+  async updateBanqueReelSolde({ bankKey, type, montant }) {
+    const banque = await BanqueModel.getBanque({ key: bankKey });
     const sommeBanquaire = banque.soldeReel;
     if (type == FluxFinancierType.output) {
       if (sommeBanquaire >= montant) {
         await BanqueModel.resetBanqueAmount({
-          key: banque._id,
+          key: banque._key,
           soldeReel: banque.soldeReel - montantRestant,
         });
       } else {
@@ -907,7 +907,7 @@ class FluxFinancier {
       }
     } else {
       await BanqueModel.resetBanqueAmount({
-        key: banque._id,
+        key: banque._key,
         soldeReel: banque.soldeReel + montant,
       });
     }

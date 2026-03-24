@@ -93,7 +93,7 @@ class _SectionTableState extends State<SectionTable> {
       );
 
       RequestResponse result = await SectionService.deleteSection(
-        key: section.id,
+        key: section.key,
       );
       _dialog.hide();
       if (result.status == PopupStatus.success) {

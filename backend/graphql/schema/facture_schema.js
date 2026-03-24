@@ -27,7 +27,7 @@ type OldPenalty {
 #     montant: Float! 
 # }
 type Facture {
-    _id: ID!
+    _key: ID!
     reference: String! 
     reduction: Reduction!
     tva: Boolean!
@@ -59,11 +59,11 @@ type Facture {
 const query = `#graphql
     paidFactures(skip: Int, perPage: Int): [Facture]!
     facture(key: String!): Facture!
-    factureByClient(clientId: String!): [Facture]!
+    factureByClient(clientKey: String!): [Facture]!
     unpaidFacture(skip: Int, perPage: Int): [Facture]!
     blockedInvoice(skip: Int, perPage: Int): [Facture]!
     payementFacture(skip: Int, perPage: Int): [Facture]!
-    recurrentFactureByClient(clientId: String!):[Facture]!
+    recurrentFactureByClient(clientKey: String!):[Facture]!
     newRecurrentFacture(skip: Int, perPage: Int):[Facture]!
 `;
 
@@ -75,11 +75,11 @@ const mutation = `#graphql
         type:TypeFacture
         tva: Boolean
         facturesAcompte: [FactureAcompteInput]
-        clientId: String!
+        clientKey: String!
         generatePeriod: Float
         ligneFactures: [LigneFactureInput!]
         delaisPayment: Float
-        banquesIds: [String!]!
+        banquesKeys: [String!]!
     ): String!
 
     updateFacture(
@@ -89,10 +89,10 @@ const mutation = `#graphql
         dateDebutFacturation:Float
         reduction: ReductionInput
         tva: Boolean
-        clientId: String
+        clientKey: String
         generatePeriod: Float
         delaisPayment: Float
-        banquesIds: [String]
+        banquesKeys: [String]
         facturesAcompte: [FactureAcompteInput]
         commentaire: CommentaireInput
     ): String!
@@ -110,7 +110,7 @@ const mutation = `#graphql
     deleteFacture(key: ID!): String!
     
     stopperService(secretekey: String!): String!
-    restartService(factureId: String!, secretekey: String!): String!
+    restartService(factureKey: String!, secretekey: String!): String!
 
     ajouterPayement(
         key: ID!,
@@ -118,15 +118,15 @@ const mutation = `#graphql
         moyenPayement: MoyenPaiementInput!,
         pieceJustificative: Upload,
         referenceTransaction: String!
-        userId: String,
-        clientId: String!,
-        bankId: String!
+        userKey: String,
+        clientKey: String!,
+        bankKey: String!
         dateOperation: Float
     ): String!
 
     ajouterLigneFacture(
-        factureId: String!,
-        serviceId: String!,
+        factureKey: String!,
+        serviceKey: String!,
         designation: String!,
         unit: String!
         quantite: Int,

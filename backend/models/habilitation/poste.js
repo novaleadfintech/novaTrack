@@ -10,7 +10,7 @@ class Poste {
 
   async initializeCollections() {
     if (!(await posteCollection.exists())) {
-      posteCollection.create();
+    await posteCollection.create();
     }
   }
 

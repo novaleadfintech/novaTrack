@@ -13,10 +13,10 @@ const clientResolvers = {
       nature: nature,
     }),
 
-  // Récupérer un client par son ID
+  // Récupérer un client par son KEY
   client: async ({ key }) => await clientModel.getClient({ key: key }),
 
-  // Récupérer tous les clients moraux par son ID
+  // Récupérer tous les clients moraux par son KEY
   clientMoraux: async ({ skip, perPage }) =>
     await clientModel.getClientMoraux({ perPage: perPage, skip: skip }),
   unarchivedClientsAndProspects: ({ skip, perPage }) =>
@@ -38,13 +38,13 @@ const clientResolvers = {
     telephone,
     adresse,
     pays,
-    categorieId,
+    partnerCategorieKey,
     etat = "unarchived",
     responsable,
   }) =>
     await clientModel.createClientMoral({
       adresse: adresse,
-      categorieId: categorieId,
+      partnerCategorieKey: partnerCategorieKey,
       email: email,
       logo: logo,
       nature: nature,
@@ -89,13 +89,13 @@ const clientResolvers = {
     telephone,
     adresse,
     pays,
-    categorieId,
+    partnerCategorieKey,
     responsable,
   }) =>
     await clientModel.updateClientMoral({
       key: key,
       adresse: adresse,
-      categorieId: categorieId,
+      partnerCategorieKey: partnerCategorieKey,
       email: email,
       nature: nature,
       logo: logo,
@@ -129,11 +129,11 @@ const clientResolvers = {
       telephone: telephone,
     }),
 
-  // Archiver un client par son ID
+  // Archiver un client par son KEY
   archivedClient: async ({ key }) =>
     await clientModel.archivedClient({ key: key }),
 
-  // Réactiver un client archivé par son ID
+  // Réactiver un client archivé par son KEY
   unarchivedClient: async ({ key }) =>
     await clientModel.unarchivedClient({ key: key }),
 };

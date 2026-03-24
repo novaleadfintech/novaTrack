@@ -16,8 +16,8 @@ export const hasPermission = (permissionAlias) =>
     const allPermissions = [];
 
     for (const userRole of roles) {
-       const permissions = await PermissionModel.getAllPermissionsByRoleForUser({
-        roleId: userRole.role._id,
+      const permissions = await PermissionModel.getAllPermissionsByRoleForUser({
+        roleKey: userRole.role._key,
       });
       const aliases = permissions.map((p) => p.alias);
       allPermissions.push(...aliases);
@@ -40,25 +40,28 @@ const isAuthenticated = rule()(async (parent, args, context, info) => {
   return true;
 });
 
-const isSelf = rule({ cache: "contextual" })(
-  async (parent, args, context, info) => {
-    const currentUserId = context?.user?._id;
+const isSelf = rule({ cache: "contextual" })(async (
+  parent,
+  args,
+  context,
+  info,
+) => {
+  const currentUserKey = context?.user?._key;
 
-    const targetUserId = args?.userId || args?.id || args?.key;
+  const targetUserKey = args?.userKey || args?.key || args?.key;
 
-    if (!currentUserId) {
-      return new Error("Vous devez être connecté pour effectuer cette action.");
-    }
-
-    if (currentUserId !== targetUserId) {
-      return new Error(
-        "Accès refusé : vous ne pouvez voir que vos propres données."
-      );
-    }
-
-    return true;
+  if (!currentUserKey) {
+    return new Error("Vous devez être connecté pour effectuer cette action.");
   }
-);
+
+  if (currentUserKey !== targetUserKey) {
+    return new Error(
+      "Accès refusé : vous ne pouvez voir que vos propres données.",
+    );
+  }
+
+  return true;
+});
 
 const permissions = shield(
   {
@@ -76,8 +79,8 @@ const permissions = shield(
       banques: hasPermission(PermissionAlias.readBanque),
       banque: hasPermission(PermissionAlias.readBanque),
       // protection pour les requete de catégorie
-      categories: isAuthenticated,
-      categorie: isAuthenticated,
+      partnerCategories: isAuthenticated,
+      partnerCategorie: isAuthenticated,
       //protection pour les requete de client
       clients: hasPermission(PermissionAlias.readClient),
       client: hasPermission(PermissionAlias.readClient),
@@ -130,25 +133,25 @@ const permissions = shield(
       proformaByClient: hasPermission(PermissionAlias.readProforma),
 
       //Protection pour les permission
-      permissions: hasPermission(PermissionAlias.assignPermissionRole),
-      permission: hasPermission(PermissionAlias.assignPermissionRole),
-      permissionByRole: hasPermission(PermissionAlias.assignPermissionRole),
+      // permissions: hasPermission(PermissionAlias.assignPermissionRole),
+      // permission: hasPermission(PermissionAlias.assignPermissionRole),
+      // permissionByRole: hasPermission(PermissionAlias.assignPermissionRole),
       //Protection pour le personnel
       personnels: hasPermission(PermissionAlias.readPersonnel),
       personnel: hasPermission(PermissionAlias.readPersonnel),
       //Protection pour roles
-      roles: hasPermission(PermissionAlias.assignPermissionRole),
-      role: hasPermission(PermissionAlias.assignPermissionRole),
+      // roles: hasPermission(PermissionAlias.assignPermissionRole),
+      // role: hasPermission(PermissionAlias.assignPermissionRole),
       // bulletins
       currentBulletinsPaie: hasPermission(PermissionAlias.readBulletin),
       archiveBulletinsPaie: hasPermission(PermissionAlias.readBulletin),
       bulletinPaie: hasPermission(PermissionAlias.readBulletin),
+      // partnerCategorie de paie
+      // categoriesPaie: hasPermission(PermissionAlias.readpaieCategorie),
+      // paieCategorie: hasPermission(PermissionAlias.readpaieCategorie),
       // Categorie de paie
-      // categoriesPaie: hasPermission(PermissionAlias.readCategoriePaie),
-      // categoriePaie: hasPermission(PermissionAlias.readCategoriePaie),
-      // Categorie de paie
-      categories: hasPermission(PermissionAlias.readCategorieClient),
-      categorie: hasPermission(PermissionAlias.readCategorieClient),
+      partnerCategories: hasPermission(PermissionAlias.readPartnerCategorie),
+      partnerCategorie: hasPermission(PermissionAlias.readPartnerCategorie),
       // Moyen de paiement
       moyensPaiement: hasPermission(PermissionAlias.readMoyenPaiement),
       moyenPaiement: hasPermission(PermissionAlias.readMoyenPaiement),
@@ -200,9 +203,9 @@ const permissions = shield(
       createBanque: hasPermission(PermissionAlias.createBanque),
       updateBanque: hasPermission(PermissionAlias.updateBanque),
       //Mutation de catégorie
-      createCategorie: isAuthenticated,
-      updateCategorie: isAuthenticated,
-      // deleteCategorie: isAuthenticated,
+      createPartnerCategorie: isAuthenticated,
+      updatePartnerCategorie: isAuthenticated,
+      // deletePartnerCategorie: isAuthenticated,
       //Mutation de client
       createClientMoral: hasPermission(PermissionAlias.createClient),
       createClientPhysique: hasPermission(PermissionAlias.createClient),
@@ -285,28 +288,32 @@ const permissions = shield(
       updateBulletinPaie: hasPermission(PermissionAlias.updateBulletin),
       validerBulletin: hasPermission(PermissionAlias.validBulletin),
       // Mutation de categorie de bulletin
-      createCategorieBulletin: hasPermission(
-        PermissionAlias.createCategorieBulletin,
+      createBulletinCategorie: hasPermission(
+        PermissionAlias.createBulletinCategorie,
       ),
-      updateCategorieBulletin: hasPermission(
-        PermissionAlias.updateCategorieBulletin,
+      updateBulletinCategorie: hasPermission(
+        PermissionAlias.updateBulletinCategorie,
       ),
-      deleteCategorieBulletin: hasPermission(
-        PermissionAlias.deleteCategorieBulletin,
+      deleteBulletinCategorie: hasPermission(
+        PermissionAlias.deleteBulletinCategorie,
       ),
 
       // Mutation de categorie de paie
-      createCategoriePaie: hasPermission(PermissionAlias.createCategoriePaie),
-      updateCategoriePaie: hasPermission(
-        PermissionAlias.updateCategorieBulletin,
+      createpaieCategorie: hasPermission(PermissionAlias.createpaieCategorie),
+      updatepaieCategorie: hasPermission(
+        PermissionAlias.updateBulletinCategorie,
       ),
-      deleteCategorieBulletin: hasPermission(
-        PermissionAlias.deleteCategorieBulletin,
+      deleteBulletinCategorie: hasPermission(
+        PermissionAlias.deleteBulletinCategorie,
       ),
       // Mutation de categorie de client
-      createCategorie: hasPermission(PermissionAlias.createCategorieClient),
-      updateCategorie: hasPermission(PermissionAlias.updateCategorieClient),
-      deleteCateforie: hasPermission(PermissionAlias.deleteCategorieClient),
+      createPartnerCategorie: hasPermission(
+        PermissionAlias.createPartnerCategorie,
+      ),
+      updatePartnerCategorie: hasPermission(
+        PermissionAlias.updatePartnerCategorie,
+      ),
+      deleteCateforie: hasPermission(PermissionAlias.deletePartnerCategorie),
       // Mutation de categorie de client
       createMoyenPaiement: hasPermission(PermissionAlias.createMoyenPaiement),
       updateMoyenPaiement: hasPermission(PermissionAlias.updateMoyenPaiement),

@@ -1,19 +1,19 @@
 const typeDef = `#graphql
-type Categorie{
-    _id:ID!
+type partnerCategorie{
+    _key:ID!
     libelle:String!
 }
 `;
 
 const query = `#graphql
-    categories(perPage:Int, skip:Int):[Categorie]!
-    categorie(key:ID!):Categorie!
+    partnerCategories(perPage:Int, skip:Int):[partnerCategorie]!
+    partnerCategorie(key:ID!):partnerCategorie!
 `;
 
 const mutation = `#graphql
-    createCategorie(libelle:String!):String!
-    updateCategorie(key:ID!, libelle:String):String!
+    createPartnerCategorie(libelle:String!):String!
+    updatePartnerCategorie(key:ID!, libelle:String):String!
     deleteCateforie(key:ID!):String!
 `;
 
-export default {typeDef, query, mutation};
+export default { typeDef, query, mutation };

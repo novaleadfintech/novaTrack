@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/helper/paginate_data.dart';
-import 'package:frontend/model/bulletin_paie/categorie_bulletin.dart';
+import 'package:frontend/model/bulletin_paie/bulletin_categorie.dart';
 import 'package:frontend/service/categorie_bulletin_service.dart';
 import 'package:gap/gap.dart';
 import '../../../../global/global_value.dart';
@@ -12,19 +12,19 @@ import '../../../../model/habilitation/role_model.dart';
 import '../no_data_page.dart';
 import 'rubrique_categorie_table.dart';
 
-class RubriqueCategoriePaie extends StatefulWidget {
-  const RubriqueCategoriePaie({
+class RubriquepaieCategorie extends StatefulWidget {
+  const RubriquepaieCategorie({
     super.key,
   });
 
   @override
-  State<RubriqueCategoriePaie> createState() => _CategoriePaieClientPageState();
+  State<RubriquepaieCategorie> createState() => _paieCategorieClientPageState();
 }
 
-class _CategoriePaieClientPageState extends State<RubriqueCategoriePaie> {
+class _paieCategorieClientPageState extends State<RubriquepaieCategorie> {
   final TextEditingController _researchController = TextEditingController();
   int currentPage = GlobalValue.currentPage;
-  List<CategorieBulletinModel> categorieBulletinData = [];
+  List<BulletinCategorieModel> bulletinCategorieData = [];
   bool isLoading = true;
   bool hasError = false;
   String searchQuery = "";
@@ -37,7 +37,7 @@ class _CategoriePaieClientPageState extends State<RubriqueCategoriePaie> {
     super.initState();
     _researchController.addListener(_onSearchChanged);
     _futureRoles = getRole();
-    _loadCategorieBulletin();
+    _loadBulletinCategorie();
   }
 
   Future<void> getRole() async {
@@ -50,10 +50,10 @@ class _CategoriePaieClientPageState extends State<RubriqueCategoriePaie> {
     });
   }
 
-  Future<void> _loadCategorieBulletin() async {
+  Future<void> _loadBulletinCategorie() async {
     try {
-      categorieBulletinData =
-          await CategorieBulletinService.getCategoriesBulletin();
+      bulletinCategorieData =
+          await BulletinCategorieservice.getBulletinCategories();
     } catch (error) {
       setState(() {
         errorMessage = error.toString();
@@ -67,9 +67,9 @@ class _CategoriePaieClientPageState extends State<RubriqueCategoriePaie> {
     });
   }
 
-  List<CategorieBulletinModel> filterCategorieBulletin() {
-    return categorieBulletinData.where((categorieBulletin) {
-      return categorieBulletin.categorieBulletin
+  List<BulletinCategorieModel> filterBulletinCategorie() {
+    return bulletinCategorieData.where((bulletinCategorie) {
+      return bulletinCategorie.bulletinCategorie
           .toLowerCase()
           .contains(searchQuery.toLowerCase().trim());
     }).toList();
@@ -83,7 +83,7 @@ class _CategoriePaieClientPageState extends State<RubriqueCategoriePaie> {
 
   @override
   Widget build(BuildContext context) {
-    List<CategorieBulletinModel> filteredData = filterCategorieBulletin();
+    List<BulletinCategorieModel> filteredData = filterBulletinCategorie();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8).copyWith(top: 4),
@@ -131,7 +131,7 @@ class _CategoriePaieClientPageState extends State<RubriqueCategoriePaie> {
                     isLoading = true;
                     hasError = false;
                   });
-                  await _loadCategorieBulletin();
+                  await _loadBulletinCategorie();
                 },
               ),
             )
@@ -147,10 +147,10 @@ class _CategoriePaieClientPageState extends State<RubriqueCategoriePaie> {
                         Expanded(
                           child: Container(
                             color: Theme.of(context).colorScheme.surface,
-                            child: CategorieBulletinRubriqueTable(
-                              categoriesBulletin: getPaginatedData(
+                            child: BulletinCategorieRubriqueTable(
+                              bulletinCategories: getPaginatedData(
                                   data: filteredData, currentPage: currentPage),
-                              refresh: _loadCategorieBulletin,
+                              refresh: _loadBulletinCategorie,
                             ),
                           ),
                         ),

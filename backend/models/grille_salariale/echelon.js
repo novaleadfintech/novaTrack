@@ -12,10 +12,10 @@ class Echelon {
 
   async initializeCollections() {
     if (!(await echelonCollection.exists())) {
-      echelonCollection.create();
+     await echelonCollection.create();
     }
     if (!(await echelonCollection.exists())) {
-      echelonCollection.create();
+     await echelonCollection.create();
     }
   }
   async getAllEchelon({ perPage, skip }) {
@@ -135,7 +135,7 @@ class Echelon {
       const existingEchelon = await db.query(aql`
         FOR classe IN ${classCollection}
             FOR echelon IN classe.echelonIndices
-                FILTER echelon._id == ${key}
+                FILTER echelon._key == ${key}
         LIMIT 1
         RETURN classe
       `);

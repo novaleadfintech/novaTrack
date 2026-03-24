@@ -10,13 +10,13 @@ import 'request_header.dart';
 
 class UserService {
   static Future<RequestResponse> assignRoleToPersonnel({
-    required String personnelId,
-    required String roleId,
+    required String personnelKey,
+    required String roleKey,
     required String createBy,
   }) async {
     var body = '''
     mutation AttribuerRolePersonnel {
-        attribuerRolePersonnel(personnelId: "$personnelId", roleId:"$roleId", createBy: "$createBy")    }
+        attribuerRolePersonnel(personnelKey: "$personnelKey", roleKey:"$roleKey", createBy: "$createBy")    }
   ''';
 
     try {
@@ -68,30 +68,30 @@ class UserService {
     var body = '''
    mutation SeConnecter {
         seConnecter(login: "$login", password: "$password") {
-            _id
+            _key
             login
             password
             roles {
-            _id
+            _key
             roleAuthorization
             authorizeTime
             role {
-                _id
+                _key
                 libelle
                 permissions {
-                    _id
+                    _key
                     libelle
                     alias
                     isChecked
                     module {
-                        _id
+                        _key
                         name
                         alias
                     }
                 }
             }
             authorizer {
-                _id
+                _key
                 login
                 password
                 canLogin
@@ -100,7 +100,7 @@ class UserService {
                 dateEnregistrement
             }
             createBy {
-                _id
+                _key
                 login
                 password
                 canLogin
@@ -108,14 +108,14 @@ class UserService {
                 isTheFirstConnection
                 dateEnregistrement
                 personnel {
-                    _id
+                    _key
                     nom
                     prenom
                     email
                     telephone
                     adresse
                     sexe
-                    poste{_id, libelle}
+                    poste{_key, libelle}
                     situationMatrimoniale
                     commentaire
                     etat
@@ -154,11 +154,12 @@ class UserService {
           throw RequestMessage.timeoutMessage;
         },
       ).catchError((error) {
-        throw RequestMessage.serverCatchErrorMessage;
+        throw error;
       });
-    
+
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
+        print(jsonData);
         var data = jsonData['data']['seConnecter'];
         return UserModel.fromJson(data);
       } else {
@@ -175,33 +176,33 @@ class UserService {
     var body = '''
      query User {
     user(key: "$key") {
-        _id
+        _key
         login
         password
         canLogin
         _token
         dateEnregistrement
         roles {
-            _id
+            _key
             roleAuthorization
             authorizeTime
             role {
-                _id
+                _key
                 libelle
                 permissions {
-                    _id
+                    _key
                     libelle
                     alias
                     isChecked
                     module {
-                        _id
+                        _key
                         name
                         alias
                     }
                 }
             }
             authorizer {
-                _id
+                _key
                 login
                 password
                 canLogin
@@ -210,7 +211,7 @@ class UserService {
                 dateEnregistrement
             }
             createBy {
-                _id
+                _key
                 login
                 password
                 canLogin
@@ -218,14 +219,14 @@ class UserService {
                 isTheFirstConnection
                 dateEnregistrement
                 personnel {
-                    _id
+                    _key
                     nom
                     prenom
                     email
                     telephone
                     adresse
                     sexe
-                    poste{_id, libelle}
+                    poste{_key, libelle}
                     situationMatrimoniale
                     commentaire
                     etat
@@ -244,14 +245,14 @@ class UserService {
             timeStamp
         }
         personnel {
-            _id
+            _key
             nom
             prenom
             email
             telephone
             adresse
             sexe
-            poste{_id, libelle}
+            poste{_key, libelle}
             situationMatrimoniale
             commentaire
             etat
@@ -293,48 +294,48 @@ class UserService {
     var body = '''
      query Users {
          users {
-        _id
+        _key
          login
         password
         canLogin
         _token
           dateEnregistrement
         roles {
-            _id
+            _key
             roleAuthorization
             authorizeTime
             role {
-                _id
+                _key
                 libelle
             }
             authorizer {
-                _id
+                _key
                  personnel {
-                    _id
+                    _key
                     nom
                     prenom
                      telephone
                     adresse
-                    poste{_id, libelle}
+                    poste{_key, libelle}
                 }
               }
             createBy {
-                _id
+                _key
                 personnel {
-                _id
+                _key
                 nom
                 prenom
                 sexe
                  telephone
                 adresse
-                 poste{_id, libelle}
+                 poste{_key, libelle}
               }
             }
             timeStamp
         }
         isTheFirstConnection
         personnel {
-            _id
+            _key
             nom
             prenom
             email
@@ -342,7 +343,7 @@ class UserService {
             sexe
             telephone
             adresse
-            poste{_id, libelle}
+            poste{_key, libelle}
         }
     }
 }
@@ -381,11 +382,11 @@ class UserService {
   }
 
   static Future<RequestResponse> seDeconnecter({
-    required String userId,
+    required String userKey,
   }) async {
     var body = '''
     mutation seDeconnecter {
-        seDeconnecter(key: "$userId")
+        seDeconnecter(key: "$userKey")
     }
   ''';
 
@@ -431,13 +432,13 @@ class UserService {
   }
 
   static Future<RequestResponse> handleRoleEditing({
-    required String userRoleId,
+    required String userRoleKey,
     required String authorizer,
     required RoleAuthorization roleAuthorization,
   }) async {
     var body = '''
     mutation HandleRoleEditing {
-        handleRoleEditing(authorizer: "$authorizer", userRoleId: "$userRoleId", roleAuthorization: ${RoleAuthorization.roleAuthorizationToString(roleAuthorization)})
+        handleRoleEditing(authorizer: "$authorizer", userRoleKey: "$userRoleKey", roleAuthorization: ${RoleAuthorization.roleAuthorizationToString(roleAuthorization)})
     }
   ''';
 
@@ -483,12 +484,12 @@ class UserService {
   }
 
   static Future<RequestResponse> access({
-    required String userId,
+    required String userKey,
     required bool canLogin,
   }) async {
     var body = '''
     mutation Access {
-    access(key: "$userId", canLogin: $canLogin)
+    access(key: "$userKey", canLogin: $canLogin)
 }
     ''';
 
@@ -534,11 +535,11 @@ class UserService {
   }
 
   static Future<RequestResponse> resetLoginParameter({
-    required String userId,
+    required String userKey,
   }) async {
     var body = '''
     mutation ResetLoginParameter {
-    resetLoginParameter(key: "$userId")
+    resetLoginParameter(key: "$userKey")
 }
   ''';
 
@@ -584,14 +585,14 @@ class UserService {
   }
 
   static Future<dynamic> updateLoginData({
-    required String userId,
+    required String userKey,
     String? login,
     required String ancienMotdepasse,
     required String password,
   }) async {
     var body = '''
     mutation UpdateLoginData {
-    updateLoginData(key:"$userId",''';
+    updateLoginData(key:"$userKey",''';
 
     if (login != null) body += 'login: "$login",';
     body += 'password: "$password"';

@@ -36,7 +36,7 @@ input PersonnePrevenirInput{
 }
  #definition du type personnel
        type Personnel{
-        _id:ID!
+        _key:ID!
         nom:String!
         prenom:String!
         email:String!

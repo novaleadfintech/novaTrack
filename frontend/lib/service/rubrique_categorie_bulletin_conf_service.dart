@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:frontend/model/bulletin_paie/categorie_bulletin.dart';
+import 'package:frontend/model/bulletin_paie/bulletin_categorie.dart';
 import 'package:frontend/model/bulletin_paie/valeur_rubrique_temporaire.dart';
 import '../app/integration/popop_status.dart';
 import '../global/config.dart';
@@ -11,16 +11,16 @@ import 'package:http/http.dart' as http;
 
 class RubriqueCategorieConfService {
   static Future<List<RubriquePaieConfig>>
-      getBulletinRubriquesByCategorieBulletinForConfig(
-          {required CategorieBulletinModel categorieBulletin}) async {
+      getBulletinRubriquesByBulletinCategorieForConfig(
+          {required BulletinCategorieModel bulletinCategorie}) async {
     var body = '''
-      query RubriqueBulletinByCategorieBulletinForConfiguration {
-    rubriqueBulletinByCategorieBulletinForConfiguration(categorieBulletinId: "${categorieBulletin.id}") {
+      query RubriqueBulletinByBulletinCategorieForConfiguration {
+    rubriqueBulletinByBulletinCategorieForConfiguration(bulletinCategorieKey: "${bulletinCategorie.key}") {
         isChecked
         rubriqueOnBulletin {
             value
             rubrique{
-           _id
+           _key
         rubrique
         code
         type
@@ -28,12 +28,12 @@ class RubriqueCategorieConfService {
         rubriqueIdentity
         nature
         section {
-            _id
+            _key
             section
         }
         taux {
             base {
-                _id
+                _key
                 rubrique
                 code
                 type
@@ -47,7 +47,7 @@ class RubriqueCategorieConfService {
                 type
                 valeur
                 rubrique {
-                    _id
+                    _key
                     rubrique
                     code
                     type
@@ -57,7 +57,7 @@ class RubriqueCategorieConfService {
         }
         bareme {
             reference{
-                _id
+                _key
                 rubrique
                 code
                 type
@@ -71,7 +71,7 @@ class RubriqueCategorieConfService {
                     valeur
                     taux {
                         base {
-                            _id
+                            _key
                             rubrique
                             code
                             type
@@ -88,7 +88,7 @@ class RubriqueCategorieConfService {
                 type
                 valeur
                 rubrique {
-                    _id
+                    _key
                     rubrique
                     code
                     type
@@ -120,15 +120,13 @@ class RubriqueCategorieConfService {
       var jsonData = jsonDecode(response.body);
 
       var data = jsonData['data']
-          ['rubriqueBulletinByCategorieBulletinForConfiguration'];
+          ['rubriqueBulletinByBulletinCategorieForConfiguration'];
       List<RubriquePaieConfig> rubriques = [];
       if (data != null) {
         for (var rubrique in data) {
-          try {
+
             rubriques.add(RubriquePaieConfig.fromJson(rubrique));
-          } catch (e) {
-            print('Error parsing rubrique: $e');
-          }
+ 
         }
         return rubriques;
       } else {
@@ -140,14 +138,14 @@ class RubriqueCategorieConfService {
   }
 
   static Future<List<RubriqueOnBulletinModel>>
-      getBulletinRubriquesByCategorieBulletin(
-          {required CategorieBulletinModel categorieBulletin}) async {
+      getBulletinRubriquesByBulletinCategorie(
+          {required BulletinCategorieModel bulletinCategorie}) async {
     var body = '''
-    query RubriqueBulletinByCategorieBulletin {
-    rubriqueBulletinByCategorieBulletin(categorieBulletinId: "${categorieBulletin.id}") {
+    query RubriqueBulletinByBulletinCategorie {
+    rubriqueBulletinByBulletinCategorie(bulletinCategorieKey: "${bulletinCategorie.key}") {
     value
          rubrique{
-           _id
+           _key
         rubrique
         code
         type
@@ -155,12 +153,12 @@ class RubriqueCategorieConfService {
         rubriqueIdentity
         nature
         section {
-            _id
+            _key
             section
         }
         taux {
             base {
-                _id
+                _key
                 rubrique
                 code
                 type
@@ -174,7 +172,7 @@ class RubriqueCategorieConfService {
                 type
                 valeur
                 rubrique {
-                    _id
+                    _key
                     rubrique
                     code
                     type
@@ -184,7 +182,7 @@ class RubriqueCategorieConfService {
         }
         bareme {
             reference{
-                _id
+                _key
                 rubrique
                 code
                 type
@@ -198,7 +196,7 @@ class RubriqueCategorieConfService {
                     valeur
                     taux {
                         base {
-                            _id
+                            _key
                             rubrique
                             code
                             type
@@ -215,7 +213,7 @@ class RubriqueCategorieConfService {
                 type
                 valeur
                 rubrique {
-                    _id
+                    _key
                     rubrique
                     code
                     type
@@ -246,7 +244,7 @@ class RubriqueCategorieConfService {
 
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
-      var data = jsonData['data']['rubriqueBulletinByCategorieBulletin'];
+      var data = jsonData['data']['rubriqueBulletinByBulletinCategorie'];
       List<RubriqueOnBulletinModel> rubriques = [];
       if (data != null) {
         for (var rubrique in data) {
@@ -264,17 +262,17 @@ class RubriqueCategorieConfService {
 
   static Future<ValeurRubriqueTemporaire>
       getvariablePaieAndPrimeExceptionnelles(
-          {required CategorieBulletinModel categorieBulletin,
-          required String salarieId}) async {
+          {required BulletinCategorieModel bulletinCategorie,
+          required String salarieKey}) async {
     var body = '''
     query variablePaieAndPrimeExceptionnelles {
-    variablePaieAndPrimeExceptionnelles(categorieBulletinId: "${categorieBulletin.id}", salarieId: "$salarieId") {
-      salarieId
-      _id
+    variablePaieAndPrimeExceptionnelles(bulletinCategorieKey: "${bulletinCategorie.key}", salarieKey: "$salarieKey") {
+      salarieKey
+      _key
       rubriques{
         value
         rubrique{
-           _id
+           _key
         rubrique
         code
         type
@@ -283,12 +281,12 @@ class RubriqueCategorieConfService {
         rubriqueIdentity
         nature
         section {
-            _id
+            _key
             section
         }
         taux {
             base {
-                _id
+                _key
                 rubrique
                 code
                 type
@@ -302,7 +300,7 @@ class RubriqueCategorieConfService {
                 type
                 valeur
                 rubrique {
-                    _id
+                    _key
                     rubrique
                     code
                     type
@@ -312,7 +310,7 @@ class RubriqueCategorieConfService {
         }
         bareme {
             reference{
-                _id
+                _key
                 rubrique
                 code
                 type
@@ -326,7 +324,7 @@ class RubriqueCategorieConfService {
                     valeur
                     taux {
                         base {
-                            _id
+                            _key
                             rubrique
                             code
                             type
@@ -343,7 +341,7 @@ class RubriqueCategorieConfService {
                 type
                 valeur
                 rubrique {
-                    _id
+                    _key
                     rubrique
                     code
                     type
@@ -356,7 +354,7 @@ class RubriqueCategorieConfService {
       primesExceptionnelles{
         value
         rubrique{
-           _id
+           _key
         rubrique
         code
         type
@@ -364,12 +362,12 @@ class RubriqueCategorieConfService {
         rubriqueIdentity
         nature
         section {
-            _id
+            _key
             section
         }
         taux {
             base {
-                _id
+                _key
                 rubrique
                 code
                 type
@@ -383,7 +381,7 @@ class RubriqueCategorieConfService {
                 type
                 valeur
                 rubrique {
-                    _id
+                    _key
                     rubrique
                     code
                     type
@@ -393,7 +391,7 @@ class RubriqueCategorieConfService {
         }
         bareme {
             reference{
-                _id
+                _key
                 rubrique
                 code
                 type
@@ -407,7 +405,7 @@ class RubriqueCategorieConfService {
                     valeur
                     taux {
                         base {
-                            _id
+                            _key
                             rubrique
                             code
                             type
@@ -424,7 +422,7 @@ class RubriqueCategorieConfService {
                 type
                 valeur
                 rubrique {
-                    _id
+                    _key
                     rubrique
                     code
                     type
@@ -470,16 +468,16 @@ class RubriqueCategorieConfService {
     }
   }
 
-  static Future<RequestResponse> createCategorieBulletinRubrique({
-    required String rubriqueId,
-    required String categorieBulletinId,
+  static Future<RequestResponse> createBulletinCategorieRubrique({
+    required String rubriqueKey,
+    required String bulletinCategorieKey,
     required double? value,
   }) async {
     var body = '''
     mutation {
-      createCategorieBulletinRubrique(
-        rubriqueId: "$rubriqueId",
-        categorieBulletinId: "$categorieBulletinId",
+      createBulletinCategorieRubrique(
+        rubriqueKey: "$rubriqueKey",
+        bulletinCategorieKey: "$bulletinCategorieKey",
         value: $value
       )
     }
@@ -499,7 +497,7 @@ class RubriqueCategorieConfService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body)['data']
-            ['createCategorieBulletinRubrique'];
+            ['createBulletinCategorieRubrique'];
         if (data == RequestMessage.success) {
           return RequestResponse(
             message: RequestMessage.successMessage,
@@ -519,16 +517,16 @@ class RubriqueCategorieConfService {
     }
   }
 
-  static Future<RequestResponse> updateCategorieBulletinRubriqueBulletin({
-    required String rubriqueId,
-    required String categorieBulletinId,
+  static Future<RequestResponse> updateBulletinCategorieRubriqueBulletin({
+    required String rubriqueKey,
+    required String bulletinCategorieKey,
     required double? value,
   }) async {
     var body = '''
     mutation {
-      updateCategorieBulletinRubrique(
-        rubriqueId: "$rubriqueId",
-        categorieBulletinId: "$categorieBulletinId",
+      updateBulletinCategorieRubrique(
+        rubriqueKey: "$rubriqueKey",
+        bulletinCategorieKey: "$bulletinCategorieKey",
         value: $value
       )
     }
@@ -548,7 +546,7 @@ class RubriqueCategorieConfService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body)['data']
-            ['updateCategorieBulletinRubriqueBulletin'];
+            ['updateBulletinCategorieRubriqueBulletin'];
         if (data == RequestMessage.success) {
           return RequestResponse(
             message: RequestMessage.successMessage,
@@ -568,15 +566,15 @@ class RubriqueCategorieConfService {
     }
   }
 
-  static Future<RequestResponse> deleteCategorieBulletinRubriqueBulletin({
-    required String rubriqueId,
-    required String categorieBulletinId,
+  static Future<RequestResponse> deleteBulletinCategorieRubriqueBulletin({
+    required String rubriqueKey,
+    required String bulletinCategorieKey,
   }) async {
     var body = '''
     mutation {
-      deleteCategorieBulletinRubrique(
-        rubriqueId: "$rubriqueId",
-        categorieBulletinId: "$categorieBulletinId"
+      deleteBulletinCategorieRubrique(
+        rubriqueKey: "$rubriqueKey",
+        bulletinCategorieKey: "$bulletinCategorieKey"
       )
     }
   ''';
@@ -595,7 +593,7 @@ class RubriqueCategorieConfService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body)['data']
-            ['deleteCategorieBulletinRubriqueBulletin'];
+            ['deleteBulletinCategorieRubriqueBulletin'];
         if (data == RequestMessage.success) {
           return RequestResponse(
             message: RequestMessage.successMessage,

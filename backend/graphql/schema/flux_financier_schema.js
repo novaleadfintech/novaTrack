@@ -53,7 +53,7 @@ const typeDef = `#graphql
     }
     
     type FluxFinancier{
-        _id:ID!
+        _key:ID!
         libelle:String!
         reference:String
         type:FluxFinancierType!
@@ -67,10 +67,10 @@ const typeDef = `#graphql
         isFromSystem: Boolean,
         dateEnregistrement:Float!
         pieceJustificative: String
-        user: User #userId
+        user: User #userKey
         client: Client
         bank:Banque! 
-        factureId: String #factureId
+        factureKey: String #factureKey
     }
 `;
 
@@ -80,7 +80,7 @@ const query = `#graphql
     unValidatedFluxFinanciers(perPage:Int, skip:Int, type: FluxFinancierType,): [FluxFinancier]!
     archiveFluxFinanciers(perPage:Int, skip:Int,): [FluxFinancier]!
     fluxFinancier(key:ID!): FluxFinancier!
-    fluxFiancierbyFacture(factureId:String!): [FluxFinancier]!
+    fluxFiancierbyFacture(factureKey:String!): [FluxFinancier]!
     fluxFinanciersByBank(banque:String!, debut: Float!, fin:Float!, status: FluxFinancierStatus): [FluxFinancier]!
     bilan(begin:Float, end:Float, type: FluxFinancierType,): Bilan!
     yearBilan(year:Int):[MonthBilan]!
@@ -95,12 +95,12 @@ const mutation = `#graphql
         moyenPayement: MoyenPaiementInput!,
         partiePrenante: String,
         pieceJustificative:Upload,
-        userId: String!,
+        userKey: String!,
         referenceTransaction: String!
         dateOperation:Float
-        factureId:String,
-        bankId: String!
-        clientId: String
+        factureKey:String,
+        bankKey: String!
+        clientKey: String
     ):String!
 
     updateFluxFinancier(
@@ -114,8 +114,8 @@ const mutation = `#graphql
         moyenPayement: MoyenPaiementInput,
         pieceJustificative:Upload,
         partiePrenante: String,
-        bankId: String,
-        clientId: String,
+        bankKey: String,
+        clientKey: String,
     ):String!
 
     validateFluxFinancier(

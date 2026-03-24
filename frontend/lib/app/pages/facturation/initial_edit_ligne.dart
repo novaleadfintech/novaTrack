@@ -139,7 +139,7 @@ class _AddInitialLigneServiceState extends State<EditInitialLigne> {
             : double.parse(prixSupplementaireString),
         quantite: int.parse(quantiteString),
         unit: _unitController.text,
-        serviceId: service!.id,
+        serviceKey: service!.key,
         service: service,
       );
 

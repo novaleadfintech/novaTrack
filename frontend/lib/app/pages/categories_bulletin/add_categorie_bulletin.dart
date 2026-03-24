@@ -10,19 +10,19 @@ import '../../../widget/validate_button.dart';
 import 'package:gap/gap.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 
-class AddCategorieBulletinPage extends StatefulWidget {
+class AddBulletinCategoriePage extends StatefulWidget {
   final Future<void> Function() refresh;
-  const AddCategorieBulletinPage({
+  const AddBulletinCategoriePage({
     super.key,
     required this.refresh,
   });
 
   @override
-  State<AddCategorieBulletinPage> createState() =>
-      _AddCategorieBulletinPageState();
+  State<AddBulletinCategoriePage> createState() =>
+      _AddBulletinCategoriePageState();
 }
 
-class _AddCategorieBulletinPageState extends State<AddCategorieBulletinPage> {
+class _AddBulletinCategoriePageState extends State<AddBulletinCategoriePage> {
   final TextEditingController _libelleController = TextEditingController();
 
   late SimpleFontelicoProgressDialog _dialog;
@@ -33,7 +33,7 @@ PaieClause? paieClause;
     _dialog = SimpleFontelicoProgressDialog(context: context);
   }
 
-  Future<void> _addCategorieBulletin() async {
+  Future<void> _addBulletinCategorie() async {
     String? errMessage;
     if (_libelleController.text.isEmpty && paieClause == null) {
       errMessage = "Veuillez remplir tous les champs marqués.";
@@ -52,8 +52,8 @@ PaieClause? paieClause;
       backgroundColor: Colors.transparent,
     );
 
-    var result = await CategorieBulletinService.createCategorieBulletin(
-      categorieBulletin:
+    var result = await BulletinCategorieservice.createBulletinCategorie(
+      bulletinCategorie:
           capitalizeFirstLetter(word: _libelleController.text.toLowerCase()),
       paieClause: paieClause!,
     );
@@ -102,7 +102,7 @@ PaieClause? paieClause;
               alignment: Alignment.bottomRight,
               child: ValidateButton(
                 onPressed: () async {
-                await _addCategorieBulletin();
+                await _addBulletinCategorie();
                 },
               ),
             ),

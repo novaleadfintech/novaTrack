@@ -218,7 +218,7 @@ class BulletinPaie {
         (await this.verifySingleFutureBulletin({
           dateDebut: dateDebut,
           dateFin: dateFin,
-          salarieId: salarie._id,
+          salarieKey: salarie._key,
         })) == true
       ) {
         readySalaries.push(salarie);
@@ -243,24 +243,26 @@ class BulletinPaie {
       try {
         // 2. Récupérer les rubriques de base (avec valeurs collectives) configurer pour une catégorie
         const rubriquesBase =
-          await RubriqueCategorieConfModel.getRubriqueBulletinByCategoriePaie({
-            categoriePaieId: salarie.categoriePaie._id,
+          await RubriqueCategorieConfModel.getRubriqueBulletinBypaieCategorie({
+            paieCategorieKey: salarie.paieCategorie._key,
           });
 
         // console.log(rubriquesBase);
         // 3. Récupérer les valeurs temporaires saisies
-        const valeursTemp = await ValeurRubriqueTemporaireModel.getBySalarieId({
-          salarieId: salarie._id,
-        });
+        const valeursTemp = await ValeurRubriqueTemporaireModel.getBySalarieKey(
+          {
+            salarieKey: salarie._key,
+          },
+        );
 
         // 4. Fusionner : remplacer les null par les valeurs saisies
         const rubriques = rubriquesBase.map((rubrique) => {
           // Chercher si une valeur temporaire existe pour cette rubrique
           const valeurTemp = valeursTemp?.rubriques?.find(
-            (r) => r.rubriqueId === rubrique.rubrique._id,
+            (r) => r.rubriqueKey === rubrique.rubrique._key,
           );
           return {
-            rubriqueId: rubrique.rubrique._id,
+            rubriqueKey: rubrique.rubrique._key,
             value: valeurTemp?.value ?? rubrique.value ?? 0,
           };
         });
@@ -272,7 +274,7 @@ class BulletinPaie {
           debutPeriodePaie: dateDebut,
           finPeriodePaie: dateFin,
           dateEdition: Date.now(),
-          salarieId: salarie._id,
+          salarieKey: salarie._key,
 
           rubriques: rubriques,
         });
@@ -284,12 +286,12 @@ class BulletinPaie {
     return "OK";
   }
 
-  async verifySingleFutureBulletin({ dateDebut, dateFin, salarieId }) {
+  async verifySingleFutureBulletin({ dateDebut, dateFin, salarieKey }) {
     try {
       // Vérifie s'il existe déjà un bulletin pour ce salarié dans la période donnée
       const query = await db.query(aql`
       FOR b IN ${bulletinCollection} 
-        FILTER b.salarie._id == ${salarieId} 
+        FILTER b.salarie._key == ${salarieKey} 
         AND NOT (
           b.finPeriodePaie < ${dateDebut} 
           OR b.debutPeriodePaie > ${dateFin}
@@ -301,9 +303,9 @@ class BulletinPaie {
       const bulletinExiste = query.hasNext;
 
       if (bulletinExiste) {
-        console.log("❌ Bulletin existe déjà pour cette période");
+        console.log("Bulletin existe déjà pour cette période");
       } else {
-        console.log("✅ Aucun bulletin, création possible");
+        console.log("Aucun bulletin, création possible");
       }
 
       // Retourne true si AUCUN bulletin n'existe (peut créer)
@@ -337,7 +339,7 @@ class BulletinPaie {
           const rubriquesPromises = bulletin.rubriques.map(async (rubrique) => {
             const rubriqueBulletin =
               await RubriqueBulletinModel.getRubriqueBulletin({
-                key: rubrique.rubriqueId,
+                key: rubrique.rubriqueKey,
               });
             return {
               ...rubrique,
@@ -370,11 +372,11 @@ class BulletinPaie {
 
   async getBulletin({ id }) {
     try {
-      const bulletin = await bulletinCollection.document({ _id: id });
+      const bulletin = await bulletinCollection.document({ _key: id });
       const rubriquesPromises = bulletin.rubriques.map(async (rubrique) => {
         const rubriqueBulletin =
           await RubriqueBulletinModel.getRubriqueBulletin({
-            key: rubrique.rubriqueId,
+            key: rubrique.rubriqueKey,
           });
         return {
           ...rubrique,
@@ -404,10 +406,10 @@ class BulletinPaie {
     }
   }
 
-  async getPreviousBulletin({ salarieId }) {
+  async getPreviousBulletin({ salarieKey }) {
     try {
       const query = await db.query(
-        aql`FOR bulletin IN ${bulletinCollection} FILTER bulletin.salarie._id == ${salarieId} SORT bulletin.dateEdition DESC
+        aql`FOR bulletin IN ${bulletinCollection} FILTER bulletin.salarie._key == ${salarieKey} SORT bulletin.dateEdition DESC
         LIMIT 1
         RETURN bulletin`,
       );
@@ -416,7 +418,7 @@ class BulletinPaie {
         const rubriquesPromises = bulletin.rubriques.map(async (rubrique) => {
           const rubriqueBulletin =
             await RubriqueBulletinModel.getRubriqueBulletin({
-              key: rubrique.rubriqueId,
+              key: rubrique.rubriqueKey,
             });
           return {
             ...rubrique,
@@ -451,7 +453,7 @@ class BulletinPaie {
     try {
       const cursor = await db.query(aql`
       FOR bulletin IN ${bulletinCollection}
-      FILTER bulletin.salarie._id == ${id}
+      FILTER bulletin.salarie._key == ${id}
       AND bulletin.etat ==${EtatBulletin.valid}
       SORT bulletin.timeStamp DESC
       LIMIT 1
@@ -468,7 +470,7 @@ class BulletinPaie {
       const rubriquesPromises = bulletin.rubriques.map(async (rubrique) => {
         const rubriqueBulletin =
           await RubriqueBulletinModel.getRubriqueBulletin({
-            key: rubrique.rubriqueId,
+            key: rubrique.rubriqueKey,
           });
         return {
           ...rubrique,
@@ -526,11 +528,11 @@ class BulletinPaie {
     debutPeriodePaie,
     finPeriodePaie,
     dateEdition,
-    salarieId,
+    salarieKey,
     rubriques,
   }) {
     isValidValue({
-      value: [debutPeriodePaie, finPeriodePaie, dateEdition, salarieId],
+      value: [debutPeriodePaie, finPeriodePaie, dateEdition, salarieKey],
     });
 
     isValidValue({ value: rubriques });
@@ -538,7 +540,7 @@ class BulletinPaie {
     // Vérification de chevauchement d'une période de paie
     const existingBulletin = await db.query(aql`
     FOR bulletin IN ${bulletinCollection}
-    FILTER bulletin.salarie._id == ${salarieId}
+    FILTER bulletin.salarie._key == ${salarieKey}
     AND NOT (bulletin.finPeriodePaie < ${debutPeriodePaie}
     AND (bulletin.etat == ${EtatBulletin.wait} OR bulletin.etat == ${EtatBulletin.returne} OR bulletin.etat == ${EtatBulletin.valid} )
     OR bulletin.debutPeriodePaie > ${finPeriodePaie})
@@ -552,11 +554,11 @@ class BulletinPaie {
       );
     }
 
-    const salarie = await SalarieModel.getSalarie({ key: salarieId });
+    const salarie = await SalarieModel.getSalarie({ key: salarieKey });
     // Étape 1 : Récupérer les découverts impayés ou partiellement payés
     const decouvertesQuery = await db.query(aql`
     FOR decouvert IN ${decouverteCollection}
-      FILTER decouvert.salarie._id == ${salarieId}
+      FILTER decouvert.salarie._key == ${salarieKey}
       AND (decouvert.status != ${DecouverteStatus.paid})
       RETURN decouvert
   `);
@@ -577,7 +579,7 @@ class BulletinPaie {
     for (let i = 0; i < rubriques.length; i++) {
       // console.log(rubriques[i]);
       const rubriqueData = await RubriqueBulletinModel.getRubriqueBulletin({
-        key: rubriques[i].rubriqueId,
+        key: rubriques[i].rubriqueKey,
       });
       rubriques[i].rubrique = rubriqueData;
     }
@@ -650,7 +652,7 @@ class BulletinPaie {
 
       await session.commit();
 
-      console.log(`Bulletin créé avec succès pour le salarié ${salarieId}`);
+      console.log(`Bulletin créé avec succès pour le salarié ${salarieKey}`);
       return "OK";
     } catch (error) {
       console.error("Erreur lors de la création du bulletin:", error);
@@ -664,7 +666,7 @@ class BulletinPaie {
   async calculateSalaire({ salarie }) {
     try {
       // 1. Vérifier si le salarié a une grille salariale, classe et échelon
-      if (!salarie.grilleCategoriePaie || !salarie.classe || !salarie.echelon) {
+      if (!salarie.grillepaieCategorie || !salarie.classe || !salarie.echelon) {
         console.warn("Grille salariale, classe ou échelon ne sont pas défini");
         return 0;
       }
@@ -677,9 +679,9 @@ class BulletinPaie {
       }
 
       // 3. Récupérer les informations de la grille salariale
-      const grilleSalariale = salarie.grilleCategoriePaie;
-      const classeId = salarie.classe._id;
-      const echelonId = salarie.echelon._id;
+      const grilleSalariale = salarie.grillepaieCategorie;
+      const classeKey = salarie.classe._key;
+      const echelonKey = salarie.echelon._key;
 
       // 4. Vérifier que la grille a des classes
       if (!grilleSalariale.classes || grilleSalariale.classes.length === 0) {
@@ -689,7 +691,7 @@ class BulletinPaie {
 
       // 5. Trouver la classe correspondante dans la grille
       const classeCorrespondante = grilleSalariale.classes.find(
-        (c) => c._id === classeId,
+        (c) => c._key === classeKey,
       );
 
       if (!classeCorrespondante) {
@@ -712,7 +714,7 @@ class BulletinPaie {
 
       // 7. Trouver l'échelon indiciaire correspondant
       const echelonIndiciaire = classeCorrespondante.echelonIndiciciaires.find(
-        (ei) => ei.echelon._id === echelonId,
+        (ei) => ei.echelon._key === echelonKey,
       );
 
       if (!echelonIndiciaire) {
@@ -1007,9 +1009,9 @@ class BulletinPaie {
 
   async updateBulletin({
     key,
-    banqueId,
+    banqueKey,
     moyenPayement,
-    salarieId,
+    salarieKey,
     rubriques,
     debutPeriodePaie,
     referencePaie,
@@ -1041,8 +1043,8 @@ class BulletinPaie {
     if (finPeriodePaie !== undefined) {
       updateField.finPeriodePaie = finPeriodePaie;
     }
-    if (banqueId !== undefined) {
-      const banque = await BanqueModel.getBanque({ key: banqueId });
+    if (banqueKey !== undefined) {
+      const banque = await BanqueModel.getBanque({ key: banqueKey });
       const { logo, ...otherdata } = banque;
       if (logo != null) {
         otherdata.logo = logo.replace(
@@ -1053,13 +1055,13 @@ class BulletinPaie {
       updateField.banque = otherdata;
     }
 
-    if (salarieId !== undefined) {
-      await SalarieModel.isExistSalarie({ key: salarieId });
+    if (salarieKey !== undefined) {
+      await SalarieModel.isExistSalarie({ key: salarieKey });
       const existingBulletin = await db.query(aql`
       FOR bulletin IN ${bulletinCollection}
-      FILTER bulletin.salarieId == ${salarieId} 
+      FILTER bulletin.salarieKey == ${salarieKey} 
       AND (bulletin.etat == ${EtatBulletin.wait} OR bulletin.etat == ${EtatBulletin.returne})
-      AND bulletin._id == ${key}
+      AND bulletin._key == ${key}
       AND bulletin.debutPeriodePaie >= ${debutPeriodePaie}
       AND bulletin.finPeriodePaie <= ${finPeriodePaie}
       LIMIT 1
@@ -1069,7 +1071,7 @@ class BulletinPaie {
       if (existingBulletin.hasNext) {
         throw new Error(`Un bulletin existe déjà pour ce salarié.`);
       }
-      updateField.salarieId = salarieId;
+      updateField.salarieKey = salarieKey;
     }
 
     try {
@@ -1090,12 +1092,12 @@ class BulletinPaie {
   //     });
   //     try {
   //       for (const bulletin of bulletins) {
-  //         const { retenus, gains, salarieId, _key } = bulletin;
+  //         const { retenus, gains, salarieKey, _key } = bulletin;
   //         const filteredRetenus = retenus.filter((retenu) => !retenu.isAvance);
   //         await session.step(async () => {
   //           await this.createBulletin({
   //             gains: gains,
-  //             salarieId: salarieId,
+  //             salarieKey: salarieKey,
   //             retenus: filteredRetenus,
   //           });
   //         });
@@ -1163,7 +1165,7 @@ class BulletinPaie {
 
       const decouvertesQuery = await db.query(aql`
       FOR decouvert IN ${decouverteCollection}
-        FILTER decouvert.salarie._id == ${bulletin.salarie._id}
+        FILTER decouvert.salarie._key == ${bulletin.salarie._key}
         AND (decouvert.status == ${DecouverteStatus.unpaid} OR decouvert.status == ${DecouverteStatus.partialpaid})
         SORT decouvert.timeStamp ASC
         RETURN decouvert
@@ -1191,9 +1193,9 @@ class BulletinPaie {
         //       montant: montantRembourse,
         //       moyenPayement: bulletin.moyenPayement,
         //       type: FluxFinancierType.input,
-        //       bankId: bulletin.banque._id,
+        //       bankKey: bulletin.banque._key,
         //       isFromSystem: true,
-        //       userId: validate.validater,
+        //       userKey: validate.validater,
         //       referenceTransaction: `${bulletin.referencePaie}-1`,
         //     });
 
@@ -1215,11 +1217,11 @@ class BulletinPaie {
         //   montant: montant,
         //   moyenPayement: bulletin.moyenPayement,
         //   type: FluxFinancierType.output,
-        //   bankId: bulletin.banque._id,
-        //   userId: validate.validater,
+        //   bankKey: bulletin.banque._key,
+        //   userKey: validate.validater,
         //   isFromSystem: true,
         //   referenceTransaction: `${bulletin.referencePaie}`,
-        //   bulletinId: bulletin._id,
+        //   bulletinKey: bulletin._key,
         // });
       }
       // Mise à jour du bulletin

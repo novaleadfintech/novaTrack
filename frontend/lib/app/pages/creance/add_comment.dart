@@ -107,7 +107,7 @@ class _AddCommentPageState extends State<AddCommentPage> {
             alignment: Alignment.bottomRight,
             child: ValidateButton(
               onPressed: () {
-                addComment(factureId: widget.facture.id);
+                addComment(factureKey: widget.facture.key);
               },
             ),
           ),
@@ -122,7 +122,7 @@ class _AddCommentPageState extends State<AddCommentPage> {
     super.dispose();
   }
 
-  void addComment({required String factureId}) async {
+  void addComment({required String factureKey}) async {
     if (_commentaireController.text.trim().isEmpty) {
       MutationRequestContextualBehavior.showCustomInformationPopUp(
         message: "Veuillez mettre un commentaire.",
@@ -152,10 +152,10 @@ class _AddCommentPageState extends State<AddCommentPage> {
         date: DateTime.now(),
         editer: user,
       ),
-      clientId: null,
+      clientKey: null,
       dateDebutFacturation: null,
       dateEtablissement: null,
-      factureId: factureId,
+      factureKey: factureKey,
       generatePeriod: null,
       reduction: null,
       tva: null,

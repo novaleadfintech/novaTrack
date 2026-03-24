@@ -11,7 +11,7 @@ class MoyenPaiement {
 
   async initializeCollections() {
     if (!(await moyenPaiementCollection.exists())) {
-      moyenPaiementCollection.create();
+     await moyenPaiementCollection.create();
     }
   }
   async getAllMoyenPaiement({ perPage, skip }) {
@@ -101,7 +101,7 @@ class MoyenPaiement {
       const existingCategorie = await db.query(aql`
         FOR moyen IN ${moyenPaiementCollection}
         FILTER moyen.libelle == ${libelle}
-        AND moyen._id != ${key}
+        AND moyen._key != ${key}
         LIMIT 1
         RETURN moyen
       `);

@@ -109,12 +109,12 @@ class _AddFluxPageState extends State<AddPayement> {
       return;
     }
     RequestResponse result = await PayementService.ajouterPayement(
-      factureId: facture.id,
+        factureKey: facture.key,
       montant: double.parse(_amountController.text),
       moyenPayement: moyenPayement!,
       file: file,
-      userId: user!.id!,
-        clientId: facture.client!.id,
+        userKey: user!.key!,
+        clientKey: facture.client!.key,
         bank: _selectedBank!,
         referenceTransaction: referenceTransactionFieldController.text,
       dateOperation: dateOperation,

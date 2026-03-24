@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:frontend/model/client/responsable_model.dart';
 import '../../../helper/telephone_number_helper.dart';
-import '../../../service/categorie_service.dart';
+import '../../../service/categorie_partner_service.dart';
 import '../../../service/pays_service.dart';
 import '../../../style/app_color.dart';
 import '../../../widget/future_dropdown_field.dart';
@@ -60,7 +60,7 @@ class _EditClientPageState extends State<EditClientPage> {
   late TypeClient type;
   late NatureClient nature;
   Sexe? sexe;
-  CategorieModel? categorie;
+  CategorieModel? partnerCategorie;
   PlatformFile? file;
   PaysModel? _selectedCountry;
   Civilite? responsableCivilite;
@@ -74,7 +74,7 @@ class _EditClientPageState extends State<EditClientPage> {
   int? telephone;
   String? responsable;
   PaysModel? pays;
-  String? categorieId;
+  String? partnerCategorieKey;
   Sexe? newsexe;
   NatureClient? newNature;
   String? responsableEmail;
@@ -102,7 +102,7 @@ class _EditClientPageState extends State<EditClientPage> {
     } */
     if (type == TypeClient.moral) {
       ClientMoralModel client = widget.client as ClientMoralModel;
-      categorie = client.categorie;
+      partnerCategorie = client.partnerCategorie;
       file = client.logo != null
           ? PlatformFile(
               name: client.logo!.split("/").last, size: 10, path: client.logo)
@@ -138,7 +138,7 @@ class _EditClientPageState extends State<EditClientPage> {
     }
 
     if (type == TypeClient.moral) {
-      if (_raisonSocialeController.text.isEmpty || categorie == null) {
+      if (_raisonSocialeController.text.isEmpty || partnerCategorie == null) {
         return "Veuillez remplir tous les champs marqués.";
       }
 
@@ -234,7 +234,9 @@ class _EditClientPageState extends State<EditClientPage> {
       if (type == TypeClient.moral) {
         final client = initialClient as ClientMoralModel;
 
-        if (categorie != client.categorie) categorieId = categorie?.id;
+        if (partnerCategorie != client.partnerCategorie) {
+          partnerCategorieKey = partnerCategorie?.key;
+        }
         if (_raisonSocialeController.text != client.raisonSociale) {
           raisonSociale = _raisonSocialeController.text;
         }
@@ -254,7 +256,7 @@ class _EditClientPageState extends State<EditClientPage> {
             telephone == null &&
             pays == null &&
             newNature == null &&
-            categorieId == null &&
+            partnerCategorieKey == null &&
             raisonSociale == null &&
             !responsableModified &&
             file?.bytes == null) {
@@ -310,9 +312,9 @@ class _EditClientPageState extends State<EditClientPage> {
 
       var result = type == TypeClient.moral
           ? await ClientService.updateClientMoral(
-              id: initialClient.id,
+              key: initialClient.key,
               adresse: adresse,
-              categorieId: categorieId,
+              partnerCategorieKey: partnerCategorieKey,
               email: email,
               nature: newNature,
               pays: pays,
@@ -322,7 +324,7 @@ class _EditClientPageState extends State<EditClientPage> {
               responsable: buildResponsable(),
             )
           : await ClientService.updatePhysiqueClient(
-              clientId: initialClient.id,
+              clientKey: initialClient.key,
               adresse: adresse,
               nom: nom,
               prenom: prenom,
@@ -454,10 +456,10 @@ class _EditClientPageState extends State<EditClientPage> {
               ),
               MoralFields(
                 isNotFournisseur: isNotFournisseur,
-                categorie: categorie,
+                partnerCategorie: partnerCategorie,
                 onCategorieChanged: (newCategorie) {
                   setState(() {
-                    categorie = newCategorie;
+                    partnerCategorie = newCategorie;
                   });
                 },
                 country: _selectedCountry,
@@ -547,7 +549,7 @@ class _PhysiqueFieldsState extends State<PhysiqueFields> {
 
 class MoralFields extends StatefulWidget {
   final TextEditingController raisonSocialeController;
-  final CategorieModel? categorie;
+  final CategorieModel? partnerCategorie;
   final void Function(CategorieModel?) onCategorieChanged;
   final Sexe? responsableSexe;
   final Civilite? responsableCivilite;
@@ -575,7 +577,7 @@ class MoralFields extends StatefulWidget {
     required this.responsablePrenomControlller,
     required this.responsableTelephoneController,
     required this.onResponsableSexeChanged,
-    this.categorie,
+    this.partnerCategorie,
     required this.onCategorieChanged,
   });
 
@@ -613,7 +615,7 @@ class _MoralFieldsState extends State<MoralFields> {
           ),
           FutureCustomDropDownField(
             label: "Catégorie",
-            selectedItem: widget.categorie,
+            selectedItem: widget.partnerCategorie,
             fetchItems: fetchCategorieItems,
             onChanged: _handleCategoryChange,
             itemsAsString: (CategorieModel c) => c.libelle,

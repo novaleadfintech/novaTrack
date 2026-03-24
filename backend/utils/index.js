@@ -6,7 +6,7 @@ import roleResolvers from "./role.js";
 import permissionResolvers from "./permission.js";
 import fluxFinancierResolvers from "./flux_financier.js";
 import factureResolvers from "./facture.js";
-import categorieResolvers from "./categorie.js";
+import categorieResolvers from "./bulletincategorie.js";
 import ligneServiceResolvers from "./ligneService.js";
 
 const graphQlResolvers = {

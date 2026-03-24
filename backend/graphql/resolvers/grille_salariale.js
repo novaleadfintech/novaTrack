@@ -1,31 +1,31 @@
-import CategoriePaieGrille from "../../models/grille_salariale/categoriePaieGrille.js";
+import paieCategorieGrille from "../../models/grille_salariale/categoriePaieGrille.js";
 
-const categoriePaieGrilleModel = new CategoriePaieGrille();
+const paieCategorieGrilleModel = new paieCategorieGrille();
 
-const categoriePaieGrilleResolvers = {
+const paieCategorieGrilleResolvers = {
   categoriesPaieGrille: async ({ perPage, skip }) =>
-    categoriePaieGrilleModel.getAllCategoriePaieGrille({
+    paieCategorieGrilleModel.getAllpaieCategorieGrille({
       skip: skip,
       perPage: perPage,
     }),
 
-  categoriePaieGrille: async ({ key }) =>
-    categoriePaieGrilleModel.getCategoriePaieGrille({ key: key }),
+  paieCategorieGrille: async ({ key }) =>
+    paieCategorieGrilleModel.getpaieCategorieGrille({ key: key }),
 
-  createCategoriePaieGrille: async ({ libelle, classes }) =>
-    categoriePaieGrilleModel.createCategoriePaieGrille({
+  createpaieCategorieGrille: async ({ libelle, classes }) =>
+    paieCategorieGrilleModel.createpaieCategorieGrille({
       libelle: libelle,
       classes: classes,
     }),
 
-  updateCategoriePaieGrille: async ({ key, libelle }) =>
-    categoriePaieGrilleModel.updateCategoriePaieGrille({
+  updatepaieCategorieGrille: async ({ key, libelle }) =>
+    paieCategorieGrilleModel.updatepaieCategorieGrille({
       key: key,
       libelle: libelle,
     }),
 
-  deleteCategoriePaieGrille: async ({ key }) =>
-    categoriePaieGrilleModel.deleteCategoriePaieGrille({ key: key }),
+  deletepaieCategorieGrille: async ({ key }) =>
+    paieCategorieGrilleModel.deletepaieCategorieGrille({ key: key }),
 };
 
-export default categoriePaieGrilleResolvers;
+export default paieCategorieGrilleResolvers;

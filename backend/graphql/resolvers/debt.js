@@ -15,23 +15,23 @@ const debtResolvers = {
     libelle,
     montant,
     pieceJustificative,
-    userId,
+    userKey,
     partiePrenante,
     datePayementUlterieur,
     referenceFacture,
     dateOperation,
-    clientId,
+    clientKey,
   }) => {
     return await debtModel.createDebt({
       libelle,
       montant,
       pieceJustificative,
-      userId,
+      userKey,
       partiePrenante,
       datePayementUlterieur,
       referenceFacture,
       dateOperation,
-      clientId,
+      clientKey,
     });
   },
 
@@ -45,7 +45,7 @@ const debtResolvers = {
     partiePrenante,
     datePayementUlterieur,
     pieceJustificative,
-    clientId,
+    clientKey,
   }) => {
     return await debtModel.updateDebt({
       key,
@@ -57,7 +57,7 @@ const debtResolvers = {
       datePayementUlterieur,
       status: status,
       pieceJustificative,
-      clientId,
+      clientKey,
     });
   },
 

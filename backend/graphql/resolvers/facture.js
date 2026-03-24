@@ -41,11 +41,11 @@ const factureResolvers = {
     }),
   facture: async ({ key }) => await factureModel.getFacture({ key: key }),
 
-  factureByClient: async ({ clientId }) =>
-    await factureModel.factureByClient({ clientId: clientId }),
+  factureByClient: async ({ clientKey }) =>
+    await factureModel.factureByClient({ clientKey: clientKey }),
 
-  recurrentFactureByClient: async ({ clientId }) =>
-    await factureModel.recurrentFactureByClient({ clientId: clientId }),
+  recurrentFactureByClient: async ({ clientKey }) =>
+    await factureModel.recurrentFactureByClient({ clientKey: clientKey }),
 
   //mutation
   createFacture: async ({
@@ -56,10 +56,10 @@ const factureResolvers = {
     facturesAcompte,
     tva,
     delaisPayment,
-    clientId,
+    clientKey,
     ligneFactures,
     generatePeriod,
-    banquesIds,
+    banquesKeys,
   }) =>
     await factureModel.createFacture({
       dateEtablissementFacture: dateEtablissementFacture,
@@ -68,11 +68,11 @@ const factureResolvers = {
       dateDebutFacturation: dateDebutFacturation,
       tva: tva,
       delaisPayment: delaisPayment,
-      clientId: clientId,
+      clientKey: clientKey,
       facturesAcompte: facturesAcompte,
       generatePeriod: generatePeriod,
       ligneFactures: ligneFactures,
-      banquesIds: banquesIds,
+      banquesKeys: banquesKeys,
     }),
 
   updateFacture: async (
@@ -86,11 +86,11 @@ const factureResolvers = {
       delaisPayment,
       tva,
       commentaire,
-      clientId,
+      clientKey,
       generatePeriod,
-      banquesIds,
+      banquesKeys,
     },
-    context
+    context,
   ) => {
     const user = context.user;
     return await factureModel.updateFacture({
@@ -104,11 +104,11 @@ const factureResolvers = {
       delaisPayment: delaisPayment,
       commentaire: {
         ...commentaire,
-        editer: user._id,
+        editer: user._key,
       },
-      clientId: clientId,
+      clientKey: clientKey,
       generatePeriod: generatePeriod,
-      banquesIds: banquesIds,
+      banquesKeys: banquesKeys,
     });
   },
   updateFactureAccompte: async (
@@ -121,11 +121,11 @@ const factureResolvers = {
       isSent,
       commentaire,
     },
-    context
+    context,
   ) => {
     if (canPenalty && !hasPermission(PermissionAlias.exonorerFacturePenalty)) {
       throw new Error(
-        "Accès refusé : vous n'avez pas la permission requise pour effectuer cette action"
+        "Accès refusé : vous n'avez pas la permission requise pour effectuer cette action",
       );
     }
     return await factureModel.updateFactureAccompte({
@@ -144,9 +144,9 @@ const factureResolvers = {
   stopperService: async ({ secretekey }) =>
     await factureModel.stopperService({ secretekey: secretekey }),
 
-  restartService: async ({ factureId, secretekey }) =>
+  restartService: async ({ factureKey, secretekey }) =>
     await factureModel.restartService({
-      factureId: factureId,
+      factureKey: factureKey,
       secretekey: secretekey,
     }),
 
@@ -156,9 +156,9 @@ const factureResolvers = {
     moyenPayement,
     pieceJustificative,
     referenceTransaction,
-    userId,
-    clientId,
-    bankId,
+    userKey,
+    clientKey,
+    bankKey,
     dateOperation,
   }) =>
     await factureModel.ajouterPayement({
@@ -167,15 +167,15 @@ const factureResolvers = {
       moyenPayement: moyenPayement,
       referenceTransaction: referenceTransaction,
       pieceJustificative: pieceJustificative,
-      userId: userId,
-      clientId: clientId,
-      bankId: bankId,
+      userKey: userKey,
+      clientKey: clientKey,
+      bankKey: bankKey,
       dateOperation: dateOperation,
     }),
 
   ajouterLigneFacture: async ({
-    factureId,
-    serviceId,
+    factureKey,
+    serviceKey,
     designation,
     quantite,
     dureeLivraison,
@@ -185,8 +185,8 @@ const factureResolvers = {
     fraisDivers,
   }) =>
     await factureModel.ajouterLigneFacture({
-      factureId: factureId,
-      serviceId: serviceId,
+      factureKey: factureKey,
+      serviceKey: serviceKey,
       designation: designation,
       unit: unit,
       prixSupplementaire: prixSupplementaire,

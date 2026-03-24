@@ -13,7 +13,7 @@ class PaysService {
     var body = '''
       query {
       allCountries {
-          _id
+          _key
           name
           code
           tauxTVA
@@ -104,7 +104,7 @@ class PaysService {
   }
 
   static Future<RequestResponse> updatePays({
-    required String paysId,
+    required String paysKey,
     String? nom,
     double? taux,
     int? nbreNumTel,
@@ -115,7 +115,7 @@ class PaysService {
     var body = StringBuffer('''
     mutation UpdateCountry {
       updateCountry(
-        key: "$paysId",
+        key: "$paysKey",
   ''');
 
     if (nom != null) {

@@ -96,7 +96,7 @@ class _HeaderState extends State<Header> {
     AuthService().clearToken();
 
     // RequestResponse result =
-    await UserService.seDeconnecter(userId: user!.id!);
+    await UserService.seDeconnecter(userKey: user!.key!);
     AuthService().clearToken();
     _dialog.hide();
     // if (result.status == PopupStatus.success) {

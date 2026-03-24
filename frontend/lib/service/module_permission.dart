@@ -8,18 +8,18 @@ import 'request_header.dart';
 
 class ModulePermissionService {
   static Future<List<ModulePermissionModel>> getModuleParmission(
-      {required String id}) async {
+      {required String key}) async {
      try {
       var body = '''
       query PermissionByRole {
-          permissionByRole (roleId:"$id"){
+          permissionByRole (roleKey:"$key"){
               module {
-                _id
+                _key
                 name
                 alias
               }
               permissions{
-                _id
+                _key
                 libelle
                 alias
                 isChecked

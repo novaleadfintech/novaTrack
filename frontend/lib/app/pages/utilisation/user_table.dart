@@ -65,7 +65,7 @@ class _UserTableState extends State<UserTable> {
         backgroundColor: Colors.transparent,
       );
       RequestResponse result =
-          await UserService.access(userId: user.id!, canLogin: false);
+          await UserService.access(userKey: user.key!, canLogin: false);
       _dialog.hide();
       if (result.status == PopupStatus.success) {
         MutationRequestContextualBehavior.showPopup(
@@ -104,7 +104,7 @@ class _UserTableState extends State<UserTable> {
         backgroundColor: Colors.transparent,
       );
       RequestResponse result =
-          await UserService.access(userId: user.id!, canLogin: true);
+          await UserService.access(userKey: user.key!, canLogin: true);
       _dialog.hide();
       if (result.status == PopupStatus.success) {
         MutationRequestContextualBehavior.showPopup(
@@ -135,7 +135,7 @@ class _UserTableState extends State<UserTable> {
         backgroundColor: Colors.transparent,
       );
       RequestResponse result =
-          await UserService.resetLoginParameter(userId: user.id!);
+          await UserService.resetLoginParameter(userKey: user.key!);
       _dialog.hide();
       if (result.status == PopupStatus.success) {
         MutationRequestContextualBehavior.showPopup(
@@ -170,9 +170,9 @@ class _UserTableState extends State<UserTable> {
       );
 
       RequestResponse result = await UserService.assignRoleToPersonnel(
-        personnelId: user.personnel!.id,
-        roleId: role.id!,
-        createBy: user.id!,
+        personnelKey: user.personnel!.key,
+        roleKey: role.key!,
+        createBy: user.key!,
       );
       _dialog.hide();
       if (result.status == PopupStatus.success) {
@@ -219,10 +219,10 @@ class _UserTableState extends State<UserTable> {
       );
 
       RequestResponse result = await UserService.handleRoleEditing(
-        userRoleId: userRole.id,
+        userRoleKey: userRole.key,
         roleAuthorization:
             confirmed ? RoleAuthorization.accepted : RoleAuthorization.refused,
-        authorizer: user!.id!,
+        authorizer: user!.key!,
       );
       _dialog.hide();
       if (result.status == PopupStatus.success) {
@@ -334,7 +334,7 @@ class _UserTableState extends State<UserTable> {
               },
               children: widget.paginatedUserData.map(
                 (use) {
-                  bool isCurrentUser = use.id == user?.id;
+                  bool isCurrentUser = use.key == user?.key;
                   return Responsive.isMobile(context)
                       ? TableRow(
                           decoration: tableDecoration(context),

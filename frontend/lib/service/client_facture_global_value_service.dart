@@ -18,7 +18,7 @@ class ClientFactureGlobalValuesService {
     clientFactureGlobalValues {
       nbreJrMaxPenalty
        client {
-            _id
+            _key
             email
             telephone
             adresse
@@ -27,14 +27,14 @@ class ClientFactureGlobalValuesService {
             dateEnregistrement
             fullCount
             pays {
-                     _id
+                     _key
           name
           code
           tauxTVA
           phoneNumber
                   }
             ... on ClientMoral {
-                _id
+                _key
                 raisonSociale
                 logo
                 email
@@ -45,7 +45,7 @@ class ClientFactureGlobalValuesService {
                 dateEnregistrement
                 fullCount
                 pays {
-                     _id
+                     _key
           name
           code
           tauxTVA
@@ -53,7 +53,7 @@ class ClientFactureGlobalValuesService {
                   }
             }
             ... on ClientPhysique {
-                _id
+                _key
                 nom
                 prenom
                 sexe
@@ -65,7 +65,7 @@ class ClientFactureGlobalValuesService {
                 dateEnregistrement
                 fullCount
                 pays {
-                     _id
+                     _key
           name
           code
           tauxTVA
@@ -114,7 +114,7 @@ class ClientFactureGlobalValuesService {
   }) async {
     var body = '''
       mutation ConfigClientFactureGlobaLValue {
-       configClientFactureGlobaLValue(clientId: "${client.id}", nbreJrMaxPenalty: $nbreJrMaxPenalty)
+       configClientFactureGlobaLValue(clientKey: "${client.key}", nbreJrMaxPenalty: $nbreJrMaxPenalty)
     }
     ''';
     try {

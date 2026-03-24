@@ -13,7 +13,7 @@ class OperateurService {
     var body = '''
       query Operateurs {
           operateurs {
-              _id
+              _key
               libelle
           }
       }

@@ -18,7 +18,7 @@ class MoyenPaiementService {
     var body = '''
       query MoyensPaiement {
     moyensPaiement {
-        _id
+        _key
         libelle
         type
     }

@@ -26,12 +26,12 @@ class CreanceService {
                      
                       montantRestant
                       factures {
-                          _id
+                          _key
                           reference
                           montant
                           type
                           payements {
-                              _id
+                              _key
                               montant
                           }
                         facturesAcompte {
@@ -43,13 +43,13 @@ class CreanceService {
                       }
                       
                       client {
-                          _id
+                          _key
                           ... on ClientMoral {
-                              _id
+                              _key
                               raisonSociale
                           }
                           ... on ClientPhysique {
-                              _id
+                              _key
                               nom
                               prenom
                           }
@@ -105,12 +105,12 @@ class CreanceService {
     body += ''' {
                       montantRestant
                       factures {
-                          _id
+                          _key
                           reference
                           montant
                           type
                           payements {
-                              _id
+                              _key
                               montant
                           }
                         
@@ -123,13 +123,13 @@ class CreanceService {
                       }
                       
                       client {
-                          _id
+                          _key
                           ... on ClientMoral {
-                              _id
+                              _key
                               raisonSociale
                           }
                           ... on ClientPhysique {
-                              _id
+                              _key
                               nom
                               prenom
                           }

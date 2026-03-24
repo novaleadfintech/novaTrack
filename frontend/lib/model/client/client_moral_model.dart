@@ -10,10 +10,10 @@ class ClientMoralModel extends ClientModel {
   final dynamic raisonSociale;
   final String? logo;
   final ResponsableModel? responsable;
-  final CategorieModel? categorie;
+  final CategorieModel? partnerCategorie;
 
   ClientMoralModel({
-    super.id,
+    super.key,
     super.email,
     super.telephone,
     super.nature,
@@ -26,12 +26,12 @@ class ClientMoralModel extends ClientModel {
     required this.raisonSociale,
      this.logo,
     this.responsable,
-    this.categorie,
+    this.partnerCategorie,
   });
 
   factory ClientMoralModel.fromJson(Map<String, dynamic> json) {
     return ClientMoralModel(
-      id: json['_id'] ?? '',
+      key: json['_key'] ?? '',
       email: json['email'],
       telephone: (json["telephone"] as num?)?.toInt(),
       adresse: json['adresse'],
@@ -46,14 +46,16 @@ class ClientMoralModel extends ClientModel {
       raisonSociale: json['raisonSociale'] ?? '',
       logo: json['logo'],
       responsable: json['responsable'] != null ? ResponsableModel.fromJson(json['responsable']) : null,
-      categorie: json['categorie'] != null ? CategorieModel.fromJson(json['categorie']) : null,
+      partnerCategorie: json['partnerCategorie'] != null
+          ? CategorieModel.fromJson(json['partnerCategorie'])
+          : null,
     );
   }
 
   @override
   Map<String, dynamic> toJson() {
     return {
-      '_id': id,
+      '_key': key,
       'email': email,
       'telephone': telephone,
       'adresse': adresse,
@@ -66,7 +68,7 @@ class ClientMoralModel extends ClientModel {
       'raisonSociale': raisonSociale,
       'logo': logo,
       'responsable': responsable?.toJson(),
-      'categorie': categorie?.toJson(),
+      'partnerCategorie': partnerCategorie?.toJson(),
     };
   }
 }

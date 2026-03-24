@@ -31,8 +31,8 @@ class _AddUserPageState extends State<AddUserPage> {
   late SimpleFontelicoProgressDialog _dialog;
   PersonnelModel? personnel;
   RoleModel? role;
-  String? currentPersonnelId;
-  String? currentUserId;
+  String? currentPersonnelKey;
+  String? currentUserKey;
 
   @override
   void initState() {
@@ -44,8 +44,8 @@ class _AddUserPageState extends State<AddUserPage> {
   Future<void> _loadCurrentUser() async {
     UserModel? user = await AuthService().decodeToken();
     setState(() {
-      currentPersonnelId = user!.personnel!.id;
-      currentUserId = user.id;
+      currentPersonnelKey = user!.personnel!.key;
+      currentUserKey = user.key;
     });
   }
 
@@ -68,9 +68,9 @@ class _AddUserPageState extends State<AddUserPage> {
       );
 
       RequestResponse result = await UserService.assignRoleToPersonnel(
-        personnelId: personnel.id,
-        roleId: role.id!,
-        createBy: currentUserId!,
+        personnelKey: personnel.key,
+        roleKey: role.key!,
+        createBy: currentUserKey!,
       );
       _dialog.hide();
 
@@ -100,8 +100,8 @@ class _AddUserPageState extends State<AddUserPage> {
         await PersonnelService.getUnarchivedPersonnels();
 
     // Exclure l'utilisateur connecté de la liste
-    if (currentPersonnelId != null) {
-      personnels.removeWhere((p) => p.id == currentPersonnelId);
+    if (currentPersonnelKey != null) {
+      personnels.removeWhere((p) => p.key == currentPersonnelKey);
     }
 
     return personnels;

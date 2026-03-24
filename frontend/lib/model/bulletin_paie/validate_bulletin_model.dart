@@ -27,7 +27,7 @@ class ValidateBulletinModel {
     return {
       "validateStatus": etatBulletinToString(validateStatus),
       "date": date.millisecondsSinceEpoch,
-      "validater": "\"${validater.id}\"",
+      "validater": "\"${validater.key}\"",
       "commentaire": "\"$commentaire\"",
     };
   }

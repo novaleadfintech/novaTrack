@@ -19,20 +19,20 @@ import '../error_page.dart';
 import '../no_data_page.dart';
 import 'grille_categorie_paie_table.dart';
 
-class GrilleCategoriePaiePage extends StatefulWidget {
-  const GrilleCategoriePaiePage({
+class GrillepaieCategoriePage extends StatefulWidget {
+  const GrillepaieCategoriePage({
     super.key,
   });
 
   @override
-  State<GrilleCategoriePaiePage> createState() =>
-      _GrilleCategoriePaiePageState();
+  State<GrillepaieCategoriePage> createState() =>
+      _GrillepaieCategoriePageState();
 }
 
-class _GrilleCategoriePaiePageState extends State<GrilleCategoriePaiePage> {
+class _GrillepaieCategoriePageState extends State<GrillepaieCategoriePage> {
   final TextEditingController _researchController = TextEditingController();
   int currentPage = GlobalValue.currentPage;
-  List<GrilleCategoriePaieModel> grilleCategoriePaieData = [];
+  List<GrillepaieCategorieModel> grillepaieCategorieData = [];
   bool isLoading = true;
   bool hasError = false;
   String searchQuery = "";
@@ -45,7 +45,7 @@ class _GrilleCategoriePaiePageState extends State<GrilleCategoriePaiePage> {
     super.initState();
     _researchController.addListener(_onSearchChanged);
     _futureRoles = getRole();
-    _loadGrilleCategoriePaie();
+    _loadGrillepaieCategorie();
   }
 
   Future<void> getRole() async {
@@ -58,10 +58,10 @@ class _GrilleCategoriePaiePageState extends State<GrilleCategoriePaiePage> {
     });
   }
 
-  Future<void> _loadGrilleCategoriePaie() async {
+  Future<void> _loadGrillepaieCategorie() async {
     try {
-      grilleCategoriePaieData =
-          await GrilleCategoriePaieService.getGrilleCategoriePaies();
+      grillepaieCategorieData =
+          await GrillepaieCategorieService.getGrillepaieCategories();
     } catch (error) {
       setState(() {
         errorMessage = error.toString();
@@ -74,9 +74,9 @@ class _GrilleCategoriePaiePageState extends State<GrilleCategoriePaiePage> {
     });
   }
 
-  List<GrilleCategoriePaieModel> filterGrilleCategoriePaie() {
-    return grilleCategoriePaieData.where((grilleCategoriePaie) {
-      return grilleCategoriePaie.libelle
+  List<GrillepaieCategorieModel> filterGrillepaieCategorie() {
+    return grillepaieCategorieData.where((grillepaieCategorie) {
+      return grillepaieCategorie.libelle
           .toLowerCase()
           .contains(searchQuery.toLowerCase().trim());
     }).toList();
@@ -92,15 +92,15 @@ class _GrilleCategoriePaiePageState extends State<GrilleCategoriePaiePage> {
     showResponsiveDialog(
       context,
       title: "Nouvelle catégorie de paie",
-      content: AddGrilleCategoriePaiePage(
-        refresh: _loadGrilleCategoriePaie,
+      content: AddGrillepaieCategoriePage(
+        refresh: _loadGrillepaieCategorie,
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    List<GrilleCategoriePaieModel> filteredData = filterGrilleCategoriePaie();
+    List<GrillepaieCategorieModel> filteredData = filterGrillepaieCategorie();
 
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.surface,
@@ -127,7 +127,7 @@ class _GrilleCategoriePaiePageState extends State<GrilleCategoriePaiePage> {
               } else {
                 // var canCreate = hasPermission(
                 //   role: role,
-                //   permission: PermissionAlias.createBulletinGrilleCategoriePaieCategoriePaie.label,
+                    //   permission: PermissionAlias.createBulletinGrillepaieCategoriepaieCategorie.label,
                 // );
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -185,7 +185,7 @@ class _GrilleCategoriePaiePageState extends State<GrilleCategoriePaiePage> {
                             isLoading = true;
                             hasError = false;
                           });
-                          await _loadGrilleCategoriePaie();
+                              await _loadGrillepaieCategorie();
                         },
                       )
                     : filteredData.isEmpty
@@ -196,11 +196,11 @@ class _GrilleCategoriePaiePageState extends State<GrilleCategoriePaiePage> {
                         : Column(
                             children: [
                               Expanded(
-                                child: GrilleCategoriePaieTable(
-                                  grilleCategoriePaie: getPaginatedData(
+                                    child: GrillepaieCategorieTable(
+                                      grillepaieCategorie: getPaginatedData(
                                       data: filteredData,
                                       currentPage: currentPage),
-                                  refresh: _loadGrilleCategoriePaie,
+                                      refresh: _loadGrillepaieCategorie,
                                 ),
                               ),
                               if (filteredData.isNotEmpty)

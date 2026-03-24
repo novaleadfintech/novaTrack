@@ -1,6 +1,6 @@
 const typeDef = `#graphql
     type Country {
-      _id: ID
+      _key: ID
       name: String!
       code: Int!
       tauxTVA: Float
@@ -9,7 +9,7 @@ const typeDef = `#graphql
     }
 
     input CountryInput {
-      _id: ID
+      _key: ID
       name: String!
       code: Int!
       tauxTVA: Float

@@ -27,10 +27,10 @@ import moduleSchema from "./module_schema.js";
 import rubriqueSchema from "./rubrique_bulletin_schema.js";
 import sectionSchema from "./section_bulletin_schema.js";
 import trancheSchema from "./param_tranche_bulletin_schema.js";
-import categorieBulletinSchema from "./categorie_bulletin_schema.js";
+import bulletinCategorieschema from "./categorie_bulletin_schema.js";
 import salaireSchema from "./salarie_schema.js";
 import moyenPaiementSchema from "./moyen_paiement_schema.js";
-import rubriqueCategorieBulletinSchema from "./rubrique_categorie_bulletin_schema.js";
+import rubriqueBulletinCategorieschema from "./rubrique_categorie_bulletin_schema.js";
 import clientFactureGlobalValueSchema from "./client_facture_global_value_schema.js";
 import posteSchema from "./poste_schema.js";
 import debtSchema from "./debt_schema.js";
@@ -74,10 +74,10 @@ const schemas = [
   rubriqueSchema,
   sectionSchema,
   trancheSchema,
-  categorieBulletinSchema,
+  bulletinCategorieschema,
   salaireSchema,
   moyenPaiementSchema,
-  rubriqueCategorieBulletinSchema,
+  rubriqueBulletinCategorieschema,
   clientFactureGlobalValueSchema,
   posteSchema,
   debtSchema,

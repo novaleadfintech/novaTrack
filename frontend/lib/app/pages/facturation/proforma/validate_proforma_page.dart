@@ -16,12 +16,12 @@ import '../../../integration/popop_status.dart';
 import '../../../integration/request_frot_behavior.dart';
 
 class ValidateProformatPage extends StatefulWidget {
-  final String proformaId;
+  final String proformaKey;
   final Future<void> Function() refresh;
   const ValidateProformatPage({
     super.key,
     required this.refresh,
-    required this.proformaId,
+    required this.proformaKey,
   });
 
   @override
@@ -38,7 +38,7 @@ class _ValidateProformatPageState extends State<ValidateProformatPage> {
       MultiSelectController<BanqueModel>();
   List<BanqueModel>? banques;
 
-  validateProforma({required String proformaId}) async {
+  validateProforma({required String proformaKey}) async {
     if (_factureAcompteControllers.isEmpty || banques == null) {
       MutationRequestContextualBehavior.showPopup(
         status: PopupStatus.information,
@@ -96,7 +96,7 @@ class _ValidateProformatPageState extends State<ValidateProformatPage> {
 
     try {
       RequestResponse result = await ProformaService.validerProforma(
-          proformaId: proformaId,
+          proformaKey: proformaKey,
           dateEtablissementFacture: dateEtablissement,
           banques: banques!,
           facturesAcompte: _factureAcompteControllers
@@ -206,7 +206,7 @@ class _ValidateProformatPageState extends State<ValidateProformatPage> {
               children: [
                 ValidateButton(
                   onPressed: () => validateProforma(
-                    proformaId: widget.proformaId,
+                    proformaKey: widget.proformaKey,
                   ),
                   libelle: "Suivant",
                 ),

@@ -3,7 +3,7 @@ import 'user_model.dart';
 import 'role_model.dart';
 
 class UserRoleModel {
-  final String id;
+  final String key;
   final RoleAuthorization? roleAuthorization;
   final RoleModel role;
   final UserModel? authorizer;
@@ -12,7 +12,7 @@ class UserRoleModel {
   final DateTime? timeStamp;
 
   UserRoleModel({
-    required this.id,
+    required this.key,
     required this.role,
     required this.timeStamp,
     this.roleAuthorization,
@@ -23,7 +23,7 @@ class UserRoleModel {
 
   factory UserRoleModel.fromJson(Map<String, dynamic> json) {
      return UserRoleModel(
-      id: json['_id'],
+      key: json['_key'],
       role: RoleModel.fromJson(json['role']),
       timeStamp: json['timeStamp'] != null
           ? DateTime.fromMillisecondsSinceEpoch((json['timeStamp']))
@@ -46,7 +46,7 @@ class UserRoleModel {
 
   Map<String, dynamic> toJson() {
     return {
-      '_id': id,
+      '_key': key,
       'role': role.toJson(),
       'timeStamp': timeStamp,
       if (roleAuthorization != null)

@@ -94,7 +94,7 @@ class _InputTableState extends State<RubriqueTable> {
 
       RequestResponse result =
           await BulletinRubriqueService.deleteBulletinRubrique(
-        key: rubrique.id,
+        key: rubrique.key,
       );
       _dialog.hide();
       if (result.status == PopupStatus.success) {

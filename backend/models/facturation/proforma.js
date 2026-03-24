@@ -38,19 +38,19 @@ class Proforma {
 
   async initializeCollections() {
     if (!(await proformaCollection.exists())) {
-      proformaCollection.create();
+      await proformaCollection.create();
     }
     if (!(await factureCollection.exists())) {
-      factureCollection.create();
+      await factureCollection.create();
     }
     if (!(await ligneFactureCollection.exists())) {
-      ligneFactureCollection.create({ type: CollectionType.EDGE_COLLECTION });
+      await ligneFactureCollection.create();
     }
     if (!(await entrepriseCollection.exists())) {
-      entrepriseCollection.create();
+      await entrepriseCollection.create();
     }
     if (!(await ligneProformaCollection.exists())) {
-      ligneProformaCollection.create({ type: CollectionType.EDGE_COLLECTION });
+      await ligneProformaCollection.create();
     }
   }
 
@@ -61,7 +61,7 @@ class Proforma {
     }
 
     const query = await db.query(
-      aql`FOR proforma IN ${proformaCollection} FILTER proforma.status == ${statusProforma.wait} SORT proforma._key DESC ${limit} RETURN proforma`
+      aql`FOR proforma IN ${proformaCollection} FILTER proforma.status == ${statusProforma.wait} SORT proforma._key DESC ${limit} RETURN proforma`,
     );
 
     if (query.hasNext) {
@@ -77,7 +77,7 @@ class Proforma {
           proformaCopy.client.logo = path;
           const ligneProformas =
             await ligneProformaModel.getLigneProformaByProforma({
-              proformaId: proformaCopy._id,
+              proformaKey: proformaCopy._key,
             });
           const montantTotal = utils.calculerMontantTotal({
             lignes: ligneProformas,
@@ -91,7 +91,7 @@ class Proforma {
             ligneProformas: ligneProformas,
             montant: montantTotal,
           };
-        })
+        }),
       );
     } else {
       return [];
@@ -104,7 +104,7 @@ class Proforma {
     // }
 
     const query = await db.query(
-      aql`FOR proforma IN ${proformaCollection} FILTER proforma.status != ${statusProforma.wait} SORT proforma._key DESC RETURN proforma`
+      aql`FOR proforma IN ${proformaCollection} FILTER proforma.status != ${statusProforma.wait} SORT proforma._key DESC RETURN proforma`,
     );
 
     if (query.hasNext) {
@@ -120,7 +120,7 @@ class Proforma {
           proformaCopy.client.logo = path;
           const ligneProformas =
             await ligneProformaModel.getLigneProformaByProforma({
-              proformaId: proformaCopy._id,
+              proformaKey: proformaCopy._key,
             });
           const montantTotal = utils.calculerMontantTotal({
             lignes: ligneProformas,
@@ -134,7 +134,7 @@ class Proforma {
             ligneProformas: ligneProformas,
             montant: montantTotal,
           };
-        })
+        }),
       );
     } else {
       return [];
@@ -148,7 +148,7 @@ class Proforma {
       // Récupérer les lignes de services associées à la proforma
       const ligneProformas =
         await ligneProformaModel.getLigneProformaByProforma({
-          proformaId: proforma._id,
+          proformaKey: proforma._key,
         });
 
       // Calculer le montant total de la proforma en utilisant les lignes de service
@@ -171,14 +171,14 @@ class Proforma {
     }
   };
 
-  proformaByClient = async ({ clientId }) => {
+  proformaByClient = async ({ clientKey }) => {
     let filtre = aql``;
 
-    if (clientId !== undefined) {
-      filtre = aql`FILTER proforma.client._id == ${clientId}`;
+    if (clientKey !== undefined) {
+      filtre = aql`FILTER proforma.client._key == ${clientKey}`;
     }
     const query = await db.query(
-      aql`FOR proforma IN ${proformaCollection} SORT proforma._key DESC ${filtre} RETURN proforma`
+      aql`FOR proforma IN ${proformaCollection} SORT proforma._key DESC ${filtre} RETURN proforma`,
     );
     if (query.hasNext) {
       const proformas = await query.all();
@@ -191,7 +191,7 @@ class Proforma {
 
           const ligneProformas =
             await ligneProformaModel.getLigneProformaByProforma({
-              proformaId: proformaCopy._id,
+              proformaKey: proformaCopy._key,
             });
           const montantTotal = utils.calculerMontantTotal({
             lignes: ligneProformas,
@@ -206,7 +206,7 @@ class Proforma {
             ligneProformas: ligneProformas,
             montant: montantTotal,
           };
-        })
+        }),
       );
     } else {
       return [];
@@ -218,17 +218,17 @@ class Proforma {
     garantyTime = 0,
     dateEnvoie,
     tva = false,
-    clientId,
+    clientKey,
     ligneProformas,
   }) => {
     let entreprise;
     if (!ligneProformas || ligneProformas.length == 0) {
       throw new Error(
-        "Vous devez fournir une ligne de service pour créer un proforma."
+        "Vous devez fournir une ligne de service pour créer un proforma.",
       );
     }
     const query = await db.query(
-      aql`FOR entreprise IN ${entrepriseCollection} LIMIT 1 RETURN entreprise`
+      aql`FOR entreprise IN ${entrepriseCollection} LIMIT 1 RETURN entreprise`,
     );
     const session = await db.beginTransaction({
       write: ["proformas", "ligneProformas"],
@@ -239,24 +239,24 @@ class Proforma {
         entreprise = await query.next();
       } else {
         throw new Error(
-          "Aucune donnée de l'entreprise n'est configurer, veuillez contacter l'administrateur"
+          "Aucune donnée de l'entreprise n'est configurer, veuillez contacter l'administrateur",
         );
       }
       isValidValue({
-        value: [dateEtablissementProforma, tva, clientId, ligneProformas],
+        value: [dateEtablissementProforma, tva, clientKey, ligneProformas],
       });
 
-      const client = await clientModel.getClient({ key: clientId });
+      const client = await clientModel.getClient({ key: clientKey });
       if (!client) throw new Error("Client non trouvé.");
 
       if (client.logo) {
         client.logo = client.logo.replace(
           process.env.FILE_PREFIX + `${locateClientFolder}/`,
-          ""
+          "",
         );
       }
 
-      const { categorie, ...otherClientInfo } = client;
+      const { partnerCategorie, ...otherClientInfo } = client;
 
       const newProforma = {
         reference: await this.generateNewProformaReference(),
@@ -279,7 +279,7 @@ class Proforma {
       });
       if (montantTotal <= 0) {
         throw new Error(
-          "Le montant total de la facture semble être inférieur ou égal à zéro."
+          "Le montant total de la facture semble être inférieur ou égal à zéro.",
         );
       }
 
@@ -288,19 +288,19 @@ class Proforma {
           newProforma,
           {
             returnNew: true,
-          }
+          },
         );
         ligneProformas.forEach(async (ligneProforma) => {
-          const { serviceId, ...lignePro } = ligneProforma;
-          const service = await serviceModel.getService({ key: serviceId });
+          const { serviceKey, ...lignePro } = ligneProforma;
+          const service = await serviceModel.getService({ key: serviceKey });
           // if (service.prix * ligneProforma.quantite <= ligneProforma.remise) {
           //   throw new Error(
           //     "Attention!!! La remise dépasse le montant du service"
           //   );
           // }
           const newLigneProforma = {
-            _from: serviceId,
-            _to: proformaInsertResult._id,
+            serviceKey: serviceKey,
+            proformaKey: proformaInsertResult._key,
             service: service,
             // remise: lignePro.remise ?? 0,
             ...lignePro,
@@ -317,7 +317,7 @@ class Proforma {
 
       await session.abort();
       throw new Error(
-        "Une erreur s'est produite lors de la création du proforma."
+        "Une erreur s'est produite lors de la création du proforma.",
       );
     }
   };
@@ -325,7 +325,7 @@ class Proforma {
   validerProforma = async ({
     key,
     dateEtablissementFacture = Date.now(),
-    banquesIds,
+    banquesKeys,
     facturesAcompte,
   }) => {
     const proforma = await this.getProforma({ key: key });
@@ -361,14 +361,14 @@ class Proforma {
       if (client.logo) {
         client.logo = client.logo.replace(
           process.env.FILE_PREFIX + `${locateClientFolder}/`,
-          ""
+          "",
         );
       }
 
-      const { categorie, ...otherClientInfo } = client;
+      const { partnerCategorie, ...otherClientInfo } = client;
 
       const oldPenalties = await factureModel.getOldPenaltiesForClient({
-        clientId: client._id,
+        clientKey: client._key,
       });
 
       // Injection dans le premier acompte
@@ -395,16 +395,16 @@ class Proforma {
         status: StatusFacture.tobepaid,
         isConvertFromProforma: true,
         banques: await Promise.all(
-          banquesIds.map(async (banqueId) => {
-            const banque = await BanqueModel.getBanque({ key: banqueId });
+          banquesKeys.map(async (banqueKey) => {
+            const banque = await BanqueModel.getBanque({ key: banqueKey });
             return {
               ...banque,
               logo: banque.logo?.replace(
                 process.env.FILE_PREFIX + `${locateBanqueFolder}/`,
-                ""
+                "",
               ),
             };
-          })
+          }),
         ),
         facturesAcompte: updatedAcomptes,
       };
@@ -415,9 +415,9 @@ class Proforma {
         });
 
         for (const lignePro of ligneProformas) {
-          const { _to, _id, _key, _rev, ...otherLigneFac } = lignePro;
+          const { proformaKey, _id, _key, _rev, ...otherLigneFac } = lignePro;
           const newLigneFacture = {
-            _to: factureInsertResult._id,
+            factureKey: factureInsertResult._key,
             ...otherLigneFac,
           };
           await ligneFactureCollection.save(newLigneFacture);
@@ -435,7 +435,7 @@ class Proforma {
 
       await session.abort();
       throw new Error(
-        "Une erreur s'est produite lors de la validation de la Proforma"
+        "Une erreur s'est produite lors de la validation de la Proforma",
       );
     }
   };
@@ -446,7 +446,7 @@ class Proforma {
     dateEnvoie,
     reduction,
     tva,
-    clientId,
+    clientKey,
     garantyTime,
     status,
   }) => {
@@ -468,16 +468,16 @@ class Proforma {
     if (status !== undefined) {
       updateField.status = status;
     }
-    if (clientId !== undefined) {
-      const client = await clientModel.getClient({ key: clientId });
+    if (clientKey !== undefined) {
+      const client = await clientModel.getClient({ key: clientKey });
 
       if (client.logo !== undefined && client.logo != null) {
         client.logo = client.logo.replace(
           process.env.FILE_PREFIX + `${locateClientFolder}/`,
-          ""
+          "",
         );
       }
-      const { categorie, ...otherClientInfo } = client;
+      const { partnerCategorie, ...otherClientInfo } = client;
       updateField.client = otherClientInfo;
     }
     // Validation des champs mis à jour
@@ -492,7 +492,7 @@ class Proforma {
         })
       ) {
         throw new Error(
-          "Attention!!! Le montant de la facture est inférieur à sa réduction"
+          "Attention!!! Le montant de la facture est inférieur à sa réduction",
         );
       }
       updateField.reduction = reduction;
@@ -505,7 +505,7 @@ class Proforma {
       console.error(err);
 
       throw new Error(
-        "Une erreur s'est produite lors de la mise à jour de la proforma"
+        "Une erreur s'est produite lors de la mise à jour de la proforma",
       );
     }
   };
@@ -533,7 +533,7 @@ class Proforma {
       throw new Error("Suppression impossible");
     }
     try {
-      await ligneProformaModel.deleteAllByProforma({ proformaId: key });
+      await ligneProformaModel.deleteAllByProforma({ proformaKey: key });
       await proformaCollection.remove(key);
       return "OK";
     } catch (err) {
@@ -544,8 +544,8 @@ class Proforma {
   };
 
   ajouterLigneProforma = async ({
-    proformaId,
-    serviceId,
+    proformaKey,
+    serviceKey,
     designation,
     prixSupplementaire = 0.0,
     quantite = 1,
@@ -554,10 +554,10 @@ class Proforma {
     remise = 0.0,
     fraisDivers,
   }) => {
-    await this.isExistProforma({ key: proformaId });
+    await this.isExistProforma({ key: proformaKey });
     await ligneProformaModel.ajouterLigneProforma({
-      proformaId: proformaId,
-      serviceId: serviceId,
+      proformaKey: proformaKey,
+      serviceKey: serviceKey,
       designation: designation,
       dureeLivraison: dureeLivraison,
       prixSupplementaire: prixSupplementaire,
@@ -590,7 +590,7 @@ class Proforma {
   //     const query = await db.query(
   //       aql`
   //       FOR ligneProforma IN ${ligneProformaCollection}
-  //       LET proforma = DOCUMENT(ligneProforma._to)
+  //       LET proforma = DOCUMENT(ligneProforma.proformaKey)
   //       proforma.garantyTime != 0
   //       AND ${Date.now()} - proforma.dateEnvoie >= proforma.garantyTime
   //       RETURN ligneProforma
@@ -601,15 +601,15 @@ class Proforma {
   //       ligneProformas.map(async (ligneProforma) => {
   //         const updatedData = {
   //           service: await serviceModel.getService({
-  //             key: ligneProforma._from,
+  //             key: ligneProforma.serviceKey,
   //           }),
   //         };
 
-  //         ligneProformaCollection.update(ligneProforma._id, updatedData);
+  //         ligneProformaCollection.update(ligneProforma._key, updatedData);
   //       })
   //     );
   //   } catch (e) {
-      // console.error(e);}
+  // console.error(e);}
   // };
 
   autoArchiveProforma = async () => {
@@ -621,19 +621,19 @@ class Proforma {
       AND proforma.status == ${statusProforma.wait}
       AND ${Date.now()} - proforma.dateEnvoie >= proforma.garantyTime
       RETURN proforma
-    `
+    `,
       );
       const proformas = await query.all();
       await Promise.all(
         proformas.map(async (proforma) => {
-          await proformaCollection.update(proforma._id, {
+          await proformaCollection.update(proforma._key, {
             status: statusProforma.archived,
           });
-        })
+        }),
       );
     } catch (e) {
       console.error(e);
-       console.error("Erreur lors de la mise à jour des proformas.");
+      console.error("Erreur lors de la mise à jour des proformas.");
     }
   };
 
@@ -653,7 +653,7 @@ class Proforma {
         LIMIT 1
         FILTER proforma.dateEnregistrement >= ${startOfMonth}
         RETURN proforma        
-      `
+      `,
     );
     let count = 0;
     if (query.hasNext) {
@@ -664,7 +664,7 @@ class Proforma {
     }
     return `DG/PRO/${lastTwoDigitsYear}/${String(currentMonth).padStart(
       2,
-      "0"
+      "0",
     )}/${String((count ?? 0) + 1).padStart(2, "0")}`;
   };
 }

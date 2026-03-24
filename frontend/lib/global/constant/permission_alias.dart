@@ -15,10 +15,10 @@ enum PermissionAlias {
   validProforma("VALID_PROFORMA"),
   validFluxFinancier("VALID_FLUX_FINANCIER"),
   readFinalSituation("READ_FINANCIAL_SITUATION"),
-  createClient("CREATE_CLIENT"),
-  updateClient("EDIT_CLIENT"),
-  archiveClient("ARCHIVER_CLIENT"),
-  readClient("READ_CLIENT"),
+  createClient("CREATE_PARTNER"),
+  updateClient("EDIT_PARTNER"),
+  archiveClient("ARCHIVER_PARTNER"),
+  readClient("READ_PARTNER"),
   createService("CREATE_SERVICE"),
   updateService("EDIT_SERVICE"),
   archiveService("ARCHIVER_SERVICE"),
@@ -75,16 +75,16 @@ enum PermissionAlias {
   readAvance("READ_AVANCE"),
 
 // Catégorie bulletin
-  createCategorieBulletin("CREATE_CATEGORIE_BULLETIN"),
-  updateCategorieBulletin("EDIT_CATEGORIE_BULLETIN"),
-  readCategorieBulletin("READ_CATEGORIE_BULLETIN"),
-  deleteCategorieBulletin("DELETE_CATEGORIE_BULLETIN"),
+  createBulletinCategorie("CREATE_BULLETIN_CATEGORIE"),
+  updateBulletinCategorie("EDIT_BULLETIN_CATEGORIE"),
+  readBulletinCategorie("READ_BULLETIN_CATEGORIE"),
+  deleteBulletinCategorie("DELETE_BULLETIN_CATEGORIE"),
 
 // Catégorie paie
-  createCategoriePaie("CREATE_CATEGORIE_PAIE"),
-  updateCategoriePaie("EDIT_CATEGORIE_PAIE"),
-  readCategoriePaie("READ_CATEGORIE_PAIE"),
-  deleteCategoriePaie("DELETE_CATEGORIE_PAIE"),
+  createpaieCategorie("CREATE_CATEGORIE_PAIE"),
+  updatepaieCategorie("EDIT_CATEGORIE_PAIE"),
+  readpaieCategorie("READ_CATEGORIE_PAIE"),
+  deletepaieCategorie("DELETE_CATEGORIE_PAIE"),
 
 // Moyen de Paiement
   createMoyenPaiement("CREATE_MOYEN_PAIEMENT"),
@@ -93,10 +93,10 @@ enum PermissionAlias {
   deleteMoyenPaiement("DELETE_MOYEN_PAIEMENT"),
 
 // Catégorie Client
-  createCategorieClient("CREATE_CATEGORIE_CLIENT"),
-  updateCategorieClient("EDIT_CATEGORIE_CLIENT"),
-  readCategorieClient("READ_CATEGORIE_CLIENT"),
-  deleteCategorieClient("DELETE_CATEGORIE_CLIENT"),
+  createPartnerCategorie("CREATE_PARTNER_CATEGORIE"),
+  updatePartnerCategorie("EDIT_PARTNER_CATEGORIE"),
+  readPartnerCategorie("READ_PARTNER_CATEGORIE"),
+  deletePartnerCategorie("DELETE_PARTNER_CATEGORIE"),
 
 // Section Bulletin
   createBulletinSection("CREATE_BULLETIN_SECTION"),
@@ -113,7 +113,7 @@ enum PermissionAlias {
   readPoste("READ_POSTE"),
 
 // Assignation
-  assignRubriqueCategorieBulletin("ASSIGN_RUBRIQUE_TO_CATEGORIE_BULLETIN"),
+  assignRubriqueBulletinCategorie("ASSIGN_RUBRIQUE_TO_BULLETIN_CATEGORIE"),
 //Poste
 
 // echelon

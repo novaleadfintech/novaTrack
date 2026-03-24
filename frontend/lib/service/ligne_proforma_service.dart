@@ -9,8 +9,8 @@ import 'request_header.dart';
 
 class LigneProformaService {
   static Future<RequestResponse> createLigneProforma({
-    required String proformaId,
-    required String serviceId,
+    required String proformaKey,
+    required String serviceKey,
     required String designation,
     required int? dureeLivraison,
     required String unit,
@@ -23,8 +23,8 @@ class LigneProformaService {
     String body = '''
   mutation AjouterLigneProforma {
     ajouterLigneProforma(
-      proformaId: "$proformaId",
-      serviceId: "$serviceId",
+      proformaKey: "$proformaKey",
+      serviceKey: "$serviceKey",
       unit: "$unit",
       designation: "$designation",
   ''';
@@ -101,12 +101,12 @@ class LigneProformaService {
   }
 
   static Future<RequestResponse> retirerLigneProforma({
-    required String ligneProformaId,
+    required String ligneProformaKey,
   }) async {
     // Initialisation de la requête
     String body = '''
       mutation DeleteLigneProforma {
-        deleteLigneProforma(key:"$ligneProformaId")
+        deleteLigneProforma(key:"$ligneProformaKey")
       }
   ''';
 
@@ -151,8 +151,8 @@ class LigneProformaService {
   }
 
   static Future<RequestResponse> updateLigneProforma({
-    required String ligneProformaId,
-    String? serviceId,
+    required String ligneProformaKey,
+    String? serviceKey,
     String? designation,
     int? dureeLivraison,
     double? prixSupplementaire,
@@ -164,7 +164,7 @@ class LigneProformaService {
     String body = '''
   mutation UpdateLigneProforma {
     updateLigneProforma(
-      key: "$ligneProformaId",
+      key: "$ligneProformaKey",
   ''';
 
     if (fraisDivers != null && fraisDivers.isNotEmpty) {
@@ -191,8 +191,8 @@ class LigneProformaService {
     if (designation != null) {
       body += 'designation: "$designation",';
     }
-    if (serviceId != null) {
-      body += 'serviceId: "$serviceId",';
+    if (serviceKey != null) {
+      body += 'serviceKey: "$serviceKey",';
     }
     if (dureeLivraison != null && dureeLivraison != 0) {
       body += 'dureeLivraison: $dureeLivraison,';

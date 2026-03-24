@@ -14,11 +14,11 @@ class ClasseService {
     var body = '''
       query Classes {
         classes {
-          _id
+          _key
           libelle
           echelonIndiciciaires {
             echelon {
-              _id
+              _key
               libelle
             }
             indice

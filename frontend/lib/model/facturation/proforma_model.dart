@@ -5,7 +5,7 @@ import 'enum_facture.dart';
 import '../client/client_model.dart';
 
 class ProformaModel {
-  final String id;
+  final String key;
   final String reference;
   final DateTime? dateEtablissementProforma;
   final ReductionModel? reduction;
@@ -20,7 +20,7 @@ class ProformaModel {
   final double? montant;
 
   ProformaModel({
-    required this.id,
+    required this.key,
     required this.reference,
     this.dateEtablissementProforma,
     this.reduction,
@@ -37,7 +37,7 @@ class ProformaModel {
 
   factory ProformaModel.fromJson(Map<String, dynamic> json) {
     return ProformaModel(
-      id: json['_id'] ?? '',
+      key: json['_key'] ?? '',
       reference: json['reference'] ?? '',
       dateEtablissementProforma: json['dateEtablissementProforma'] != null
           ? DateTime.fromMillisecondsSinceEpoch(
@@ -70,7 +70,7 @@ class ProformaModel {
 
   Map<String, dynamic> toJson() {
     return {
-      '_id': id,
+      '_key': key,
       'reference': reference,
       'dateEtablissementProforma':
           dateEtablissementProforma?.millisecondsSinceEpoch,

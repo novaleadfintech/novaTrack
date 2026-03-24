@@ -16,9 +16,9 @@ final List<String> echelonTableTitlesSmall = [
   "LIBELLE",
   "",
 ];
-final List<String> grilleCategoriePaieTableTitles = ["LIBELLE", ""];
+final List<String> grillepaieCategorieTableTitles = ["LIBELLE", ""];
 
-final List<String> grilleCategoriePaieTableTitlesSmall = [
+final List<String> grillepaieCategorieTableTitlesSmall = [
   "LIBELLE",
   "",
 ];

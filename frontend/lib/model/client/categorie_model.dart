@@ -1,23 +1,23 @@
 class CategorieModel {
-  final String id;
+  final String key;
   final String libelle;
   static dynamic categorieErr;
 
   CategorieModel({
-    required this.id,
+    required this.key,
     required this.libelle,
   });
 
   factory CategorieModel.fromJson(Map<String, dynamic> json) {
     return CategorieModel(
-      id: json["_id"],
+      key: json["_key"],
       libelle: json["libelle"],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      "_id": id,
+      "_key": key,
       "libelle": libelle,
     };
   }

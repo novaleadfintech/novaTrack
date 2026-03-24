@@ -13,7 +13,7 @@ class RoleService {
       var body = '''
       query Roles {
           roles {
-              _id
+              _key
               libelle
           }
       }
@@ -49,13 +49,13 @@ class RoleService {
 
   static Future<RequestResponse> attribuerPermissionRole({
     required String rolekey,
-    required String permissionId,
+    required String permissionKey,
   }) async {
     var body = '''
       mutation AttribuerPermissionRole {
         attribuerPermissionRole(
           rolekey: "$rolekey",
-          permissionId: "$permissionId",
+          permissionKey: "$permissionKey",
         )
       }
     ''';
@@ -95,13 +95,13 @@ class RoleService {
 
   static Future<RequestResponse> retirerPermissionRole({
     required String rolekey,
-    required String permissionId,
+    required String permissionKey,
   }) async {
     var body = '''
       mutation RetirerPermissionRole {
         retirerPermissionRole(
           rolekey: "$rolekey",
-          permissionId: "$permissionId",
+          permissionKey: "$permissionKey",
         )
       }
     ''';

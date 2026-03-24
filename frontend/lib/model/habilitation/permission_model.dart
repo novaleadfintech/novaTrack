@@ -3,14 +3,14 @@
 import 'module_model.dart';
 
 class PermissionModel {
-  final String id;
+  final String key;
   final String libelle;
   final String alias;
   final bool? isChecked;
   final ModuleModel? module;
 
   PermissionModel({
-    required this.id,
+    required this.key,
     required this.libelle,
     required this.alias,
     this.isChecked,
@@ -19,7 +19,7 @@ class PermissionModel {
 
   factory PermissionModel.fromJson(Map<String, dynamic> json) {
     return PermissionModel(
-      id: json['_id'],
+      key: json['_key'],
       libelle: json['libelle'],
       alias: json['alias'],
       isChecked: json['isChecked'],
@@ -32,7 +32,7 @@ class PermissionModel {
 
   Map<String, dynamic> toJson() {
     return {
-      '_id': id,
+      '_key': key,
       'libelle': libelle,
       'alias': alias,
       'isChecked': isChecked,

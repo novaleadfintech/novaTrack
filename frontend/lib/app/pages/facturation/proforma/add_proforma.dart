@@ -86,7 +86,7 @@ class _AddFactureProformatState extends State<AddFactureProformat> {
     }
 
     RequestResponse result = await ProformaService.createProformat(
-      clientId: client!.id,
+      clientKey: client!.key,
       tva: tva,
       dateEnvoie: dateEnvoie!,
       dateEtablissementProforma: dateEtablissement,

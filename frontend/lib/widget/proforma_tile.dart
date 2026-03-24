@@ -92,7 +92,7 @@ class _ProformaTileState extends State<ProformaTile> {
       );
 
       RequestResponse result = await ProformaService.updateProformat(
-        id: proforma.id,
+        key: proforma.key,
         statut: StatusProforma.cancel,
       );
       _dialog.hide();
@@ -165,7 +165,7 @@ class _ProformaTileState extends State<ProformaTile> {
     showResponsiveDialog(
       context,
       content: ValidateProformatPage(
-        proformaId: proforma.id,
+        proformaKey: proforma.key,
         refresh: widget.refresh,
       ),
       title: "Validation de la proforma",

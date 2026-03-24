@@ -4,10 +4,10 @@ import '../../../style/app_style.dart';
 import '../../../widget/table_body_middle.dart';
 
 class DetailCategoriePage extends StatefulWidget {
-  final CategorieModel categorie;
+  final CategorieModel partnerCategorie;
   const DetailCategoriePage({
     super.key,
-    required this.categorie,
+    required this.partnerCategorie,
   });
 
   @override
@@ -27,7 +27,7 @@ class _DetailCategoriePageState extends State<DetailCategoriePage> {
               isbold: true,
             ),
             TabledetailBodyMiddle(
-              valeur: widget.categorie.libelle,
+              valeur: widget.partnerCategorie.libelle,
             ),
           ],
         ),

@@ -2,7 +2,7 @@ import '../pays_model.dart';
 import 'type_canaux_paiement.dart';
 
 class BanqueModel {
-  final String id;
+  final String key;
   final String name;
   final String codeBanque;
   final double soldeReel;
@@ -16,7 +16,7 @@ class BanqueModel {
   final String cleRIB;
 
   BanqueModel({
-    required this.id,
+    required this.key,
     required this.name,
     required this.codeBanque,
     this.country,
@@ -32,7 +32,7 @@ class BanqueModel {
 
   factory BanqueModel.fromJson(Map<String, dynamic> json) {
     return BanqueModel(
-      id: json['_id'],
+      key: json['_key'],
       name: json['name'],
       codeBanque: json['codeBanque'],
       country:
@@ -55,7 +55,7 @@ class BanqueModel {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      'key': key,
       'name': name,
       'codeBanque': codeBanque,
       'soldeTheorique': soldeTheorique.toDouble(),
@@ -72,6 +72,6 @@ class BanqueModel {
   }
 
   bool equalTo({required BanqueModel bank}) {
-    return bank.id == id;
+    return bank.key == key;
   }
 }

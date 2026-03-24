@@ -97,7 +97,7 @@ class _EditFluxPageState extends State<EditPayement> {
     }
 
     RequestResponse result = await FluxFinancierService.updateFluxFinancier(
-      key: flux.id,
+      key: flux.key,
       dateOperation: newdateOperation,
       montant: montant,
       moyenPayement: newmoyenPayement,

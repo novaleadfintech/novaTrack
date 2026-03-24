@@ -8,13 +8,12 @@ const proformaResolvers = {
       skip: skip,
       perPage: perPage,
     }),
-  archivedProformas: async () =>
-    await proformaModel.getArchivedProforma(),
+  archivedProformas: async () => await proformaModel.getArchivedProforma(),
 
   proforma: async ({ key }) => await proformaModel.getProforma({ key: key }),
 
-  proformaByClient: async ({ clientId }) =>
-    await proformaModel.proformaByClient({ clientId: clientId }),
+  proformaByClient: async ({ clientKey }) =>
+    await proformaModel.proformaByClient({ clientKey: clientKey }),
 
   createProforma: async ({
     dateEtablissementProforma,
@@ -23,7 +22,7 @@ const proformaResolvers = {
     etat,
     ligneProformas,
     tva,
-    clientId,
+    clientKey,
   }) =>
     await proformaModel.createProforma({
       dateEtablissementProforma: dateEtablissementProforma,
@@ -31,7 +30,7 @@ const proformaResolvers = {
       dateEnvoie: dateEnvoie,
       etat: etat,
       tva: tva,
-      clientId: clientId,
+      clientKey: clientKey,
       ligneProformas: ligneProformas,
     }),
 
@@ -42,7 +41,7 @@ const proformaResolvers = {
     dateEnvoie,
     reduction,
     tva,
-    clientId,
+    clientKey,
     status,
   }) =>
     await proformaModel.updateProforma({
@@ -52,29 +51,29 @@ const proformaResolvers = {
       dateEnvoie: dateEnvoie,
       reduction: reduction,
       tva: tva,
-      clientId: clientId,
+      clientKey: clientKey,
       status: status,
     }),
 
   deleteProforma: async ({ key }) =>
     await proformaModel.deleteProforma({ key: key }),
 
-  validerProforma: async ({
+  valkeyerProforma: async ({
     key,
     dateEtablissementFacture,
     facturesAcompte,
-    banquesIds,
+    banquesKeys,
   }) =>
-    await proformaModel.validerProforma({
+    await proformaModel.valkeyerProforma({
       key: key,
       dateEtablissementFacture: dateEtablissementFacture,
-      banquesIds: banquesIds,
+      banquesKeys: banquesKeys,
       facturesAcompte: facturesAcompte,
     }),
 
   ajouterLigneProforma: async ({
-    proformaId,
-    serviceId,
+    proformaKey,
+    serviceKey,
     designation,
     quantite,
     dureeLivraison,
@@ -83,8 +82,8 @@ const proformaResolvers = {
     fraisDivers,
   }) =>
     await proformaModel.ajouterLigneProforma({
-      proformaId: proformaId,
-      serviceId: serviceId,
+      proformaKey: proformaKey,
+      serviceKey: serviceKey,
       designation: designation,
       unit,
       quantite: quantite,

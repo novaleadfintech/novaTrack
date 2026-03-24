@@ -1,7 +1,7 @@
 const typeDef = `#graphql
 #Definition du type permission
     type Permission{
-        _id: ID!
+        _key: ID!
         libelle: String!
         alias: String!
         isChecked: Boolean
@@ -17,12 +17,12 @@ const typeDef = `#graphql
 const query = `#graphql
     permissions: [ModulePermission]!
     permission(key: ID!): Permission!
-    permissionByRole(roleId: String!): [ModulePermission]!
-    permissionByModule(moduleId: String!): [Permission]!
+    permissionByRole(roleKey: String!): [ModulePermission]!
+    permissionByModule(moduleKey: String!): [Permission]!
 `;
 
 const mutation = `#graphql
-     createPermission(libelle: String!, moduleId: String): String!
+     createPermission(libelle: String!, moduleKey: String): String!
      updatePermission(key: ID!, libelle: String): String!
     deletePermission(key: ID!): String!
 `;

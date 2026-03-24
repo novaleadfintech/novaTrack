@@ -5,19 +5,19 @@ import '../app/integration/popop_status.dart';
 import '../global/config.dart';
 import '../global/constant/request_management_value.dart';
 
-import '../model/bulletin_paie/categorie_bulletin.dart';
+import '../model/bulletin_paie/bulletin_categorie.dart';
 import '../model/request_response.dart';
 import 'package:http/http.dart' as http;
 
 import 'request_header.dart';
 
-class CategorieBulletinService {
-  static Future<List<CategorieBulletinModel>> getCategoriesBulletin() async {
+class BulletinCategorieservice {
+  static Future<List<BulletinCategorieModel>> getBulletinCategories() async {
     var body = '''
-      query CategoriesBulletin {
-    categoriesBulletin {
-        _id
-        categorieBulletin
+      query BulletinCategories {
+    bulletinCategories {
+        _key
+        bulletinCategorie
         paieClause
     }
 }
@@ -40,14 +40,14 @@ class CategorieBulletinService {
 
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
-      var data = jsonData['data']['categoriesBulletin'];
+       var data = jsonData['data']['bulletinCategories'];
 
-      List<CategorieBulletinModel> categoriebulletins = [];
+      List<BulletinCategorieModel> bulletincategories = [];
       if (data != null) {
         for (var category in data) {
-          categoriebulletins.add(CategorieBulletinModel.fromJson(category));
+          bulletincategories.add(BulletinCategorieModel.fromJson(category));
         }
-        return categoriebulletins;
+        return bulletincategories;
       } else {
         throw RequestMessage.failgettingDataMessage;
       }
@@ -56,13 +56,13 @@ class CategorieBulletinService {
     }
   }
 
-  static Future<RequestResponse> createCategorieBulletin({
-    required String categorieBulletin,
+  static Future<RequestResponse> createBulletinCategorie({
+    required String bulletinCategorie,
     required PaieClause paieClause,
   }) async {
     var body = '''
-      mutation CreateCategorieBulletin {
-    createCategorieBulletin(categorieBulletin: "$categorieBulletin",
+      mutation CreateBulletinCategorie {
+    createBulletinCategorie(bulletinCategorie: "$bulletinCategorie",
     paieClause: ${PaieClause.paieClauseToString(paieClause)}
     )
 }
@@ -82,7 +82,7 @@ class CategorieBulletinService {
 
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
-        var data = jsonData['data']['createCategorieBulletin'];
+        var data = jsonData['data']['createBulletinCategorie'];
         if (data == RequestMessage.success) {
           return RequestResponse(
             message: RequestMessage.successMessage,
@@ -108,13 +108,13 @@ class CategorieBulletinService {
     }
   }
 
-  static Future<RequestResponse> updateCategorieBulletin(
-      {required String categorieBulletin,
+  static Future<RequestResponse> updateBulletinCategorie(
+      {required String bulletinCategorie,
       required String key,
       required PaieClause paieClause}) async {
     var body = '''
-mutation UpdateCategorieBulletin {
-    updateCategorieBulletin(key: "$key", categorieBulletin: "$categorieBulletin", paieClause: ${PaieClause.paieClauseToString(paieClause)})
+mutation UpdateBulletinCategorie {
+    updateBulletinCategorie(key: "$key", bulletinCategorie: "$bulletinCategorie", paieClause: ${PaieClause.paieClauseToString(paieClause)})
 }
     ''';
 
@@ -131,7 +131,7 @@ mutation UpdateCategorieBulletin {
 
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
-        var data = jsonData['data']['updateCategorieBulletin'];
+        var data = jsonData['data']['updateBulletinCategorie'];
         if (data == RequestMessage.success) {
           return RequestResponse(
             message: RequestMessage.successMessage,
@@ -157,12 +157,12 @@ mutation UpdateCategorieBulletin {
     }
   }
 
-  static Future<RequestResponse> deleteCategorieBulletin({
+  static Future<RequestResponse> deleteBulletinCategorie({
     required String key,
   }) async {
     var body = '''
-      mutation DeleteCategorieBulletin {
-    deleteCategorieBulletin(key: "$key")
+      mutation DeleteBulletinCategorie {
+    deleteBulletinCategorie(key: "$key")
 }
     ''';
 
@@ -185,7 +185,7 @@ mutation UpdateCategorieBulletin {
 
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
-        var data = jsonData['data']['deleteCategorieBulletin'];
+        var data = jsonData['data']['deleteBulletinCategorie'];
         if (data == RequestMessage.success) {
           return RequestResponse(
             message: RequestMessage.successMessage,

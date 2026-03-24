@@ -19,13 +19,13 @@ class ClientService {
     var body = '''
       query Clients {
           clients(etat: unarchived) {
-          _id
+          _key
           email
           telephone
           nature
           adresse
           pays{
-            _id
+            _key
             name
             code
             initiauxPays
@@ -36,13 +36,13 @@ class ClientService {
           dateEnregistrement
           fullCount
           ... on ClientMoral {
-              _id
+              _key
               raisonSociale
               email
               logo
               telephone
               pays{
-                _id
+                _key
                 name
                 code
                 tauxTVA
@@ -61,18 +61,18 @@ class ClientService {
             }
               dateEnregistrement
               fullCount
-              categorie {
-                  _id
+              partnerCategorie {
+                  _key
                   libelle
               }
           }
           ... on ClientPhysique {
-              _id
+              _key
               nom
               prenom
               sexe
               pays{
-              _id
+              _key
               name
               code
               initiauxPays
@@ -128,13 +128,13 @@ class ClientService {
     var body = '''
       query Clients {
           unarchivedClientsAndProspects {
-          _id
+          _key
           email
           telephone
           nature
           adresse
           pays{
-            _id
+            _key
             name
             code
             initiauxPays
@@ -145,13 +145,13 @@ class ClientService {
           dateEnregistrement
           fullCount
           ... on ClientMoral {
-              _id
+              _key
               raisonSociale
               email
               logo
               telephone
               pays{
-                _id
+                _key
                 name
                 code
                 tauxTVA
@@ -170,18 +170,18 @@ class ClientService {
             }
               dateEnregistrement
               fullCount
-              categorie {
-                  _id
+              partnerCategorie {
+                  _key
                   libelle
               }
           }
           ... on ClientPhysique {
-              _id
+              _key
               nom
               prenom
               sexe
               pays{
-              _id
+              _key
               name
               code
               initiauxPays
@@ -237,13 +237,13 @@ class ClientService {
     var body = '''
       query Clients {
           clients(etat: unarchived, nature: ${natureClientToString(NatureClient.client)}) {
-          _id
+          _key
           email
           telephone
           nature
           adresse
           pays{
-            _id
+            _key
             name
             code
             initiauxPays
@@ -254,13 +254,13 @@ class ClientService {
           dateEnregistrement
           fullCount
           ... on ClientMoral {
-              _id
+              _key
               raisonSociale
               email
               logo
               telephone
               pays{
-                _id
+                _key
                 name
                 code
                 initiauxPays
@@ -280,18 +280,18 @@ class ClientService {
             }
               dateEnregistrement
               fullCount
-              categorie {
-                  _id
+              partnerCategorie {
+                  _key
                   libelle
               }
           }
           ... on ClientPhysique {
-              _id
+              _key
               nom
               prenom
               sexe
               pays{
-              _id
+              _key
               name
               initiauxPays
               code
@@ -348,13 +348,13 @@ class ClientService {
     var body = '''
       query Clients {
           clients(etat: unarchived, nature: ${natureClientToString(NatureClient.fournisseur)}) {
-          _id
+          _key
           email
           telephone
           nature
           adresse
           pays{
-            _id
+            _key
             name
             code
             initiauxPays
@@ -365,13 +365,13 @@ class ClientService {
           dateEnregistrement
           fullCount
           ... on ClientMoral {
-              _id
+              _key
               raisonSociale
               email
               logo
               telephone
               pays{
-                _id
+                _key
                 name
                 code
                 initiauxPays
@@ -391,18 +391,18 @@ class ClientService {
             }
               dateEnregistrement
               fullCount
-              categorie {
-                  _id
+              partnerCategorie {
+                  _key
                   libelle
               }
           }
           ... on ClientPhysique {
-              _id
+              _key
               nom
               prenom
               sexe
               pays{
-              _id
+              _key
               name
               initiauxPays
               code
@@ -460,13 +460,13 @@ class ClientService {
     var body = '''
      query Clients {
           clients(etat: archived) {
-          _id
+          _key
           email
           telephone
           nature
           adresse
           pays{
-            _id
+            _key
             name
             code
             initiauxPays
@@ -477,13 +477,13 @@ class ClientService {
           dateEnregistrement
           fullCount
           ... on ClientMoral {
-              _id
+              _key
               raisonSociale
               email
               telephone
               logo
               pays{
-              _id
+              _key
               name
               code
               initiauxPays
@@ -503,18 +503,18 @@ class ClientService {
             }
               dateEnregistrement
               fullCount
-              categorie {
-                  _id
+              partnerCategorie {
+                  _key
                   libelle
               }
           }
           ... on ClientPhysique {
-              _id
+              _key
               nom
               prenom
               sexe
               pays{
-              _id
+              _key
               name
               code
               tauxTVA
@@ -571,7 +571,7 @@ class ClientService {
     var body = '''
       query Client {
           client(key: "$key") {
-              _id
+              _key
               email
               telephone
               adresse
@@ -580,7 +580,7 @@ class ClientService {
               dateEnregistrement
               fullCount
               pays {
-                  _id
+                  _key
           name
           code
           initiauxPays
@@ -588,7 +588,7 @@ class ClientService {
           phoneNumber
               }
               ... on ClientMoral {
-                  _id
+                  _key
                   raisonSociale
                   logo
                   email
@@ -596,7 +596,7 @@ class ClientService {
                   adresse
                   etat
                   responsable {
-                _id
+                _key
                 prenom
                 nom
                 email
@@ -608,20 +608,20 @@ class ClientService {
                   dateEnregistrement
                   fullCount
                   pays {
-                      _id
+                      _key
           name
           code
           initiauxPays
           tauxTVA
           phoneNumber
                   }
-                  categorie {
-                      _id
+                  partnerCategorie {
+                      _key
                       libelle
                   }
               }
               ... on ClientPhysique {
-                  _id
+                  _key
                   nom
                   prenom
                   sexe
@@ -632,7 +632,7 @@ class ClientService {
                   dateEnregistrement
                   fullCount
                   pays {
-                     _id
+                     _key
           name
           code
           initiauxPays
@@ -676,7 +676,7 @@ class ClientService {
   static Future<RequestResponse> createMoralClient({
     required String raisonSociale,
     required ResponsableModel? responsable,
-    required String categorieId,
+    required String partnerCategorieKey,
     required NatureClient nature,
     PlatformFile? file,
     required String? email,
@@ -690,8 +690,8 @@ class ClientService {
         createClientMoral(
           raisonSociale: "$raisonSociale",
           nature: ${natureClientToString(nature)},
-          categorieId: "$categorieId",
-          pays: {_id: "${pays.id}", name: "${pays.name}", code: ${pays.code}, phoneNumber: ${pays.phoneNumber}, tauxTVA: ${pays.tauxTVA}, initiauxPays: ${pays.initiauxPays.toList()}},
+          partnerCategorieKey: "$partnerCategorieKey",
+          pays: {_key: "${pays.key}", name: "${pays.name}", code: ${pays.code}, phoneNumber: ${pays.phoneNumber}, tauxTVA: ${pays.tauxTVA}, initiauxPays: ${pays.initiauxPays.toList()}},
           logo: \$logo,''';
       if (responsable != null) {
         body +=
@@ -795,7 +795,7 @@ class ClientService {
             prenom: "$prenom"
             sexe: ${sexeToString(sexe)}
            nature: ${natureClientToString(nature)},
-           pays: {_id: "${pays.id}", name: "${pays.name}", code: ${pays.code}, phoneNumber: ${pays.phoneNumber}, tauxTVA: ${pays.tauxTVA}, initiauxPays: ${pays.initiauxPays.toList()}},
+           pays: {_key: "${pays.key}", name: "${pays.name}", code: ${pays.code}, phoneNumber: ${pays.phoneNumber}, tauxTVA: ${pays.tauxTVA}, initiauxPays: ${pays.initiauxPays.toList()}},
              ''';
     if (email != null && email.isNotEmpty) {
       body += 'email: "$email",';
@@ -854,10 +854,10 @@ class ClientService {
   }
 
   static Future<RequestResponse> updateClientMoral({
-    String? id,
+    String? key,
     String? raisonSociale,
     ResponsableModel? responsable,
-    String? categorieId,
+    String? partnerCategorieKey,
     PlatformFile? file,
     NatureClient? nature,
     String? email,
@@ -869,7 +869,7 @@ class ClientService {
       String body = '''
     mutation UpdateClientMoral(\$logo: Upload) {
       updateClientMoral(
-        key: "$id",
+        key: "$key",
     ''';
 
       if (raisonSociale != null && raisonSociale.isNotEmpty) {
@@ -879,8 +879,8 @@ class ClientService {
         body +=
             'responsable: {prenom: "${responsable.prenom}", nom: "${responsable.nom}", sexe: ${sexeToString(responsable.sexe!)}, civilite: ${civiliteToString(responsable.civilite!)}, email: "${responsable.email}", telephone: ${responsable.telephone}, poste: "${responsable.poste}"},';
       }
-      if (categorieId != null) {
-        body += 'categorieId: "$categorieId",';
+      if (partnerCategorieKey != null) {
+        body += 'partnerCategorieKey: "$partnerCategorieKey",';
       }
       if (email != null) {
         body += 'email: "$email",';
@@ -893,7 +893,7 @@ class ClientService {
       }
       if (pays != null) {
         body +=
-            'pays: {_id: "${pays.id}", name: "${pays.name}", code: ${pays.code}, phoneNumber: ${pays.phoneNumber}, tauxTVA: ${pays.tauxTVA}, initiauxPays: ${pays.initiauxPays.toList()}},';
+            'pays: {_key: "${pays.key}", name: "${pays.name}", code: ${pays.code}, phoneNumber: ${pays.phoneNumber}, tauxTVA: ${pays.tauxTVA}, initiauxPays: ${pays.initiauxPays.toList()}},';
       }
       if (telephone != null) {
         body += 'telephone: $telephone,';
@@ -973,7 +973,7 @@ class ClientService {
   }
 
   static Future<RequestResponse> updatePhysiqueClient({
-    required String clientId,
+    required String clientKey,
     String? nom,
     String? prenom,
     Sexe? sexe,
@@ -986,7 +986,7 @@ class ClientService {
     var body = '''
       mutation UpdateClientPhysique {
         updateClientPhysique(
-          key: "$clientId",
+          key: "$clientKey",
     ''';
 
     if (nom != null) {
@@ -1007,7 +1007,7 @@ class ClientService {
     }
     if (pays != null) {
       body +=
-          'pays: {_id: "${pays.id}", name: "${pays.name}", code: ${pays.code}, phoneNumber: ${pays.phoneNumber},initiauxPays: ${pays.initiauxPays.toList()}, tauxTVA: ${pays.tauxTVA}},';
+          'pays: {_key: "${pays.key}", name: "${pays.name}", code: ${pays.code}, phoneNumber: ${pays.phoneNumber},initiauxPays: ${pays.initiauxPays.toList()}, tauxTVA: ${pays.tauxTVA}},';
     }
     if (telephone != null) {
       body += 'telephone: $telephone,';
@@ -1066,11 +1066,11 @@ class ClientService {
   }
 
   static Future<RequestResponse> archiveClient({
-    required String clientId,
+    required String clientKey,
   }) async {
     var body = '''
       mutation ArchivedClient {
-        archivedClient(key: "$clientId")
+        archivedClient(key: "$clientKey")
       }
     ''';
 
@@ -1120,11 +1120,11 @@ class ClientService {
   }
 
   static Future<RequestResponse> unarchiveClient({
-    required String clientId,
+    required String clientKey,
   }) async {
     var body = '''
       mutation UnarchivedClient {
-        unarchivedClient(key: "$clientId")
+        unarchivedClient(key: "$clientKey")
       }
     ''';
 

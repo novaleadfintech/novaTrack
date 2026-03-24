@@ -1,6 +1,6 @@
 const typeDef = `#graphql
 type LibelleFlux{
-    _id:ID!
+    _key:ID!
      libelle:String!
     type: FluxFinancierType!
 }

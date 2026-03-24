@@ -97,7 +97,7 @@ class _PersonnelPageState extends State<SalariePage> {
           salarie.personnel.prenom
               .toLowerCase()
               .contains(searchQuery.toLowerCase().trim()) ||
-          salarie.categorieBulletin.categorieBulletin
+          salarie.bulletinCategorie.bulletinCategorie
               .toLowerCase()
               .contains(searchQuery.toLowerCase().trim());
 

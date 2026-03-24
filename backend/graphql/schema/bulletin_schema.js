@@ -22,7 +22,7 @@ type ValidateBulletin{
 
 
 type BulletinPaie {
-    _id: ID!
+    _key: ID!
     etat: EtatBulletin!
     # moyenPayement: MoyenPaiement
     debutPeriodePaie: Float!
@@ -41,7 +41,7 @@ const query = `#graphql
     currentBulletinsPaie(perPage: Int, skip: Int, etat:EtatBulletin): [BulletinPaie]!
     archiveBulletinsPaie(perPage: Int, skip: Int, etat:EtatBulletin): [BulletinPaie]!
     currentValidateBulletin(perPage: Int, skip: Int): [BulletinPaie]!
-    previousBulletinsPaie(salarieId: String!): BulletinPaie
+    previousBulletinsPaie(salarieKey: String!): BulletinPaie
     bulletinPaie(key: ID!): BulletinPaie!
 `;
 
@@ -51,9 +51,9 @@ const mutation = `#graphql
         debutPeriodePaie: Float!
         finPeriodePaie: Float!
         dateEdition: Float!
-        banqueId: String!
+        banqueKey: String!
         referencePaie: String!
-        salarieId: String!
+        salarieKey: String!
         rubriques: [RubriqueBulletinInput!]!
     ): String!
 
@@ -65,9 +65,9 @@ const mutation = `#graphql
         debutPeriodePaie: Float
         finPeriodePaie: Float
         dateEdition: Float
-        banqueId: String
+        banqueKey: String
         referencePaie: String
-        salarieId: String
+        salarieKey: String
         rubriques: [RubriqueBulletinInput]
     ): String!
 

@@ -7,12 +7,12 @@ const typeDef = `#graphql
 
 const query = `#graphql
     clientFactureGlobalValues: [ClientFactureGlobaLValue]
-    # rubriqueBulletinByCategoriePaieForConfiguration(categoriePaieId: String): [CategorieBulletinRubrique]!
+    # rubriqueBulletinBypaieCategorieForConfiguration(paieCategorieKey: String): [BulletinCategorieRubrique]!
 `;
 
 const mutation = `#graphql
-    configClientFactureGlobaLValue(clientId:String!, nbreJrMaxPenalty: Float): String!
-    # deleteCategorieBulletinRubrique(categorieId:String,rubriqueId: ID!): String!
+    configClientFactureGlobaLValue(clientKey:String!, nbreJrMaxPenalty: Float): String!
+    # deleteBulletinCategorieRubrique(partnerCategorieKey:String,rubriqueKey: KEY!): String!
 `;
 
 export default {

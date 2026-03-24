@@ -216,9 +216,9 @@ class _AddDecouvertePageState extends State<AddDecouvertePage> {
         dureeReversement: int.parse(_dureeReversementController.text),
         justification: _justificationController.text.trim(),
         montant: double.parse(_montantController.text),
-        salarieId: salarie!.id,
+        salarieKey: salarie!.key,
         referenceTransaction: referenceTransactionFieldController.text.trim(),
-        userId: user!.id!,
+        userKey: user!.key!,
         moyenPayement: moyenPayement!,
         banque: banque!,
       );

@@ -95,7 +95,7 @@ class _InputTableState extends State<LibelleFluxTable> {
 
       RequestResponse result =
           await LibelleFluxFinancierService.deletelibelleFluxFinancier(
-        key: libelle.id,
+        key: libelle.key,
       );
       _dialog.hide();
       if (result.status == PopupStatus.success) {

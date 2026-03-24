@@ -27,29 +27,29 @@ const roleAuthorization = {
 };
 const generateToken = ({ user, password }) => {
   const cleanedRoles = user.roles.map(
-    ({ _id, _from, _to, roleAuthorization, role }) => ({
-      _id,
-      _from,
-      _to,
+    ({ _key, roleKey, permissionKey, roleAuthorization, role }) => ({
+      _key,
+      roleKey,
+      permissionKey,
       roleAuthorization,
-      role: { _id: role._id, libelle: role.libelle },
-    })
+      role: { _key: role._key, libelle: role.libelle },
+    }),
   );
-   return jwt.sign(
+  return jwt.sign(
     {
       user: {
-        _id: user._id,
+        _key: user._key,
         login: user.login,
         password: password,
         personnel: {
-          _id: user.personnel._id,
+          _key: user.personnel._key,
           nom: user.personnel.nom,
           prenom: user.personnel.prenom,
         },
         roles: cleanedRoles,
       },
     },
-    process.env.TOKEN_SECRET_KEY
+    process.env.TOKEN_SECRET_KEY,
   );
 };
 
@@ -108,7 +108,7 @@ class User {
       userCollection.create();
     }
     if (!(await userRoleCollection.exists())) {
-      userRoleCollection.create({ type: CollectionType.EDGE_COLLECTION });
+     await userRoleCollection.create();
     }
   }
 
@@ -116,7 +116,7 @@ class User {
   getAllUsers = async () => {
     try {
       const query = await db.query(
-        aql`FOR user IN ${userCollection} SORT user._id RETURN user`
+        aql`FOR user IN ${userCollection} SORT user._key RETURN user`,
       );
 
       if (query.hasNext) {
@@ -125,12 +125,12 @@ class User {
           users.map(async (user) => {
             return {
               ...user,
-              roles: this.getRoleByUser({ userId: user._id }),
+              roles: this.getRoleByUser({ userKey: user._key }),
               personnel: await personnelModel.getPersonnel({
-                key: user.personnelId,
+                key: user.personnelKey,
               }),
             };
-          })
+          }),
         );
       } else {
         return [];
@@ -140,21 +140,24 @@ class User {
     }
   };
 
-  getRoleByUser = async ({ userId }) => {
+  getRoleByUser = async ({ userKey }) => {
+    console.log(userKey);
+    console.log('ama')
+    console.log(24)
     try {
       const query = await db.query(aql`
           FOR userrole IN ${userRoleCollection}
-          FILTER userrole._from == ${userId}
+          FILTER userrole.userKey == ${userKey}
           SORT userrole.timeStamp ASC
           RETURN userrole
         `);
-
       if (query.hasNext) {
+        console.log('ouiiiiiiiiii')
         const userRoles = await query.all();
-
-        return Promise.all(
+        console.log(userRoles);
+         return Promise.all(
           userRoles.map(async (userRole) => {
-            const role = await roleModel.getRole({ key: userRole._to });
+            const role = await roleModel.getRole({ key: userRole.roleKey });
             return {
               ...userRole,
               role: role,
@@ -165,14 +168,14 @@ class User {
                 ? await this.getUser({ key: userRole.authorizer })
                 : null,
             };
-          })
+          }),
         );
       }
       return [];
     } catch (err) {
       console.error(err);
       throw new Error(
-        "Erreur lors de la récupération des rôles de l'utilisateur"
+        "Erreur lors de la récupération des rôles de l'utilisateur",
       );
     }
   };
@@ -180,12 +183,11 @@ class User {
   getUser = async ({ key }) => {
     try {
       const user = await userCollection.document(key);
-      const personnel = await personnelModel.getPersonnel({
-        key: user.personnelId,
+       const personnel = await personnelModel.getPersonnel({
+        key: user.personnelKey,
       });
-
-      const roles = await this.getRoleByUser({ userId: user._id });
-
+       const roles = await this.getRoleByUser({ userKey: user._key });
+      console.log(roles);
       return {
         ...user,
         personnel: personnel,
@@ -197,21 +199,21 @@ class User {
     }
   };
 
-  attribuerRolePersonnel = async ({ personnelId, roleId, userId }) => {
+  attribuerRolePersonnel = async ({ personnelKey, roleKey, userKey }) => {
     let personnel, role, newUser;
 
     // Vérifications préalables
-    await personnelModel.isExistPersonnel({ key: personnelId });
-    await roleModel.isExistRole({ key: roleId });
+    await personnelModel.isExistPersonnel({ key: personnelKey });
+    await roleModel.isExistRole({ key: roleKey });
 
     const userDoublonpersonnel = await db.query(
-      aql`FOR user IN ${userCollection} FILTER user.personnelId == ${personnelId} RETURN user`
+      aql`FOR user IN ${userCollection} FILTER user.personnelKey == ${personnelKey} RETURN user`,
     );
 
     if (userDoublonpersonnel.hasNext) {
       const user = await userDoublonpersonnel.next();
       const userDoublon = await db.query(
-        aql`FOR userRole IN ${userRoleCollection} FILTER userRole._from == ${user._id} AND userRole._to == ${roleId} RETURN userRole`
+        aql`FOR userRole IN ${userRoleCollection} FILTER userRole.userKey == ${user._key} AND userRole.roleKey == ${roleKey} RETURN userRole`,
       );
 
       if (userDoublon.hasNext) {
@@ -220,7 +222,7 @@ class User {
           for (const userRole of userRoleExistant) {
             if (userRole.roleAuthorization == roleAuthorization.wait) {
               throw new Error(
-                "Ce personnel a déjà un rôle en attente de validation."
+                "Ce personnel a déjà un rôle en attente de validation.",
               );
             }
           }
@@ -232,10 +234,10 @@ class User {
       try {
         // const user = await userDoublonpersonnel.next();
         userRoleCollection.save({
-          _from: user._id,
-          _to: roleId,
+          userKey: user._key,
+          roleKey: roleKey,
           roleAuthorization: roleAuthorization.wait,
-          createBy: userId,
+          createBy: userKey,
           timeStamp: Date.now(),
         });
         return "OK";
@@ -245,8 +247,8 @@ class User {
       }
     }
 
-    personnel = await personnelModel.getPersonnel({ key: personnelId });
-    role = await roleModel.getRole({ key: roleId });
+    personnel = await personnelModel.getPersonnel({ key: personnelKey });
+    role = await roleModel.getRole({ key: roleKey });
 
     const password = generatePassword();
     const hashedPassword = await hashPassword({ password: password });
@@ -254,7 +256,7 @@ class User {
     const user = {
       login: personnel.email,
       password: hashedPassword,
-      personnelId: personnelId,
+      personnelKey: personnelKey,
       isTheFirstConnection: true,
       dateEnregistrement: Date.now(),
       canLogin: true,
@@ -266,17 +268,17 @@ class User {
 
     try {
       const userQuery = await trx.step(() =>
-        userCollection.save(user, { returnNew: true })
+        userCollection.save(user, { returnNew: true }),
       );
       newUser = userQuery.new;
       await trx.step(() =>
         userRoleCollection.save({
-          _from: newUser._id,
-          _to: roleId,
-          createBy: userId,
+          userKey: newUser._key,
+          roleKey: roleKey,
+          createBy: userKey,
           roleAuthorization: roleAuthorization.wait,
           timeStamp: Date.now(),
-        })
+        }),
       );
 
       let info = await sendRoleAssignmentEmail({
@@ -295,17 +297,17 @@ class User {
       console.error(error);
       await trx.abort();
       throw new Error(
-        "Une erreur s'est produite lors de l'attribution du rôle."
+        "Une erreur s'est produite lors de l'attribution du rôle.",
       );
     }
   };
 
-  handleRoleEditing = async ({ userRoleId, decision, userId }) => {
-    isValidValue({ value: { decision, userRoleId, userId } });
+  handleRoleEditing = async ({ userRoleKey, decision, userKey }) => {
+    isValidValue({ value: { decision, userRoleKey, userKey } });
     try {
-      await userRoleCollection.update(userRoleId, {
+      await userRoleCollection.update(userRoleKey, {
         roleAuthorization: decision,
-        authorizer: userId,
+        authorizer: userKey,
         authorizeTime: Date.now(),
       });
       return "OK";
@@ -315,35 +317,35 @@ class User {
     }
   };
 
-  attribuerRoleUser = async ({ userId, roleId }) => {
-    await this.isExistUser({ key: userId });
+  attribuerRoleUser = async ({ userKey, roleKey }) => {
+    await this.isExistUser({ key: userKey });
 
-    await roleModel.isExistRole({ key: roleId });
+    await roleModel.isExistRole({ key: roleKey });
 
     const doublon = await db.query(
-      aql`FOR userRole IN ${userRoleCollection} FILTER userRole._from == ${userId} AND userRole._to == ${roleId} RETURN userRole`
+      aql`FOR userRole IN ${userRoleCollection} FILTER userRole.userKey == ${userKey} AND userRole.roleKey == ${roleKey} RETURN userRole`,
     );
 
     if (doublon.hasNext) {
-      const role = await roleModel.getRole(roleId);
+      const role = await roleModel.getRole(roleKey);
       throw new Error(`Cet utilisateur joue dejà le rôle de ${role.libelle}`);
     }
     try {
-      await userRoleCollection.save({ _from: userId, _to: roleId });
+      await userRoleCollection.save({ userKey: userKey, roleKey: roleKey });
       return "OK";
     } catch (err) {
       console.error(err);
 
       throw new Error(
-        "Une erreur s'est produite lors de l'attribution du role."
+        "Une erreur s'est produite lors de l'attribution du role.",
       );
     }
   };
 
-  retirerRoleUser = async ({ userId, roleId }) => {
+  retirerRoleUser = async ({ userKey, roleKey }) => {
     try {
       const query = await db.query(
-        aql`FOR userRole IN ${userRoleCollection} FILTER userRole._from == ${userId} AND  userRole._to == ${roleId} RETURN userRole REMOVE userRole IN ${userRoleCollection}`
+        aql`FOR userRole IN ${userRoleCollection} FILTER userRole.userkey == ${userKey} AND  userRole.roleKey == ${roleKey} RETURN userRole REMOVE userRole IN ${userRoleCollection}`,
       );
       if (query.hasNext) {
         return "OK";
@@ -355,10 +357,10 @@ class User {
     }
   };
 
-  /*  deleteUser = async ({ userId, }) => {
+  /*  deleteUser = async ({ userKey, }) => {
     try {
       const query = await db.query(
-        aql`FOR userRole IN ${userRoleCollection} FILTER userRole._from == ${userId} AND  userRole._to == ${roleId} RETURN userRole REMOVE userRole IN ${userRoleCollection}`
+        aql`FOR userRole IN ${userRoleCollection} FILTER userRole.userKey == ${userKey} AND  userRole.roleKey == ${roleKey} RETURN userRole REMOVE userRole IN ${userRoleCollection}`
       );
       if (query.hasNext) {
         return "OK";
@@ -380,11 +382,11 @@ class User {
       const currentUser = await this.getUser({ key: key });
       const isPasswordCorrect = await bcrypt.compare(
         oldPassword,
-        currentUser.password
+        currentUser.password,
       );
       if (!isPasswordCorrect) {
         throw new Error(
-          "Verifiez votre ancienne mot de passe et réssayer la modification."
+          "Verifiez votre ancienne mot de passe et réssayer la modification.",
         );
       }
     } else {
@@ -394,7 +396,7 @@ class User {
         /^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>])(?=.*\d).{8,}$/;
       if (!strongPasswordRegex.test(password)) {
         throw new Error(
-          "Le mot de passe doit contenir au moins 8 caractères, une majuscule, un chiffre et un caractère spécial."
+          "Le mot de passe doit contenir au moins 8 caractères, une majuscule, un chiffre et un caractère spécial.",
         );
       }
       const hashed = await hashPassword({ password: password });
@@ -413,7 +415,7 @@ class User {
       console.error(err);
 
       throw new Error(
-        "Une erreur s'est produite lors de la mise à jour des paramètre de connexion."
+        "Une erreur s'est produite lors de la mise à jour des paramètre de connexion.",
       );
     }
   };
@@ -423,21 +425,20 @@ class User {
     var existingUser = null;
     try {
       existingUser = await db.query(
-        aql`FOR user IN ${userCollection} FILTER user.login==${login} RETURN user`
+        aql`FOR user IN ${userCollection} FILTER user.login==${login} RETURN user`,
       );
     } catch {
       throw new Error(
-        "Cet utilisateur n'existe pas ou les données de connexion sont incorrectes."
+        "Cet utilisateur n'existe pas ou les données de connexion sont incorrectes.",
       );
     }
 
     if (existingUser.hasNext) {
       const user = await existingUser.next();
-      const currentUser = await this.getUser({ key: user._id });
-
+      const currentUser = await this.getUser({ key: user._key });
       const isPasswordCorrect = await bcrypt.compare(
         password,
-        currentUser.password
+        currentUser.password,
       );
       if (!isPasswordCorrect) {
         throw new Error("Mot de passe incorrecte.");
@@ -447,14 +448,15 @@ class User {
         !currentUser.canLogin
       ) {
         throw new Error(
-          "Vous n'êtes plus autoriseés à avoir accès à ce système."
+          "Vous n'êtes plus autoriseés à avoir accès à ce système.",
         );
       }
       const token = generateToken({ user: currentUser, password: password });
       await userCollection.update(currentUser._key, {
         _token: token,
       });
-      return await this.getUser({ key: currentUser._id });
+      console.log(await this.getUser({ key: currentUser._key }));
+      return await this.getUser({ key: currentUser._key });
     } else {
       throw new Error("Les données de connexion sont incorrectes.");
     }
@@ -464,7 +466,7 @@ class User {
     try {
       const logout = await db.query(aql`
         FOR user IN ${userCollection}
-        FILTER user._id == ${key}
+        FILTER user._key == ${key}
         UPDATE user WITH UNSET(user, '_token') IN ${userCollection}
         RETURN NEW
       `);
@@ -506,7 +508,7 @@ class User {
         userCollection.update(key, {
           login: user.personnel.email,
           password: hashedPassword,
-        })
+        }),
       );
       let info = await sendresetLoginEmail({
         password: password,
@@ -521,7 +523,7 @@ class User {
       console.error(error);
       await trx.abort();
       throw new Error(
-        `Une erreur s'est produite lors de la réinitialisation du paramètre de connexion de ${user.personnel.nom} ${user.personnel.prenom}`
+        `Une erreur s'est produite lors de la réinitialisation du paramètre de connexion de ${user.personnel.nom} ${user.personnel.prenom}`,
       );
     }
   };

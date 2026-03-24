@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/app/pages/categories_bulletin/edit_categorie_bulletin.dart';
 import '../../../global/constant/permission_alias.dart';
 import '../../../helper/user_helper.dart';
-import '../../../model/bulletin_paie/categorie_bulletin.dart';
+import '../../../model/bulletin_paie/bulletin_categorie.dart';
 import '../../../model/request_response.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 import '../../../service/categorie_bulletin_service.dart';
@@ -22,20 +22,20 @@ import '../../../auth/authentification_token.dart';
 import '../../../model/habilitation/role_model.dart';
 import 'detail_categorie_bulletin.dart';
 
-class CategorieBulletinTable extends StatefulWidget {
-  final List<CategorieBulletinModel> categories;
+class BulletinCategorieTable extends StatefulWidget {
+  final List<BulletinCategorieModel> categories;
   final Future<void> Function() refresh;
-  const CategorieBulletinTable({
+  const BulletinCategorieTable({
     super.key,
     required this.categories,
     required this.refresh,
   });
 
   @override
-  State<CategorieBulletinTable> createState() => _CategorieBulletinTableState();
+  State<BulletinCategorieTable> createState() => _BulletinCategorieTableState();
 }
 
-class _CategorieBulletinTableState extends State<CategorieBulletinTable> {
+class _BulletinCategorieTableState extends State<BulletinCategorieTable> {
   late SimpleFontelicoProgressDialog _dialog;
   late RoleModel role;
   late Future<void> _futureRoles;
@@ -51,36 +51,36 @@ class _CategorieBulletinTableState extends State<CategorieBulletinTable> {
     role = await AuthService().getRole();
   }
 
-  editCategorieBulletin({
-    required CategorieBulletinModel categorieBulletin,
+  editBulletinCategorie({
+    required BulletinCategorieModel bulletinCategorie,
   }) {
     showResponsiveDialog(
       context,
-      content: EditCategorieBulletinPage(
-        categorieBulletin: categorieBulletin,
+      content: EditBulletinCategoriePage(
+        bulletinCategorie: bulletinCategorie,
         refresh: widget.refresh,
       ),
       title: "Modifier une catégorie de bulletin",
     );
   }
 
-  detailCategorieBulletin({required CategorieBulletinModel categorieBulletin}) {
+  detailBulletinCategorie({required BulletinCategorieModel bulletinCategorie}) {
     showDetailDialog(
       context,
-      content: DetailCategorieBulletinPage(
-        categorieBulletin: categorieBulletin,
+      content: DetailBulletinCategoriePage(
+        bulletinCategorie: bulletinCategorie,
       ),
       title: "Détail de catégorie de bulletin",
     );
   }
 
-  Future<void> deleteCategorieBulletin({
-    required CategorieBulletinModel categorieBulletin,
+  Future<void> deleteBulletinCategorie({
+    required BulletinCategorieModel bulletinCategorie,
   }) async {
     bool confirmed = await handleOperationButtonPress(
       context,
       content:
-          "Voulez-vous vraiment supprimer la catégorie de bulletin \"${categorieBulletin.categorieBulletin}\"?",
+          "Voulez-vous vraiment supprimer la catégorie de bulletin \"${bulletinCategorie.bulletinCategorie}\"?",
     );
     if (confirmed) {
       _dialog.show(
@@ -89,8 +89,9 @@ class _CategorieBulletinTableState extends State<CategorieBulletinTable> {
         backgroundColor: Colors.transparent,
       );
 
-      RequestResponse result = await CategorieBulletinService.deleteCategorieBulletin(
-        key: categorieBulletin.id,
+      RequestResponse result =
+          await BulletinCategorieservice.deleteBulletinCategorie(
+        key: bulletinCategorie.key,
       );
       _dialog.hide();
       if (result.status == PopupStatus.success) {
@@ -148,42 +149,45 @@ class _CategorieBulletinTableState extends State<CategorieBulletinTable> {
               },
               children: [
                 ...widget.categories.map(
-                  (categorieBulletin) => TableRow(
+                  (bulletinCategorie) => TableRow(
                     decoration: tableDecoration(context),
                     children: [
                       TableBodyMiddle(
-                        valeur: categorieBulletin.categorieBulletin,
+                        valeur: bulletinCategorie.bulletinCategorie,
                       ),
                       TableBodyLast(
                         items: [
                           (
                             label: Constant.detail,
                             onTap: () {
-                              detailCategorieBulletin(categorieBulletin: categorieBulletin);
+                              detailBulletinCategorie(
+                                  bulletinCategorie: bulletinCategorie);
                             },
                             color: null,
                           ),
                           if (hasPermission(
                             role: role,
                             permission: PermissionAlias
-                                .updateCategorieBulletin.label,
+                                .updateBulletinCategorie.label,
                           ))
                             (
                               label: Constant.edit,
                               onTap: () {
-                                editCategorieBulletin(categorieBulletin: categorieBulletin);
+                                editBulletinCategorie(
+                                    bulletinCategorie: bulletinCategorie);
                               },
                               color: null,
                             ),
                           if (hasPermission(
                             role: role,
                             permission: PermissionAlias
-                                .deleteCategorieBulletin.label,
+                                .deleteBulletinCategorie.label,
                           ))
                             (
                               label: Constant.delete,
                               onTap: () {
-                                deleteCategorieBulletin(categorieBulletin: categorieBulletin);
+                                deleteBulletinCategorie(
+                                    bulletinCategorie: bulletinCategorie);
                               },
                               color: null,
                             ),

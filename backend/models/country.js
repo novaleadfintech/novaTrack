@@ -11,7 +11,7 @@ class CountryModel {
 
   async initializeCollections() {
     if (!(await countryCollection.exists())) {
-      countryCollection.create();
+     await countryCollection.create();
     }
   }
 

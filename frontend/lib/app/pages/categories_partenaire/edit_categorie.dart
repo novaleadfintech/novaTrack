@@ -3,7 +3,7 @@ import 'package:frontend/model/client/categorie_model.dart';
 import '../../../helper/string_helper.dart';
 import '../../integration/popop_status.dart';
 import '../../integration/request_frot_behavior.dart';
-import '../../../service/categorie_service.dart';
+import '../../../service/categorie_partner_service.dart';
 import '../../../widget/simple_text_field.dart';
 import '../../../widget/validate_button.dart';
 import 'package:gap/gap.dart';
@@ -11,11 +11,11 @@ import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 
 class EditCategoriePage extends StatefulWidget {
   final Future<void> Function() refresh;
-  final CategorieModel categorie;
+  final CategorieModel partnerCategorie;
   const EditCategoriePage({
     super.key,
     required this.refresh,
-    required this.categorie,
+    required this.partnerCategorie,
   });
 
   @override
@@ -30,7 +30,7 @@ class _EditCategoriePageState extends State<EditCategoriePage> {
   @override
   void initState() {
     super.initState();
-    _libelleController.text = widget.categorie.libelle;
+    _libelleController.text = widget.partnerCategorie.libelle;
     _dialog = SimpleFontelicoProgressDialog(context: context);
   }
 
@@ -40,7 +40,7 @@ class _EditCategoriePageState extends State<EditCategoriePage> {
       errMessage = "Veuillez remplir tous les champs marqués.";
     }
 
-    if (_libelleController.text == widget.categorie.libelle) {
+    if (_libelleController.text == widget.partnerCategorie.libelle) {
       errMessage = "Veuillez modifier le libellé.";
     }
     if (errMessage != null) {
@@ -56,7 +56,7 @@ class _EditCategoriePageState extends State<EditCategoriePage> {
       backgroundColor: Colors.transparent,
     );
 
-    var result = await CategorieService.createCategorie(
+    var result = await CategorieService.createPartnerCategorie(
       libelle: capitalizeFirstLetter(word: _libelleController.text.toLowerCase()),
     );
 

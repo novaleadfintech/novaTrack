@@ -137,7 +137,7 @@ class _AddFactureState extends State<AddFacture> {
       backgroundColor: Colors.transparent,
     );
     RequestResponse result = await FactureService.createFacture(
-        clientId: client!.id,
+        clientKey: client!.key,
         tva: tva,
         banques: banques!,
         type: type,

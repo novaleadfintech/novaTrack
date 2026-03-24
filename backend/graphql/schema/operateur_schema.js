@@ -1,10 +1,10 @@
 const typeDef = `#graphql
 type Operateur{
-    _id:ID!
+    _key:ID!
     libelle:String!
 }
 input OperateurInput{
-    _id:ID!
+    _key:ID!
     libelle:String!
 }
 `;

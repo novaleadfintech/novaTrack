@@ -198,9 +198,9 @@ class _UpdateLigneProformaState extends State<UpdateLigneProforma> {
         );
       }
     RequestResponse result = await LigneProformaService.updateLigneProforma(
-      ligneProformaId: widget.ligneProforma.id,
+        ligneProformaKey: widget.ligneProforma.key,
       unit: _unitController.text,
-      serviceId: service == widget.ligneProforma.service ? null : service.id,
+        serviceKey: service == widget.ligneProforma.service ? null : service.key,
       designation: designation,
       prixSupplementaire: prixSupplementaireString.isEmpty
           ? null

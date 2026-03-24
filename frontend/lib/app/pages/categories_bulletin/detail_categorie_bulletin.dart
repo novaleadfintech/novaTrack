@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
-import '../../../model/bulletin_paie/categorie_bulletin.dart';
+import '../../../model/bulletin_paie/bulletin_categorie.dart';
 import '../../../style/app_style.dart';
 import '../../../widget/table_body_middle.dart';
 
-class DetailCategorieBulletinPage extends StatefulWidget {
-  final CategorieBulletinModel categorieBulletin;
-  const DetailCategorieBulletinPage({
+class DetailBulletinCategoriePage extends StatefulWidget {
+  final BulletinCategorieModel bulletinCategorie;
+  const DetailBulletinCategoriePage({
     super.key,
-    required this.categorieBulletin,
+    required this.bulletinCategorie,
   });
 
   @override
-  State<DetailCategorieBulletinPage> createState() =>
-      _DetailCategorieBulletinPageState();
+  State<DetailBulletinCategoriePage> createState() =>
+      _DetailBulletinCategoriePageState();
 }
 
-class _DetailCategorieBulletinPageState
-    extends State<DetailCategorieBulletinPage> {
+class _DetailBulletinCategoriePageState
+    extends State<DetailBulletinCategoriePage> {
   @override
   Widget build(BuildContext context) {
     return Table(
@@ -29,7 +29,7 @@ class _DetailCategorieBulletinPageState
               isbold: true,
             ),
             TabledetailBodyMiddle(
-              valeur: widget.categorieBulletin.categorieBulletin,
+              valeur: widget.bulletinCategorie.bulletinCategorie,
             ),
           ],
         ),
@@ -41,7 +41,7 @@ class _DetailCategorieBulletinPageState
               isbold: true,
             ),
             TabledetailBodyMiddle(
-                valeur: widget.categorieBulletin.paieClause.label
+                valeur: widget.bulletinCategorie.paieClause.label
             ),
           ],
         ),

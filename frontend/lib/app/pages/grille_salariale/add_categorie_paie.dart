@@ -11,20 +11,20 @@ import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 
 import 'add_class_categorie_space.dart';
 
-class AddGrilleCategoriePaiePage extends StatefulWidget {
+class AddGrillepaieCategoriePage extends StatefulWidget {
   final Future<void> Function() refresh;
-  const AddGrilleCategoriePaiePage({
+  const AddGrillepaieCategoriePage({
     super.key,
     required this.refresh,
   });
 
   @override
-  State<AddGrilleCategoriePaiePage> createState() =>
-      _AddGrilleCategoriePaiePageState();
+  State<AddGrillepaieCategoriePage> createState() =>
+      _AddGrillepaieCategoriePageState();
 }
 
-class _AddGrilleCategoriePaiePageState
-    extends State<AddGrilleCategoriePaiePage> {
+class _AddGrillepaieCategoriePageState
+    extends State<AddGrillepaieCategoriePage> {
   final TextEditingController _libelleController = TextEditingController();
   final List<ClasseModel> classes = [];
 
@@ -36,7 +36,7 @@ class _AddGrilleCategoriePaiePageState
     _dialog = SimpleFontelicoProgressDialog(context: context);
   }
 
-  Future<void> _addGrilleCategoriePaie() async {
+  Future<void> _addGrillepaieCategorie() async {
     try {
       String? errMessage;
       if (_libelleController.text.isEmpty) {
@@ -56,7 +56,7 @@ class _AddGrilleCategoriePaiePageState
         backgroundColor: Colors.transparent,
       );
 
-      var result = await GrilleCategoriePaieService.createGrilleCategoriePaie(
+      var result = await GrillepaieCategorieService.createGrillepaieCategorie(
         libelle:
             capitalizeFirstLetter(word: _libelleController.text.toLowerCase()),
         classes: classes,
@@ -108,7 +108,7 @@ class _AddGrilleCategoriePaiePageState
             alignment: Alignment.bottomRight,
             child: ValidateButton(
               onPressed: () async {
-                await _addGrilleCategoriePaie();
+                await _addGrillepaieCategorie();
               },
             ),
           ),

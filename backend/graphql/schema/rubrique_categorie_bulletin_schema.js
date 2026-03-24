@@ -4,22 +4,22 @@ const typeDef = `#graphql
         value: Float
     }
 
-    type CategorieBulletinRubrique {
+    type BulletinCategorieRubrique {
         rubriqueOnBulletin: RubriqueOnBulletin!
         isChecked: Boolean!
     }
 `;
 
 const query = `#graphql
-    rubriqueBulletinByCategorieBulletin(categorieBulletinId: String): [RubriqueOnBulletin]!
-    variablePaieAndPrimeExceptionnelles(categorieBulletinId: String!, salarieId: String!): ValeurRubriqueTemporaire
-    rubriqueBulletinByCategorieBulletinForConfiguration(categorieBulletinId: String): [CategorieBulletinRubrique]!
+    rubriqueBulletinByBulletinCategorie(bulletinCategorieKey: String): [RubriqueOnBulletin]!
+    variablePaieAndPrimeExceptionnelles(bulletinCategorieKey: String!, salarieKey: String!): ValeurRubriqueTemporaire
+    rubriqueBulletinByBulletinCategorieForConfiguration(bulletinCategorieKey: String): [BulletinCategorieRubrique]!
 `;
 
 const mutation = `#graphql
-    createCategorieBulletinRubrique(categorieBulletinId:String!, rubriqueId: ID!, value: Float): String!
-    updateCategorieBulletinRubriqueBulletin(categorieBulletinId:String,rubriqueId: ID!, value: Float): String!
-    deleteCategorieBulletinRubriqueBulletin(categorieBulletinId:String,rubriqueId: ID!): String!
+    createBulletinCategorieRubrique(bulletinCategorieKey:String!, rubriqueKey: ID!, value: Float): String!
+    updateBulletinCategorieRubriqueBulletin(bulletinCategorieKeyy:String,rubriqueKey: ID!, value: Float): String!
+    deleteBulletinCategorieRubriqueBulletin(bulletinCategorieKeyy:String,rubriqueKey: ID!): String!
 `;
 
 export default {

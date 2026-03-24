@@ -6,9 +6,9 @@ const clientFactureGlobalValueResolvers = {
   clientFactureGlobalValues: async () =>
     await clientFactureGlobalValueModel.clientFactureGlobalValues(),
 
-  configClientFactureGlobaLValue: async ({ clientId, nbreJrMaxPenalty }) =>
+  configClientFactureGlobaLValue: async ({ clientKey, nbreJrMaxPenalty }) =>
     await clientFactureGlobalValueModel.configClientFactureGlobaLValue({
-      clientId: clientId,
+      clientKey: clientKey,
       nbreJrMaxPenalty: nbreJrMaxPenalty,
     }),
 };

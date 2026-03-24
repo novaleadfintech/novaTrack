@@ -83,11 +83,9 @@ class _FillIndiceState extends State<FillIndice> {
     for (var echelon in widget.classe.echelonIndiciciaires!) {
       final controller = _controllers[echelon.echelon.libelle];
       final newIndice = double.tryParse(controller?.text ?? "");
-      print(echelon.indice);      
-      if (newIndice != null) {
+       if (newIndice != null) {
         echelon.setIndice(newIndice.toInt());
-        print(echelon.indice);
-      } else {
+       } else {
         MutationRequestContextualBehavior.showCustomInformationPopUp(
           message:
               "Veuillez entrer un indice valide pour l'échelon ${echelon.echelon.libelle}.",

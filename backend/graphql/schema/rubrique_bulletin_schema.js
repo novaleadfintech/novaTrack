@@ -26,7 +26,7 @@ const typeDef = `#graphql
     }
     
     type RubriqueBulletin {
-        _id: ID!
+        _key: ID!
         rubrique: String!
         code: String!
         type: RubriqueBulletinType
@@ -41,7 +41,7 @@ const typeDef = `#graphql
         calcul: Calcul
     }
     input RubriqueBulletinInput {
-        rubriqueId: ID!
+        rubriqueKey: ID!
         value: Float
     }
 `;
@@ -50,7 +50,7 @@ const query = `#graphql
     rubriquesBulletin(perPage: Int, skip: Int): [RubriqueBulletin]!
     rubriqueBulletin(key: ID!): RubriqueBulletin
     primesExceptionnelles : [RubriqueBulletin]!
-    # rubriqueBulletinBySection(sectionId: Int): RubriqueBulletin
+    # rubriqueBulletinBySection(sectionKey: Int): RubriqueBulletin
 `;
 
 const mutation = `#graphql
@@ -60,7 +60,7 @@ const mutation = `#graphql
         type: RubriqueBulletinType
         nature: RubriqueBulletinNature!
         bareme: BaremeInput
-        sectionId: String
+        sectionKeyy: String
         portee: PorteeRubrique
         rubriqueRole: RubriqueRole
         taux: TauxInput
@@ -76,7 +76,7 @@ const mutation = `#graphql
         type: RubriqueBulletinType
         nature: RubriqueBulletinNature
         bareme: BaremeInput
-        sectionId: String
+        sectionKey: String
         rubriqueRole: RubriqueRole
         portee: PorteeRubrique
         rubriqueIdentity: RubriqueIdentity

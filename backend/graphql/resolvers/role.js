@@ -14,21 +14,21 @@ const roleResolvers = {
     await roleModel.createRole({ libelle: libelle }),
 
   //retirer une permission à un profil ou role
-  retirerPermissionRole: async ({ rolekey, permissionId }) =>
+  retirerPermissionRole: async ({ rolekey, permissionKey }) =>
     await roleModel.retirerPermissionRole({
-      key: rolekey,
-      permissionId: permissionId,
+      roleKey: rolekey,
+      permissionKey: permissionKey,
     }),
 
   //attribuer une permission à un profil ou role
-  attribuerPermissionRole: async ({ rolekey, permissionId }) =>
+  attribuerPermissionRole: async ({ rolekey, permissionKey }) =>
     await roleModel.attribuerPermissionRole({
-      key: rolekey,
-      permissionId: permissionId,
+      roleKey: rolekey,
+      permissionKey: permissionKey,
     }),
 
-  roleByUser: async ({ userId }) =>
-    await roleModel.getRoleByUser({ userId: userId }),
+  roleByUser: async ({ userKey }) =>
+    await roleModel.getRoleByUser({ userKey: userKey }),
 
   updateRole: async ({ key, libelle }) =>
     await roleModel.updateRole({ key: key, libelle: libelle }),

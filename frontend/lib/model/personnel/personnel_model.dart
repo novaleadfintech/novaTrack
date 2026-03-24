@@ -7,7 +7,7 @@ import 'enum_personnel.dart';
 import 'personne_prevenir.dart';
 
 class PersonnelModel {
-  final String id;
+  final String key;
   final String nom;
   final String prenom;
   final String? email;
@@ -34,7 +34,7 @@ class PersonnelModel {
   static dynamic personnelErr;
 
   PersonnelModel({
-    required this.id,
+    required this.key,
     required this.nom,
     required this.prenom,
     this.email,
@@ -61,7 +61,7 @@ class PersonnelModel {
 
   factory PersonnelModel.fromJson(Map<String, dynamic> json) {
     return PersonnelModel(
-      id: json['_id'] ?? "",
+      key: json['_key'] ?? "",
       nom: json['nom'] ?? "",
       prenom: json['prenom'] ?? "",
       email: json['email'],
@@ -106,7 +106,7 @@ class PersonnelModel {
   /// Méthode pour convertir une instance en JSON
   Map<String, dynamic> toJson() {
     return {
-      '_id': id,
+      '_key': key,
       'nom': nom,
       'prenom': prenom,
       'email': email,
@@ -141,6 +141,6 @@ class PersonnelModel {
   }
 
    bool equalTo({required PersonnelModel personnel}) {
-    return personnel.id == id;
+    return personnel.key == key;
   }
 }

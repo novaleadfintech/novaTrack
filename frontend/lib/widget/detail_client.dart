@@ -131,7 +131,7 @@ class _DetailClientState extends State<DetailClient> {
                               "Catégorie",
                               capitalizeFirstLetter(
                                 word: (widget.client as ClientMoralModel)
-                                    .categorie!
+                                    .partnerCategorie!
                                     .libelle,
                               )),
                         ],

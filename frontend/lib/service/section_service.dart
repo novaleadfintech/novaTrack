@@ -14,7 +14,7 @@ class SectionService {
     var body = '''
       query SectionsBulletin {
     sectionsBulletin {
-        _id
+        _key
         section
     }
 }

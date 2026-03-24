@@ -99,10 +99,10 @@ class SectionBulletin {
       const cursor = await db.query(
         `
       FOR rubrique IN ${rubriqueBulletinCollection}
-        FILTER rubrique.sectionId == ${key}
+        FILTER rubrique.sectionKey == ${key}
         LIMIT 1
         RETURN rubrique
-    `
+    `,
       );
 
       const rubriqueExistante = await cursor.next();

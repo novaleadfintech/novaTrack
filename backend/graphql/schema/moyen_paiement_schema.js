@@ -1,12 +1,12 @@
 const typeDef = `#graphql
 type MoyenPaiement{
-    _id:ID!
+    _key:ID!
     type: CanalType
     libelle:String!
 }
 
 input MoyenPaiementInput{
-    _id:ID!
+    _key:ID!
     type: CanalType
     libelle:String!
 }

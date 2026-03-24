@@ -1,7 +1,7 @@
 import { aql } from "arangojs";
 import db from "../../db/database_connection.js";
 import { isValidEmail, isValidValue } from "../../utils/util.js";
-import Categorie from "./categorie.js";
+import partnerCategorie from "./partner_categorie.js";
 import { uploadFile } from "../../utils/fichier.js";
 import path from "path";
 import { StatusFacture } from "../facturation/utils.js";
@@ -17,9 +17,9 @@ const NatureClient = {
   fournisseur: "fournisseur",
 };
 
-const clientCollection = db.collection("clients");
+const clientCollection = db.collection("partners");
 const factureCollection = db.collection("factures");
-const categorieModel = new Categorie();
+const categorieModel = new partnerCategorie();
 
 const locateClientFolder = "client";
 class Client {
@@ -57,7 +57,7 @@ class Client {
             SORT sortKey ASC
             ${limit} ${filtre}
             RETURN client`,
-        { fullCount: true }
+        { fullCount: true },
       );
       if (query.hasNext) {
         const clients = await query.all();
@@ -74,13 +74,13 @@ class Client {
               __typename: client.raisonSociale
                 ? "ClientMoral"
                 : "ClientPhysique",
-              categorie: client.raisonSociale
+              partnerCategorie: client.raisonSociale
                 ? await categorieModel.getCategorie({
-                    key: client.categorieId,
+                    key: client.partnerCategorieKey,
                   })
                 : null,
             };
-          })
+          }),
         );
       } else {
         return [];
@@ -108,7 +108,7 @@ class Client {
             SORT sortKey ASC
             ${limit} ${filtre}
             RETURN client`,
-        { fullCount: true }
+        { fullCount: true },
       );
       if (query.hasNext) {
         const clients = await query.all();
@@ -125,13 +125,13 @@ class Client {
               __typename: client.raisonSociale
                 ? "ClientMoral"
                 : "ClientPhysique",
-              categorie: client.raisonSociale
+              partnerCategorie: client.raisonSociale
                 ? await categorieModel.getCategorie({
-                    key: client.categorieId,
+                    key: client.partnerCategorieKey,
                   })
                 : null,
             };
-          })
+          }),
         );
       } else {
         return [];
@@ -143,7 +143,7 @@ class Client {
     }
   };
 
-  // Récupérer un client par son ID
+  // Récupérer un client par son KEY
   getClient = async ({ key }) => {
     try {
       const client = await clientCollection.document(key);
@@ -153,9 +153,9 @@ class Client {
           ? process.env.FILE_PREFIX + `${locateClientFolder}/` + client.logo
           : null,
         __typename: client.raisonSociale ? "ClientMoral" : "ClientPhysique",
-        categorie: client.raisonSociale
+        partnerCategorie: client.raisonSociale
           ? await categorieModel.getCategorie({
-              key: client.categorieId,
+              key: client.partnerCategorieKey,
             })
           : null,
       };
@@ -181,7 +181,7 @@ class Client {
             SORT sortKey ASC
         ${limit}       
         RETURN client`,
-        { fullCount: true }
+        { fullCount: true },
       );
       if (query.hasNext) {
         const clients = await query.all();
@@ -190,11 +190,13 @@ class Client {
             ...client,
             logo: client.logo ? process.env.FILE_PREFIX : null,
             filePath,
-            categorie:
+            partnerCategorie:
               client.nom ??
-              (await categorieModel.getCategorie({ key: client.categorieId })),
+              (await categorieModel.getCategorie({
+                key: client.partnerCategorieKey,
+              })),
             fullCount: query.extra.stats.fullCount,
-          }))
+          })),
         );
       } else {
         return [];
@@ -219,7 +221,7 @@ class Client {
         SORT sortKey ASC
         ${limit}       
         RETURN client`,
-        { fullCount: true }
+        { fullCount: true },
       );
 
       if (query.hasNext) {
@@ -246,13 +248,13 @@ class Client {
     adresse,
     pays,
     nature,
-    categorieId,
+    partnerCategorieKey,
     etat = EtatClient.unarchived,
     responsable,
   }) => {
     // Validation des champs obligatoires
     isValidValue({
-      value: [raisonSociale, pays, categorieId, nature],
+      value: [raisonSociale, pays, partnerCategorieKey, nature],
     });
     if (nature !== NatureClient.fournisseur) {
       isValidValue({
@@ -263,7 +265,7 @@ class Client {
     }
     // Vérifier les types des champs
 
-    await categorieModel.isExistCategorie({ key: categorieId });
+    await categorieModel.isExistCategorie({ key: partnerCategorieKey });
 
     try {
       let filePath = null;
@@ -303,7 +305,7 @@ class Client {
         pays: pays,
         etat: etat,
         nature: nature,
-        categorieId: categorieId,
+        partnerCategorieId: partnerCategorieId,
         responsable: responsable,
         dateEnregistrement: Date.now(),
       };
@@ -313,7 +315,7 @@ class Client {
       console.error(error);
 
       throw new Error(
-        "Une erreur s'est produite lors de l'enrégistrement du partenaire"
+        "Une erreur s'est produite lors de l'enrégistrement du partenaire",
       );
     }
   };
@@ -372,7 +374,7 @@ class Client {
     telephone,
     nature,
     adresse,
-    categorieId,
+    partnerCategorieKey,
     responsable,
   }) => {
     try {
@@ -396,7 +398,7 @@ class Client {
         if (filename) {
           const validName = (raisonSociale || client.raisonSociale).replace(
             / /g,
-            "_"
+            "_",
           );
           const extension = path.extname(filename);
           const uniqueFilename = `${Date.now()}_${validName}${extension}`;
@@ -419,9 +421,9 @@ class Client {
         throw new Error("Veuillez uploader le logo");
       }
 
-      if (categorieId !== undefined) {
-        await categorieModel.isExistCategorie({ key: categorieId });
-        updateField.categorieId = categorieId;
+      if (partnerCategorieKey !== undefined) {
+        await categorieModel.isExistCategorie({ key: partnerCategorieKey });
+        updateField.partnerCategorieKey = partnerCategorieKey;
       }
 
       if (nature !== undefined) {
@@ -535,18 +537,18 @@ class Client {
     }
   };
 
-  // Archiver un client par son ID
+  // Archiver un client par son KEY
   archivedClient = async ({ key }) => {
     const query = await db.query(
       aql`FOR facture IN ${factureCollection} 
-       FILTER facture.client._id == ${key} AND facture.status != ${StatusFacture.paid}
+       FILTER facture.client._key == ${key} AND facture.status != ${StatusFacture.paid}
         LIMIT 1
-        RETURN facture`
+        RETURN facture`,
     );
 
     if (query.hasNext) {
       throw new Error(
-        "Ce partenaire à des factures à payer. Il ne peux donc pas être archivé."
+        "Ce partenaire à des factures à payer. Il ne peux donc pas être archivé.",
       );
     }
     try {
@@ -560,7 +562,7 @@ class Client {
     }
   };
 
-  // Réactiver un partenaire archivé par son ID
+  // Réactiver un partenaire archivé par son KEY
   unarchivedClient = async ({ key }) => {
     try {
       const updateField = { etat: EtatClient.unarchived };

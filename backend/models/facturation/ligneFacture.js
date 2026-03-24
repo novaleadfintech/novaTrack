@@ -15,10 +15,10 @@ class LigneFacture {
 
   async initializeCollections() {
     if (!(await ligneFactureCollection.exists())) {
-      ligneFactureCollection.create({ type: CollectionType.EDGE_COLLECTION });
+      await ligneFactureCollection.create();
     }
     if (!(await factureCollection.exists())) {
-      factureCollection.create();
+      await factureCollection.create();
     }
   }
 
@@ -67,12 +67,17 @@ class LigneFacture {
     }
   };
 
-  getLigneFactureByFacture = async ({ factureId }) => {
+  getLigneFactureByFacture = async ({ factureKey }) => {
     try {
-      const ligneFactures = await ligneFactureCollection.edges(factureId);
+      const cursor = await db.query(aql`
+        FOR ligneFacture IN ${ligneFactureCollection}
+          FILTER ligneFacture.factureKey == ${factureKey}
+          RETURN ligneFacture
+      `);
+      const ligneFactures = await cursor.all();
 
       return await Promise.all(
-        ligneFactures.edges
+        ligneFactures
           .sort((a, b) => a.timeStamp - b.timeStamp) // Trie les lignes par timeStamp
           .map(async (ligneFactureEdge) => {
             if (!ligneFactureEdge || !ligneFactureEdge.service) {
@@ -92,7 +97,7 @@ class LigneFacture {
                 tarif.maxQuantity == null
                   ? ligneFactureEdge.quantite >= tarif.minQuantity
                   : ligneFactureEdge.quantite >= tarif.minQuantity &&
-                    ligneFactureEdge.quantite <= tarif.maxQuantity
+                    ligneFactureEdge.quantite <= tarif.maxQuantity,
               );
 
               prixRecalcule += tarif ? tarif.prix : 0;
@@ -110,7 +115,7 @@ class LigneFacture {
               montant: montantLigneFacture,
               fraisDivers,
             };
-          })
+          }),
       );
     } catch (err) {
       console.error(err);
@@ -119,21 +124,21 @@ class LigneFacture {
     }
   };
 
-  /*  getLigneFacturesByFactureId =async ({serviceId})=>{
+  /*  getLigneFacturesByFactureKey =async ({serviceKey})=>{
     const query = await db.query(
-      aql`FOR ligneFacture IN ${ligneFactureCollection} FILTER ligneFacture._from == ${serviceId} AND ligneFacture._to == ${factureId} RETURN ligneFacture`
+      aql`FOR ligneFacture IN ${ligneFactureCollection} FILTER ligneFacture.serviceKey == ${serviceKey} AND ligneFacture.factureKey == ${factureKey} RETURN ligneFacture`
     );
   } */
 
-  updateFacturesInLigneFacture = async (serviceId) => {
+  updateFacturesInLigneFacture = async (serviceKey) => {
     const query = await db.query(
       aql`
           FOR ligneFacture IN ${ligneFactureCollection}
-          FILTER ligneFacture._from == ${serviceId}
-          LET facture = DOCUMENT(ligneFacture._to)
+          FILTER ligneFacture.serviceKey == ${serviceKey}
+          LET facture = DOCUMENT(ligneFacture.factureKey)
           FILTER facture.garantyTime == 0
           RETURN ligneFacture
-        `
+        `,
     );
 
     const ligneFactures = await query.all();
@@ -141,20 +146,20 @@ class LigneFacture {
     await Promise.all(
       ligneFactures.map(async (ligneFacture) => {
         const updatedData = {
-          service: await serviceModel.getFacture({ key: serviceId }),
+          service: await serviceModel.getFacture({ key: serviceKey }),
         };
 
         await this.updateLigneFactureFactures({
-          key: ligneFacture._id,
+          key: ligneFacture._key,
           updatedData,
         });
-      })
+      }),
     );
   };
 
   ajouterLigneFacture = async ({
-    factureId,
-    serviceId,
+    factureKey,
+    serviceKey,
     designation,
     unit,
     prixSupplementaire = 0.0,
@@ -164,21 +169,21 @@ class LigneFacture {
     fraisDivers,
   }) => {
     isValidValue({ value: [designation, quantite] });
-    const service = await serviceModel.getService({ key: serviceId });
+    const service = await serviceModel.getService({ key: serviceKey });
     const doublon = await db.query(
-      aql`FOR ligneFacture IN ${ligneFactureCollection} FILTER ligneFacture._from == ${serviceId} AND ligneFacture._to == ${factureId} RETURN ligneFacture`
+      aql`FOR ligneFacture IN ${ligneFactureCollection} FILTER ligneFacture.serviceKey == ${serviceKey} AND ligneFacture.factureKey == ${factureKey} RETURN ligneFacture`,
     );
     if (doublon.hasNext) {
       throw new Error(
-        "Ajout impossible! Ce service est dejà enregistré sur cette facture"
+        "Ajout impossible! Ce service est dejà enregistré sur cette facture",
       );
     }
     if (service.prix * quantite <= remise) {
       throw new Error("Attention!!! La remise dépasse le montant du service");
     }
     const newLigneFacture = {
-      _from: serviceId,
-      _to: factureId,
+      serviceKey: serviceKey,
+      factureKey: factureKey,
       designation: designation,
       quantite: quantite,
       dureeLivraison: dureeLivraison,
@@ -204,7 +209,7 @@ class LigneFacture {
     key,
     designation,
     quantite,
-    serviceId,
+    serviceKey,
     unit,
     dureeLivraison,
     remise,
@@ -217,9 +222,9 @@ class LigneFacture {
     try {
       const updateField = {};
 
-      if (serviceId !== undefined) {
-        const service = await serviceModel.getService({ key: serviceId });
-        updateField._from = serviceId;
+      if (serviceKey !== undefined) {
+        const service = await serviceModel.getService({ key: serviceKey });
+        updateField.serviceKey = serviceKey;
         updateField.service = service;
       }
       if (designation !== undefined) updateField.designation = designation;
@@ -250,20 +255,22 @@ class LigneFacture {
           await ligneFactureCollection.update(key, updateField);
 
           const ligneFacture = await this.getLigneFacture({ key: key });
-          if (!ligneFacture || !ligneFacture._to) {
+          if (!ligneFacture || !ligneFacture.factureKey) {
             throw new Error("Impossible de récupérer la facture liée.");
           }
 
-          const facture = await factureCollection.document(ligneFacture._to);
+          const facture = await factureCollection.document(
+            ligneFacture.factureKey,
+          );
           if (!facture) {
             throw new Error("Facture introuvable.");
           }
 
           const lignesFactures = await this.getLigneFactureByFacture({
-            factureId: facture._id,
+            factureKey: facture._key,
           });
           lignesFactures.forEach((ligne) => {
-            if (ligne._id === key) {
+            if (ligne._key === key) {
               if (ligne.service.nature === Nature.unique) {
                 ligne.montant = ligne.service.prix * quantite;
               } else {
@@ -286,7 +293,7 @@ class LigneFacture {
           });
           if (montantTotal <= 0) {
             throw new Error(
-              "Le montant total de la facture semble être inférieur ou égal à zéro."
+              "Le montant total de la facture semble être inférieur ou égal à zéro.",
             );
           }
         });
@@ -304,7 +311,9 @@ class LigneFacture {
   //une methode à utiliser pour la tache cron
   updateLigneFactureFactures = async ({ key }) => {
     const ligneFacture = await this.getLigneFacture({ key: key });
-    const service = await serviceModel.getService({ key: ligneFacture._from });
+    const service = await serviceModel.getService({
+      key: ligneFacture.serviceKey,
+    });
     await ligneFactureCollection.update(key, { service: service });
     return "OK";
   };
@@ -312,11 +321,11 @@ class LigneFacture {
   deleteLigneFacture = async ({ key }) => {
     const ligneFacture = await this.getLigneFacture({ key: key });
     const allLigneFacture = await this.getLigneFactureByFacture({
-      factureId: ligneFacture._to,
+      factureKey: ligneFacture.factureKey,
     });
     if (allLigneFacture.length == 1) {
       throw new Error(
-        "Vous ne pouvez pas retirer tous les demandes sur cette facture"
+        "Vous ne pouvez pas retirer tous les demandes sur cette facture",
       );
     } else {
       try {
@@ -330,15 +339,20 @@ class LigneFacture {
     return "OK";
   };
 
-  deleteAllByFacture = async ({ factureId }) => {
+  deleteAllByFacture = async ({ factureKey }) => {
     try {
-      const ligneFactures = await ligneFactureCollection.edges(factureId);
+      const cursor = await db.query(aql`
+        FOR ligneFacture IN ${ligneFactureCollection}
+          FILTER ligneFacture.factureKey == ${factureKey}
+          RETURN ligneFacture
+      `);
+      const ligneFactures = await cursor.all();
       // if (ligneFactures.length == 1) {
       //   throw new Error(
       //     "Suppression impossible : cette facture ne peut rester sans service!"
       //   );
       // }
-      await ligneFactureCollection.removeAll(ligneFactures.edges);
+      await ligneFactureCollection.removeAll(ligneFactures);
       return "OK";
     } catch (err) {
       console.error(err);
@@ -347,10 +361,15 @@ class LigneFacture {
     }
   };
 
-  deleteAllByFactureByForce = async ({ factureId }) => {
+  deleteAllByFactureByForce = async ({ factureKey }) => {
     try {
-      const ligneFactures = await ligneFactureCollection.edges(factureId);
-      await ligneFactureCollection.removeAll(ligneFactures.edges);
+      const cursor = await db.query(aql`
+        FOR ligneFacture IN ${ligneFactureCollection}
+          FILTER ligneFacture.factureKey == ${factureKey}
+          RETURN ligneFacture
+      `);
+      const ligneFactures = await cursor.all();
+      await ligneFactureCollection.removeAll(ligneFactures);
       return "OK";
     } catch (err) {
       console.error(err);

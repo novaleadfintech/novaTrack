@@ -1,20 +1,20 @@
 const typeDef = `#graphql
-  type CategoriePaieGrille {
-    _id: ID!
+  type paieCategorieGrille {
+    _key: ID!
     libelle: String!
     classes: [Classe]      
   }
 `;
 
 const query = `#graphql
-  categoriesPaieGrille(perPage: Int, skip: Int): [CategoriePaieGrille]!
-  categoriePaieGrille(key: ID!): CategoriePaieGrille!
+  categoriesPaieGrille(perPage: Int, skip: Int): [paieCategorieGrille]!
+  paieCategorieGrille(key: ID!): paieCategorieGrille!
 `;
 
 const mutation = `#graphql
-  createCategoriePaieGrille(libelle: String!, classes: [ClasseInput]! ): String!
-  updateCategoriePaieGrille(key: ID!, libelle: String, classes: [ClasseInput]): String!
-  deleteCategoriePaieGrille(key: ID!): String!
+  createpaieCategorieGrille(libelle: String!, classes: [ClasseInput]! ): String!
+  updatepaieCategorieGrille(key: ID!, libelle: String, classes: [ClasseInput]): String!
+  deletepaieCategorieGrille(key: ID!): String!
 `;
 
 export default { typeDef, query, mutation };

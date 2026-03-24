@@ -32,9 +32,10 @@ class _PermissionPageState extends State<PermissionPage> {
   @override
   void initState() {
     fetchRoleItems();
-    super.initState();
+    
 
     _dialog = SimpleFontelicoProgressDialog(context: context);
+    super.initState();
   }
 
   // onClickAddProfilButton() {
@@ -53,7 +54,7 @@ class _PermissionPageState extends State<PermissionPage> {
     setState(() => isLoading = true);
     try {
       permissions = await ModulePermissionService.getModuleParmission(
-        id: profil.id!,
+        key: profil.key!,
       );
       setState(() {});
     } catch (e) {
@@ -197,12 +198,12 @@ class _PermissionPageState extends State<PermissionPage> {
                                                                                         if (value != null) {
                                                                                           setState(() {
                                                                                             // Trouver l'index de l'élément dans la liste
-                                                                                            int index = modulePermission.permissions.indexWhere((p) => p!.id == permission.id);
+                                                                                            int index = modulePermission.permissions.indexWhere((p) => p!.key == permission.key);
 
                                                                                             if (index != -1) {
                                                                                               // Remplacer l'objet par une nouvelle instance modifiée
                                                                                               modulePermission.permissions[index] = PermissionModel(
-                                                                                                id: permission.id,
+                                                                                                key: permission.key,
                                                                                                 libelle: permission.libelle,
                                                                                                 alias: permission.alias,
                                                                                                 isChecked: value, // Nouvelle valeur
@@ -282,14 +283,14 @@ class _PermissionPageState extends State<PermissionPage> {
         if (permission.isChecked!) {
           // Ajouter la permission
           await RoleService.attribuerPermissionRole(
-            rolekey: profil!.id!,
-            permissionId: permission.id,
+            rolekey: profil!.key!,
+            permissionKey: permission.key,
           );
         } else {
           // Retirer la permission
           await RoleService.retirerPermissionRole(
-            rolekey: profil!.id!,
-            permissionId: permission.id,
+            rolekey: profil!.key!,
+            permissionKey: permission.key,
           );
         }
       }

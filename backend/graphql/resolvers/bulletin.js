@@ -33,9 +33,9 @@ const bulletinPaieResolvers = {
     });
   },
 
-  previousBulletinsPaie: async ({ salarieId }) => {
+  previousBulletinsPaie: async ({ salarieKey }) => {
     return await bulletinPaieModel.getPreviousBulletin({
-      salarieId: salarieId,
+      salarieKey: salarieKey,
     });
   },
 
@@ -49,8 +49,8 @@ const bulletinPaieResolvers = {
     finPeriodePaie,
     dateEdition,
     referencePaie,
-    banqueId,
-    salarieId,
+    banqueKey,
+    salarieKey,
     rubriques,
   }) => {
     return await bulletinPaieModel.createBulletin({
@@ -59,8 +59,8 @@ const bulletinPaieResolvers = {
       finPeriodePaie,
       referencePaie,
       dateEdition,
-      banqueId,
-      salarieId,
+      banqueKey,
+      salarieKey,
       rubriques,
     });
   },
@@ -71,9 +71,9 @@ const bulletinPaieResolvers = {
     debutPeriodePaie,
     finPeriodePaie,
     dateEdition,
-    banqueId,
+    banqueKey,
     referencePaie,
-    salarieId,
+    salarieKey,
     rubriques,
   }) => {
     return await bulletinPaieModel.updateBulletin({
@@ -83,8 +83,8 @@ const bulletinPaieResolvers = {
       finPeriodePaie,
       dateEdition,
       referencePaie,
-      banqueId,
-      salarieId,
+      banqueKey,
+      salarieKey,
       rubriques,
     });
   },

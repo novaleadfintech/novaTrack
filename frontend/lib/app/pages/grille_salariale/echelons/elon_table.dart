@@ -91,7 +91,7 @@ class _EchelonTableState extends State<EchelonTable> {
       );
 
       RequestResponse result = await EchelonService.deleteEchelon(
-        key: echelon.id,
+        key: echelon.key,
       );
       _dialog.hide();
       if (result.status == PopupStatus.success) {

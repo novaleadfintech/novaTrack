@@ -15,7 +15,7 @@ class Entreprise {
 
   async initializeCollections() {
     if (!(await entreprise.exists())) {
-      entreprise.create();
+    await entreprise.create();
     }
   }
   getEntreprise = async () => {
@@ -276,7 +276,7 @@ class Entreprise {
       isValidValue({
         value: updateField,
       });
-      await entreprise.update(key ?? entre._id, updateField);
+      await entreprise.update(key ?? entre._key, updateField);
       return "OK";
     } catch (e) {
       console.error(e);

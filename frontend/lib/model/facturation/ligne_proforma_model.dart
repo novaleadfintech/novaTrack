@@ -2,7 +2,7 @@ import 'frais_divers_model.dart';
 import '../service/service_model.dart';
 
 class LigneProformaModel {
-  final String id;
+  final String key;
   final String designation;
   final int? quantite;
   final int? dureeLivraison;
@@ -14,7 +14,7 @@ class LigneProformaModel {
   final List<FraisDiversModel>? fraisDivers;
 
   LigneProformaModel({
-    required this.id,
+    required this.key,
     required this.designation,
     required this.montant,
     this.quantite,
@@ -28,7 +28,7 @@ class LigneProformaModel {
 
   factory LigneProformaModel.fromJson(Map<String, dynamic> json) {
     return LigneProformaModel(
-      id: json['_id'],
+      key: json['_key'],
       designation: json['designation'],
       unit: json['unit'],
       quantite: json['quantite'],
@@ -50,7 +50,7 @@ class LigneProformaModel {
 
   Map<String, dynamic> toJson() {
     return {
-      '_id': id,
+      '_key': key,
       'designation': designation,
       'unit': unit,
       'quantite': quantite,

@@ -553,7 +553,7 @@ class RubriqueCalculator {
           (el) => el.rubrique.code == bareme.reference.code,
           orElse: () => RubriqueOnBulletinModel(
             rubrique: RubriqueBulletin(
-              id: "id",
+              key: "key",
               rubrique: "rubrique",
               code: "code",
               type: TypeRubrique.gain,
@@ -736,7 +736,7 @@ double calculerMontantRubrique({
           (el) => el.rubrique.code == bareme.reference.code,
           orElse: () => RubriqueOnBulletinModel(
                 rubrique: RubriqueBulletin(
-                  id: "id",
+                  key: "key",
                   rubrique: "rubrique",
                   code: "code",
                   type: TypeRubrique.gain,
@@ -787,7 +787,7 @@ double getFormuleValue({
   required List<RubriqueOnBulletinModel> toutesLesRubriquesSurBulletin,
 }) {
   final element = toutesLesRubriquesSurBulletin.firstWhere(
-    (toElement) => toElement.rubrique.id == rubrique.id,
+    (toElement) => toElement.rubrique.key == rubrique.key,
     orElse: () => RubriqueOnBulletinModel(rubrique: rubrique, value: 0),
   );
 
