@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/model/bulletin_paie/bulletin_categorie.dart';
+import 'package:frontend/model/bulletin_paie/bulletin_categorie_model.dart';
 import 'package:frontend/model/bulletin_paie/operateur_model.dart';
 import 'package:frontend/model/grille_salariale/categorie_paie.dart';
 import 'package:frontend/model/grille_salariale/echelon_model.dart';
 import 'package:frontend/model/moyen_paiement_model.dart';
 import 'package:frontend/service/banque_service.dart';
-import 'package:frontend/service/categorie_bulletin_service.dart';
+import 'package:frontend/service/bulletin_categorie_service.dart';
 import 'package:frontend/service/grille_categorie_paie_service.dart';
 import 'package:frontend/service/operateur_service.dart';
 import 'package:frontend/widget/drop_down_text_field.dart';

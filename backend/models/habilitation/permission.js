@@ -20,8 +20,7 @@ class Permission {
      await moduleCollection.create();
     }
     if (!(await rolePermissionCollection.exists())) {
-      console.log('ça nexiste pas!')
-     await rolePermissionCollection.create();
+      await rolePermissionCollection.create();
     }
   }
 
@@ -31,8 +30,7 @@ class Permission {
     );
 
     const permissions = query.hasNext ? await query.all() : [];
-    console.log(permissions);
-    const groupedPermissions = permissions.reduce(async (acc, perm) => {
+     const groupedPermissions = permissions.reduce(async (acc, perm) => {
       const { moduleKey } = perm;
       if (!acc[moduleKey]) {
         acc[moduleKey] = {
@@ -78,8 +76,7 @@ class Permission {
         aql`FOR module IN ${moduleCollection} RETURN module`,
       );
       const allModules = query.hasNext ? await query.all() : [];
-      console.log(roleKey);
-       const permCursor = await db.query(aql`
+        const permCursor = await db.query(aql`
         FOR rolePermission IN ${rolePermissionCollection}
         FILTER rolePermission.roleKey == ${roleKey}
         RETURN rolePermission
@@ -130,14 +127,11 @@ class Permission {
         RETURN rolePermission
       `);
        const permissions = await cursor.all();
-       console.log('-------------------------------------------------')
-      console.log(permissions);
-      const permissionsDetails = [];
+       const permissionsDetails = [];
 
       for (let i = 0; i < permissions.length; i++) {
         const perm = permissions[i];
-        console.log(perm.permissionkey)
-        try {
+         try {
  
 
   const permissionDetails = await permissionCollection.document(perm.permissionKey);

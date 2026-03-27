@@ -62,9 +62,7 @@ class Personnel {
   getPersonnel = async ({ key }) => {
     try {
       console.log(key);
-      const personnel = await personnelCollection.document(`${key}`, {
-        graceful: true,
-      });
+      const personnel = await personnelCollection.document(key);
       return personnel;
     } catch (e) {
       console.error(e);

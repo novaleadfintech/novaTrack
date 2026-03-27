@@ -60,7 +60,7 @@ const mutation = `#graphql
         type: RubriqueBulletinType
         nature: RubriqueBulletinNature!
         bareme: BaremeInput
-        sectionKeyy: String
+        sectionKey: String
         portee: PorteeRubrique
         rubriqueRole: RubriqueRole
         taux: TauxInput

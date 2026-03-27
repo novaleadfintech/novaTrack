@@ -24,9 +24,9 @@ export const hasPermission = (permissionAlias) =>
     }
 
     if (!allPermissions.includes(permissionAlias)) {
-      allPermissions.forEach((element) => {
-        console.log(element);
-      });
+      // allPermissions.forEach((element) => {
+      //   console.log(element);
+      // });
       return new Error(
         `Accès refusé : vous n'avez pas la permission requise pour effectuer cette action`,
       );

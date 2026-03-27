@@ -110,7 +110,7 @@ class BulletinCategorieRubrique {
         // Chercher une valeur personnalisée (si déjà définie)
         const variableForRubrique = rubriquesVariables.find(
           (v) =>
-            v.rubriqueKey === rubrique._keyyy ||
+            v.rubriqueKey === rubrique.key ||
             v.rubriqueKey === bulletinCategorieRubrique.rubriqueKey,
         );
 
@@ -183,8 +183,7 @@ class BulletinCategorieRubrique {
           isChecked: !!config,
         };
       });
-      console.log(result);
-      // Trier par timeStamp croissant
+       // Trier par timeStamp croissant
       result.sort((a, b) => {
         const tA = a.rubriqueOnBulletin.rubrique?.timeStamp ?? 0;
         const tB = b.rubriqueOnBulletin.rubrique?.timeStamp ?? 0;

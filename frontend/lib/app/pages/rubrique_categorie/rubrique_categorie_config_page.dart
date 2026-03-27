@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/app/pages/error_page.dart';
 import 'package:frontend/app/pages/no_data_page.dart';
 import 'package:frontend/helper/amout_formatter.dart';
-import 'package:frontend/model/bulletin_paie/bulletin_categorie.dart'
+import 'package:frontend/model/bulletin_paie/bulletin_categorie_model.dart'
     show BulletinCategorieModel;
 import 'package:frontend/model/bulletin_paie/nature_rubrique.dart';
 import 'package:frontend/model/bulletin_paie/rubrique.dart';

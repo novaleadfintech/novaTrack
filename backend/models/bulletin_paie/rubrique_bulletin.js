@@ -101,9 +101,9 @@ class RubriqueBulletin {
 
             return {
               ...rubrique,
-              section: rubrique.sectionKeyy
+              section: rubrique.sectionKey
                 ? await sectionBulletinModel.getSectionBulletin({
-                    key: rubrique.sectionKeyy,
+                    key: rubrique.sectionKey,
                   })
                 : null,
             };
@@ -391,7 +391,7 @@ class RubriqueBulletin {
     if (sectionKey != undefined) {
       await sectionBulletinModel.isExistSectionBulletin({ key: sectionKey });
     }
-    updateField.sectionKeyy = sectionKeyy;
+    updateField.sectionKey = sectionKey;
 
     if (rubriqueIdentity !== undefined) {
       updateField.rubriqueIdentity = rubriqueIdentity;

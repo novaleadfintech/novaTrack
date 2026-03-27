@@ -108,7 +108,7 @@ class User {
       userCollection.create();
     }
     if (!(await userRoleCollection.exists())) {
-     await userRoleCollection.create();
+      await userRoleCollection.create();
     }
   }
 
@@ -141,9 +141,6 @@ class User {
   };
 
   getRoleByUser = async ({ userKey }) => {
-    console.log(userKey);
-    console.log('ama')
-    console.log(24)
     try {
       const query = await db.query(aql`
           FOR userrole IN ${userRoleCollection}
@@ -152,10 +149,8 @@ class User {
           RETURN userrole
         `);
       if (query.hasNext) {
-        console.log('ouiiiiiiiiii')
         const userRoles = await query.all();
-        console.log(userRoles);
-         return Promise.all(
+        return Promise.all(
           userRoles.map(async (userRole) => {
             const role = await roleModel.getRole({ key: userRole.roleKey });
             return {
@@ -183,11 +178,10 @@ class User {
   getUser = async ({ key }) => {
     try {
       const user = await userCollection.document(key);
-       const personnel = await personnelModel.getPersonnel({
+      const personnel = await personnelModel.getPersonnel({
         key: user.personnelKey,
       });
-       const roles = await this.getRoleByUser({ userKey: user._key });
-      console.log(roles);
+      const roles = await this.getRoleByUser({ userKey: user._key });
       return {
         ...user,
         personnel: personnel,
@@ -455,7 +449,6 @@ class User {
       await userCollection.update(currentUser._key, {
         _token: token,
       });
-      console.log(await this.getUser({ key: currentUser._key }));
       return await this.getUser({ key: currentUser._key });
     } else {
       throw new Error("Les données de connexion sont incorrectes.");

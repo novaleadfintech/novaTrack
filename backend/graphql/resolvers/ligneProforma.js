@@ -35,7 +35,7 @@ const ligneProformaResolvers = {
     await ligneProformaModel.deleteLigneProforma({ key: key }),
 
   deleteAllByProforma: async ({ factureKey }) =>
-    await ligneProformaModel.deleteAllByProforma({ factureKey: factureKeyy }),
+    await ligneProformaModel.deleteAllByProforma({ factureKey: factureKey }),
 };
 
 export default ligneProformaResolvers;

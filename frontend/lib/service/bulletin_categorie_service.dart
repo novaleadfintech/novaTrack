@@ -5,7 +5,7 @@ import '../app/integration/popop_status.dart';
 import '../global/config.dart';
 import '../global/constant/request_management_value.dart';
 
-import '../model/bulletin_paie/bulletin_categorie.dart';
+import '../model/bulletin_paie/bulletin_categorie_model.dart';
 import '../model/request_response.dart';
 import 'package:http/http.dart' as http;
 
@@ -40,7 +40,8 @@ class BulletinCategorieservice {
 
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
-       var data = jsonData['data']['bulletinCategories'];
+      print(jsonData);
+      var data = jsonData['data']['bulletinCategories'];
 
       List<BulletinCategorieModel> bulletincategories = [];
       if (data != null) {

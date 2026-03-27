@@ -26,7 +26,7 @@ enum RoleAuthorization {
 const query = `#graphql
     roles: [Role]!
     role(key: ID!): Role!
-    roleByUser(userKeyy: String!): [Role]!
+    roleByUser(userKey: String!): [Role]!
 `;
 
 const mutation = `#graphql

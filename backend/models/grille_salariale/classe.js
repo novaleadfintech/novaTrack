@@ -2,7 +2,7 @@ import { aql } from "arangojs";
 import db from "../../db/database_connection.js";
 import { isValidValue } from "../../utils/util.js";
 import Echelon from "./echelon.js";
-const classeCollection = db.collection("classes");
+const classeCollection = db.collection("paieClasses");
 const paieCategorieGrilleCollection = db.collection("paieCategorieGrille");
 
 const EchelonModel = new Echelon();
@@ -13,10 +13,7 @@ class Classe {
 
   async initializeCollections() {
     if (!(await classeCollection.exists())) {
-     await classeCollection.create();
-    }
-    if (!(await classeCollection.exists())) {
-     await classeCollection.create();
+      await classeCollection.create();
     }
   }
   async getAllClasse({ perPage, skip }) {

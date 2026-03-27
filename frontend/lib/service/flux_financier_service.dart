@@ -876,13 +876,13 @@ class FluxFinancierService {
                       total
                       input
                       output
-                      partiePrenante
                       fluxFinanciers {
                       _key
                       libelle
                       type
                       montant
                       reference
+                      partiePrenante
                       referenceTransaction
                       status
                       client {

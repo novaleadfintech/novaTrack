@@ -85,7 +85,7 @@ class Salarie {
               };
             } catch (innerError) {
               console.error(
-                `Erreur lors de l'enrichissement du salarié ${salarie._key}:`,
+                `Erreur lors de l'enrégistrement du salarié ${salarie._key}:`,
                 innerError,
               );
               return null;

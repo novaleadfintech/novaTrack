@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/model/bulletin_paie/bulletin_categorie.dart';
+import 'package:frontend/model/bulletin_paie/bulletin_categorie_model.dart';
 import 'package:frontend/model/bulletin_paie/operateur_model.dart';
 import 'package:frontend/model/grille_salariale/classe_model.dart';
 import 'package:frontend/model/grille_salariale/echelon_indice_model.dart';
 import 'package:frontend/model/habilitation/user_model.dart';
-import 'package:frontend/service/categorie_bulletin_service.dart';
+import 'package:frontend/service/bulletin_categorie_service.dart';
 import 'package:frontend/widget/enum_selector_radio.dart';
 import 'package:gap/gap.dart';
 import 'package:frontend/model/grille_salariale/categorie_paie.dart';

@@ -47,7 +47,7 @@ const mutation = `#graphql
         dateEnvoie: Float
         reduction: ReductionInput
         tva: Boolean
-        clientKeyy: String
+        clientKey: String
         status: StatusProforma
     ): String!
     
@@ -61,7 +61,7 @@ const mutation = `#graphql
 
     ajouterLigneProforma(
         proformaKey: String!,
-        serviceKeyy: String!,
+        serviceKey: String!,
         designation: String!,
         unit: String!
         prixSupplementaire: Float,

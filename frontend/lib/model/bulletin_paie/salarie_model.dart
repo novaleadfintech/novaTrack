@@ -1,4 +1,4 @@
-import 'package:frontend/model/bulletin_paie/bulletin_categorie.dart';
+import 'package:frontend/model/bulletin_paie/bulletin_categorie_model.dart';
 import 'package:frontend/model/bulletin_paie/operateur_model.dart';
 import 'package:frontend/model/grille_salariale/categorie_paie.dart';
 import 'package:frontend/model/grille_salariale/classe_model.dart';

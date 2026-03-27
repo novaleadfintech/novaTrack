@@ -2,7 +2,7 @@ import { aql } from "arangojs";
 import db from "../../db/database_connection.js";
 import { isValidValue } from "../../utils/util.js";
 
-const paieCategorieGrilleCollection = db.collection("grillepaieCategories");
+const paieCategorieGrilleCollection = db.collection("grillePaieCategories");
 
 class paieCategorieGrille {
   constructor() {

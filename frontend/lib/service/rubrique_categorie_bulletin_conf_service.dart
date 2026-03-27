@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:frontend/model/bulletin_paie/bulletin_categorie.dart';
+import 'package:frontend/model/bulletin_paie/bulletin_categorie_model.dart';
 import 'package:frontend/model/bulletin_paie/valeur_rubrique_temporaire.dart';
 import '../app/integration/popop_status.dart';
 import '../global/config.dart';

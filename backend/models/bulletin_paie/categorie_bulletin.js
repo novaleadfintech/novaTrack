@@ -21,6 +21,7 @@ class BulletinCategorie {
     }
   }
   async getAllBulletinCategorie({ perPage, skip }) {
+
     let limit = aql``;
 
     if (skip !== undefined && perPage !== undefined) {
@@ -33,15 +34,15 @@ class BulletinCategorie {
           RETURN bulletincategorie`,
       { fullCount: true },
     );
-
+    let bulletinCategories = [];
     if (query.hasNext) {
-      return await query.all();
-    } else {
-      return [];
+       bulletinCategories = await query.all();
     }
+     return bulletinCategories;
   }
 
   async getBulletinCategorie({ key }) {
+    
     try {
       const bulletincategorie = await bulletinCategorieCollection.document(key);
       return bulletincategorie;
@@ -105,7 +106,7 @@ class BulletinCategorie {
       const existingCategorie = await db.query(aql`
         FOR bulletincategorie IN ${bulletinCategorieCollection}
         FILTER bulletincategorie.bulletinCategorie == ${bulletinCategorie}
-        AND bulletincategorie._keyy != ${key}
+        AND bulletincategorie._key != ${key}
         LIMIT 1
         RETURN bulletincategorie
       `);

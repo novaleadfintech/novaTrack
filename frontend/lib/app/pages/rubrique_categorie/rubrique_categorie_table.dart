@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/app/pages/configure_page_dialog.dart';
-import 'package:frontend/model/bulletin_paie/bulletin_categorie.dart';
+import 'package:frontend/model/bulletin_paie/bulletin_categorie_model.dart';
 import 'package:frontend/style/app_color.dart';
 import '../../../../global/constant/permission_alias.dart';
 import '../../../../helper/user_helper.dart';

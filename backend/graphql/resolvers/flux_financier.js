@@ -73,7 +73,7 @@ const fluxFinancierResolvers = {
       moyenPayement: moyenPayement,
       pieceJustificative: pieceJustificative,
       type: type,
-      userKeyy: user._key,
+      userKey: user._key,
       dateOperation: dateOperation,
       bankKey: bankKey,
     });
@@ -100,7 +100,7 @@ const fluxFinancierResolvers = {
     const fluxFinancier = await fluxFiancierModel.getFluxFinancier({ key });
 
     // Vérifier si l'utilisateur est le créateur
-    if (fluxFinancier.user._keyy !== user_keyey) {
+    if (fluxFinancier.user._key !== user_key) {
       throw new Error("Seul le créateur peut modifier ce flux financier");
     }
 
@@ -128,7 +128,7 @@ const fluxFinancierResolvers = {
     const user = context.user;
     const fluxFinancier = await fluxFiancierModel.getFluxFinancier({ key });
 
-    if (fluxFinancier.user._keyy !== user_keyey) {
+    if (fluxFinancier.user._key !== user_key) {
       throw new Error("Seul le créateur peut supprimer ce flux financier");
     }
 
@@ -143,7 +143,7 @@ const fluxFinancierResolvers = {
     const user = context.user;
     const fluxFinancier = await fluxFiancierModel.getFluxFinancier({ key });
 
-    if (fluxFinancier.user._keyy === user_keyey) {
+    if (fluxFinancier.user._key === user_key) {
       throw new Error(
         "Vous étes celui qui a enregistré ce flux financier, vous ne pouvez plus le valider.",
       );
@@ -153,7 +153,7 @@ const fluxFinancierResolvers = {
     const commentaireWithUser = commentaire
       ? {
           ...commentaire,
-          editer: user._keyy,
+          editer: user._key,
         }
       : undefined;
 

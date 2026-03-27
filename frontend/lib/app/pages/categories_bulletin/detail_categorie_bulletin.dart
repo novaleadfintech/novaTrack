@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../model/bulletin_paie/bulletin_categorie.dart';
+import '../../../model/bulletin_paie/bulletin_categorie_model.dart';
 import '../../../style/app_style.dart';
 import '../../../widget/table_body_middle.dart';
 

@@ -2,8 +2,8 @@ import { aql } from "arangojs";
 import db from "../../db/database_connection.js";
 import { isValidValue } from "../../utils/util.js";
 
-const echelonCollection = db.collection("echelons");
-const classCollection = db.collection("classes");
+const echelonCollection = db.collection("paieEchelons");
+const classCollection = db.collection("paieClasses");
 
 class Echelon {
   constructor() {
@@ -12,10 +12,7 @@ class Echelon {
 
   async initializeCollections() {
     if (!(await echelonCollection.exists())) {
-     await echelonCollection.create();
-    }
-    if (!(await echelonCollection.exists())) {
-     await echelonCollection.create();
+      await echelonCollection.create();
     }
   }
   async getAllEchelon({ perPage, skip }) {

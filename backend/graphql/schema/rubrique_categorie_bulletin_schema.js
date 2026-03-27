@@ -18,8 +18,8 @@ const query = `#graphql
 
 const mutation = `#graphql
     createBulletinCategorieRubrique(bulletinCategorieKey:String!, rubriqueKey: ID!, value: Float): String!
-    updateBulletinCategorieRubriqueBulletin(bulletinCategorieKeyy:String,rubriqueKey: ID!, value: Float): String!
-    deleteBulletinCategorieRubriqueBulletin(bulletinCategorieKeyy:String,rubriqueKey: ID!): String!
+    updateBulletinCategorieRubriqueBulletin(bulletinCategorieKey:String,rubriqueKey: ID!, value: Float): String!
+    deleteBulletinCategorieRubriqueBulletin(bulletinCategorieKey:String,rubriqueKey: ID!): String!
 `;
 
 export default {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/helper/paginate_data.dart';
-import 'package:frontend/model/bulletin_paie/bulletin_categorie.dart';
-import 'package:frontend/service/categorie_bulletin_service.dart';
+import 'package:frontend/model/bulletin_paie/bulletin_categorie_model.dart';
+import 'package:frontend/service/bulletin_categorie_service.dart';
 import 'package:gap/gap.dart';
 import '../../../../global/global_value.dart';
  import '../../../../widget/pagination.dart';

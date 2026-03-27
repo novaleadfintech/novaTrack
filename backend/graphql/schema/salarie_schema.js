@@ -1,6 +1,6 @@
 const typeDef = `#graphql
     type Salarie{
-        _keyy:ID!
+        _key:ID!
         personnel: Personnel!
         bulletinCategorie: BulletinCategorie
         classe: Classe

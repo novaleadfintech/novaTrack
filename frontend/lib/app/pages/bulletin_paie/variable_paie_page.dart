@@ -18,7 +18,6 @@ import 'package:frontend/widget/simple_text_field.dart';
 import 'package:frontend/widget/validate_button.dart';
 import 'package:gap/gap.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
-
 import '../../../model/bulletin_paie/nature_rubrique.dart';
 
 class VariablePaiePage extends StatefulWidget {

@@ -41,7 +41,6 @@ class partnerCategorie {
       return await categorieCollection.document(key);
     } catch (err) {
       console.error(err);
-
       throw new Error(
         "Une erreur s'est produite lors de la récupération du catégorie",
       );
