@@ -58,13 +58,13 @@ const proformaResolvers = {
   deleteProforma: async ({ key }) =>
     await proformaModel.deleteProforma({ key: key }),
 
-  valkeyerProforma: async ({
+  validerProforma: async ({
     key,
     dateEtablissementFacture,
     facturesAcompte,
     banquesKeys,
   }) =>
-    await proformaModel.valkeyerProforma({
+    await proformaModel.validerProforma({
       key: key,
       dateEtablissementFacture: dateEtablissementFacture,
       banquesKeys: banquesKeys,

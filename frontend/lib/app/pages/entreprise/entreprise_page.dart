@@ -214,12 +214,8 @@ class _EntreprisePageState extends State<EntreprisePage> {
                                       readOnly: !isEditable,
                                       label: "Téléphone",
                                       textController: telephoneController,
-                                      contryCode: _selectedCountry == null
-                                          ? ""
-                                          : _selectedCountry!.code.toString(),
-                                      maxLength: _selectedCountry == null
-                                          ? 1
-                                          : _selectedCountry!.phoneNumber ?? 1,
+                                      country: _selectedCountry,
+
                                     ),
                                     SimpleTextField(
                                       label: 'Nom du DG',

@@ -159,8 +159,7 @@ class UserService {
 
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
-        print(jsonData);
-        var data = jsonData['data']['seConnecter'];
+         var data = jsonData['data']['seConnecter'];
         return UserModel.fromJson(data);
       } else {
         throw jsonDecode(response.body)['errors'][0]['message'];

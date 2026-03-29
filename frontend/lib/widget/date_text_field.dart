@@ -28,10 +28,32 @@ class DateField extends StatefulWidget {
 }
 
 class _DateFieldState extends State<DateField> {
+  bool _isFocused = false;
+  late FocusNode _focusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  void _onFocusChange() {
+    setState(() {
+      _isFocused = _focusNode.hasFocus;
+    });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
   Future<void> _selectDate(BuildContext context) async {
     DateTime? picked = await showDatePicker(
       context: context,
-      //initialDate: widget.firstDate ?? DateTime.now(),
       firstDate: widget.firstDate ?? DateTime(2024),
       lastDate: widget.lastDate ?? DateTime(2100),
     );
@@ -39,7 +61,7 @@ class _DateFieldState extends State<DateField> {
     if (picked != null) {
       setState(() {
         widget.dateController.text =
-            "${picked.day}/${picked.month}/${picked.year}"; // Format de date
+            "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}";
       });
       widget.onCompleteDate(picked);
     }
@@ -54,6 +76,9 @@ class _DateFieldState extends State<DateField> {
 
   @override
   Widget build(BuildContext context) {
+    final borderColor = Theme.of(context).colorScheme.onSecondary;
+    final focusedBorderColor = AppColor.adaptivePrimaryColor(context);
+    
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -65,52 +90,85 @@ class _DateFieldState extends State<DateField> {
                 widget.label,
                 textAlign: TextAlign.left,
                 style: DestopAppStyle.fieldTitlesStyle.copyWith(
-                  color: Theme.of(context).colorScheme.onSecondary,
+                  color: _isFocused ? focusedBorderColor : borderColor,
                 ),
               ),
               if (widget.required)
                 Text(
-                  "*",
+                  " *",
                   style: DestopAppStyle.fieldTitlesStyle.copyWith(
                     color: Theme.of(context).colorScheme.error,
                   ),
                 ),
             ],
           ),
-          const Gap(4),
-          TextFormField(
-            controller: widget.dateController,
-            readOnly: true,
-            onTap: () => _selectDate(context),
-            decoration: InputDecoration(
-              suffixIcon: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.calendar_month),
-                  if (widget.reset && widget.dateController.text.isNotEmpty)
-                    IconButton(
-                      icon: const Icon(Icons.close, color: Colors.red),
-                      onPressed: _resetDate,
-                    ),
-                ],
+          const Gap(6),
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            height: 44,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: _isFocused
+                  ? [
+                      BoxShadow(
+                        color: focusedBorderColor.withValues(alpha: 0.15),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ]
+                  : null,
+            ),
+            child: TextFormField(
+              focusNode: _focusNode,
+              controller: widget.dateController,
+              readOnly: true,
+              onTap: () => _selectDate(context),
+              style: DestopAppStyle.normalText.copyWith(
+                color: Theme.of(context).colorScheme.onSurface,
               ),
-              contentPadding: const EdgeInsets.symmetric(
-                vertical: 8.0,
-                horizontal: 16.0,
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(4),
-                borderSide: const BorderSide(
-                  color: AppColor.popGrey,
-                  width: 0.5,
+              decoration: InputDecoration(
+                prefixIcon: Icon(
+                  Icons.calendar_month_rounded,
+                  size: 20,
+                  color: _isFocused ? focusedBorderColor : borderColor,
                 ),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(4),
-                borderSide: const BorderSide(
-                  color: AppColor.popGrey,
-                  width: 0.5,
+                suffixIcon: widget.reset && widget.dateController.text.isNotEmpty
+                    ? IconButton(
+                        icon: Icon(
+                          Icons.close_rounded,
+                          size: 18,
+                          color: Theme.of(context).colorScheme.error,
+                        ),
+                        onPressed: _resetDate,
+                      )
+                    : null,
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 12.0,
+                  horizontal: 12.0,
                 ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(
+                    color: borderColor,
+                    width: 1,
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(
+                    color: borderColor.withValues(alpha: 0.5),
+                    width: 1,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(
+                    color: focusedBorderColor,
+                    width: 1.5,
+                  ),
+                ),
+                fillColor: Theme.of(context).colorScheme.surface,
+                filled: true,
               ),
             ),
           ),

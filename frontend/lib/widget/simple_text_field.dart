@@ -19,6 +19,8 @@ class SimpleTextField extends StatefulWidget {
   final bool readOnly;
   final List<TextInputFormatter>? inputFormaters;
   final int? maxlength;
+  final String? hintText;
+  final IconData? prefixIcon;
 
   const SimpleTextField({
     super.key,
@@ -29,12 +31,14 @@ class SimpleTextField extends StatefulWidget {
     this.putUniqueKey = true,
     this.maxLines = 1,
     this.expands = false,
-    this.height = 40,
+    this.height = 44,
     this.keyboardType = TextInputType.text,
     this.readOnly = false,
     this.inputFormaters,
     this.color,
     this.maxlength,
+    this.hintText,
+    this.prefixIcon,
   });
 
   @override
@@ -44,10 +48,15 @@ class SimpleTextField extends StatefulWidget {
 class _SimpleTextFieldState extends State<SimpleTextField> {
   late final TextEditingController _displayController;
   bool _isUpdating = false;
+  bool _isFocused = false;
+  late FocusNode _focusNode;
 
   @override
   void initState() {
     super.initState();
+    _focusNode = FocusNode();
+    _focusNode.addListener(_onFocusChange);
+    
     _displayController = TextEditingController(
       text: widget.keyboardType == TextInputType.number &&
               widget.textController.text.isNotEmpty
@@ -59,6 +68,12 @@ class _SimpleTextFieldState extends State<SimpleTextField> {
     widget.textController.addListener(_syncFromTextController);
   }
 
+  void _onFocusChange() {
+    setState(() {
+      _isFocused = _focusNode.hasFocus;
+    });
+  }
+
   void _syncFromTextController() {
     if (_isUpdating) return;
 
@@ -66,7 +81,7 @@ class _SimpleTextFieldState extends State<SimpleTextField> {
 
     if ((widget.keyboardType == TextInputType.number ||
             widget.keyboardType ==
-                TextInputType.numberWithOptions(decimal: true)) &&
+                const TextInputType.numberWithOptions(decimal: true)) &&
         currentText.isNotEmpty) {
       final rawValue = double.tryParse(currentText) ?? 0;
       final formattedValue = Formatter.formatAmount(rawValue);
@@ -95,7 +110,7 @@ class _SimpleTextFieldState extends State<SimpleTextField> {
     _isUpdating = true;
 
     if (widget.keyboardType == TextInputType.number ||
-        widget.keyboardType == TextInputType.numberWithOptions(decimal: true)) {
+        widget.keyboardType == const TextInputType.numberWithOptions(decimal: true)) {
       final rawValue = Formatter.parseAmount(value);
 
       if (widget.textController.text != rawValue) {
@@ -120,6 +135,8 @@ class _SimpleTextFieldState extends State<SimpleTextField> {
 
   @override
   void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
     widget.textController.removeListener(_syncFromTextController);
     _displayController.dispose();
     super.dispose();
@@ -127,6 +144,9 @@ class _SimpleTextFieldState extends State<SimpleTextField> {
 
   @override
   Widget build(BuildContext context) {
+    final borderColor = widget.color ?? Theme.of(context).colorScheme.onSecondary;
+    final focusedBorderColor = AppColor.adaptivePrimaryColor(context);
+    
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -139,28 +159,43 @@ class _SimpleTextFieldState extends State<SimpleTextField> {
                 child: Text(
                   widget.label,
                   style: DestopAppStyle.fieldTitlesStyle.copyWith(
-                    color: widget.color ??
-                        Theme.of(context).colorScheme.onSecondary,
+                    color: _isFocused 
+                        ? focusedBorderColor
+                        : borderColor,
                   ),
                 ),
               ),
               if (widget.required)
                 Text(
-                  "*",
+                  " *",
                   style: DestopAppStyle.normalText.copyWith(
                     color: Theme.of(context).colorScheme.error,
                   ),
                 ),
             ],
           ),
-          const Gap(4),
-          SizedBox(
+          const Gap(6),
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
             height: widget.height,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: _isFocused && !widget.readOnly
+                  ? [
+                      BoxShadow(
+                        color: focusedBorderColor.withValues(alpha: 0.15),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ]
+                  : null,
+            ),
             child: TextField(
+              focusNode: _focusNode,
               inputFormatters: widget.keyboardType == TextInputType.number
                   ? [FilteringTextInputFormatter.digitsOnly, _AmountFormatter()]
                   : widget.keyboardType ==
-                          TextInputType.numberWithOptions(decimal: true)
+                          const TextInputType.numberWithOptions(decimal: true)
                       ? [
                           FilteringTextInputFormatter.allow(
                             RegExp(r'^[\d ]*(\.[\d ]*)?$'),
@@ -171,10 +206,10 @@ class _SimpleTextFieldState extends State<SimpleTextField> {
               readOnly: widget.readOnly,
               maxLines: widget.maxLines,
               expands: widget.expands,
-              textAlignVertical: TextAlignVertical.top,
+              textAlignVertical: TextAlignVertical.center,
               controller: widget.keyboardType == TextInputType.number ||
                       widget.keyboardType ==
-                          TextInputType.numberWithOptions(decimal: true)
+                          const TextInputType.numberWithOptions(decimal: true)
                   ? _displayController
                   : widget.textController,
               keyboardType: widget.keyboardType,
@@ -186,32 +221,55 @@ class _SimpleTextFieldState extends State<SimpleTextField> {
                 }
                 if (widget.keyboardType == TextInputType.number ||
                     widget.keyboardType ==
-                        TextInputType.numberWithOptions(decimal: true)) {
+                        const TextInputType.numberWithOptions(decimal: true)) {
                   _syncToTextController(value);
                 }
               },
               decoration: InputDecoration(
+                hintText: widget.hintText,
+                hintStyle: DestopAppStyle.normalText.copyWith(
+                  color: Theme.of(context).colorScheme.onSecondary.withValues(alpha: 0.6),
+                ),
+                prefixIcon: widget.prefixIcon != null
+                    ? Icon(
+                        widget.prefixIcon,
+                        size: 20,
+                        color: _isFocused ? focusedBorderColor : borderColor,
+                      )
+                    : null,
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(4),
-                  borderSide: const BorderSide(
-                    strokeAlign: BorderSide.strokeAlignInside,
-                    width: 0.5,
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(
+                    width: 1,
+                    color: borderColor,
                   ),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(4),
+                  borderRadius: BorderRadius.circular(8),
                   borderSide: BorderSide(
-                    strokeAlign: BorderSide.strokeAlignInside,
-                    width: 0.5,
-                    color: widget.color ??
-                        Theme.of(context).colorScheme.onSecondary,
+                    width: 1,
+                    color: borderColor.withValues(alpha: 0.5),
                   ),
                 ),
-                contentPadding: const EdgeInsets.all(8),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(
+                    width: 1.5,
+                    color: focusedBorderColor,
+                  ),
+                ),
+                disabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(
+                    width: 1,
+                    color: borderColor.withValues(alpha: 0.3),
+                  ),
+                ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                 fillColor: widget.readOnly
-                    ? AppColor.adaptivePopGrey(context)
+                    ? AppColor.adaptivePopGrey(context).withValues(alpha: 0.1)
                     : Theme.of(context).colorScheme.surface,
-                filled: widget.readOnly,
+                filled: true,
               ),
               style: DestopAppStyle.normalText.copyWith(
                 color: Theme.of(context).colorScheme.onSurface,
@@ -232,14 +290,12 @@ class _AmountFormatter extends TextInputFormatter {
       return newValue;
     }
 
-    // Formatter le texte
     final double? numericValue =
         double.tryParse(newValue.text.replaceAll(' ', ''));
     if (numericValue == null) return oldValue;
 
     final String formatted = Formatter.formatAmount(numericValue);
 
-    // Mettre le curseur à la fin à chaque fois
     return TextEditingValue(
       text: formatted,
       selection: TextSelection.collapsed(offset: formatted.length),

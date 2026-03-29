@@ -305,7 +305,7 @@ class Client {
         pays: pays,
         etat: etat,
         nature: nature,
-        partnerCategorieId: partnerCategorieId,
+        partnerCategorieKey: partnerCategorieKey,
         responsable: responsable,
         dateEnregistrement: Date.now(),
       };
@@ -389,9 +389,8 @@ class Client {
       const isFournisseur =
         nature === NatureClient.fournisseur ||
         client.nature === NatureClient.fournisseur;
-
       // Gestion de l'upload du logo
-      if (logo?.file) {
+      if (await logo?.file) {
         const file = logo.file;
         const { createReadStream, filename, mimetype } = file;
 
@@ -416,10 +415,10 @@ class Client {
 
           updateField.logo = filePath.replace(/\\/g, "/");
         }
-      } else if (!isFournisseur && logo !== undefined) {
-        // logo est requis si ce n’est pas un fournisseur
-        throw new Error("Veuillez uploader le logo");
       }
+      // else if (!isFournisseur && logo !== undefined) {
+      //   throw new Error("Veuillez uploader le logo");
+      // }
 
       if (partnerCategorieKey !== undefined) {
         await categorieModel.isExistCategorie({ key: partnerCategorieKey });
@@ -430,30 +429,15 @@ class Client {
         updateField.nature = nature;
       }
 
-      // Validation conditionnelle
-      if (!isFournisseur) {
-        isValidValue({
-          value: [
-            email,
-            telephone,
-            pays,
-            responsable,
-            logo || client.logo,
-            adresse,
-          ],
-        });
-
-        if (email !== undefined) {
-          isValidEmail({ email });
-          updateField.email = email;
-        }
-
-        if (responsable !== undefined) {
-          updateField.responsable = responsable;
-          isValidEmail({ email: responsable.email });
-        }
+      if (email !== undefined) {
+        isValidEmail({ email });
+        updateField.email = email;
       }
 
+      if (responsable !== undefined) {
+        updateField.responsable = responsable;
+        isValidEmail({ email: responsable.email });
+      }
       if (telephone !== undefined) {
         updateField.telephone = telephone;
       }

@@ -145,7 +145,7 @@ class _MoreDatailClientPageState extends State<MoreDatailClientPage> {
                                       null) 
                                   buildTableRow(
                                     "Téléphone",
-                                    "+${(widget.client as ClientMoralModel).pays!.code} ${(widget.client as ClientMoralModel).responsable!.telephone}",
+                                    "${(widget.client as ClientMoralModel).pays!.code} ${(widget.client as ClientMoralModel).responsable!.telephone}",
                                   ),
                                   
                                 ],

@@ -262,7 +262,7 @@ class _PersonnelTableState extends State<PersonnelTable> {
                                   : "Aucun"),
                           TableBodyMiddle(
                             valeur:
-                                "+${personnel.pays!.code} ${personnel.telephone}",
+                                "${personnel.pays!.code} ${personnel.telephone}",
                           ),
                           TableBodyLast(
                             items: [

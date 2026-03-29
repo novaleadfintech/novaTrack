@@ -1,6 +1,8 @@
 import '../model/pays_model.dart';
 
 checkPhoneNumber({required String phoneNumber, required PaysModel pays}) {
+  print(phoneNumber);
+  print(pays.phoneNumber);
   List<int> initiaux = pays.initiauxPays;
   if (initiaux.isEmpty) {
     return "Aucun initial téléphonique n'est configuré pour ce pays.";

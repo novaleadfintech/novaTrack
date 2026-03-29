@@ -479,12 +479,10 @@ class _EditPersonnelPageState extends State<EditPersonnelPage> {
             ),
             TelephoneTextField(
               label: "Téléphone",
-              maxLength:
-                  _selectedCountry == null ? 1 : _selectedCountry!.phoneNumber!,
+              country: _selectedCountry,
+
               textController: _telephoneController,
-              contryCode: _selectedCountry == null
-                  ? ""
-                  : _selectedCountry!.code.toString(),
+             
             ),
             SimpleTextField(
               label: "Email",
@@ -678,13 +676,10 @@ class _EditPersonnelPageState extends State<EditPersonnelPage> {
                 Expanded(
                   child: TelephoneTextField(
                     label: "Téléphone 1",
-                    maxLength: _selectedCountry == null
-                        ? 1
-                        : _selectedCountry!.phoneNumber!,
+                    country: _selectedCountry,
+
                     textController: _telephone1Controller,
-                    contryCode: _selectedCountry == null
-                        ? ""
-                        : _selectedCountry!.code.toString(),
+                   
                   ),
                 ),
                 if (!isMobile)
@@ -692,13 +687,8 @@ class _EditPersonnelPageState extends State<EditPersonnelPage> {
                     child: TelephoneTextField(
                       label: "Téléphone 2",
                       required: false,
-                      maxLength: _selectedCountry == null
-                          ? 1
-                          : _selectedCountry!.phoneNumber!,
+                      country: _selectedCountry,
                       textController: _telephone2Controller,
-                      contryCode: _selectedCountry == null
-                          ? ""
-                          : _selectedCountry!.code.toString(),
                     ),
                   ),
               ],
@@ -707,13 +697,8 @@ class _EditPersonnelPageState extends State<EditPersonnelPage> {
               TelephoneTextField(
                 label: "Téléphone 2",
                 required: false,
-                maxLength: _selectedCountry == null
-                    ? 1
-                    : _selectedCountry!.phoneNumber!,
+                country: _selectedCountry,
                 textController: _telephone2Controller,
-                contryCode: _selectedCountry == null
-                    ? ""
-                    : _selectedCountry!.code.toString(),
               ),
             const Gap(16),
             Padding(

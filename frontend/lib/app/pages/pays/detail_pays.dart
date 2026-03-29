@@ -41,7 +41,7 @@ class MoreDatailPaysPage extends StatelessWidget {
               isbold: true,
             ),
             TabledetailBodyMiddle(
-              valeur: "+${pays.code}",
+              valeur: pays.code,
             ),
           ],
         ),

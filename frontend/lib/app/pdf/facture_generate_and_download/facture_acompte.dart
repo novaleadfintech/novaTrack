@@ -894,7 +894,7 @@ class FactureAcomptePdfGenerator {
                         textAlign: pw.TextAlign.center,
                       ),
                       pw.Text(
-                        "Tél. (+${entreprise.pays.code}) ${entreprise.telephone}",
+                        "Tél. (${entreprise.pays.code}) ${entreprise.telephone}",
                         textAlign: pw.TextAlign.center,
                         style: pw.TextStyle(
                           fontSize: 10,

@@ -220,7 +220,7 @@ class DetailSalariePage extends StatelessWidget {
                 isbold: true,
               ),
               TabledetailBodyMiddle(
-                valeur: "+${personnel.pays!.code} ${personnel.telephone}",
+                valeur: "${personnel.pays!.code} ${personnel.telephone}",
               ),
             ],
           ),
@@ -323,7 +323,7 @@ class DetailSalariePage extends StatelessWidget {
               ),
               TabledetailBodyMiddle(
                 valeur:
-                    "Nom : ${personnel.personnePrevenir!.nom}\nLien : ${personnel.personnePrevenir!.lien}\nContact : +${personnel.pays!.code} ${personnel.personnePrevenir!.telephone1} ${personnel.personnePrevenir!.telephone2 != null ? "/ +${personnel.pays!.code} ${personnel.personnePrevenir!.telephone2}" : ""}",
+                    "Nom : ${personnel.personnePrevenir!.nom}\nLien : ${personnel.personnePrevenir!.lien}\nContact : +${personnel.pays!.code} ${personnel.personnePrevenir!.telephone1} ${personnel.personnePrevenir!.telephone2 != null ? "/ ${personnel.pays!.code} ${personnel.personnePrevenir!.telephone2}" : ""}",
               ),
             ],
           ),

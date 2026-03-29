@@ -31,8 +31,7 @@ class BulletinCategorieRubrique {
           RETURN rubriqueBulletion
       `);
       const rubriqueConfiforCategorie = await cursor.all();
-      console.log(rubriqueConfiforCategorie);
-      // Attendre la récupération des rubriques
+       // Attendre la récupération des rubriques
       const result = await Promise.all(
         rubriqueConfiforCategorie.map(async (bulletinCategorieRubrique) => {
           const rubrique = await rubriqueBulletin.getRubriqueBulletin({
@@ -54,7 +53,7 @@ class BulletinCategorieRubrique {
       });
       return result;
     } catch (e) {
-      console.log(e);
+      console.error(e);
       throw new Error("Erreur lors de la récupération des données");
     }
   };

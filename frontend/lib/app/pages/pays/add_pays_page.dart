@@ -29,10 +29,10 @@ class _AddPaysPageState extends State<AddPaysPage> {
   final TextEditingController _phoneNumberCaracterController =
       TextEditingController();
   final TextEditingController _codeController = TextEditingController();
+  final TextEditingController _internationalPrefixController =
+      TextEditingController();
   Country? _selectedCountry;
   late SimpleFontelicoProgressDialog _dialog;
-
-    
 
   @override
   void initState() {
@@ -46,14 +46,14 @@ class _AddPaysPageState extends State<AddPaysPage> {
       String errorMessage = "";
       final taux = _tauxtvaController.text.trim();
       final code =
-          int.tryParse(_codeController.text.trim()); // Utiliser tryParse() ici
+          _codeController.text.trim(); 
       final nbrePhoneTel =
           int.tryParse(_phoneNumberCaracterController.text.trim());
 
       // Vérification des champs nécessaires
       if (_selectedCountry == null ||
           taux.isEmpty ||
-          code == null ||
+          code.isEmpty ||
           (nbrePhoneTel != null && nbrePhoneTel == 0) ||
           _debutNumTelCotroller.text.isEmpty) {
         errorMessage = "Veuillez remplir les champs marqués";
@@ -90,11 +90,10 @@ class _AddPaysPageState extends State<AddPaysPage> {
         initiauxPays: _debutNumTelCotroller.text
             .trim()
             .split(" ")
-            .map((str) =>
-                int.tryParse(str) ??
-                0)
+            .map((str) => int.tryParse(str) ?? 0)
             .toList(),
-        code: code!,
+        code: code,
+        // internationalPrefix: _internationalPrefixController.text.trim(),
       );
 
       // Fermeture du dialogue de chargement
@@ -123,7 +122,6 @@ class _AddPaysPageState extends State<AddPaysPage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -135,17 +133,21 @@ class _AddPaysPageState extends State<AddPaysPage> {
             CustomDropDownField<Country>(
               items: Countries.values,
               onChanged: (country) {
-                setState(() {
-                  _selectedCountry = country;
-                  _nomController.text =
-                      _selectedCountry!.isoShortNameByLocale.containsKey("fr")
-                          ? _selectedCountry!.isoShortNameByLocale["fr"]!
-                          : _selectedCountry!.isoShortName;
-                  _codeController.text = _selectedCountry!.countryCode;
-                  _phoneNumberCaracterController.text =
-                      (_selectedCountry!.nationalNumberLengths.last + 1)
-                          .toString();
-                });
+                if (country != null) {
+                  setState(() {
+                    _selectedCountry = country;
+                    _nomController.text =
+                        _selectedCountry!.isoShortNameByLocale.containsKey("fr")
+                            ? _selectedCountry!.isoShortNameByLocale["fr"]!
+                            : _selectedCountry!.isoShortName;
+                    _codeController.text =
+                        '${_selectedCountry!.internationalPrefix}${_selectedCountry!.countryCode}';
+                    _phoneNumberCaracterController.text =
+                        (_selectedCountry!.nationalNumberLengths.last + 1)
+                            .toString();
+                         
+                  });
+                }
               },
               selectedItem: _selectedCountry,
               itemsAsString: (country) =>
@@ -161,11 +163,17 @@ class _AddPaysPageState extends State<AddPaysPage> {
               textController: _nomController,
             ),
             SimpleTextField(
+              label: "Préfixe international",
+              textController: _internationalPrefixController,
+              readOnly: true,
+              // hintText: "Ex: + ou 00",
+            ),
+            SimpleTextField(
               label: "Indicatif",
               textController: _codeController,
               keyboardType: TextInputType.number,
               readOnly: true,
-              
+              hintText: "Ex: 213",
             ),
             SimpleTextField(
               label: "Nombre de chiffres du téléphone",
@@ -177,7 +185,6 @@ class _AddPaysPageState extends State<AddPaysPage> {
               label: "Taux TVA (%)",
               textController: _tauxtvaController,
               keyboardType: TextInputType.numberWithOptions(decimal: true),
-              
               required: true,
             ),
             SimpleTextField(

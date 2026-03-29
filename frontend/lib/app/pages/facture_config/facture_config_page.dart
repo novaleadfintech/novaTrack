@@ -18,10 +18,10 @@ class FactureConfigPage extends StatefulWidget {
   });
 
   @override
-  State<FactureConfigPage> createState() => _paieCategorieClientPageState();
+  State<FactureConfigPage> createState() => _PaieCategorieClientPageState();
 }
 
-class _paieCategorieClientPageState extends State<FactureConfigPage> {
+class _PaieCategorieClientPageState extends State<FactureConfigPage> {
   final TextEditingController _researchController = TextEditingController();
   int currentPage = GlobalValue.currentPage;
   List<ClientFactureGlobaLValueModel> clientFactureGlobalValueDate = [];

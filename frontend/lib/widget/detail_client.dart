@@ -147,7 +147,7 @@ class _DetailClientState extends State<DetailClient> {
                         ),
                         buildTableRow(
                           "Téléphone",
-                          "+${widget.client.pays!.code} ${widget.client.telephone ?? "_" * widget.client.pays!.phoneNumber!}",
+                          "${widget.client.pays!.code} ${widget.client.telephone ?? "_" * widget.client.pays!.phoneNumber!}",
                         ),
                         buildTableRow(
                           "Adresse",

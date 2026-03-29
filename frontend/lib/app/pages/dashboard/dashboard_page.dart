@@ -175,34 +175,56 @@ class _DashBoardPageState extends State<DashBoardPage> {
       behavior: HitTestBehavior.opaque,
       child: LayoutBuilder(
         builder: (context, constraints) {
-          return Column(
-            children: [
-              Wrap(
-                children: items
-                    .map((item) => ConstrainedBox(
-                          constraints: BoxConstraints(
-                            minWidth: 260,
-                            maxWidth: Responsive.isMobile(context)
-                                ? double.infinity
-                                : 350,
-                          ),
-                          child: item,
-                        ))
-                    .toList(),
-              ),
-              Gap(16),
-              Expanded(
-                child: NotificationListener<ScrollNotification>(
-                  onNotification: (ScrollNotification notification) {
-                    if (notification is ScrollStartNotification) {
-                      FocusManager.instance.primaryFocus?.unfocus();
-                    }
-                    return false;
-                  },
-                  child: SingleChildScrollView(
+          final isMobile = Responsive.isMobile(context);
+
+          // Sur mobile : layout original avec Wrap et chart à hauteur fixe
+          if (isMobile) {
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  Wrap(
+                    children: items
+                        .map((item) => ConstrainedBox(
+                              constraints: const BoxConstraints(
+                                minWidth: 260,
+                                maxWidth: double.infinity,
+                              ),
+                              child: item,
+                            ))
+                        .toList(),
+                  ),
+                  const Gap(16),
+                  // Chart avec hauteur fixe sur mobile pour éviter l'erreur Expanded
+                  const SizedBox(
+                    height: 450,
                     child: FinancialBarChart(),
                   ),
+                ],
+              ),
+            );
+          }
+          
+          // Tablet et Desktop : layout fixe sans scroll
+          return Column(
+            children: [
+              // Cartes en ligne horizontale
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: items
+                      .map((item) => Expanded(
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 4.0),
+                              child: item,
+                            ),
+                          ))
+                      .toList(),
                 ),
+              ),
+              // Chart prend tout l'espace restant
+              const Expanded(
+                child: FinancialBarChart(),
               ),
             ],
           );

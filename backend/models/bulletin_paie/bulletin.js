@@ -247,8 +247,7 @@ class BulletinPaie {
             paieCategorieKey: salarie.paieCategorie._key,
           });
 
-        // console.log(rubriquesBase);
-        // 3. Récupérer les valeurs temporaires saisies
+         // 3. Récupérer les valeurs temporaires saisies
         const valeursTemp = await ValeurRubriqueTemporaireModel.getBySalarieKey(
           {
             salarieKey: salarie._key,
@@ -268,8 +267,7 @@ class BulletinPaie {
         });
         // Fusionner les deux tableaux
         rubriques.push(...(valeursTemp?.primesExceptionnelles || []));
-        // console.log(salarie);
-        // 5. Créer le bulletin
+         // 5. Créer le bulletin
         await this.createBulletin({
           debutPeriodePaie: dateDebut,
           finPeriodePaie: dateFin,
@@ -301,16 +299,7 @@ class BulletinPaie {
     `);
 
       const bulletinExiste = query.hasNext;
-
-      if (bulletinExiste) {
-        console.log("Bulletin existe déjà pour cette période");
-      } else {
-        console.log("Aucun bulletin, création possible");
-      }
-
-      // Retourne true si AUCUN bulletin n'existe (peut créer)
-      // Retourne false si un bulletin existe (ne peut PAS créer)
-      return !bulletinExiste;
+      return !bulletinExiste; // Retourne true si AUCUN bulletin n'existe (peut créer); Retourne false si un bulletin existe (ne peut PAS créer)
     } catch (error) {
       console.error("Erreur lors de la vérification du duplicata :", error);
       throw new Error("Erreur interne lors de la vérification du bulletin.");
@@ -577,8 +566,7 @@ class BulletinPaie {
 
     // Étape 3 : Charger les données complètes des rubriques
     for (let i = 0; i < rubriques.length; i++) {
-      // console.log(rubriques[i]);
-      const rubriqueData = await RubriqueBulletinModel.getRubriqueBulletin({
+       const rubriqueData = await RubriqueBulletinModel.getRubriqueBulletin({
         key: rubriques[i].rubriqueKey,
       });
       rubriques[i].rubrique = rubriqueData;
@@ -626,11 +614,9 @@ class BulletinPaie {
         salarie.personnel.nombrePersonneCharge ?? 0;
     }
 
-    console.log("Début du calcul des rubriques...");
-    const rubriquesCalculees =
+     const rubriquesCalculees =
       this.calculateRubriquesWithDependencies(rubriques);
-    console.log("Calcul des rubriques terminé");
-
+ 
     const bulletin = {
       salarie: salarie,
       dateEdition: dateEdition,
@@ -652,7 +638,6 @@ class BulletinPaie {
 
       await session.commit();
 
-      console.log(`Bulletin créé avec succès pour le salarié ${salarieKey}`);
       return "OK";
     } catch (error) {
       console.error("Erreur lors de la création du bulletin:", error);

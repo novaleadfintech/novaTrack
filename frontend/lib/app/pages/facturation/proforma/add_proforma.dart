@@ -175,6 +175,7 @@ class _AddFactureProformatState extends State<AddFactureProformat> {
                 fetchItems: () {
                   return fetchClientItems(isCheckedByPays: false);
                 },
+                
                 onChanged: (ClientModel? value) {
                   if (value != null) {
                     setState(() {

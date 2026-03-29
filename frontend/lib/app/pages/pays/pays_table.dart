@@ -111,7 +111,7 @@ class _ServiceTableState extends State<PaysTable> {
                             TableBodyMiddle(
                               valeur: capitalizeFirstLetter(word: pays.name),
                             ),
-                            TableBodyMiddle(valeur: "+${pays.code}"),
+                            TableBodyMiddle(valeur: pays.code),
                             TableBodyLast(
                               items: [
                                 (
@@ -146,7 +146,7 @@ class _ServiceTableState extends State<PaysTable> {
                               valeur: capitalizeFirstLetter(word: pays.name),
                             ),
                             TableBodyMiddle(
-                              valeur: "+${pays.code}",
+                              valeur: "${pays.code}",
                             ),
                             TableBodyLast(
                               items: [

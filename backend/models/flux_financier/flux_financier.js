@@ -761,8 +761,7 @@ class FluxFinancier {
         }
 
         if (libelle !== undefined) updateField.libelle = libelle;
-        console.log();
-        if (clientKey !== undefined) {
+         if (clientKey !== undefined) {
           (await clientKey) != null ??
             clientModel.isExistClient({ key: clientKey });
           updateField.clientKey = clientKey;

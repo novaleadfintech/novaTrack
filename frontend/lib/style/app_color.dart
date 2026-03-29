@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../main.dart';
+
 class AppColor {
+  static final BuildContext? context = navigatorKey.currentContext;
+
   // ======== LIGHT MODE COLORS ========
   static const Color primaryColor = Color(0xFF277572);
   static const Color backgroundColor = Color.fromARGB(255, 226, 239, 239);
@@ -47,14 +51,14 @@ class AppColor {
   static Color adaptativeLoginScreenBachroundColor(BuildContext context) =>
       isDark(context) ? bbackgroundColor : primaryColor;
 
-  static Color adaptiveWhiteColor(BuildContext context) =>
-      isDark(context) ? bwhiteColor : whiteColor;
+  static Color adaptiveWhiteColor() =>
+      isDark(context!) ? bwhiteColor : whiteColor;
 
   static Color adaptiveGrayColor(BuildContext context) =>
       isDark(context) ? bgrayColor : grayColor;
 
-  static Color adaptiveBlackColor(BuildContext context) =>
-      isDark(context) ? bblackColor : blackColor;
+  static Color adaptiveBlackColor() =>
+      isDark(context!) ? bblackColor : blackColor;
 
   static Color adaptiveDirtyWhite(BuildContext context) =>
       isDark(context) ? bdirtyWhite : dirtyWhite;

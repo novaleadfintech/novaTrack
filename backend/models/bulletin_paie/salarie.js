@@ -63,8 +63,7 @@ class Salarie {
               let echelon;
               if (grillepaieCategorie != null) {
                 if (grillepaieCategorie.classes) {
-                  console.log(grillepaieCategorie.classes);
-                  classe = grillepaieCategorie.classes.find(
+                   classe = grillepaieCategorie.classes.find(
                     (c) => c && c._key == salarie.classeKey,
                   );
                 }

@@ -212,7 +212,7 @@ class _SalarieTableState extends State<SalarieTable> {
                                       : "Aucun"),
                               TableBodyMiddle(
                                 valeur:
-                                    "+${personnel.pays!.code} ${personnel.telephone}",
+                                    "${personnel.pays!.code} ${personnel.telephone}",
                               ),
                               Row(
                                 children: [

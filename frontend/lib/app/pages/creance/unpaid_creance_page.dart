@@ -113,9 +113,10 @@ class _UnpaidCreancePageState extends State<UnpaidCreancePage> {
   Widget build(BuildContext context) {
     List<CreanceModel> filteredData = filterCreanceData();
 
-    return isLoading
-        ? const Center(child: CircularProgressIndicator())
-        : hasError
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    } else {
+      return hasError
             ? ErrorPage(
                 message: errMessage ?? "Erreur lors du chargement des créances",
                 onPressed: () async {
@@ -134,8 +135,7 @@ class _UnpaidCreancePageState extends State<UnpaidCreancePage> {
                         icon: Icons.date_range_outlined,
                         label: "Choisir une durée",
                       ),
-                    ),
-                    const Gap(4),
+                  ),
                   ],
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -240,6 +240,7 @@ class _UnpaidCreancePageState extends State<UnpaidCreancePage> {
                   ),
                 ],
               );
+    }
   }
 
   void _showChangeDuringPopup() {

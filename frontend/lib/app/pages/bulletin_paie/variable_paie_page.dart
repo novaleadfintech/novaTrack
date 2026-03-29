@@ -13,6 +13,7 @@ import 'package:frontend/service/bulletin_rubrique_service.dart';
 import 'package:frontend/service/rubrique_categorie_bulletin_conf_service.dart';
 import 'package:frontend/service/valeur_rubrique_temporaire_service.dart';
 import 'package:frontend/style/app_style.dart';
+import 'package:frontend/widget/divider_text.dart';
 import 'package:frontend/widget/future_dropdown_field.dart';
 import 'package:frontend/widget/simple_text_field.dart';
 import 'package:frontend/widget/validate_button.dart';
@@ -192,30 +193,7 @@ class _VariablePaiePageState extends State<VariablePaiePage> {
                 Column(children: [
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Divider(
-                            thickness: 2,
-                            height: 16,
-                          ),
-                        ),
-                        Gap(8),
-                        Text(
-                          'Variable de paie',
-                          style: DestopAppStyle.fieldTitlesStyle.copyWith(
-                            color: Theme.of(context).colorScheme.onSecondary,
-                          ),
-                        ),
-                        Gap(8),
-                        Expanded(
-                          child: Divider(
-                            thickness: 2,
-                            height: 16,
-                          ),
-                        ),
-                      ],
-                    ),
+                      child: DividerText(text: 'Variables de paie')
                   ),
                   if (variablePaies.isEmpty)
                     Text(

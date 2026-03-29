@@ -1,11 +1,11 @@
 class PaysModel {
   final String? key;
-  final int code;
+  final String code;
   final String name;
   final List<int> initiauxPays;
   final double? tauxTVA;
   final int? phoneNumber;
-
+ 
   PaysModel({
     this.key,
     required this.name,
@@ -17,7 +17,7 @@ class PaysModel {
 
   factory PaysModel.fromJson(Map<String, dynamic> json) {
     return PaysModel(
-      code: json["code"],
+      code: json["code"] ?? "",
       key: json["_key"] ?? "",
       name: json["name"] ?? "",
       initiauxPays: json["initiauxPays"] == null
@@ -31,7 +31,7 @@ class PaysModel {
 
   Map<String, dynamic> toJson() {
     return {
-      "code": code,
+      "code": "\"${code.toString()}\"",
       "_key": "\"$key\"",
       "initiauxPays": initiauxPays,
       "tauxTVA": tauxTVA,
@@ -39,6 +39,4 @@ class PaysModel {
       "name": "\"${name.toString()}\"",
     };
   }
-
-  
 }

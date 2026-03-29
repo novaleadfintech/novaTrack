@@ -99,14 +99,11 @@ class Banque {
       });
     }
     let filePath = null;
-    // console.log("logo", logo);
-    if (logo && logo.file) {
-      // console.log("logo file", logo.file);
-      const { file } = await logo;
+     if (logo && logo.file) {
+       const { file } = await logo;
       const { filename, createReadStream, mimetype } = file;
       if (filename) {
-        console.log("filename", filename);
-        isValidValue({ value: [filename, mimetype] });
+         isValidValue({ value: [filename, mimetype] });
         const valid_name = name.replace(/ /g, "_");
         const extension = path.extname(filename);
         const uniquefilename = `${Date.now()}_${valid_name}${extension}`;
@@ -122,8 +119,7 @@ class Banque {
         }
       }
     }
-console.log("filePath", filePath);
-    let banque = {
+     let banque = {
       name: name,
       codeBanque: codeBanque,
       soldeReel: soldeReel,

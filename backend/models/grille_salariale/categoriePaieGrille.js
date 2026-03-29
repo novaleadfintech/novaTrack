@@ -84,12 +84,8 @@ class paieCategorieGrille {
       await paieCategorieGrilleCollection.save(paieCategorie);
       return "OK";
     } catch (error) {
-      console.log(
-        "---------------------------------------------------------------------",
-      );
-      console.error(error);
-
-      throw new Error(`Erreur lors de la création de la catégorie de paie`);
+       console.error(error);
+       throw new Error(`Erreur lors de la création de la catégorie de paie`);
     }
   }
 

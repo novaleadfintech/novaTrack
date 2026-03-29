@@ -691,7 +691,7 @@ class ClientService {
           raisonSociale: "$raisonSociale",
           nature: ${natureClientToString(nature)},
           partnerCategorieKey: "$partnerCategorieKey",
-          pays: {_key: "${pays.key}", name: "${pays.name}", code: ${pays.code}, phoneNumber: ${pays.phoneNumber}, tauxTVA: ${pays.tauxTVA}, initiauxPays: ${pays.initiauxPays.toList()}},
+          pays: ${pays.toJson()},
           logo: \$logo,''';
       if (responsable != null) {
         body +=
@@ -795,7 +795,7 @@ class ClientService {
             prenom: "$prenom"
             sexe: ${sexeToString(sexe)}
            nature: ${natureClientToString(nature)},
-           pays: {_key: "${pays.key}", name: "${pays.name}", code: ${pays.code}, phoneNumber: ${pays.phoneNumber}, tauxTVA: ${pays.tauxTVA}, initiauxPays: ${pays.initiauxPays.toList()}},
+           pays: ${pays.toJson()},
              ''';
     if (email != null && email.isNotEmpty) {
       body += 'email: "$email",';
@@ -893,7 +893,7 @@ class ClientService {
       }
       if (pays != null) {
         body +=
-            'pays: {_key: "${pays.key}", name: "${pays.name}", code: ${pays.code}, phoneNumber: ${pays.phoneNumber}, tauxTVA: ${pays.tauxTVA}, initiauxPays: ${pays.initiauxPays.toList()}},';
+            'pays: ${pays.toJson()},';
       }
       if (telephone != null) {
         body += 'telephone: $telephone,';
@@ -1007,7 +1007,7 @@ class ClientService {
     }
     if (pays != null) {
       body +=
-          'pays: {_key: "${pays.key}", name: "${pays.name}", code: ${pays.code}, phoneNumber: ${pays.phoneNumber},initiauxPays: ${pays.initiauxPays.toList()}, tauxTVA: ${pays.tauxTVA}},';
+            'pays: ${pays.toJson()},';
     }
     if (telephone != null) {
       body += 'telephone: $telephone,';

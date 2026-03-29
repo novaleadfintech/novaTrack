@@ -40,8 +40,7 @@ class BulletinCategorieservice {
 
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
-      print(jsonData);
-      var data = jsonData['data']['bulletinCategories'];
+       var data = jsonData['data']['bulletinCategories'];
 
       List<BulletinCategorieModel> bulletincategories = [];
       if (data != null) {

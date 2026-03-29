@@ -83,6 +83,21 @@ class _AddFactureState extends State<AddFacture> {
       return "Vueillez remplir tous les champs marqués";
     }
 
+    // Validation: période de régénération < délai de paiement
+    if (type == TypeFacture.recurrent &&
+        _compterController.text.isNotEmpty &&
+        _delaicompterController.text.isNotEmpty &&
+        unit != null &&
+        delaiUnit != null) {
+      final generatePeriodMs =
+          int.parse(_compterController.text) * unitMultipliers[unit]!;
+      final delaisPaymentMs =
+          int.parse(_delaicompterController.text) * unitMultipliers[delaiUnit]!;
+      if (generatePeriodMs <= delaisPaymentMs) {
+        return "La période de régénération doit être strictement supérieure au délai de paiement";
+      }
+    }
+
     if (type == TypeFacture.punctual) {
       for (var toElement in _factureAcompteControllers) {
         var pourcentageController = toElement["pourcentage"];

@@ -47,14 +47,14 @@ class _EditPaysPageState extends State<EditPaysPage> {
             country.isoShortName == widget.pays.name));
     _tauxtvaController.text = widget.pays.tauxTVA.toString();
     _phoneNumberCaracterController.text = widget.pays.phoneNumber.toString();
-    _codeController.text = widget.pays.code.toString();
+    _codeController.text = widget.pays.code;
   }
 
   Future<void> editPays() async {
     final nom = _nomController.text.trim();
     String errorMessage = "";
     final taux = _tauxtvaController.text.trim();
-    final code = int.parse(_codeController.text.trim());
+    final code = _codeController.text.trim();
     final nbrePhoneTel = int.parse(_phoneNumberCaracterController.text.trim());
 
     if (_selectedCountry == null ||

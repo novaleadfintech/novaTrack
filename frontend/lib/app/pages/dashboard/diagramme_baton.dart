@@ -45,7 +45,6 @@ class FinancialBarChartState extends State<FinancialBarChart> {
         return Padding(
           padding: const EdgeInsets.all(8),
           child: Container(
-            height: MediaQuery.of(context).size.height - 100,
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(8),
@@ -53,6 +52,7 @@ class FinancialBarChartState extends State<FinancialBarChart> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
+                // Header avec titre et bouton année
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   child: Row(
@@ -87,183 +87,153 @@ class FinancialBarChartState extends State<FinancialBarChart> {
                     ],
                   ),
                 ),
-                Expanded(
-                  child: (snapshot.connectionState == ConnectionState.waiting)
-                      ? const Center(child: CircularProgressIndicator())
-                      : (snapshot.hasError)
-                          ? ErrorPage(
-                              message: snapshot.error.toString(),
-                              onPressed: () {
-                                setState(() {
-                                  _chartDataFuture =
-                                      _fetchChartData(year: _selectedYear);
-                                });
-                              },
-                            )
-                          : (snapshot.hasData &&
-                                  snapshot.data!.showingBarGroups.isNotEmpty &&
-                                  snapshot.data!.subdivisionUnit > 0)
-                              ? Column(
-                                  children: [
-                                    Expanded(
-                                      child: Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 8.0),
-                                        child: BarChart(
-                                          BarChartData(
-                                            maxY:
-                                                snapshot.data!.subdivisionUnit *
-                                                    snapshot.data!
-                                                        .nombreSubdivision,
-                                            barTouchData: BarTouchData(
-                                              touchTooltipData:
-                                                  BarTouchTooltipData(
-                                                getTooltipItem: (group,
-                                                    groupIndex, rod, rodIndex) {
-                                                  String month = [
-                                                    'Janvier',
-                                                    'Février',
-                                                    'Mars',
-                                                    'Avril',
-                                                    'Mai',
-                                                    'Juin',
-                                                    'Juillet',
-                                                    'Août',
-                                                    'Septembre',
-                                                    'Octobre',
-                                                    'Novembre',
-                                                    'Décembre',
-                                                  ][group.x];
-
-                                                  String typeFlux =
-                                                      rodIndex == 0
-                                                          ? 'Entrée'
-                                                          : 'Sortie';
-                                                  double montant = rod.toY;
-
-                                                  return BarTooltipItem(
-                                                    '$month\n$typeFlux: ${Formatter.formatAmount(montant)} FCFA',
-                                                    const TextStyle(
-                                                      color: Colors.white,
-                                                    ),
-                                                  );
-                                                },
-                                              ),
-                                              touchCallback:
-                                                  (FlTouchEvent event,
-                                                      response) {
-                                                if (response == null ||
-                                                    response.spot == null) {
-                                                  setState(() {});
-                                                  return;
-                                                }
-                                                setState(() {});
-                                              },
-                                            ),
-                                            titlesData: FlTitlesData(
-                                              show: true,
-                                              rightTitles: const AxisTitles(
-                                                sideTitles: SideTitles(
-                                                    showTitles: false),
-                                              ),
-                                              topTitles: const AxisTitles(
-                                                sideTitles: SideTitles(
-                                                    showTitles: false),
-                                              ),
-                                              bottomTitles: AxisTitles(
-                                                sideTitles: SideTitles(
-                                                  showTitles: true,
-                                                  getTitlesWidget: bottomTitles,
-                                                  reservedSize: 42,
-                                                ),
-                                              ),
-                                              leftTitles: AxisTitles(
-                                                sideTitles: SideTitles(
-                                                  showTitles: true,
-                                                  reservedSize: 40,
-                                                  interval: (snapshot.data!
-                                                              .subdivisionUnit >
-                                                          0)
-                                                      ? snapshot
-                                                          .data!.subdivisionUnit
-                                                      : 1,
-                                                  getTitlesWidget:
-                                                      (value, meta) =>
-                                                          leftTitles(
-                                                    value: value,
-                                                    meta: meta,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            borderData:
-                                                FlBorderData(show: false),
-                                            barGroups:
-                                                snapshot.data!.showingBarGroups,
-                                            gridData:
-                                                const FlGridData(show: true),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                              horizontal: 16)
-                                          .copyWith(bottom: 8),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Expanded(
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  Responsive.isMobile(context)
-                                                      ? MainAxisAlignment
-                                                          .spaceBetween
-                                                      : MainAxisAlignment.start,
-                                              children: [
-                                                LegendItem(
-                                                  color: leftBarColor,
-                                                  text: 'Entrées',
-                                                ),
-                                                const SizedBox(width: 8),
-                                                LegendItem(
-                                                  color: rightBarColor,
-                                                  text: 'Dépenses',
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          if (!Responsive.isMobile(context) &&
-                                              snapshot.connectionState !=
-                                                  ConnectionState.waiting &&
-                                              !snapshot.hasError)
-                                            Text(
-                                              'Division par ${formatNumber(number: snapshot.data!.subdivisionUnit)} ${snapshot.data!.unit}',
-                                              style: TextStyle(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .onSurface,
-                                              ),
-                                            ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              : const Center(
-                                  child: NoDataPage(
-                                    data: [],
-                                    message: "Aucune donnée disponible",
-                                  ),
-                                ),
+                // Contenu principal - utilise Flexible pour s'adapter
+                Flexible(
+                  fit: FlexFit.tight,
+                  child: _buildChartContent(context, snapshot),
                 ),
               ],
             ),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildChartContent(BuildContext context, AsyncSnapshot<ChartData> snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    
+    if (snapshot.hasError) {
+      return ErrorPage(
+        message: snapshot.error.toString(),
+        onPressed: () {
+          setState(() {
+            _chartDataFuture = _fetchChartData(year: _selectedYear);
+          });
+        },
+      );
+    }
+    
+    if (!snapshot.hasData ||
+        snapshot.data!.showingBarGroups.isEmpty ||
+        snapshot.data!.subdivisionUnit <= 0) {
+      return const Center(
+        child: NoDataPage(
+          data: [],
+          message: "Aucune donnée disponible",
+        ),
+      );
+    }
+
+    return Column(
+      children: [
+        Flexible(
+          fit: FlexFit.tight,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: BarChart(
+              BarChartData(
+                maxY: snapshot.data!.subdivisionUnit *
+                    snapshot.data!.nombreSubdivision,
+                barTouchData: BarTouchData(
+                  touchTooltipData: BarTouchTooltipData(
+                    getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                      String month = [
+                        'Janvier',
+                        'Février',
+                        'Mars',
+                        'Avril',
+                        'Mai',
+                        'Juin',
+                        'Juillet',
+                        'Août',
+                        'Septembre',
+                        'Octobre',
+                        'Novembre',
+                        'Décembre',
+                      ][group.x];
+
+                      String typeFlux = rodIndex == 0 ? 'Entrée' : 'Sortie';
+                      double montant = rod.toY;
+
+                      return BarTooltipItem(
+                        '$month\n$typeFlux: ${Formatter.formatAmount(montant)} FCFA',
+                        const TextStyle(
+                          color: Colors.white,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                titlesData: FlTitlesData(
+                  show: true,
+                  rightTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  topTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      getTitlesWidget: bottomTitles,
+                      reservedSize: 42,
+                    ),
+                  ),
+                  leftTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 40,
+                      interval: (snapshot.data!.subdivisionUnit > 0)
+                          ? snapshot.data!.subdivisionUnit
+                          : 1,
+                      getTitlesWidget: (value, meta) => leftTitles(
+                        value: value,
+                        meta: meta,
+                      ),
+                    ),
+                  ),
+                ),
+                borderData: FlBorderData(show: false),
+                barGroups: snapshot.data!.showingBarGroups,
+                gridData: const FlGridData(show: true),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        // Légende en bas
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16).copyWith(bottom: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  LegendItem(
+                    color: leftBarColor,
+                    text: 'Entrées',
+                  ),
+                  const SizedBox(width: 16),
+                  LegendItem(
+                    color: rightBarColor,
+                    text: 'Dépenses',
+                  ),
+                ],
+              ),
+              if (!Responsive.isMobile(context))
+                Text(
+                  'Division par ${formatNumber(number: snapshot.data!.subdivisionUnit)} ${snapshot.data!.unit}',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 

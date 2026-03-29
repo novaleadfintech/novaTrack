@@ -6,6 +6,7 @@ import 'package:frontend/model/bulletin_paie/calendar_model.dart';
 import 'package:frontend/model/request_response.dart';
 import 'package:frontend/service/bulletin_service.dart';
 import 'package:frontend/service/pay_calendar_service.dart';
+import 'package:frontend/style/app_color.dart';
 import 'package:frontend/widget/app_tile_clickable.dart';
 import 'package:frontend/widget/confirmation_dialog_box.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
@@ -109,8 +110,8 @@ class _ChoosePeriodPageState extends State<ChoosePeriodPage> {
       _dialog.show(
         message: 'Génération des bulletins en cours',
         type: SimpleFontelicoProgressDialogType.bullets,
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        indicatorColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: AppColor.adaptiveWhiteColor(),
+        indicatorColor: AppColor.primaryColor,
         width: 250,
       );
       try {

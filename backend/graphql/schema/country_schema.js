@@ -2,7 +2,7 @@ const typeDef = `#graphql
     type Country {
       _key: ID
       name: String!
-      code: Int!
+      code: String!
       tauxTVA: Float
       phoneNumber: Int
       initiauxPays: [Int]
@@ -11,7 +11,7 @@ const typeDef = `#graphql
     input CountryInput {
       _key: ID
       name: String!
-      code: Int!
+      code: String!
       tauxTVA: Float
       phoneNumber: Int
     initiauxPays: [Int]
@@ -25,9 +25,9 @@ const query = `#graphql
 `;
 
 const mutation = `#graphql
-    createCountry(name: String!, code:Int!, phoneNumber:Int!, tauxTVA: Float!,       initiauxPays: [Int]!,
+    createCountry(name: String!, code:String!, phoneNumber:Int!, tauxTVA: Float!, initiauxPays: [Int]!,
 ): String!
-    updateCountry(key: ID!, name: String, code:Int, phoneNumber:Int tauxTVA: Float,      initiauxPays: [Int],
+    updateCountry(key: ID!, name: String, code:String, phoneNumber:Int, tauxTVA: Float, initiauxPays: [Int],
 ): String!
 `;
 

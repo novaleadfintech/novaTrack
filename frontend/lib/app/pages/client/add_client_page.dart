@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/model/client/responsable_model.dart';
 import 'package:frontend/model/request_response.dart';
 import 'package:frontend/service/pays_service.dart';
-import 'package:frontend/style/app_color.dart';
+import 'package:frontend/widget/divider_text.dart';
 import '../../../helper/telephone_number_helper.dart';
 import '../../../service/categorie_partner_service.dart';
 import '../../../widget/future_dropdown_field.dart';
@@ -280,13 +280,11 @@ class _AddClientPageState extends State<AddClientPage> {
             ),
             TelephoneTextField(
               label: "Téléphone",
-              maxLength:
-                  _selectedCountry == null ? 1 : _selectedCountry!.phoneNumber!,
+              
               textController: _telephoneController,
               required: isNotFournisseur,
-              contryCode: _selectedCountry == null
-                  ? ""
-                  : _selectedCountry!.code.toString(),
+              country: _selectedCountry,
+
             ),
             SimpleTextField(
               label: "Adresse",
@@ -294,7 +292,7 @@ class _AddClientPageState extends State<AddClientPage> {
               expands: true,
               required: isNotFournisseur,
               maxLines: null,
-              height: 50,
+              // height: 50,
             ),
             /* AgencesFields(
               controllers: _agenceControllers,
@@ -480,81 +478,69 @@ class _MoralFieldsState extends State<MoralFields> {
             itemsAsString: (CategorieModel c) => c.libelle,
           ),
         // if (widget.isNotFournisseur) ...[
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Container(
-                padding: const EdgeInsets.all(8.0),
-                color: AppColor.primaryColor.withValues(alpha: 0.5),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Personne contact",
-                      style: TextStyle(fontWeight: FontWeight.w200),
-                    ),
-                  ],
-                ),
-              ),
+        // Padding(
+        //   padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        //   child: Container(
+        //     padding: const EdgeInsets.all(8.0),
+        //     color: AppColor.primaryColor.withValues(alpha: 0.5),
+        //     child: Row(
+        //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //       children: [
+        //         Text(
+        //           "Personne contact",
+        //           style: TextStyle(fontWeight: FontWeight.w200),
+        //         ),
+        //       ],
+        //     ),
+        //   ),
+        // ),
+        DividerText(text: 'Personne contact'),
+        Column(
+          children: [
+            SimpleTextField(
+              label: "Nom du personne contact",
+              required: widget.isNotFournisseur,
+              textController: widget.responsableNomController,
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(6),
-                    border: Border.all()),
-                child: Column(
-                  children: [
-                    SimpleTextField(
-                      label: "Nom",
-                      required: widget.isNotFournisseur,
-                      textController: widget.responsableNomController,
-                    ),
-                    SimpleTextField(
-                      label: "Prénoms",
-                  required: widget.isNotFournisseur,
-                      textController: widget.responsablePrenomControlller,
-                    ),
-                    CustomDropDownField<Sexe>(
-                      items: Sexe.values.toList(),
-                      onChanged: _handleResponsableSexeChange,
-                      label: "Sexe",
-                  required: widget.isNotFournisseur,
-                      selectedItem: widget.responsableSexe,
-                      itemsAsString: (s) => s.label,
-                    ),
-                    CustomDropDownField<Civilite>(
-                      items: Civilite.values.toList(),
-                      onChanged: _handleResponsableCiviliteChange,
-                      label: "Civilité",
-                  required: widget.isNotFournisseur,
-                      selectedItem: widget.responsableCivilite,
-                      itemsAsString: (s) => s.label,
-                    ),
-                    TelephoneTextField(
-                      label: "Téléphone",
-                  required: widget.isNotFournisseur,
-                      textController: widget.responsableTelephoneController,
-                      contryCode: widget.country == null
-                          ? ""
-                          : widget.country!.code.toString(),
-                      maxLength: widget.country == null
-                          ? 1
-                          : widget.country!.phoneNumber!,
-                    ),
-                    SimpleTextField(
-                      label: "Email",
-                  required: widget.isNotFournisseur,
-                      textController: widget.responsableEmailController,
-                      keyboardType: TextInputType.emailAddress,
-                    ),
-                    SimpleTextField(
-                      label: "Poste",
-                  required: widget.isNotFournisseur,
-                      textController: widget.responsablePosteController,
-                    ),
-                  ],
-                ),
-              ),
+            SimpleTextField(
+              label: "Prénoms du personne contact",
+              required: widget.isNotFournisseur,
+              textController: widget.responsablePrenomControlller,
+            ),
+            CustomDropDownField<Sexe>(
+              items: Sexe.values.toList(),
+              onChanged: _handleResponsableSexeChange,
+              label: "Sexe du personne contact",
+              required: widget.isNotFournisseur,
+              selectedItem: widget.responsableSexe,
+              itemsAsString: (s) => s.label,
+            ),
+            CustomDropDownField<Civilite>(
+              items: Civilite.values.toList(),
+              onChanged: _handleResponsableCiviliteChange,
+              label: "Civilité du personne contact",
+              required: widget.isNotFournisseur,
+              selectedItem: widget.responsableCivilite,
+              itemsAsString: (s) => s.label,
+            ),
+            TelephoneTextField(
+              label: "Téléphone du personne contact",
+              required: widget.isNotFournisseur,
+              textController: widget.responsableTelephoneController,
+              country: widget.country,
+            ),
+            SimpleTextField(
+              label: "Email du personne contact",
+              required: widget.isNotFournisseur,
+              textController: widget.responsableEmailController,
+              keyboardType: TextInputType.emailAddress,
+            ),
+            SimpleTextField(
+              label: "Poste du personne contact",
+              required: widget.isNotFournisseur,
+              textController: widget.responsablePosteController,
+            ),
+          ],
             ),
           ]
           // ],

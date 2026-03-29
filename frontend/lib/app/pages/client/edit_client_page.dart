@@ -428,13 +428,10 @@ class _EditClientPageState extends State<EditClientPage> {
             TelephoneTextField(
               label: "Téléphone",
               required: isNotFournisseur,
-              maxLength:
-                  _selectedCountry == null ? 1 : _selectedCountry!.phoneNumber!,
+              country: _selectedCountry,
               textController: _telephoneController,
-              contryCode: _selectedCountry == null
-                  ? ""
-                  : _selectedCountry!.code.toString(),
             ),
+
             /* AgencesFields(
               controllers: _agenceControllers,
             ), */
@@ -678,12 +675,9 @@ class _MoralFieldsState extends State<MoralFields> {
                     required: widget.isNotFournisseur,
 
                     textController: widget.responsableTelephoneController,
-                    contryCode: widget.country == null
-                        ? ""
-                        : widget.country!.code.toString(),
-                    maxLength: widget.country == null
-                        ? 1
-                        : widget.country!.phoneNumber!,
+                     
+                    country: widget.country,
+
                   ),
                   SimpleTextField(
                     label: "Email",

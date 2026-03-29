@@ -61,8 +61,7 @@ class Personnel {
   //récuperer un personnel
   getPersonnel = async ({ key }) => {
     try {
-      console.log(key);
-      const personnel = await personnelCollection.document(key);
+       const personnel = await personnelCollection.document(key);
       return personnel;
     } catch (e) {
       console.error(e);

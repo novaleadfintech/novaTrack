@@ -59,11 +59,11 @@ class PaysService {
     required double taux,
     required int nbreNumTel,
 
-    required int code,
+    required String code,
   }) async {
     var body = '''
     mutation {
-    createCountry(name: "$nom", code: $code, phoneNumber: $nbreNumTel, tauxTVA: $taux, initiauxPays: $initiauxPays) 
+    createCountry(name: "$nom", code: "$code", phoneNumber: $nbreNumTel, tauxTVA: $taux, initiauxPays: $initiauxPays) 
 }
   ''';
     try {
@@ -110,7 +110,7 @@ class PaysService {
     int? nbreNumTel,
     required List<int> initiauxPays,
 
-    int? code,
+    String? code,
   }) async {
     var body = StringBuffer('''
     mutation UpdateCountry {
@@ -128,7 +128,7 @@ class PaysService {
       body.write('phoneNumber: $nbreNumTel,');
     }
     if (code != null) {
-      body.write('code: $code,');
+      body.write('code: "$code",');
     }
     if (initiauxPays.isNotEmpty) {
       body.write('initiauxPays: ${initiauxPays.toList()},');

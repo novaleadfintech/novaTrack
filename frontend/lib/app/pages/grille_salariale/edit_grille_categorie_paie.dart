@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../helper/string_helper.dart';
-import '../../../service/categorie_paie_service.dart';
+import '../../../service/paie_categorie_service.dart';
 import '../../integration/popop_status.dart';
 import '../../integration/request_frot_behavior.dart';
 import '../../../widget/simple_text_field.dart';
@@ -53,7 +53,7 @@ class _EditGrillepaieCategoriePageState
       backgroundColor: Colors.transparent,
     );
 
-    var result = await paieCategorieService.createpaieCategorie(
+    var result = await PaieCategorieService.createPaieCategorie(
       paieCategorie:
           capitalizeFirstLetter(word: _libelleController.text.toLowerCase()),
     );

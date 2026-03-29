@@ -108,8 +108,7 @@ class SalarieService {
 
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
-      print(jsonData);
-      var data = jsonData['data']['salaries'];
+       var data = jsonData['data']['salaries'];
 
       if (data != null) {
         return (data as List)

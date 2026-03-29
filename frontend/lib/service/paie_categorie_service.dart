@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 
 import 'request_header.dart';
 
-class paieCategorieService {
+class PaieCategorieService {
   static Future<List<paieCategorieModel>> getPaieCategories() async {
     var body = '''
       query CategoriesPaie {
@@ -52,7 +52,7 @@ class paieCategorieService {
     }
   }
 
-  static Future<RequestResponse> createpaieCategorie({
+  static Future<RequestResponse> createPaieCategorie({
     required String paieCategorie,
   }) async {
     var body = '''
