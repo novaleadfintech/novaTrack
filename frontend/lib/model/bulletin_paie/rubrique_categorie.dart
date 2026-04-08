@@ -1,8 +1,8 @@
-import 'categorie_paie.dart';
-import 'rubrique_paie.dart';
+import "categorie_paie.dart";
+import "rubrique_on_bulletin_model.dart";
 
 class RubriquepaieCategorieModel {
-  final paieCategorieModel bulletincategorie;
+  final PaieCategorieModel bulletincategorie;
   final List<RubriqueOnBulletinModel> rubriques;
 
   RubriquepaieCategorieModel({
@@ -12,8 +12,8 @@ class RubriquepaieCategorieModel {
 
   factory RubriquepaieCategorieModel.fromJson(Map<String, dynamic> json) {
     return RubriquepaieCategorieModel(
-      bulletincategorie: paieCategorieModel.fromJson(json['bulletincategorie']),
-      rubriques: (json['rubriques'] as List)
+      bulletincategorie: PaieCategorieModel.fromJson(json["bulletincategorie"]),
+      rubriques: (json["rubriques"] as List)
           .map((e) => RubriqueOnBulletinModel.fromJson(e))
           .toList(),
     );
@@ -21,8 +21,8 @@ class RubriquepaieCategorieModel {
 
   Map<String, dynamic> toJson() {
     return {
-      'bulletincategorie': bulletincategorie.toJson(),
-      'rubriques': rubriques.map((e) => e.toJson()).toList(),
+      "bulletincategorie": bulletincategorie.toJson(),
+      "rubriques": rubriques.map((e) => e.toJson()).toList(),
     };
   }
 }

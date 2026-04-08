@@ -12,19 +12,19 @@
 
 //   factory RubriqueModel.fromJson(Map<String, dynamic> json) {
 //     return RubriqueModel(
-//       libelle: json['libelle'],
-//       montant: (json['montant'] as num).toDouble(),
-//       taux: (json['taux'] as num).toDouble(),
-//       isAvance: json['isAvance'],
+//       libelle: json["libelle"],
+//       montant: (json["montant"] as num).toDouble(),
+//       taux: (json["taux"] as num).toDouble(),
+//       isAvance: json["isAvance"],
 //     );
 //   }
 
 //   Map<String, dynamic> toJson() {
 //     return {
-//       'libelle': libelle,
-//       'montant': montant,
-//       'taux': taux,
-//       'isAvance': isAvance,
+//       "libelle": libelle,
+//       "montant": montant,
+//       "taux": taux,
+//       "isAvance": isAvance,
 //     };
 //   }
 // }

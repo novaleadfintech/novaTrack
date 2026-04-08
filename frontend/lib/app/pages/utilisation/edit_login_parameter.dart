@@ -163,7 +163,7 @@ class _EditLoginParametterState extends State<EditLoginParametter> {
           SimpleTextField(
             textController: _loginController,
             readOnly: true,
-            label: "Keyentifiant",
+            label: "Identifiant",
             color: Theme.of(context).colorScheme.secondary,
           ),
           SimpleTextField(

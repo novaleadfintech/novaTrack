@@ -44,7 +44,7 @@ class BulletinRubriqueService {
             elements {
                 type
                 valeur
-                rubrique {
+                calculRubrique {
                     _key
                     rubrique
                     code
@@ -85,7 +85,7 @@ class BulletinRubriqueService {
             elements {
                 type
                 valeur
-                rubrique {
+                calculRubrique {
                     _key
                     rubrique
                     code
@@ -117,10 +117,10 @@ class BulletinRubriqueService {
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
       var data = jsonData['data']['rubriquesBulletin'];
-
+      print(data);
       List<RubriqueBulletin> rubriques = [];
       if (data != null) {
-        // print(data);
+        print(data);
 
         for (var rubrique in data) {
           rubriques.add(RubriqueBulletin.fromJson(rubrique));
@@ -166,7 +166,7 @@ class BulletinRubriqueService {
             elements {
                 type
                 valeur
-                rubrique {
+                calculRubrique {
                     _key
                     rubrique
                     code
@@ -207,7 +207,7 @@ class BulletinRubriqueService {
             elements {
                 type
                 valeur
-                rubrique {
+                calculRubrique {
                     _key
                     rubrique
                     code
@@ -276,14 +276,14 @@ class BulletinRubriqueService {
         createRubriqueBulletin(
             rubrique: "$rubrique",
             code: "$code",
-            portee: ${portee == null ? null : porteeRubriqueToString(portee)}
+            portee: ${portee == null ? null : PorteeRubrique.porteeRubriqueToString(portee)}
             nature: ${natureRubriqueToString(nature)},
             type: ${type == null ? null : typeRubriqueToString(type)},
-            sectionId: ${section == null ? null : "\"${section.key}\""},
+            sectionKey: ${section == null ? null : "\"${section.key}\""},
             bareme: ${bareme?.toJson()},
             taux: ${taux?.toJson()},
-            rubriqueIdentity: ${rubriqueIdentity == null ? null : constantIdentityToString(rubriqueIdentity)}
-            rubriqueRole: ${rubriqueRole == null ? null : rubriqueRoleToString(rubriqueRole)},
+            rubriqueIdentity: ${rubriqueIdentity == null ? null : RubriqueIdentity.identityToString(rubriqueIdentity)}
+            rubriqueRole: ${rubriqueRole == null ? null : RubriqueRole.rubriqueRoleToString(rubriqueRole)},
             sommeRubrique: ${sommeRubrique?.toJson()},
             calcul: ${calcul?.toJson()},
         )
@@ -342,26 +342,27 @@ class BulletinRubriqueService {
     required Calcul? sommeRubrique,
     required Calcul? calcul,
   }) async {
- 
     var body = '''
       mutation UpdateRubriqueBulletin {
           updateRubriqueBulletin(
               key: "$key"
               rubrique: "$rubrique",
-              portee: ${portee == null ? null : porteeRubriqueToString(portee)}
+              portee: ${portee == null ? null : PorteeRubrique.porteeRubriqueToString(portee)}
               nature: ${nature == null ? null : natureRubriqueToString(nature)},
               type: ${type == null ? null : typeRubriqueToString(type)},
-              sectionId: ${section == null ? null : "\"${section.key}\""},
+              sectionKey: ${section == null ? null : "\"${section.key}\""},
               bareme: ${bareme?.toJson()},
               taux: ${taux?.toJson()},
-              rubriqueIdentity: ${rubriqueIdentity == null ? null : constantIdentityToString(rubriqueIdentity)}
-              rubriqueRole: ${rubriqueRole == null ? null : rubriqueRoleToString(rubriqueRole)},
+              rubriqueIdentity: ${rubriqueIdentity == null ? null : RubriqueIdentity.identityToString(rubriqueIdentity)}
+              rubriqueRole: ${rubriqueRole == null ? null : RubriqueRole.rubriqueRoleToString(rubriqueRole)},
               sommeRubrique: ${sommeRubrique?.toJson()},
               calcul: ${calcul?.toJson()},
           )
       }
 
     ''';
+
+    print(body);
 
     try {
       var response = await http

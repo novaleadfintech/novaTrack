@@ -1,5 +1,5 @@
-import '''
-package:frontend/model/bulletin_paie/rubrique.dart''';
+import """
+package:frontend/model/bulletin_paie/rubrique.dart""";
 
 class RubriqueOnBulletinModel {
   final RubriqueBulletin rubrique;
@@ -12,21 +12,21 @@ class RubriqueOnBulletinModel {
 
   factory RubriqueOnBulletinModel.fromJson(Map<String, dynamic> json) {
     return RubriqueOnBulletinModel(
-      rubrique: RubriqueBulletin.fromJson(json['rubrique']),
-      value: json['value'] == null ? null : (json['value'] as num).toDouble(),
+      rubrique: RubriqueBulletin.fromJson(json["rubrique"]),
+      value: json["value"] == null ? null : (json["value"] as num).toDouble(),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'rubriqueKey': "\"${rubrique.key}\"",
-      'value': value,
+      "bulletinRubrique": rubrique.toJson(),
+      "value": value,
     };
   }
 }
 
 class RubriquePaieConfig {
-  final RubriqueOnBulletinModel rubriqueOnBulletin;
+  RubriqueOnBulletinModel rubriqueOnBulletin;
   bool isChecked;
 
   RubriquePaieConfig({
@@ -37,15 +37,15 @@ class RubriquePaieConfig {
   factory RubriquePaieConfig.fromJson(Map<String, dynamic> json) {
     return RubriquePaieConfig(
       rubriqueOnBulletin:
-          RubriqueOnBulletinModel.fromJson(json['rubriqueOnBulletin']),
-      isChecked: json['isChecked'],
+          RubriqueOnBulletinModel.fromJson(json["rubriqueOnBulletin"]),
+      isChecked: json["isChecked"],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'rubriqueOnBulletin': rubriqueOnBulletin.toJson(),
-      'isChecked': isChecked,
+      "rubriqueOnBulletin": rubriqueOnBulletin.toJson(),
+      "isChecked": isChecked,
     };
   }
 }

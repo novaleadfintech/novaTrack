@@ -43,7 +43,7 @@ class ResponsiveDialogBox extends StatelessWidget {
                   body: Center(
                     child: ConstrainedBox(
                       constraints: BoxConstraints(
-                        maxHeight: constraints.maxHeight,
+                        maxHeight: maxHeight,
                       ),
                       child: Container(
                         margin: EdgeInsets.symmetric(horizontal: 8),

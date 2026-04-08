@@ -1,19 +1,25 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:frontend/app/pages/app_dialog_box.dart';
 import 'package:frontend/app/pages/error_page.dart';
 import 'package:frontend/app/pages/no_data_page.dart';
 import 'package:frontend/helper/amout_formatter.dart';
-import 'package:frontend/model/bulletin_paie/bulletin_categorie_model.dart'
-    show BulletinCategorieModel;
+import 'package:frontend/model/bulletin_paie/bulletin_categorie_model.dart';
 import 'package:frontend/model/bulletin_paie/nature_rubrique.dart';
 import 'package:frontend/model/bulletin_paie/rubrique.dart';
+import 'package:frontend/model/bulletin_paie/rubrique_dependance.dart';
+import 'package:frontend/model/bulletin_paie/rubrique_on_bulletin_model.dart';
+import 'package:frontend/model/bulletin_paie/tranche_model.dart';
 import 'package:frontend/model/bulletin_paie/type_rubrique.dart';
 import 'package:frontend/service/rubrique_categorie_bulletin_conf_service.dart';
+import 'package:frontend/widget/affiche_information_on_pop_pop.dart';
 import 'package:frontend/widget/simple_text_field.dart';
 import 'package:frontend/widget/validate_button.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 import '../../../../helper/get_bulletin_period.dart';
-import '../../../../model/bulletin_paie/rubrique_paie.dart';
 import '../../../../widget/research_bar.dart';
+import '../../../model/request_response.dart';
 import '../../integration/popop_status.dart';
 import '../../integration/request_frot_behavior.dart';
 
@@ -49,7 +55,7 @@ class _RubriqueCategorieConfigPageState
   }
 
   Future<void> _loadBulletinCategorieRubriques() async {
-     setState(() {
+    setState(() {
       isLoading = true;
     });
     try {
@@ -59,12 +65,12 @@ class _RubriqueCategorieConfigPageState
 
       // Créer une deep copy pour oldRubriqueCategories
       oldRubriqueCategories = rubriqueCategories
-          .map((rubrique) => RubriquePaieConfig(
+          .map((rubriqueCategorie) => RubriquePaieConfig(
                 rubriqueOnBulletin: RubriqueOnBulletinModel(
-                  rubrique: rubrique.rubriqueOnBulletin.rubrique,
-                  value: rubrique.rubriqueOnBulletin.value,
+                  rubrique: rubriqueCategorie.rubriqueOnBulletin.rubrique,
+                  value: rubriqueCategorie.rubriqueOnBulletin.value,
                 ),
-                isChecked: rubrique.isChecked,
+                isChecked: rubriqueCategorie.isChecked,
               ))
           .toList();
 
@@ -104,82 +110,309 @@ class _RubriqueCategorieConfigPageState
     });
   }
 
-  void _handleValidation() async {
-    List<RubriquePaieConfig> updatedRubriques = [];
-    List<RubriquePaieConfig> createdRubriques = [];
-    List<RubriquePaieConfig> deletedRubriques = [];
-
-    // Étape 1 : Extraire la liste de toutes les rubriques (cochées ou non)
-    List<RubriqueOnBulletinModel> allRubriques =
-        rubriqueCategories.map((rc) => rc.rubriqueOnBulletin).toList();
-
-    // Étape 2 : Construire la map des dépendances
-    final dependencyMap = {
-      for (var rubrique in allRubriques)
-        rubrique.rubrique.code:
-            RubriqueCalculator.findDependencies(rubrique, allRubriques)
-    };
-    // Étape 3 : Vérifier les dépendances pour chaque rubrique cochée
-    for (var rubrique in rubriqueCategories) {
-      if (rubrique.isChecked) {
-        final code = rubrique.rubriqueOnBulletin.rubrique.code;
-        final deps = dependencyMap[code] ?? {};
-
-        List<String> missingDeps = [];
-
-        for (var depCode in deps) {
-          final depRubriques = rubriqueCategories.where(
-            (r) => r.rubriqueOnBulletin.rubrique.code == depCode,
-          );
-
-          for (var depRubrique in depRubriques) {
-            if (!depRubrique.isChecked) {
-              missingDeps.add(
-                  "\"${depRubrique.rubriqueOnBulletin.rubrique.rubrique}\"");
-            }
-          }
-        }
-
-        if (missingDeps.isNotEmpty) {
-          MutationRequestContextualBehavior.showPopup(
-            status: PopupStatus.information,
-            customMessage:
-                "La rubrique \"${rubrique.rubriqueOnBulletin.rubrique.rubrique}\" dépend de : ${missingDeps.join(', ')} qui ne sont pas cochées.",
-          );
-          return;
-        }
-      }
+// Verication des champs non rempli - retourne true si valide, false sinon
+  bool _verifyfieldValue({
+    required List<RubriquePaieConfig> rubriqueConfigured,
+  }) {
+    if (!rubriqueConfigured.any((r) => r.isChecked)) {
+      MutationRequestContextualBehavior.showPopup(
+        status: PopupStatus.information,
+        customMessage:
+            'Veuillez configurer les rubrique pour cette catégorie de bulletin.',
+      );
+      return false;
     }
 
-    // Traitement normal après validation
-    for (var newRubrique in rubriqueCategories) {
-      RubriquePaieConfig? oldRubrique;
-      try {
-        oldRubrique = oldRubriqueCategories.firstWhere(
-          (rc) =>
-              rc.rubriqueOnBulletin.rubrique.key ==
-              newRubrique.rubriqueOnBulletin.rubrique.key,
+    for (RubriquePaieConfig rubriqueConf in rubriqueConfigured) {
+      if (!rubriqueConf.isChecked) continue;
+
+      final rubrique = rubriqueConf.rubriqueOnBulletin.rubrique;
+
+      if (rubrique.nature != NatureRubrique.constant ||
+          rubrique.rubriqueIdentity == RubriqueIdentity.anciennete ||
+          rubrique.rubriqueIdentity == RubriqueIdentity.nombrePersonneCharge) {
+        continue;
+      }
+
+      final controller = valueControllers[rubrique.key];
+
+      if (controller != null && controller.text.isEmpty) {
+        MutationRequestContextualBehavior.showPopup(
+          status: PopupStatus.customError,
+          customMessage: 'Veuillez remplir le champs des rubriques marquées *',
         );
-      } catch (_) {}
+        return false;
+      }
+    }
 
-      if (newRubrique.isChecked) {
-        if (oldRubrique == null || !oldRubrique.isChecked) {
-          createdRubriques.add(newRubrique);
-        } else {
-          final oldValue = oldRubrique.rubriqueOnBulletin.value;
-          final newValue = newRubrique.rubriqueOnBulletin.value;
+    return true;
+  }
 
-          if (oldValue != newValue) {
-            updatedRubriques.add(newRubrique);
-          }
-        }
-      } else {
-        if (oldRubrique != null && oldRubrique.isChecked) {
-          deletedRubriques.add(oldRubrique);
+  List<RubriqueDependance> _dependanceShowing({
+    required List<RubriquePaieConfig> rubriquesConfigured,
+  }) {
+    List<RubriqueDependance> result = [];
+
+    final allRubriques =
+        rubriquesConfigured.map((e) => e.rubriqueOnBulletin).toList();
+
+    for (var rubriqueConf in rubriquesConfigured) {
+      if (!rubriqueConf.isChecked) continue;
+
+      final parent = rubriqueConf.rubriqueOnBulletin.rubrique;
+
+      final deps = RubriqueCalculator.findDependencies(
+        rubriqueConf.rubriqueOnBulletin,
+        allRubriques,
+      );
+// .where((r) =>
+//   deps.contains(r.rubrique.code) &&
+//   !rubriquesConfigured.any((rc) =>
+//       rc.rubriqueOnBulletin.rubrique.key == r.rubrique.key &&
+//       rc.isChecked))
+// dependencedRubriques.addAll(
+//         allRubriques
+//             .where((r) =>
+//                 deps.contains(r.rubrique.code) &&
+//                 !rubriquesConfigured.any((rc) =>
+//                     rc.rubriqueOnBulletin.rubrique.key == r.rubrique.key &&
+//                     rc.isChecked))
+//             .map((r) => r.rubrique),
+//       );
+      for (var r in allRubriques) {
+        final alreadyChecked = rubriquesConfigured.any((rc) =>
+            rc.rubriqueOnBulletin.rubrique.key == r.rubrique.key &&
+            rc.isChecked);
+
+        if (deps.contains(r.rubrique.code) && !alreadyChecked) {
+          result.add(
+            RubriqueDependance(
+              rubrique: r.rubrique,
+              parent: parent,
+            ),
+          );
         }
       }
     }
 
+    return result;
+  }
+
+  void _manageDependancesMissing({
+    required List<RubriqueDependance> dependencedRubriques,
+    required Map<String, bool> selectedDeps,
+    required List<RubriquePaieConfig> rubriqueConfigured,
+    // required VoidCallback onConfirmed,
+  }) {
+    // Grouper les dépendances par parent
+    final Map<String, List<RubriqueDependance>> depsByParent = {};
+    final Map<String, RubriqueBulletin> parents = {};
+
+    for (var dep in dependencedRubriques) {
+      depsByParent.putIfAbsent(dep.parent.key, () => []).add(dep);
+      parents[dep.parent.key] = dep.parent;
+    }
+
+    // État des parents (tous cochés par défaut, sauf sommeRubrique)
+    final Map<String, bool> selectedParents = {
+      for (var entry in parents.entries)
+        if (entry.value.nature != NatureRubrique.sommeRubrique) entry.key: true
+    };
+
+    showResponsiveDialog(
+      context,
+      title: 'Dépendances manquantes',
+      content: StatefulBuilder(
+        builder: (context, setStateDialog) {
+          return SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const ShowInstruction(
+                  message:
+                      'Les rubriques suivantes sont nécessaires pour le calcul. Décochez celles que vous ne souhaitez pas inclure.',
+                ),
+                const SizedBox(height: 16),
+
+                // Afficher par groupe : parent + ses enfants
+                ...depsByParent.entries.map((entry) {
+                  final parentKey = entry.key;
+                  final parent = parents[parentKey]!;
+                  final children = entry.value;
+                  final isParentSomme =
+                      parent.nature == NatureRubrique.sommeRubrique;
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Afficher le parent (sauf si c'est une sommeRubrique)
+                      if (!isParentSomme)
+                        CheckboxListTile(
+                          title: Text(
+                            parent.rubrique,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          subtitle:
+                              const Text("Parent - Décocher pour retirer"),
+                          value: selectedParents[parentKey],
+                          onChanged: (value) {
+                            setStateDialog(() {
+                              selectedParents[parentKey] = value ?? false;
+                              // Si on décoche le parent, décocher ses enfants
+                              if (!(value ?? false)) {
+                                for (var dep in children) {
+                                  selectedDeps[dep.rubrique.key] = false;
+                                  _removeRubriqueFromParentFormula(dep: dep);
+                                }
+                              }
+                            });
+                          },
+                        ),
+
+                      // Titre pour sommeRubrique
+                      if (isParentSomme)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16, top: 8),
+                          child: Text(
+                            parent.rubrique,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+
+                      // Afficher les enfants (indentés)
+                      ...children.map((dep) {
+                        final isParentChecked =
+                            selectedParents[parentKey] ?? true;
+                        final isEditable = isParentSomme || !isParentChecked;
+
+                        return Padding(
+                          padding: const EdgeInsets.only(left: 24),
+                          child: CheckboxListTile(
+                            title: Text(dep.rubrique.rubrique),
+                            value: selectedDeps[dep.rubrique.key],
+                            onChanged: isEditable
+                                ? (value) {
+                                    setStateDialog(() {
+                                      selectedDeps[dep.rubrique.key] =
+                                          value ?? false;
+                                    });
+                                  }
+                                : null,
+                          ),
+                        );
+                      }),
+
+                      const Divider(),
+                    ],
+                  );
+                }),
+
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Annuler'),
+                    ),
+                    const SizedBox(width: 8),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Décocher les parents non sélectionnés
+                        for (var entry in selectedParents.entries) {
+                          if (!entry.value) {
+                            final parentConfig = rubriqueCategories.firstWhere(
+                              (rc) =>
+                                  rc.rubriqueOnBulletin.rubrique.key ==
+                                  entry.key,
+                              orElse: () =>
+                                  throw Exception('Parent non trouvé'),
+                            );
+                            parentConfig.isChecked = false;
+                          }
+                        }
+
+                        // Appliquer les choix pour les dépendances
+                        for (RubriqueDependance dep in dependencedRubriques) {
+                          final isChecked =
+                              selectedDeps[dep.rubrique.key] ?? false;
+
+                          final rubrique = rubriqueCategories.firstWhere(
+                            (rc) =>
+                                rc.rubriqueOnBulletin.rubrique.key ==
+                                dep.rubrique.key,
+                            orElse: () =>
+                                throw Exception('Rubrique non trouvée'),
+                          );
+
+                          rubrique.isChecked = isChecked;
+
+                          if (!isChecked) {
+                            _removeRubriqueFromParentFormula(dep: dep);
+                          }
+                        }
+
+                        setState(() {});
+                        Navigator.pop(context);
+                        return;
+
+                        // Exécuter le callback après fermeture du dialog
+                        // onConfirmed();
+                      },
+                      child: const Text('Confirmer'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  void _handleValidation({
+    required List<RubriquePaieConfig> rubriqueConfigured,
+  }) async {
+    /// 1. Vérification des champs - arrêter si invalide
+    if (!_verifyfieldValue(rubriqueConfigured: rubriqueConfigured)) {
+      return;
+    }
+
+    /// 2. Récupérer les dépendances
+    List<RubriqueDependance> dependencedRubriques =
+        _dependanceShowing(rubriquesConfigured: rubriqueConfigured);
+
+    /// 3. Supprimer les doublons
+    dependencedRubriques = dependencedRubriques.toSet().toList();
+
+    /// 4. Si pas de dépendances, sauvegarder directement
+    if (dependencedRubriques.isEmpty) {
+      _performSave(rubriqueConfigured: rubriqueConfigured);
+      return;
+    }
+
+    /// 5. Gestion des checkbox dynamiques (état local)
+    final Map<String, bool> selectedDeps = {
+      for (var dep in dependencedRubriques) dep.rubrique.key: true
+    };
+
+    /// 6. Afficher le dialog des dépendances et attendre la confirmation
+    _manageDependancesMissing(
+      dependencedRubriques: dependencedRubriques,
+      rubriqueConfigured: rubriqueConfigured,
+      selectedDeps: selectedDeps,
+    );
+
+  }
+
+  /// Effectue la sauvegarde avec loading
+  Future<void> _performSave({
+    required List<RubriquePaieConfig> rubriqueConfigured,
+  }) async {
     _dialog.show(
       message: "",
       type: SimpleFontelicoProgressDialogType.phoenix,
@@ -187,43 +420,88 @@ class _RubriqueCategorieConfigPageState
     );
 
     try {
-      for (var rubrique in createdRubriques) {
-        await RubriqueCategorieConfService.createBulletinCategorieRubrique(
-          rubriqueKey: rubrique.rubriqueOnBulletin.rubrique.key,
-          bulletinCategorieKey: widget.bulletinCategorie.key,
-          value: rubrique.rubriqueOnBulletin.value,
-        );
-      }
-
-      for (var rubrique in updatedRubriques) {
-        await RubriqueCategorieConfService
-            .updateBulletinCategorieRubriqueBulletin(
-          rubriqueKey: rubrique.rubriqueOnBulletin.rubrique.key,
-          bulletinCategorieKey: widget.bulletinCategorie.key,
-          value: rubrique.rubriqueOnBulletin.value,
-        );
-      }
-
-      for (var rubrique in deletedRubriques) {
-        await RubriqueCategorieConfService
-            .deleteBulletinCategorieRubriqueBulletin(
-          rubriqueKey: rubrique.rubriqueOnBulletin.rubrique.key,
-          bulletinCategorieKey: widget.bulletinCategorie.key,
-        );
-      }
-
+      RequestResponse result =
+          await RubriqueCategorieConfService.saveRubriqueCategorieConfig(
+              bulletinCategorieKey: widget.bulletinCategorie.key,
+              rubriques: rubriqueConfigured
+                  .where((r) => r.isChecked)
+                  .map((r) => r.rubriqueOnBulletin)
+                  .toList());
       _dialog.hide();
-      MutationRequestContextualBehavior.closePopup();
-      MutationRequestContextualBehavior.showPopup(
-        status: PopupStatus.success,
-        customMessage: "Rubriques configurées avec succès",
-      );
+      if (result.status == PopupStatus.success) {
+        MutationRequestContextualBehavior.closePopup();
+        MutationRequestContextualBehavior.showPopup(
+          status: PopupStatus.success,
+          customMessage: "Configuration éffectuée avec succès",
+        );
+      } else {
+        MutationRequestContextualBehavior.showPopup(
+          status: result.status,
+          customMessage: result.message,
+        );
+      }
     } catch (e) {
       _dialog.hide();
       MutationRequestContextualBehavior.showPopup(
-        status: PopupStatus.serverError,
+        status: PopupStatus.customError,
         customMessage: e.toString(),
       );
+    }
+  }
+
+  /// Supprime une rubrique décochée de la formule de son parent
+  void _removeRubriqueFromParentFormula({
+    required RubriqueDependance dep,
+  }) {
+    // Trouver le parent dans rubriqueCategories (la variable d'état principale)
+    final parentConfig = rubriqueCategories.firstWhere(
+      (rc) => rc.rubriqueOnBulletin.rubrique.key == dep.parent.key,
+      orElse: () => throw Exception('Parent non trouvé'),
+    );
+
+    final parentRubrique = parentConfig.rubriqueOnBulletin.rubrique;
+    final rubriqueCodeToRemove = dep.rubrique.code;
+
+    // Modifier le calcul si c'est un calcul
+    // if (parentRubrique.nature == NatureRubrique.calcul &&
+    //     parentRubrique.calcul != null) {
+    //   final newElements = parentRubrique.calcul!.elements.where((element) {
+    //     if (element.type == BaseType.rubrique && element.rubrique != null) {
+    //       return element.rubrique!.code != rubriqueCodeToRemove;
+    //     }
+    //     return true;
+    //   }).toList();
+
+    //   if (newElements.length != parentRubrique.calcul!.elements.length) {
+    //     parentConfig.rubriqueOnBulletin.rubrique.setCalcul(
+    //       newCalcul: Calcul(
+    //         operateur: parentRubrique.calcul!.operateur,
+    //         elements: newElements,
+    //       ),
+    //     );
+    //   }
+    // }
+
+    // Modifier la sommeRubrique si c'est une somme
+    if (parentRubrique.nature == NatureRubrique.sommeRubrique &&
+        parentRubrique.sommeRubrique != null) {
+      final newElements =
+          parentRubrique.sommeRubrique!.elements.where((element) {
+        if (element.type == BaseType.rubrique && element.calculRubrique != null) {
+          return element.calculRubrique!.code != rubriqueCodeToRemove;
+        }
+        return true;
+      }).toList();
+
+      if (newElements.isNotEmpty &&
+          newElements.length != parentRubrique.sommeRubrique!.elements.length) {
+        parentConfig.rubriqueOnBulletin.rubrique.setSommeRubrique(
+          newSommeRubrique: Calcul(
+            operateur: parentRubrique.sommeRubrique!.operateur,
+            elements: newElements,
+          ),
+        );
+      }
     }
   }
 
@@ -282,7 +560,10 @@ class _RubriqueCategorieConfigPageState
                     ),
                   ),
                   if (isChecked && rubrique.nature == NatureRubrique.constant)
-                    _buildValueField(rubrique, rubriqueConfig),
+                    _buildValueField(
+                      currentRubrique: rubrique,
+                      rubriqueConfig: rubriqueConfig,
+                    ),
                   const Divider(color: Color.fromARGB(255, 180, 178, 178))
                 ],
               );
@@ -291,24 +572,28 @@ class _RubriqueCategorieConfigPageState
         ),
         Padding(
             padding: const EdgeInsets.all(16.0),
-            child: ValidateButton(onPressed: _handleValidation)),
+            child: ValidateButton(onPressed: () {
+              _handleValidation(rubriqueConfigured: rubriqueCategories);
+            })),
       ],
     );
   }
 
   Widget _buildValueField(
-      RubriqueBulletin rubrique, RubriquePaieConfig rubriqueConfig) {
-    // S'assurer que nous avons un contrôleur pour cette rubrique
-    if (!valueControllers.containsKey(rubrique.key)) {
-      valueControllers[rubrique.key] = TextEditingController(
+      {required RubriqueBulletin currentRubrique,
+      required RubriquePaieConfig rubriqueConfig}) {
+    if (!valueControllers.containsKey(currentRubrique.key)) {
+      valueControllers[currentRubrique.key] = TextEditingController(
           text: rubriqueConfig.rubriqueOnBulletin.value?.toString() ?? "");
     }
 
-    if (rubrique.portee != null && rubrique.portee == PorteeRubrique.commun) {
+    if (currentRubrique.portee != null &&
+        (currentRubrique.portee == PorteeRubrique.commun ||
+            currentRubrique.portee == PorteeRubrique.defaultIndividuel)) {
       return SimpleTextField(
         label: "Valeur de la rubrique",
-        textController: valueControllers[rubrique.key]!,
-        required: false,
+        textController: valueControllers[currentRubrique.key]!,
+        required: true,
         onChanged: (value) {
           final parsed = value.isEmpty
               ? null
@@ -316,14 +601,13 @@ class _RubriqueCategorieConfigPageState
           rubriqueConfig.rubriqueOnBulletin.value = parsed;
         },
         keyboardType: const TextInputType.numberWithOptions(decimal: true),
-       );
+      );
     }
     return SizedBox();
   }
 
   @override
   void dispose() {
-    // N'oubliez pas de disposer les contrôleurs
     for (var controller in valueControllers.values) {
       controller.dispose();
     }

@@ -1,19 +1,19 @@
-import 'dart:convert';
-import 'package:frontend/model/bulletin_paie/bulletin_categorie_model.dart';
-import 'package:frontend/model/bulletin_paie/valeur_rubrique_temporaire.dart';
-import '../app/integration/popop_status.dart';
-import '../global/config.dart';
-import '../global/constant/request_management_value.dart';
-import '../model/bulletin_paie/rubrique_paie.dart';
-import '../model/request_response.dart';
-import 'request_header.dart';
-import 'package:http/http.dart' as http;
+import "dart:convert";
+import "package:frontend/model/bulletin_paie/bulletin_categorie_model.dart";
+import "package:frontend/model/bulletin_paie/valeur_rubrique_temporaire.dart";
+import "../app/integration/popop_status.dart";
+import "../global/config.dart";
+import "../global/constant/request_management_value.dart";
+import "../model/bulletin_paie/rubrique_on_bulletin_model.dart";
+import "../model/request_response.dart";
+import "request_header.dart";
+import "package:http/http.dart" as http;
 
 class RubriqueCategorieConfService {
   static Future<List<RubriquePaieConfig>>
       getBulletinRubriquesByBulletinCategorieForConfig(
           {required BulletinCategorieModel bulletinCategorie}) async {
-    var body = '''
+    var body = """
       query RubriqueBulletinByBulletinCategorieForConfiguration {
     rubriqueBulletinByBulletinCategorieForConfiguration(bulletinCategorieKey: "${bulletinCategorie.key}") {
         isChecked
@@ -46,7 +46,7 @@ class RubriqueCategorieConfService {
             elements {
                 type
                 valeur
-                rubrique {
+                calculRubrique {
                     _key
                     rubrique
                     code
@@ -87,7 +87,7 @@ class RubriqueCategorieConfService {
             elements {
                 type
                 valeur
-                rubrique {
+                calculRubrique {
                     _key
                     rubrique
                     code
@@ -99,12 +99,12 @@ class RubriqueCategorieConfService {
          }
         }
     }
-}    ''';
+}    """;
 
     var response = await http
         .post(
       Uri.parse(serverUrl),
-      body: json.encode({'query': body}),
+      body: json.encode({"query": body}),
       headers: getHeaders(),
     )
         .catchError((onError) {
@@ -119,28 +119,26 @@ class RubriqueCategorieConfService {
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
 
-      var data = jsonData['data']
-          ['rubriqueBulletinByBulletinCategorieForConfiguration'];
+      var data = jsonData["data"]
+          ["rubriqueBulletinByBulletinCategorieForConfiguration"];
       List<RubriquePaieConfig> rubriques = [];
       if (data != null) {
         for (var rubrique in data) {
-
-            rubriques.add(RubriquePaieConfig.fromJson(rubrique));
- 
+          rubriques.add(RubriquePaieConfig.fromJson(rubrique));
         }
         return rubriques;
       } else {
         throw RequestMessage.failgettingDataMessage;
       }
     } else {
-      throw jsonDecode(response.body)['errors'][0]['message'];
+      throw jsonDecode(response.body)["errors"][0]["message"];
     }
   }
 
   static Future<List<RubriqueOnBulletinModel>>
       getBulletinRubriquesByBulletinCategorie(
           {required BulletinCategorieModel bulletinCategorie}) async {
-    var body = '''
+    var body = """
     query RubriqueBulletinByBulletinCategorie {
     rubriqueBulletinByBulletinCategorie(bulletinCategorieKey: "${bulletinCategorie.key}") {
     value
@@ -171,7 +169,7 @@ class RubriqueCategorieConfService {
             elements {
                 type
                 valeur
-                rubrique {
+                calculRubrique {
                     _key
                     rubrique
                     code
@@ -212,7 +210,7 @@ class RubriqueCategorieConfService {
             elements {
                 type
                 valeur
-                rubrique {
+                calculRubrique {
                     _key
                     rubrique
                     code
@@ -225,12 +223,12 @@ class RubriqueCategorieConfService {
     }
 }
 
-    ''';
+    """;
 
     var response = await http
         .post(
       Uri.parse(serverUrl),
-      body: json.encode({'query': body}),
+      body: json.encode({"query": body}),
       headers: getHeaders(),
     )
         .catchError((onError) {
@@ -244,7 +242,7 @@ class RubriqueCategorieConfService {
 
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
-      var data = jsonData['data']['rubriqueBulletinByBulletinCategorie'];
+      var data = jsonData["data"]["rubriqueBulletinByBulletinCategorie"];
       List<RubriqueOnBulletinModel> rubriques = [];
       if (data != null) {
         for (var rubrique in data) {
@@ -256,7 +254,7 @@ class RubriqueCategorieConfService {
         throw RequestMessage.failgettingDataMessage;
       }
     } else {
-      throw jsonDecode(response.body)['errors'][0]['message'];
+      throw jsonDecode(response.body)["errors"][0]["message"];
     }
   }
 
@@ -264,7 +262,7 @@ class RubriqueCategorieConfService {
       getvariablePaieAndPrimeExceptionnelles(
           {required BulletinCategorieModel bulletinCategorie,
           required String salarieKey}) async {
-    var body = '''
+    var body = """
     query variablePaieAndPrimeExceptionnelles {
     variablePaieAndPrimeExceptionnelles(bulletinCategorieKey: "${bulletinCategorie.key}", salarieKey: "$salarieKey") {
       salarieKey
@@ -299,7 +297,7 @@ class RubriqueCategorieConfService {
             elements {
                 type
                 valeur
-                rubrique {
+                calculRubrique {
                     _key
                     rubrique
                     code
@@ -340,7 +338,7 @@ class RubriqueCategorieConfService {
             elements {
                 type
                 valeur
-                rubrique {
+                calculRubrique {
                     _key
                     rubrique
                     code
@@ -380,7 +378,7 @@ class RubriqueCategorieConfService {
             elements {
                 type
                 valeur
-                rubrique {
+                calculRubrique {
                     _key
                     rubrique
                     code
@@ -421,7 +419,7 @@ class RubriqueCategorieConfService {
             elements {
                 type
                 valeur
-                rubrique {
+                calculRubrique {
                     _key
                     rubrique
                     code
@@ -435,11 +433,11 @@ class RubriqueCategorieConfService {
     }
 }
 
-    ''';
+    """;
     var response = await http
         .post(
       Uri.parse(serverUrl),
-      body: json.encode({'query': body}),
+      body: json.encode({"query": body}),
       headers: getHeaders(),
     )
         .catchError((onError) {
@@ -454,40 +452,188 @@ class RubriqueCategorieConfService {
     try {
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
-        var data = jsonData['data']['variablePaieAndPrimeExceptionnelles'];
+        var data = jsonData["data"]["variablePaieAndPrimeExceptionnelles"];
         if (data != null) {
           return ValeurRubriqueTemporaire.fromJson(data);
         } else {
           throw RequestMessage.failgettingDataMessage;
         }
       } else {
-        throw jsonDecode(response.body)['errors'][0]['message'];
+        throw jsonDecode(response.body)["errors"][0]["message"];
       }
     } catch (e) {
       rethrow;
     }
   }
 
-  static Future<RequestResponse> createBulletinCategorieRubrique({
-    required String rubriqueKey,
+  // static Future<RequestResponse> createBulletinCategorieRubrique({
+  //   required String rubriqueKey,
+  //   required String bulletinCategorieKey,
+  //   required double? value,
+  // }) async {
+  //   var body = """
+  //   mutation {
+  //     createBulletinCategorieRubrique(
+  //       rubriqueKey: "$rubriqueKey",
+  //       bulletinCategorieKey: "$bulletinCategorieKey",
+  //       value: $value
+  //     )
+  //   }
+  // """;
+
+  //   try {
+  //     final response = await http
+  //         .post(
+  //           Uri.parse(serverUrl),
+  //           body: json.encode({"query": body}),
+  //           headers: getHeaders(),
+  //         )
+  //         .timeout(
+  //           const Duration(seconds: reqTimeout),
+  //           onTimeout: () => throw RequestMessage.timeoutMessage,
+  //         );
+
+  //     if (response.statusCode == 200) {
+  //       final data = jsonDecode(response.body)["data"]
+  //           ["createBulletinCategorieRubrique"];
+  //       if (data == RequestMessage.success) {
+  //         return RequestResponse(
+  //           message: RequestMessage.successMessage,
+  //           status: PopupStatus.success,
+  //         );
+  //       } else {
+  //         throw RequestMessage.serverErrorMessage;
+  //       }
+  //     } else {
+  //       throw jsonDecode(response.body)["errors"][0]["message"];
+  //     }
+  //   } catch (error) {
+  //     return RequestResponse(
+  //       message: error.toString(),
+  //       status: PopupStatus.serverError,
+  //     );
+  //   }
+  // }
+
+  // static Future<RequestResponse> updateBulletinCategorieRubriqueBulletin({
+  //   required String rubriqueKey,
+  //   required String bulletinCategorieKey,
+  //   required double? value,
+  // }) async {
+  //   var body = """
+  //   mutation {
+  //     updateBulletinCategorieRubrique(
+  //       rubriqueKey: "$rubriqueKey",
+  //       bulletinCategorieKey: "$bulletinCategorieKey",
+  //       value: $value
+  //     )
+  //   }
+  // """;
+
+  //   try {
+  //     final response = await http
+  //         .post(
+  //           Uri.parse(serverUrl),
+  //           body: json.encode({"query": body}),
+  //           headers: getHeaders(),
+  //         )
+  //         .timeout(
+  //           const Duration(seconds: reqTimeout),
+  //           onTimeout: () => throw RequestMessage.timeoutMessage,
+  //         );
+
+  //     if (response.statusCode == 200) {
+  //       final data = jsonDecode(response.body)["data"]
+  //           ["updateBulletinCategorieRubriqueBulletin"];
+  //       if (data == RequestMessage.success) {
+  //         return RequestResponse(
+  //           message: RequestMessage.successMessage,
+  //           status: PopupStatus.success,
+  //         );
+  //       } else {
+  //         throw RequestMessage.serverErrorMessage;
+  //       }
+  //     } else {
+  //       throw jsonDecode(response.body)["errors"][0]["message"];
+  //     }
+  //   } catch (error) {
+  //     return RequestResponse(
+  //       message: error.toString(),
+  //       status: PopupStatus.serverError,
+  //     );
+  //   }
+  // }
+
+  // static Future<RequestResponse> deleteBulletinCategorieRubriqueBulletin({
+  //   required String rubriqueKey,
+  //   required String bulletinCategorieKey,
+  // }) async {
+  //   var body = """
+  //   mutation {
+  //     deleteBulletinCategorieRubrique(
+  //       rubriqueKey: "$rubriqueKey",
+  //       bulletinCategorieKey: "$bulletinCategorieKey"
+  //     )
+  //   }
+  // """;
+
+  //   try {
+  //     final response = await http
+  //         .post(
+  //           Uri.parse(serverUrl),
+  //           body: json.encode({"query": body}),
+  //           headers: getHeaders(),
+  //         )
+  //         .timeout(
+  //           const Duration(seconds: reqTimeout),
+  //           onTimeout: () => throw RequestMessage.timeoutMessage,
+  //         );
+
+  //     if (response.statusCode == 200) {
+  //       final data = jsonDecode(response.body)["data"]
+  //           ["deleteBulletinCategorieRubriqueBulletin"];
+  //       if (data == RequestMessage.success) {
+  //         return RequestResponse(
+  //           message: RequestMessage.successMessage,
+  //           status: PopupStatus.success,
+  //         );
+  //       } else {
+  //         throw RequestMessage.serverErrorMessage;
+  //       }
+  //     } else {
+  //       throw jsonDecode(response.body)["errors"][0]["message"];
+  //     }
+  //   } catch (error) {
+  //     return RequestResponse(
+  //       message: error.toString(),
+  //       status: PopupStatus.serverError,
+  //     );
+  //   }
+  // }
+
+  /// Sauvegarde la configuration des rubriques pour une catégorie
+  /// [rubriques] est une liste de rubriques complètes (avec formules modifiables)
+  static Future<RequestResponse> saveRubriqueCategorieConfig({
     required String bulletinCategorieKey,
-    required double? value,
+    required List<RubriqueOnBulletinModel> rubriques,
   }) async {
-    var body = '''
+    // Encoder les rubriques en JSON string pour GraphQL
+    List<Map<String, dynamic>> rubriquesJson =
+        rubriques.map((r) => r.toJson()).toList();
+    var body = """
     mutation {
-      createBulletinCategorieRubrique(
-        rubriqueKey: "$rubriqueKey",
+      saveRubriqueCategorieConfig(
         bulletinCategorieKey: "$bulletinCategorieKey",
-        value: $value
+        rubriquesConfiged: $rubriquesJson
       )
     }
-  ''';
-
+  """;
+    print(body);
     try {
       final response = await http
           .post(
             Uri.parse(serverUrl),
-            body: json.encode({'query': body}),
+            body: json.encode({"query": body}),
             headers: getHeaders(),
           )
           .timeout(
@@ -496,8 +642,8 @@ class RubriqueCategorieConfService {
           );
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body)['data']
-            ['createBulletinCategorieRubrique'];
+        final data =
+            jsonDecode(response.body)["data"]["saveRubriqueCategorieConfig"];
         if (data == RequestMessage.success) {
           return RequestResponse(
             message: RequestMessage.successMessage,
@@ -507,103 +653,7 @@ class RubriqueCategorieConfService {
           throw RequestMessage.serverErrorMessage;
         }
       } else {
-        throw jsonDecode(response.body)['errors'][0]['message'];
-      }
-    } catch (error) {
-      return RequestResponse(
-        message: error.toString(),
-        status: PopupStatus.serverError,
-      );
-    }
-  }
-
-  static Future<RequestResponse> updateBulletinCategorieRubriqueBulletin({
-    required String rubriqueKey,
-    required String bulletinCategorieKey,
-    required double? value,
-  }) async {
-    var body = '''
-    mutation {
-      updateBulletinCategorieRubrique(
-        rubriqueKey: "$rubriqueKey",
-        bulletinCategorieKey: "$bulletinCategorieKey",
-        value: $value
-      )
-    }
-  ''';
-
-    try {
-      final response = await http
-          .post(
-            Uri.parse(serverUrl),
-            body: json.encode({'query': body}),
-            headers: getHeaders(),
-          )
-          .timeout(
-            const Duration(seconds: reqTimeout),
-            onTimeout: () => throw RequestMessage.timeoutMessage,
-          );
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body)['data']
-            ['updateBulletinCategorieRubriqueBulletin'];
-        if (data == RequestMessage.success) {
-          return RequestResponse(
-            message: RequestMessage.successMessage,
-            status: PopupStatus.success,
-          );
-        } else {
-          throw RequestMessage.serverErrorMessage;
-        }
-      } else {
-        throw jsonDecode(response.body)['errors'][0]['message'];
-      }
-    } catch (error) {
-      return RequestResponse(
-        message: error.toString(),
-        status: PopupStatus.serverError,
-      );
-    }
-  }
-
-  static Future<RequestResponse> deleteBulletinCategorieRubriqueBulletin({
-    required String rubriqueKey,
-    required String bulletinCategorieKey,
-  }) async {
-    var body = '''
-    mutation {
-      deleteBulletinCategorieRubrique(
-        rubriqueKey: "$rubriqueKey",
-        bulletinCategorieKey: "$bulletinCategorieKey"
-      )
-    }
-  ''';
-
-    try {
-      final response = await http
-          .post(
-            Uri.parse(serverUrl),
-            body: json.encode({'query': body}),
-            headers: getHeaders(),
-          )
-          .timeout(
-            const Duration(seconds: reqTimeout),
-            onTimeout: () => throw RequestMessage.timeoutMessage,
-          );
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body)['data']
-            ['deleteBulletinCategorieRubriqueBulletin'];
-        if (data == RequestMessage.success) {
-          return RequestResponse(
-            message: RequestMessage.successMessage,
-            status: PopupStatus.success,
-          );
-        } else {
-          throw RequestMessage.serverErrorMessage;
-        }
-      } else {
-        throw jsonDecode(response.body)['errors'][0]['message'];
+        throw jsonDecode(response.body)["errors"][0]["message"];
       }
     } catch (error) {
       return RequestResponse(

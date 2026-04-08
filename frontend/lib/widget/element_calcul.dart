@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
- import 'package:frontend/widget/future_dropdown_field.dart';
+import 'package:frontend/widget/future_dropdown_field.dart';
 import '../model/bulletin_paie/rubrique.dart';
 import '../model/bulletin_paie/tranche_model.dart';
 import '../service/bulletin_rubrique_service.dart';
@@ -8,11 +8,13 @@ import 'simple_text_field.dart';
 
 class CalculBuilderWidget extends StatefulWidget {
   final Calcul? calcul;
+  final String? editingRubriqueKey;
   final void Function(Calcul newCalcul) onChanged;
 
   const CalculBuilderWidget({
     super.key,
     required this.onChanged,
+    this.editingRubriqueKey,
     this.calcul,
   });
 
@@ -52,6 +54,7 @@ class _CalculBuilderWidgetState extends State<CalculBuilderWidget> {
           isRequired: true,
         ),
         ...elements.map((element) => ElementCalculWidget(
+            editingRubriqueKey: widget.editingRubriqueKey,
             elementCalcul: element,
             onChanged: (newElement) {
               setState(() {
@@ -93,12 +96,14 @@ class _CalculBuilderWidgetState extends State<CalculBuilderWidget> {
 
 class ElementCalculWidget extends StatefulWidget {
   final ElementCalcul? elementCalcul;
+  final String? editingRubriqueKey;
   final void Function(ElementCalcul newElement) onChanged;
 
   const ElementCalculWidget({
     super.key,
     this.elementCalcul,
     required this.onChanged,
+    required this.editingRubriqueKey,
   });
 
   @override
@@ -110,11 +115,12 @@ class _ElementCalculWidgetState extends State<ElementCalculWidget> {
   RubriqueBulletin? rubrique;
   double? valeur;
   final TextEditingController _tauxController = TextEditingController();
+
   @override
   void initState() {
     if (widget.elementCalcul != null) {
       selectedType = widget.elementCalcul!.type;
-      rubrique = widget.elementCalcul!.rubrique;
+      rubrique = widget.elementCalcul!.calculRubrique;
       valeur = widget.elementCalcul!.valeur;
       _tauxController.text = widget.elementCalcul!.valeur?.toString() ?? '';
     }
@@ -152,7 +158,6 @@ class _ElementCalculWidgetState extends State<ElementCalculWidget> {
             keyboardType: TextInputType.numberWithOptions(
               decimal: true,
             ),
-            
             onChanged: (text) {
               setState(() {
                 valeur = double.tryParse(text);
@@ -165,7 +170,10 @@ class _ElementCalculWidgetState extends State<ElementCalculWidget> {
             label: "Rubrique",
             showSearchBox: true,
             selectedItem: rubrique,
-            fetchItems: fetchRubriqueItems,
+            fetchItems: () {
+              return fetchRubriqueItems(
+                  currentRubriqueKey: widget.editingRubriqueKey);
+            },
             onChanged: (RubriqueBulletin? value) {
               if (value != null) {
                 setState(() {
@@ -193,12 +201,17 @@ class _ElementCalculWidgetState extends State<ElementCalculWidget> {
       ElementCalcul(
         type: selectedType!,
         valeur: valeur,
-        rubrique: rubrique,
+        calculRubrique: rubrique,
       ),
     );
   }
 
-  Future<List<RubriqueBulletin>> fetchRubriqueItems() async {
-    return await BulletinRubriqueService.getBulletinRubriques();
+Future<List<RubriqueBulletin>> fetchRubriqueItems(
+      {String? currentRubriqueKey}) async {
+    return (await BulletinRubriqueService.getBulletinRubriques())
+        .where((r) =>
+            r.rubriqueRole == RubriqueRole.rubrique &&
+            (currentRubriqueKey == null || r.key != currentRubriqueKey))
+        .toList();
   }
 }

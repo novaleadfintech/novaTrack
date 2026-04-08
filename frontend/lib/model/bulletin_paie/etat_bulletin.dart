@@ -9,12 +9,12 @@ wait("En attente"),
 }
 
 String etatBulletinToString(EtatBulletin etat) {
-  return etat.toString().split('.').last;
+  return etat.toString().split(".").last;
 }
 
 EtatBulletin etatBulletinFromJson(String etat) {
   return EtatBulletin.values
-      .firstWhere((e) => e.toString().split('.').last == etat);
+      .firstWhere((e) => e.toString().split(".").last == etat);
 }
 enum DecouverteStatus {
   paid("Soldé"),
@@ -26,10 +26,10 @@ enum DecouverteStatus {
 }
 
 String decourverteStatusToJson(DecouverteStatus status) {
-  return status.toString().split('.').last;
+  return status.toString().split(".").last;
 }
 
 DecouverteStatus decourverteStatusFromJson(String status) {
   return DecouverteStatus.values
-      .firstWhere((e) => e.toString().split('.').last == status);
+      .firstWhere((e) => e.toString().split(".").last == status);
 }

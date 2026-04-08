@@ -25,25 +25,27 @@ class BulletinCategorieRubrique {
 
   getRubriqueBulletinByBulletinCategorie = async ({ bulletinCategorieKey }) => {
     try {
+      // Récupérer la config avec le tableau de rubriques complètes
       const cursor = await db.query(aql`
-        FOR rubriqueBulletion IN ${bulletinCategorieRubriqueCollection}
-          FILTER rubriqueBulletion.bulletinCategorieKey == ${bulletinCategorieKey}
-          RETURN rubriqueBulletion
+        FOR config IN ${bulletinCategorieRubriqueCollection}
+          FILTER config.bulletinCategorieKey == ${bulletinCategorieKey}
+          FILTER config.rubriques != null
+          LIMIT 1
+          RETURN config
       `);
-      const rubriqueConfiforCategorie = await cursor.all();
-       // Attendre la récupération des rubriques
-      const result = await Promise.all(
-        rubriqueConfiforCategorie.map(async (bulletinCategorieRubrique) => {
-          const rubrique = await rubriqueBulletin.getRubriqueBulletin({
-            key: bulletinCategorieRubrique.rubriqueKey,
-          });
 
-          return {
-            ...bulletinCategorieRubrique,
-            rubrique: rubrique,
-          };
-        }),
-      );
+      if (!cursor.hasNext) {
+        return [];
+      }
+
+      const config = await cursor.next();
+      const storedRubriques = config.rubriques || [];
+
+      // Transformer en format attendu (RubriqueOnBulletin)
+      const result = storedRubriques.map((rubrique) => ({
+        rubrique: rubrique,
+        value: rubrique.value ?? null,
+      }));
 
       // Trier les résultats par timeStamp croissant
       result.sort((a, b) => {
@@ -51,6 +53,7 @@ class BulletinCategorieRubrique {
         const tB = b.rubrique?.timeStamp ?? 0;
         return tA - tB;
       });
+
       return result;
     } catch (e) {
       console.error(e);
@@ -162,27 +165,42 @@ class BulletinCategorieRubrique {
     bulletinCategorieKey,
   }) => {
     try {
+      // Récupérer la config avec le tableau de rubriques complètes
       const cursor = await db.query(aql`
-        FOR rubriqueBulletin IN ${bulletinCategorieRubriqueCollection}
-          FILTER rubriqueBulletin.bulletinCategorieKey == ${bulletinCategorieKey}
-          RETURN rubriqueBulletin
+        FOR config IN ${bulletinCategorieRubriqueCollection}
+          FILTER config.bulletinCategorieKey == ${bulletinCategorieKey}
+          FILTER config.rubriques != null
+          LIMIT 1
+          RETURN config
       `);
-      const rubriqueConfigforCategorie = await cursor.all();
+
+      let storedRubriques = [];
+      if (cursor.hasNext) {
+        const config = await cursor.next();
+        storedRubriques = config.rubriques || [];
+      }
+
+      // Récupérer toutes les rubriques disponibles
       const allRubriques = await rubriqueBulletin.getAllRubriqueBulletin();
 
       const result = allRubriques.map((rubrique) => {
-        const config = rubriqueConfigforCategorie.find(
-          (conf) => conf.rubriqueKey === rubrique._key,
+        // Chercher si cette rubrique existe dans la config stockée (par code ou _key)
+        const storedRubrique = storedRubriques.find(
+          (stored) =>
+            stored._key === rubrique._key || stored.code === rubrique.code,
         );
+
         return {
           rubriqueOnBulletin: {
-            rubrique,
-            value: config ? config.value : null,
+            // Utiliser la rubrique stockée (avec formules modifiées) si elle existe, sinon la rubrique originale
+            rubrique: storedRubrique || rubrique,
+            value: storedRubrique?.value ?? null,
           },
-          isChecked: !!config,
+          isChecked: !!storedRubrique,
         };
       });
-       // Trier par timeStamp croissant
+
+      // Trier par timeStamp croissant
       result.sort((a, b) => {
         const tA = a.rubriqueOnBulletin.rubrique?.timeStamp ?? 0;
         const tB = b.rubriqueOnBulletin.rubrique?.timeStamp ?? 0;
@@ -200,7 +218,7 @@ class BulletinCategorieRubrique {
     bulletinCategorieKey,
     value,
   }) => {
-    isValkeyValue({ value: [rubriqueKey, bulletinCategorieKey] });
+    isValidValue({ value: [rubriqueKey, bulletinCategorieKey] });
     try {
       await rubriqueBulletin.isExistRubriqueBulletin({ key: rubriqueKey });
       await bulletinCategorieModel.isExistBulletinCategorie({
@@ -281,6 +299,75 @@ class BulletinCategorieRubrique {
     } catch (e) {
       console.error(e);
       throw new Error("Erreur lors de la suppression");
+    }
+  };
+
+  // // Nouvelle méthode : récupérer la config avec rubriques complètes
+  // getRubriqueCategorieConfig = async ({ bulletinCategorieKey }) => {
+  //   try {
+  //     const cursor = await db.query(aql`
+  //       FOR config IN ${bulletinCategorieRubriqueCollection}
+  //         FILTER config.bulletinCategorieKey == ${bulletinCategorieKey}
+  //         FILTER config.rubriques != null
+  //         LIMIT 1
+  //         RETURN config
+  //     `);
+
+  //     if (cursor.hasNext) {
+  //       const config = await cursor.next();
+  //       return {
+  //         _key: config._key,
+  //         bulletinCategorieKey: config.bulletinCategorieKey,
+  //         rubriques: config.rubriques || [],
+  //       };
+  //     }
+  //     return null;
+  //   } catch (e) {
+  //     console.error(e);
+  //     throw new Error("Erreur lors de la récupération de la configuration");
+  //   }
+  // };
+
+  // Nouvelle méthode : sauvegarder/remplacer la config avec rubriques complètes
+  saveRubriqueCategorieConfig = async ({
+    bulletinCategorieKey,
+    rubriquesConfiged,
+  }) => {
+    try {
+      await bulletinCategorieModel.isExistBulletinCategorie({
+        key: bulletinCategorieKey,
+      });
+
+      // const parsedRubriques = JSON.parse(rubriques);
+
+      // Chercher si une config existe déjà pour cette catégorie
+      const cursor = await db.query(aql`
+        FOR config IN ${bulletinCategorieRubriqueCollection}
+          FILTER config.bulletinCategorieKey == ${bulletinCategorieKey}
+          FILTER config.rubriques != null
+          LIMIT 1
+          RETURN config
+      `);
+
+      if (cursor.hasNext) {
+        // Mettre à jour le document existant
+        const existingConfig = await cursor.next();
+        await bulletinCategorieRubriqueCollection.update(existingConfig._key, {
+          rubriquesConfiged: parsedRubriques,
+        });
+      } else {
+        // Créer un nouveau document
+        const newConfig = {
+          bulletinCategorieKey: bulletinCategorieKey,
+          rubriquesConfiged: rubriquesConfiged,
+        };
+        await bulletinCategorieRubriqueCollection.save(newConfig);
+      }
+
+      return "OK";
+    } catch (e) {
+      console.error(e);
+      throw new Error("Erreur lors de la sauvegarde de la configuration");
     }
   };
 }

@@ -10,7 +10,7 @@ import 'package:http/http.dart' as http;
 import 'request_header.dart';
 
 class PaieCategorieService {
-  static Future<List<paieCategorieModel>> getPaieCategories() async {
+  static Future<List<PaieCategorieModel>> getPaieCategories() async {
     var body = '''
       query CategoriesPaie {
     categoriesPaie {
@@ -38,10 +38,10 @@ class PaieCategorieService {
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
       var data = jsonData['data']['categoriesPaie'];
-      List<paieCategorieModel> paieCategories = [];
+      List<PaieCategorieModel> paieCategories = [];
       if (data != null) {
         for (var category in data) {
-          paieCategories.add(paieCategorieModel.fromJson(category));
+          paieCategories.add(PaieCategorieModel.fromJson(category));
         }
         return paieCategories;
       } else {

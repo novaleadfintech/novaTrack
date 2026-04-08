@@ -1,8 +1,8 @@
-import 'package:frontend/model/bulletin_paie/salarie_model.dart';
+import "package:frontend/model/bulletin_paie/salarie_model.dart";
 
-import '../entreprise/banque.dart';
-import '../moyen_paiement_model.dart';
-import 'etat_bulletin.dart';
+import "../entreprise/banque.dart";
+import "../moyen_paiement_model.dart";
+import "etat_bulletin.dart";
 
 class DecouverteModel {
   final String key;
@@ -34,7 +34,7 @@ class DecouverteModel {
   factory DecouverteModel.fromJson(Map<String, dynamic> json) {
     return DecouverteModel(
       key: json["_key"],
-      justification: json['justification'],
+      justification: json["justification"],
       montant: (json["montant"] as num).toDouble(),
       dateEnregistrement: DateTime.fromMillisecondsSinceEpoch(
         json["dateEnregistrement"] is int
@@ -62,7 +62,7 @@ class DecouverteModel {
       "referenceTransaction": referenceTransaction,
       "dureeReversement": dureeReversement,
       "status": decourverteStatusToJson(status),
-      'moyenPayement': moyenPayement.toJson(),
+      "moyenPayement": moyenPayement.toJson(),
       "banque": banque.toJson(),
       "salarie": salarie.toJson(),
     };

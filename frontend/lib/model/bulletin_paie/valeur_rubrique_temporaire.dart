@@ -1,4 +1,4 @@
-import 'package:frontend/model/bulletin_paie/rubrique_paie.dart';
+import "package:frontend/model/bulletin_paie/rubrique_on_bulletin_model.dart";
 
 class ValeurRubriqueTemporaire {
   final String? key;
@@ -15,22 +15,22 @@ class ValeurRubriqueTemporaire {
   });
 
   Map<String, dynamic> toJson() => {
-        'key': key,
-        'salarieKey': salarieKey,
-        'rubriques': rubriques.map((r) => r.toJson()).toList(),
-        'primesExceptionnelles':
+        "key": key,
+        "salarieKey": salarieKey,
+        "rubriques": rubriques.map((r) => r.toJson()).toList(),
+        "primesExceptionnelles":
             primesExceptionnelles?.map((r) => r.toJson()).toList(),
       };
 
   factory ValeurRubriqueTemporaire.fromJson(Map<String, dynamic> json) {
     return ValeurRubriqueTemporaire(
-      key: json['_key'],
-      salarieKey: json['salarieKey'],
-      rubriques: (json['rubriques'] as List<dynamic>)
+      key: json["_key"],
+      salarieKey: json["salarieKey"],
+      rubriques: (json["rubriques"] as List<dynamic>)
           .map((e) => RubriqueOnBulletinModel.fromJson(e))
           .toList(),
-      primesExceptionnelles: json['primesExceptionnelles'] != null
-          ? (json['primesExceptionnelles'] as List<dynamic>)
+      primesExceptionnelles: json["primesExceptionnelles"] != null
+          ? (json["primesExceptionnelles"] as List<dynamic>)
               .map((e) => RubriqueOnBulletinModel.fromJson(e))
               .toList()
           : null,

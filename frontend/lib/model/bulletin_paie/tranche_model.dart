@@ -1,4 +1,4 @@
-import 'package:frontend/model/bulletin_paie/rubrique.dart';
+import "package:frontend/model/bulletin_paie/rubrique.dart";
 
 enum TrancheValueType {
   taux("Taux"),
@@ -9,12 +9,12 @@ enum TrancheValueType {
 }
 
 String trancheValueTypeToString(TrancheValueType type) {
-  return type.toString().split('.').last;
+  return type.toString().split(".").last;
 }
 
 TrancheValueType trancheValueTypeFromJson(String value) {
   return TrancheValueType.values
-      .firstWhere((e) => e.toString().split('.').last == value);
+      .firstWhere((e) => e.toString().split(".").last == value);
 }
 
 enum RubriqueIdentity {
@@ -27,16 +27,18 @@ enum RubriqueIdentity {
 
   final String label;
   const RubriqueIdentity(this.label);
+
+  static String identityToString(RubriqueIdentity identity) {
+    return identity.toString().split(".").last;
+  }
+
+  static RubriqueIdentity identityFromJson(String identity) {
+    return RubriqueIdentity.values
+        .firstWhere((e) => e.toString().split(".").last == identity);
+  }
 }
 
-String constantIdentityToString(RubriqueIdentity identity) {
-  return identity.toString().split('.').last;
-}
 
-RubriqueIdentity constantIdentityFromJson(String identity) {
-  return RubriqueIdentity.values
-      .firstWhere((e) => e.toString().split('.').last == identity);
-}
 
 enum RubriqueRole {
   rubrique("Rubrique"),
@@ -44,53 +46,57 @@ enum RubriqueRole {
 
   final String label;
   const RubriqueRole(this.label);
+
+  static String rubriqueRoleToString(RubriqueRole rubriqueRole) {
+    return rubriqueRole.toString().split(".").last;
+  }
+
+  static RubriqueRole rubriqueRoleFromJson(String rubriqueRole) {
+    return RubriqueRole.values
+        .firstWhere((e) => e.toString().split(".").last == rubriqueRole);
+  }
 }
 
-String rubriqueRoleToString(RubriqueRole rubriqueRole) {
-  return rubriqueRole.toString().split('.').last;
-}
 
-RubriqueRole rubriqueRoleFromJson(String rubriqueRole) {
-  return RubriqueRole.values
-      .firstWhere((e) => e.toString().split('.').last == rubriqueRole);
-}
 
 enum PaieManner {
   finMois("Paiement à la fin du mois");
   // termeEchu("Paiement à terme échu"),
-  // finPeriod("Paiement à la fin d'une période");
+  // finPeriod("Paiement à la fin d"une période");
 
   final String label;
   const PaieManner(this.label);
+
+  static String paieMannerToString(PaieManner paieManner) {
+    return paieManner.toString().split(".").last;
+  }
+
+  static PaieManner paieMannerFromJson(String paieManner) {
+    return PaieManner.values
+        .firstWhere((e) => e.toString().split(".").last == paieManner);
+  }
 }
 
 
 
-String paieMannerToString(PaieManner paieManner) {
-  return paieManner.toString().split('.').last;
-}
 
-PaieManner paieMannerFromJson(String paieManner) {
-  return PaieManner.values
-      .firstWhere((e) => e.toString().split('.').last == paieManner);
-}
 
 enum PaieClause {
   grille("Grille salariale"),
   horaire("Paiement horaire"),
-  forfaitMensuel('Forfait mensuel'),
+  forfaitMensuel("Forfait mensuel"),
   journalier("Paiement journalier");
 
   final String label;
   const PaieClause(this.label);
 
   static String paieClauseToString(PaieClause paieClause) {
-    return paieClause.toString().split('.').last;
+    return paieClause.toString().split(".").last;
   }
 
   static PaieClause paieClauseFromJson(String paieClause) {
     return PaieClause.values
-        .firstWhere((e) => e.toString().split('.').last == paieClause);
+        .firstWhere((e) => e.toString().split(".").last == paieClause);
   }
 }
 enum TypePaie {
@@ -99,16 +105,18 @@ enum TypePaie {
 
   final String label;
   const TypePaie(this.label);
+
+  static String typePaieToString(TypePaie type) {
+    return type.toString().split(".").last;
+  }
+
+  static TypePaie typePaieFromJson(String value) {
+    return TypePaie.values
+        .firstWhere((e) => e.toString().split(".").last == value);
+  }
 }
 
-String typePaieToString(TypePaie type) {
-  return type.toString().split('.').last;
-}
 
-TypePaie typePaieFromJson(String value) {
-  return TypePaie.values
-      .firstWhere((e) => e.toString().split('.').last == value);
-}
 
 enum BaseType {
   valeur("Valeur"),
@@ -116,16 +124,18 @@ enum BaseType {
 
   final String label;
   const BaseType(this.label);
+
+  static String baseTypeToString(BaseType type) {
+    return type.toString().split(".").last;
+  }
+
+  static BaseType baseTypeFromJson(String value) {
+    return BaseType.values
+        .firstWhere((e) => e.toString().split(".").last == value);
+  }
 }
 
-String baseTypeToString(BaseType type) {
-  return type.toString().split('.').last;
-}
 
-BaseType baseTypeFromJson(String value) {
-  return BaseType.values
-      .firstWhere((e) => e.toString().split('.').last == value);
-}
 
 enum Operateur {
   multiplication("Multiplication"),
@@ -135,16 +145,18 @@ enum Operateur {
 
   final String label;
   const Operateur(this.label);
+
+  static String operateurToString(Operateur operateur) {
+    return operateur.toString().split(".").last;
+  }
+
+  static Operateur operateurFromJson(String operateur) {
+    return Operateur.values
+        .firstWhere((e) => e.toString().split(".").last == operateur);
+  }
 }
 
-String operateurToString(Operateur operateur) {
-  return operateur.toString().split('.').last;
-}
 
-Operateur operateurFromJson(String operateur) {
-  return Operateur.values
-      .firstWhere((e) => e.toString().split('.').last == operateur);
-}
 
 // Taux
 class Taux {
@@ -154,11 +166,11 @@ class Taux {
   Taux({required this.base, required this.taux});
 
   factory Taux.fromJson(Map<String, dynamic> json) => Taux(
-      base: RubriqueBulletin.fromJson(json['base']),
-      taux: json['taux'].toDouble());
+      base: RubriqueBulletin.fromJson(json["base"]),
+      taux: json["taux"].toDouble());
 
   Map<String, dynamic> toJson() => {
-        "base": "\"${base.code}\"",
+        "base": base.toJson(),
         "taux": taux,
       };
 }
@@ -175,15 +187,15 @@ class TrancheValue {
   });
 
   factory TrancheValue.fromJson(Map<String, dynamic> json) => TrancheValue(
-        type: trancheValueTypeFromJson(json['type']),
-        taux: json['taux'] != null ? Taux.fromJson(json['taux']) : null,
-        valeur: json['valeur']?.toDouble(),
+        type: trancheValueTypeFromJson(json["type"]),
+        taux: json["taux"] != null ? Taux.fromJson(json["taux"]) : null,
+        valeur: json["valeur"]?.toDouble(),
       );
 
   Map<String, dynamic> toJson() => {
-        'type': trancheValueTypeToString(type),
-        'taux': taux?.toJson(),
-        'valeur': valeur,
+        "type": trancheValueTypeToString(type),
+        "taux": taux?.toJson(),
+        "valeur": valeur,
       };
 }
 
@@ -200,15 +212,15 @@ class Tranche {
   });
 
   factory Tranche.fromJson(Map<String, dynamic> json) => Tranche(
-        min: json['min'],
-        max: json['max'],
-        value: TrancheValue.fromJson(json['value']),
+        min: json["min"],
+        max: json["max"],
+        value: TrancheValue.fromJson(json["value"]),
       );
 
   Map<String, dynamic> toJson() => {
-        'min': min,
-        'max': max,
-        'value': value.toJson(),
+        "min": min,
+        "max": max,
+        "value": value.toJson(),
       };
 }
 
@@ -225,13 +237,13 @@ class Bareme {
   factory Bareme.fromJson(Map<String, dynamic> json) => Bareme(
         reference: RubriqueBulletin.fromJson(json["reference"]),
         tranches: List<Tranche>.from(
-          json['tranches'].map((t) => Tranche.fromJson(t)),
+          json["tranches"].map((t) => Tranche.fromJson(t)),
         ),
       );
 
   Map<String, dynamic> toJson() => {
-        "reference": "\"${reference.code}\"",
-        'tranches': tranches.map((t) => t.toJson()).toList(),
+        "reference": reference.toJson(),
+        "tranches": tranches.map((t) => t.toJson()).toList(),
       };
 }
 
@@ -239,28 +251,29 @@ class Bareme {
 class ElementCalcul {
   final BaseType type;
   final double? valeur;
-  final RubriqueBulletin? rubrique;
+  final RubriqueBulletin? calculRubrique;
 
   ElementCalcul({
     required this.type,
     this.valeur,
-    this.rubrique,
+    this.calculRubrique,
   });
 
   factory ElementCalcul.fromJson(Map<String, dynamic> json) {
     return ElementCalcul(
-      type: baseTypeFromJson(json['type']),
-      valeur: json['valeur']?.toDouble(),
-      rubrique: json['rubrique'] != null
-          ? RubriqueBulletin.fromJson(json['rubrique'])
+      type: BaseType.baseTypeFromJson(json["type"]),
+      valeur: json["valeur"]?.toDouble(),
+      calculRubrique: json["calculRubrique"] != null
+          ? RubriqueBulletin.fromJson(json["calculRubrique"])
           : null,
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'type': baseTypeToString(type),
-        'valeur': valeur,
-        'rubrique': type == BaseType.rubrique ? "\"${rubrique?.code}\"" : null,
+        "type": BaseType.baseTypeToString(type),
+        "valeur": valeur,
+        "calculRubriqueKey":
+            type == BaseType.rubrique ? "\"calculRubrique!.key\"" : null,
       };
 }
 
@@ -276,15 +289,15 @@ class Calcul {
 
   factory Calcul.fromJson(Map<String, dynamic> json) {
     return Calcul(
-      operateur: operateurFromJson(json['operateur']),
+      operateur: Operateur.operateurFromJson(json["operateur"]),
       elements: List<ElementCalcul>.from(
-        json['elements'].map((e) => ElementCalcul.fromJson(e)),
+        json["elements"].map((e) => ElementCalcul.fromJson(e)),
       ),
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'operateur': operateurToString(operateur),
-        'elements': elements.map((e) => e.toJson()).toList(),
+        "operateur": Operateur.operateurToString(operateur),
+        "elements": elements.map((e) => e.toJson()).toList(),
       };
 }

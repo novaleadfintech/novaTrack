@@ -12,7 +12,7 @@ import '../../../model/bulletin_paie/bulletin_model.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import '../../../model/bulletin_paie/rubrique.dart';
-import '../../../model/bulletin_paie/rubrique_paie.dart';
+import '../../../model/bulletin_paie/rubrique_on_bulletin_model.dart';
 import '../../../model/entreprise/entreprise.dart';
 import '../../../model/request_response.dart';
 import '../../../service/entreprise_service.dart';
@@ -466,7 +466,7 @@ class BulletinPdfGenerator {
                 final element =
                     rubriqueOnBulletin.rubrique.calcul!.elements.first;
                 return "${element.type == BaseType.valeur ? element.valeur : getFormuleValue(
-                    rubrique: element.rubrique!,
+                    rubrique: element.calculRubrique!,
                     toutesLesRubriquesSurBulletin: rubriques,
                   )}";
               }
@@ -538,7 +538,7 @@ class BulletinPdfGenerator {
                   final element =
                       rubriqueOnBulletin.rubrique.calcul!.elements.last;
                   return "${element.type == BaseType.valeur ? element.valeur : getFormuleValue(
-                      rubrique: element.rubrique!,
+                      rubrique: element.calculRubrique!,
                       toutesLesRubriquesSurBulletin: rubriques,
                     )}";
                 }

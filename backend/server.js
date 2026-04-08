@@ -56,7 +56,7 @@ app.use(
     return {
       schema: protectedSchema,
       rootValue: graphQlResolvers,
-      graphiql: true,
+      graphiql: true, //pour le test de l'API via une interface de test
       context: getUser(req),
     };
   })

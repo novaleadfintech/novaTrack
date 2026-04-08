@@ -49,10 +49,10 @@ enum EtatPayCalendar {
 }
 
 String etatPayCalendarToString(EtatPayCalendar etat) {
-  return etat.toString().split('.').last;
+  return etat.toString().split(".").last;
 }
 
 EtatPayCalendar etatPayCalendarFromJson(String etat) {
   return EtatPayCalendar.values
-      .firstWhere((e) => e.toString().split('.').last == etat);
+      .firstWhere((e) => e.toString().split(".").last == etat);
 }

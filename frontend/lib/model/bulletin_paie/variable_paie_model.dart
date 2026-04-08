@@ -1,4 +1,4 @@
-import 'package:frontend/model/bulletin_paie/rubrique_paie.dart';
+import "package:frontend/model/bulletin_paie/rubrique_on_bulletin_model.dart";
 
 class VariablePaieModel {
   final String salarieKey;
@@ -12,9 +12,9 @@ class VariablePaieModel {
   });
 
   Map<String, dynamic> toJson() => {
-        'salarieKey': salarieKey,
-        'rubriques': rubriques.map((r) => r.toJson()).toList(),
-        'primesExceptionnelles': primesExceptionnelles != null
+        "salarieKey": salarieKey,
+        "rubriques": rubriques.map((r) => r.toJson()).toList(),
+        "primesExceptionnelles": primesExceptionnelles != null
             ? primesExceptionnelles!.map((r) => r.toJson()).toList()
             : [],
       };

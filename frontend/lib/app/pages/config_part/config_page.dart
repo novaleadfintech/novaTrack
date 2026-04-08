@@ -207,10 +207,10 @@ class _ConfigPageState extends State<ConfigPage> {
                               },
                             ),
                             // TODO: revenir decommenter ceci.
-                            // if (hasPermission(
-                            //     role: role,
-                            //     permission:
-                            //         PermissionAlias.assignPermissionRole.label))
+                            if (hasPermission(
+                                role: role,
+                                permission:
+                                    PermissionAlias.assignPermissionRole.label))
                               InkWell(
                                 child: ResponsiveCard(label: "Habilitations"),
                                 onTap: () {

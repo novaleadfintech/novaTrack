@@ -150,6 +150,7 @@ class _EditRubriquePageState extends State<EditRubriquePage> {
           ],
           if (selectNatureValue == NatureRubrique.calcul) ...[
             CalculBuilderWidget(
+              editingRubriqueKey: widget.rubrique.key,
               calcul: _calcul,
               onChanged: (newElement) {
                 setState(() {
@@ -160,6 +161,7 @@ class _EditRubriquePageState extends State<EditRubriquePage> {
           ],
           if (selectNatureValue == NatureRubrique.sommeRubrique) ...[
             SommeRubriqueBuilderWidget(
+              editingRubriqueKey: widget.rubrique.key,
               sommeRubrique: _sommeRubrique,
               onChanged: (newSommeRubrique) {
                 setState(() {

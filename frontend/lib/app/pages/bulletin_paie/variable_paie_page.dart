@@ -5,7 +5,7 @@ import 'package:frontend/app/integration/request_frot_behavior.dart';
 import 'package:frontend/helper/amout_formatter.dart';
 import 'package:frontend/helper/assets/asset_icon.dart';
 import 'package:frontend/model/bulletin_paie/rubrique.dart';
-import 'package:frontend/model/bulletin_paie/rubrique_paie.dart';
+import 'package:frontend/model/bulletin_paie/rubrique_on_bulletin_model.dart';
 import 'package:frontend/model/bulletin_paie/salarie_model.dart';
 import 'package:frontend/model/bulletin_paie/tranche_model.dart';
 import 'package:frontend/model/bulletin_paie/valeur_rubrique_temporaire.dart';

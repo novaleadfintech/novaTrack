@@ -9,10 +9,10 @@ enum FormuleType {
 }
 
 String formuleTypeToString(FormuleType formule) {
-  return formule.toString().split('.').last;
+  return formule.toString().split(".").last;
 }
 
 FormuleType formuleTypeFromJson(String formule) {
   return FormuleType.values
-      .firstWhere((e) => e.toString().split('.').last == formule);
+      .firstWhere((e) => e.toString().split(".").last == formule);
 }

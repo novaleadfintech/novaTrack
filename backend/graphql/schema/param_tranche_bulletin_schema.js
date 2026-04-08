@@ -73,7 +73,7 @@ enum Opera {
 input ElementCalculInput {
   type: BaseType!
   valeur: Float
-  rubrique: String
+  calculRubriqueKey: String
 }
 
 input CalculInput {
@@ -83,14 +83,35 @@ input CalculInput {
 type ElementCalcul {
   type: BaseType!
   valeur: Float
-  rubrique: RubriqueBulletin
+  calculRubrique: RubriqueBulletin
 }
-
 type Calcul {
   operateur: Opera!
   elements: [ElementCalcul!]!
 }
 
+# Pour les entrées des données de calcul dans la base de donnée
+input ElementCalculInputForRubriqueCategorieConfig {
+  type: BaseType!
+  valeur: Float
+  calculRubrique: RubriqueBulletinInput
+}
+input CalculInputForRubriqueCategorieConfig{
+  operateur: Opera!
+  elements: [ElementCalculInput!]!
+}
+
+
+input TauxInputForRubriqueCategorieConfig {
+  base: RubriqueBulletinInput!
+  taux: Float!
+}
+
+input BaremeInputForRubriqueCategorieConfig {
+  reference: RubriqueBulletinInput!
+  tranches: [TrancheInput!]!
+}
 `;
+
 
 export default { typeDef };

@@ -18,14 +18,12 @@ import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 import '../../../../auth/authentification_token.dart';
 import '../../../../helper/date_helper.dart';
 import '../../../../model/bulletin_paie/rubrique.dart';
-import '../../../../model/bulletin_paie/rubrique_paie.dart';
 import '../../../../model/bulletin_paie/salarie_model.dart';
 import '../../../../model/bulletin_paie/tranche_model.dart';
 import '../../../../model/personnel/personnel_model.dart';
 import '../../../../model/request_response.dart';
 import '../../../../service/operateur_service.dart';
 import '../../../../service/personnel_service.dart';
-import '../../../../service/rubrique_categorie_bulletin_conf_service.dart';
 import '../../../../service/salarie_service.dart';
 import '../../../../widget/future_dropdown_field.dart';
 import '../../../../widget/validate_button.dart';
@@ -462,23 +460,23 @@ class _EditSalariePageState extends State<EditSalariePage> {
     );
   }
 
-  Future<List<RubriqueBulletin>> fetchRubriqueItems() async {
-    if (bulletinCategorie == null) {
-      throw ("Veuillez sélectionner un personnel et une catégorie de paie.");
-    }
+  // Future<List<RubriqueBulletin>> fetchRubriqueItems() async {
+  //   if (bulletinCategorie == null) {
+  //     throw ("Veuillez sélectionner un personnel et une catégorie de paie.");
+  //   }
 
-    final List<RubriqueOnBulletinModel> rubriquePaieResponse =
-        await RubriqueCategorieConfService
-            .getBulletinRubriquesByBulletinCategorie(
-      bulletinCategorie: bulletinCategorie!,
-    );
+  //   final List<RubriqueOnBulletinModel> rubriquePaieResponse =
+  //       await RubriqueCategorieConfService
+  //           .getBulletinRubriquesByBulletinCategorie(
+  //     bulletinCategorie: bulletinCategorie!,
+  //   );
 
-    List<RubriqueBulletin> rubriques = [];
+  //   List<RubriqueBulletin> rubriques = [];
 
-    for (final bulletincategorie in rubriquePaieResponse) {
-      rubriques.add(bulletincategorie.rubrique);
-    }
+  //   for (final bulletincategorie in rubriquePaieResponse) {
+  //     rubriques.add(bulletincategorie.rubrique);
+  //   }
 
-    return rubriques;
-  }
+  //   return rubriques;
+  // }
 }

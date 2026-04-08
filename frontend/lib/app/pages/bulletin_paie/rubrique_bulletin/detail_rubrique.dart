@@ -137,7 +137,7 @@ class _DetailRubriquePageState extends State<DetailRubriquePage> {
               TabledetailBodyMiddle(
                   valeur: widget.rubrique.calcul!.elements.map((element) {
                 if (element.type == BaseType.rubrique) {
-                  return element.rubrique?.rubrique ?? '';
+                  return element.calculRubrique?.rubrique ?? '';
                 } else if (element.type == BaseType.valeur) {
                   return element.valeur?.toString() ?? '';
                 }
@@ -155,7 +155,7 @@ class _DetailRubriquePageState extends State<DetailRubriquePage> {
               TabledetailBodyMiddle(
                   valeur:
                       widget.rubrique.sommeRubrique!.elements.map((element) {
-                return element.rubrique?.rubrique ?? '';
+                return element.calculRubrique?.rubrique ?? '';
               }).join(' ${getOperateurSymbol(widget.rubrique.sommeRubrique!.operateur)} ')),
             ],
           ),

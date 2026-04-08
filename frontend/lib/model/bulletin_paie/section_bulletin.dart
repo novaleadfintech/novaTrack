@@ -9,15 +9,15 @@ class SectionBulletin {
 
   factory SectionBulletin.fromJson(Map<String, dynamic> json) {
     return SectionBulletin(
-      key: json['_key'],
-      section: json['section'],
+      key: json["_key"],
+      section: json["section"],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      '_key': key,
-      'section': section,
+      "_key": "\"$key\"",
+      "section": "\"$section\"",
     };
   }
 }

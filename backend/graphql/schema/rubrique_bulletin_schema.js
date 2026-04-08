@@ -23,6 +23,7 @@ const typeDef = `#graphql
     enum PorteeRubrique {
         individuel
         commun
+        defaultIndividuel
     }
     
     type RubriqueBulletin {
@@ -40,10 +41,23 @@ const typeDef = `#graphql
         sommeRubrique: Calcul
         calcul: Calcul
     }
+
     input RubriqueBulletinInput {
-        rubriqueKey: ID!
-        value: Float
+        _key: String!
+        rubrique: String!
+        code: String!
+        type: RubriqueBulletinType
+        nature: RubriqueBulletinNature!
+        bareme: BaremeInputForRubriqueCategorieConfig
+        rubriqueRole: RubriqueRole
+        portee: PorteeRubrique
+        section: SectionBulletinInput
+        taux: TauxInputForRubriqueCategorieConfig
+        rubriqueIdentity: RubriqueIdentity
+        sommeRubrique: CalculInputForRubriqueCategorieConfig
+        calcul: CalculInputForRubriqueCategorieConfig
     }
+
 `;
 
 const query = `#graphql

@@ -1,10 +1,10 @@
-import 'package:frontend/model/bulletin_paie/salarie_model.dart';
-import 'package:frontend/model/bulletin_paie/validate_bulletin_model.dart';
-import 'package:frontend/model/entreprise/banque.dart';
-import 'package:frontend/model/moyen_paiement_model.dart';
+import "package:frontend/model/bulletin_paie/salarie_model.dart";
+import "package:frontend/model/bulletin_paie/validate_bulletin_model.dart";
+import "package:frontend/model/entreprise/banque.dart";
+import "package:frontend/model/moyen_paiement_model.dart";
 
-import 'etat_bulletin.dart';
-import 'rubrique_paie.dart';
+import "etat_bulletin.dart";
+import "rubrique_on_bulletin_model.dart";
 
 class BulletinPaieModel {
   final String key;
@@ -37,24 +37,24 @@ class BulletinPaieModel {
 
   factory BulletinPaieModel.fromJson(Map<String, dynamic> json) {
     return BulletinPaieModel(
-      key: json['_key'],
-      etat: etatBulletinFromJson(json['etat']),
-      moyenPayement: json['moyenPayement'] != null
+      key: json["_key"],
+      etat: etatBulletinFromJson(json["etat"]),
+      moyenPayement: json["moyenPayement"] != null
           ? MoyenPaiementModel.fromJson(json["moyenPayement"])
           : null,
       debutPeriodePaie:
-          DateTime.fromMillisecondsSinceEpoch(json['debutPeriodePaie']),
+          DateTime.fromMillisecondsSinceEpoch(json["debutPeriodePaie"]),
       finPeriodePaie:
-          DateTime.fromMillisecondsSinceEpoch(json['finPeriodePaie']),
-      referencePaie: json['referencePaie'],
+          DateTime.fromMillisecondsSinceEpoch(json["finPeriodePaie"]),
+      referencePaie: json["referencePaie"],
       banque:
-          json['banque'] != null ? BanqueModel.fromJson(json['banque']) : null,
-      dateEdition: DateTime.fromMillisecondsSinceEpoch(json['dateEdition']),
-      datePayement: json['datePayement'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(json['datePayement'])
+          json["banque"] != null ? BanqueModel.fromJson(json["banque"]) : null,
+      dateEdition: DateTime.fromMillisecondsSinceEpoch(json["dateEdition"]),
+      datePayement: json["datePayement"] != null
+          ? DateTime.fromMillisecondsSinceEpoch(json["datePayement"])
           : null,
-      salarie: SalarieModel.fromJson(json['salarie']),
-      rubriques: (json['rubriques'] as List<dynamic>)
+      salarie: SalarieModel.fromJson(json["salarie"]),
+      rubriques: (json["rubriques"] as List<dynamic>)
           .map((e) => RubriqueOnBulletinModel.fromJson(e))
           .toList(),
       validated: json["validate"] != null
@@ -67,18 +67,18 @@ class BulletinPaieModel {
 
   Map<String, dynamic> toJson() {
     return {
-      '_key': key,
-      'etat': etatBulletinToString(etat),
-      'moyenPayement': moyenPayement?.toJson(),
-      'debutPeriodePaie': debutPeriodePaie,
-      'finPeriodePaie': finPeriodePaie,
-      'referencePaie': referencePaie,
-      'banque': banque?.toJson(),
-      'datePayement': datePayement?.millisecondsSinceEpoch,
-      'dateEdition': dateEdition,
+      "_key": key,
+      "etat": etatBulletinToString(etat),
+      "moyenPayement": moyenPayement?.toJson(),
+      "debutPeriodePaie": debutPeriodePaie,
+      "finPeriodePaie": finPeriodePaie,
+      "referencePaie": referencePaie,
+      "banque": banque?.toJson(),
+      "datePayement": datePayement?.millisecondsSinceEpoch,
+      "dateEdition": dateEdition,
       "validate": validated?.map((e) => e.toJson()).toList(),
-      'salarie': salarie.toJson(),
-      'rubriques': rubriques.map((e) => e.toJson()).toList(),
+      "salarie": salarie.toJson(),
+      "rubriques": rubriques.map((e) => e.toJson()).toList(),
     };
   }
 }

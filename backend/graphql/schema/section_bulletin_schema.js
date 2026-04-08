@@ -3,6 +3,11 @@ type SectionBulletin{
     _key:ID!
     section:String!
 }
+
+input SectionBulletinInput {
+    _key:String!
+    section:String!
+}
 `;
 
 const query = `#graphql

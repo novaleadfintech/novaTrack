@@ -1,14 +1,14 @@
-class paieCategorieModel {
+class PaieCategorieModel {
   final dynamic key;
   final String paieCategorie;
 
-  paieCategorieModel({
+  PaieCategorieModel({
     required this.key,
     required this.paieCategorie,
   });
 
-  factory paieCategorieModel.fromJson(Map<String, dynamic> json) {
-    return paieCategorieModel(
+  factory PaieCategorieModel.fromJson(Map<String, dynamic> json) {
+    return PaieCategorieModel(
       key: json["_key"],
       paieCategorie: json["paieCategorie"] ?? "",
     );
@@ -21,7 +21,7 @@ class paieCategorieModel {
     };
   }
 
-  bool equalTo({required paieCategorieModel paieCategorie}) {
+  bool equalTo({required PaieCategorieModel paieCategorie}) {
     return paieCategorie.key == key;
   }
 }

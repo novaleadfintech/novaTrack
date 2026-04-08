@@ -1,4 +1,4 @@
-import 'package:frontend/model/bulletin_paie/tranche_model.dart';
+import "package:frontend/model/bulletin_paie/tranche_model.dart";
 
 class BulletinCategorieModel {
   final dynamic key;

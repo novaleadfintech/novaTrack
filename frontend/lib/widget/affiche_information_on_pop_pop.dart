@@ -52,16 +52,29 @@ class ShowInstruction extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(4.0),
-      child: Container(
-        padding: EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: AppColor.bmodificationColor.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(4),
-          border: Border.all(
-            color: AppColor.modificationColor,
+      child: IntrinsicWidth(
+        child: Container(
+          alignment: Alignment.center,
+          padding: EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: AppColor.bmodificationColor.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(4),
+            border: Border(
+              bottom: BorderSide(color: AppColor.bmodificationColor, width: 1),
+              left: BorderSide(color: AppColor.bmodificationColor, width: 1),
+            ),
           ),
+          child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                message,
+                style: TextStyle(
+                    color: AppColor.informationColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                    fontStyle: FontStyle.italic),
+              )),
         ),
-        child: Align(alignment: Alignment.centerLeft, child: Text(message)),
       ),
     );
   }

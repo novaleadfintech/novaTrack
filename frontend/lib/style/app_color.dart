@@ -19,6 +19,7 @@ class AppColor {
   static const Color greenSecondary = Color(0xFFF5F9EF);
   static const Color popGrey = Colors.grey;
   static const Color modificationColor = Color.fromARGB(255, 12, 3, 134);
+  static const Color informationColor = Color.fromARGB(255, 12, 3, 134);
 
   // ======== DARK MODE COLORS ========
   static const Color bprimaryColor =
@@ -38,7 +39,7 @@ class AppColor {
   static const Color bgreenSecondary = Color(0xFF2E7D32); // vert foncé (accent)
   static const Color bpopGrey = Colors.grey; // dividers, icônes grises
   static const Color bmodificationColor = Color(0xFF536DFE); // bleu d’action
-
+  static const Color binformationColor = Color.fromARGB(255, 12, 3, 134);
   // ======== ADAPTATIVE HELPERS ========
   static bool isDark(BuildContext context) =>
       Theme.of(context).brightness == Brightness.dark;
@@ -85,4 +86,7 @@ class AppColor {
 
   static Color adaptiveModificationColor(BuildContext context) =>
       isDark(context) ? bmodificationColor : modificationColor;
+
+  static Color adaptiveInformationColor(BuildContext context) =>
+      isDark(context) ? binformationColor : informationColor;
 }

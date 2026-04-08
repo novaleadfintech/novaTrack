@@ -54,7 +54,7 @@ const mutation = `#graphql
         banqueKey: String!
         referencePaie: String!
         salarieKey: String!
-        rubriques: [RubriqueBulletinInput!]!
+        rubriques: [RubriqueOnBulletinInput!]!
     ): String!
 
     generateBulletinsForPeriod(dateDebut: Float!, dateFin: Float!): String!
@@ -68,7 +68,7 @@ const mutation = `#graphql
         banqueKey: String
         referencePaie: String
         salarieKey: String
-        rubriques: [RubriqueBulletinInput]
+        rubriques: [RubriqueOnBulletinInput]
     ): String!
 
      validerBulletin(

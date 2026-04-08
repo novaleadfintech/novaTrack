@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:frontend/model/bulletin_paie/categorie_paie.dart';
-import 'package:frontend/model/bulletin_paie/rubrique_paie.dart';
+import 'package:frontend/model/bulletin_paie/rubrique_on_bulletin_model.dart';
 import 'package:frontend/model/bulletin_paie/salarie_model.dart';
 import 'package:frontend/model/bulletin_paie/valeur_rubrique_temporaire.dart';
 
@@ -96,7 +96,7 @@ class ValariablePaieService {
 
 static Future<List<ValeurRubriqueTemporaire>>
       getvariablePaieAndPrimeExceptionnelles(
-          {required paieCategorieModel bulletincategorie,
+          {required PaieCategorieModel bulletincategorie,
           required String salarieKey}) async {
     var body = '''
     query variablePaieAndPrimeExceptionnelles {

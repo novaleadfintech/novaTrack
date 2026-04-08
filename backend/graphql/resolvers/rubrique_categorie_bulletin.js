@@ -24,35 +24,49 @@ const rubriqueBulletinResolvers = {
       { bulletinCategorieKey: bulletinCategorieKey },
     ),
 
-  createBulletinCategorieRubrique: async ({
-    rubriqueKey,
-    bulletinCategorieKey,
-    value,
-  }) =>
-    await rubriqueBulletinModel.createBulletinCategorieRubrique({
-      rubriqueKey: rubriqueKey,
-      bulletinCategorieKey: bulletinCategorieKey,
-      value: value,
-    }),
+  // getRubriqueCategorieConfig: async ({ bulletinCategorieKey }) =>
+  //   await rubriqueBulletinModel.getRubriqueCategorieConfig({
+  //     bulletinCategorieKey: bulletinCategorieKey,
+  //   }),
 
-  updateBulletinCategorieRubrique: async ({
-    rubriqueKey,
-    bulletinCategorieKey,
-    value,
-  }) =>
-    await rubriqueBulletinModel.updateBulletinCategorieRubrique({
-      rubriqueKey: rubriqueKey,
-      bulletinCategorieKey: bulletinCategorieKey,
-      value: value,
-    }),
+  // createBulletinCategorieRubrique: async ({
+  //   rubriqueKey,
+  //   bulletinCategorieKey,
+  //   value,
+  // }) =>
+  //   await rubriqueBulletinModel.createBulletinCategorieRubrique({
+  //     rubriqueKey: rubriqueKey,
+  //     bulletinCategorieKey: bulletinCategorieKey,
+  //     value: value,
+  //   }),
 
-  deleteBulletinCategorieRubrique: async ({
-    rubriqueKey,
+  // updateBulletinCategorieRubrique: async ({
+  //   rubriqueKey,
+  //   bulletinCategorieKey,
+  //   value,
+  // }) =>
+  //   await rubriqueBulletinModel.updateBulletinCategorieRubrique({
+  //     rubriqueKey: rubriqueKey,
+  //     bulletinCategorieKey: bulletinCategorieKey,
+  //     value: value,
+  //   }),
+
+  // deleteBulletinCategorieRubrique: async ({
+  //   rubriqueKey,
+  //   bulletinCategorieKey,
+  // }) =>
+  //   await rubriqueBulletinModel.deleteBulletinCategorieRubrique({
+  //     rubriqueKey: rubriqueKey,
+  //     bulletinCategorieKey: bulletinCategorieKey,
+  //   }),
+
+  saveRubriqueCategorieConfig: async ({
     bulletinCategorieKey,
+    rubriquesConfiged,
   }) =>
-    await rubriqueBulletinModel.deleteBulletinCategorieRubrique({
-      rubriqueKey: rubriqueKey,
+    await rubriqueBulletinModel.saveRubriqueCategorieConfig({
       bulletinCategorieKey: bulletinCategorieKey,
+      rubriqueConfiged: rubriquesConfiged,
     }),
 };
 

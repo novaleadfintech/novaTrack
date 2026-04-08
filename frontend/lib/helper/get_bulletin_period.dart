@@ -2,7 +2,7 @@ import '../model/bulletin_paie/rubrique.dart';
 import '../model/bulletin_paie/type_rubrique.dart';
 
 import '../model/bulletin_paie/nature_rubrique.dart';
-import '../model/bulletin_paie/rubrique_paie.dart';
+import '../model/bulletin_paie/rubrique_on_bulletin_model.dart';
 import '../model/bulletin_paie/tranche_model.dart';
 
 // List<DateTime>? getCurrentBulletinPeriod({
@@ -400,9 +400,11 @@ class RubriqueCalculator {
 
       case NatureRubrique.sommeRubrique:
         // Add rubriques used in sum
-        for (var element in rubrique.rubrique.sommeRubrique?.elements ?? []) {
-          if (element.type == BaseType.rubrique) {
-            dependencies.add(element.rubrique!.code);
+        for (ElementCalcul element
+            in rubrique.rubrique.sommeRubrique?.elements ?? []) {
+          if (element.type == BaseType.rubrique &&
+              element.calculRubrique != null) {
+            dependencies.add(element.calculRubrique!.code);
           }
         }
         break;
@@ -494,9 +496,10 @@ class RubriqueCalculator {
         final valeurs = rubriquesCible.map((element) {
           if (element.type == BaseType.rubrique) {
             final r = toutesLesRubriquesSurBulletin.firstWhere(
-              (toElement) => toElement.rubrique.code == element.rubrique!.code,
+              (toElement) =>
+                  toElement.rubrique.code == element.calculRubrique!.code,
               orElse: () => RubriqueOnBulletinModel(
-                  rubrique: element.rubrique!, value: 0),
+                  rubrique: element.calculRubrique!, value: 0),
             );
             return r.value;
           } else if (element.type == BaseType.valeur) {
@@ -529,9 +532,10 @@ class RubriqueCalculator {
         List valeurs = rubriquesCible.map((element) {
           if (element.type == BaseType.rubrique) {
             final match = toutesLesRubriquesSurBulletin.firstWhere(
-              (toElement) => toElement.rubrique.code == element.rubrique!.code,
+              (toElement) =>
+                  toElement.rubrique.code == element.calculRubrique!.code,
               orElse: () => RubriqueOnBulletinModel(
-                  rubrique: element.rubrique!, value: 0),
+                  rubrique: element.calculRubrique!, value: 0),
             );
             return match.value;
           } else if (element.type == BaseType.valeur) {
@@ -677,9 +681,11 @@ double calculerMontantRubrique({
       final valeurs = rubriquesCible.map((element) {
         if (element.type == BaseType.rubrique) {
           final r = toutesLesRubriquesSurBulletin.firstWhere(
-            (toElement) => toElement.rubrique.code == element.rubrique!.code,
+            (toElement) =>
+                toElement.rubrique.code == element.calculRubrique!.code,
             orElse: () =>
-                RubriqueOnBulletinModel(rubrique: element.rubrique!, value: 0),
+                RubriqueOnBulletinModel(
+                rubrique: element.calculRubrique!, value: 0),
           );
           return r.value;
         } else if (element.type == BaseType.valeur) {
@@ -712,9 +718,11 @@ double calculerMontantRubrique({
       List valeurs = rubriquesCible.map((element) {
         if (element.type == BaseType.rubrique) {
           final match = toutesLesRubriquesSurBulletin.firstWhere(
-            (toElement) => toElement.rubrique.code == element.rubrique!.code,
+            (toElement) =>
+                toElement.rubrique.code == element.calculRubrique!.code,
             orElse: () =>
-                RubriqueOnBulletinModel(rubrique: element.rubrique!, value: 0),
+                RubriqueOnBulletinModel(
+                rubrique: element.calculRubrique!, value: 0),
           );
           return match.value;
         } else if (element.type == BaseType.valeur) {

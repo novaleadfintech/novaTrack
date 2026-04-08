@@ -10,14 +10,10 @@ import 'package:frontend/service/grille_categorie_paie_service.dart';
 import 'package:frontend/service/operateur_service.dart';
 import 'package:frontend/widget/drop_down_text_field.dart';
 import 'package:frontend/widget/simple_text_field.dart';
- import '../../../../model/bulletin_paie/nature_rubrique.dart';
-import '../../../../model/bulletin_paie/rubrique.dart';
-import '../../../../model/bulletin_paie/rubrique_paie.dart';
 import '../../../../model/entreprise/banque.dart';
 import '../../../../model/grille_salariale/classe_model.dart' show ClasseModel;
 import '../../../../model/habilitation/user_model.dart';
  import '../../../../service/moyen_paiement_service.dart';
-import '../../../../service/rubrique_categorie_bulletin_conf_service.dart';
 import 'package:gap/gap.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 import '../../../../auth/authentification_token.dart';
@@ -391,24 +387,5 @@ class _AddSalariePageState extends State<AddSalariePage> {
         ],
       ),
     );
-  }
-
-  Future<List<RubriqueBulletin>> fetchRubriqueItems() async {
-    if (bulletinCategorie == null) {
-      throw ("Veuillez choisir la catégorie de paie.");
-    }
-
-    final List<RubriqueOnBulletinModel> rubriquePaieResponse =
-        await RubriqueCategorieConfService
-            .getBulletinRubriquesByBulletinCategorie(
-      bulletinCategorie: bulletinCategorie!,
-    );
-
-    return rubriquePaieResponse
-        .where(
-          (cat) => cat.rubrique.nature == NatureRubrique.constant,
-        )
-        .map((cat) => cat.rubrique)
-        .toList();
   }
 }

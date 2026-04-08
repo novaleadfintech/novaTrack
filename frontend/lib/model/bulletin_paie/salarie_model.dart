@@ -1,11 +1,11 @@
-import 'package:frontend/model/bulletin_paie/bulletin_categorie_model.dart';
-import 'package:frontend/model/bulletin_paie/operateur_model.dart';
-import 'package:frontend/model/grille_salariale/categorie_paie.dart';
-import 'package:frontend/model/grille_salariale/classe_model.dart';
-import 'package:frontend/model/grille_salariale/echelon_model.dart';
-import 'package:frontend/model/moyen_paiement_model.dart';
-import '../personnel/personnel_model.dart';
- import 'tranche_model.dart';
+import "package:frontend/model/bulletin_paie/bulletin_categorie_model.dart";
+import "package:frontend/model/bulletin_paie/operateur_model.dart";
+import "package:frontend/model/grille_salariale/categorie_paie.dart";
+import "package:frontend/model/grille_salariale/classe_model.dart";
+import "package:frontend/model/grille_salariale/echelon_model.dart";
+import "package:frontend/model/moyen_paiement_model.dart";
+import "../personnel/personnel_model.dart";
+ import "tranche_model.dart";
 
 class SalarieModel {
   final String key;
@@ -45,48 +45,48 @@ class SalarieModel {
 
   factory SalarieModel.fromJson(Map<String, dynamic> json) {
     return SalarieModel(
-      key: json['_key'] ?? "",
-      personnel: PersonnelModel.fromJson(json['personnel']),
+      key: json["_key"] ?? "",
+      personnel: PersonnelModel.fromJson(json["personnel"]),
       bulletinCategorie:
-          BulletinCategorieModel.fromJson(json['bulletinCategorie']),
-      dateEnregistrement: json['dateEnregistrement']?.toDouble() ?? 0.0,
-      periodPaie: json['periodPaie']?.toInt(),
-      // paieManner: paieMannerFromJson(json['paieManner']),
-      paieClause: PaieClause.paieClauseFromJson(json['paieClause']),
-      echelon: json['echelon'] != null
-          ? EchelonModel.fromJson(json['echelon'])
+          BulletinCategorieModel.fromJson(json["bulletinCategorie"]),
+      dateEnregistrement: json["dateEnregistrement"]?.toDouble() ?? 0.0,
+      periodPaie: json["periodPaie"]?.toInt(),
+      // paieManner: paieMannerFromJson(json["paieManner"]),
+      paieClause: PaieClause.paieClauseFromJson(json["paieClause"]),
+      echelon: json["echelon"] != null
+          ? EchelonModel.fromJson(json["echelon"])
           : null,
-      numeroMatricule: json['numeroMatricule'],
-      numeroCompte: json['numeroCompte'],
+      numeroMatricule: json["numeroMatricule"],
+      numeroCompte: json["numeroCompte"],
       moyenPaiement: json["moyenPaiement"] == null
           ? null
           : MoyenPaiementModel.fromJson(json["moyenPaiement"]),
-      operateur: json['operateur'] != null
-          ? OperateurModel.fromJson(json['operateur'])
+      operateur: json["operateur"] != null
+          ? OperateurModel.fromJson(json["operateur"])
           : null,
       classe:
-          json['classe'] != null ? ClasseModel.fromJson(json['classe']) : null,
-      grillepaieCategorie: json['grillepaieCategorie'] != null
-          ? GrillepaieCategorieModel.fromJson(json['grillepaieCategorie'])
+          json["classe"] != null ? ClasseModel.fromJson(json["classe"]) : null,
+      grillepaieCategorie: json["grillepaieCategorie"] != null
+          ? GrillepaieCategorieModel.fromJson(json["grillepaieCategorie"])
           : null,
-      fullCount: json['fullCount'],
+      fullCount: json["fullCount"],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      '_key': key,
-      'personnel': personnel.toJson(),
-      'bulletinCategorie': bulletinCategorie.toJson(),
-      'dateEnregistrement': dateEnregistrement,
-      'periodPaie': periodPaie,
-      'echelon': echelon?.toJson(),
-      'numeroMatricule': numeroMatricule,
-      'classe': classe?.toJson(),
-      'grillepaieCategorie': grillepaieCategorie?.toJson(),
-      // 'paieManner': paieMannerToString(paieManner!),
-      'paieClause': PaieClause.paieClauseToString(paieClause!),
-      'fullCount': fullCount,
+      "_key": key,
+      "personnel": personnel.toJson(),
+      "bulletinCategorie": bulletinCategorie.toJson(),
+      "dateEnregistrement": dateEnregistrement,
+      "periodPaie": periodPaie,
+      "echelon": echelon?.toJson(),
+      "numeroMatricule": numeroMatricule,
+      "classe": classe?.toJson(),
+      "grillepaieCategorie": grillepaieCategorie?.toJson(),
+      // "paieManner": paieMannerToString(paieManner!),
+      "paieClause": PaieClause.paieClauseToString(paieClause!),
+      "fullCount": fullCount,
     };
   }
 }

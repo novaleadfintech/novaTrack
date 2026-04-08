@@ -193,7 +193,7 @@ class DetailBulletinPage extends StatelessWidget {
                               valeur: rubrique.rubrique.calcul!.elements
                                   .map((element) {
                             if (element.type == BaseType.rubrique) {
-                              return element.rubrique?.rubrique ?? '';
+                              return element.calculRubrique?.rubrique ?? '';
                             } else if (element.type == BaseType.valeur) {
                               return element.valeur?.toString() ?? '';
                             }
@@ -211,7 +211,7 @@ class DetailBulletinPage extends StatelessWidget {
                           TabledetailBodyMiddle(
                               valeur: rubrique.rubrique.sommeRubrique!.elements
                                   .map((element) {
-                            return element.rubrique?.rubrique ?? '';
+                            return element.calculRubrique?.rubrique ?? '';
                           }).join(' ${getOperateurSymbol(rubrique.rubrique.sommeRubrique!.operateur)} ')),
                         ],
                       ),

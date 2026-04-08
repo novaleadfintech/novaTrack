@@ -1,5 +1,5 @@
-import 'package:frontend/model/bulletin_paie/etat_bulletin.dart';
-import 'package:frontend/model/habilitation/user_model.dart';
+import "package:frontend/model/bulletin_paie/etat_bulletin.dart";
+import "package:frontend/model/habilitation/user_model.dart";
 
 class ValidateBulletinModel {
   final EtatBulletin validateStatus;

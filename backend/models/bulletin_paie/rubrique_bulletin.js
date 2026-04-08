@@ -72,16 +72,18 @@ class RubriqueBulletin {
             if (rubrique.calcul) {
               for (const element of rubrique.calcul.elements) {
                 if (element.type == BaseType.rubrique) {
-                  element.rubrique = await this.getRubriqueBulletinByCode({
-                    code: element.rubrique,
-                  });
+                  element.calculRubrique = await this.getRubriqueBulletinByCode(
+                    {
+                      code: element.calculRubriqueKey,
+                    },
+                  );
                 }
               }
             }
             if (rubrique.sommeRubrique) {
               for (const element of rubrique.sommeRubrique.elements) {
-                element.rubrique = await this.getRubriqueBulletinByCode({
-                  code: element.rubrique,
+                element.calculRubrique = await this.getRubriqueBulletinByCode({
+                  code: element.calculRubriqueKey,
                 });
               }
             }
@@ -150,7 +152,7 @@ class RubriqueBulletin {
               for (const element of rubrique.calcul.elements) {
                 if (element.type == BaseType.rubrique) {
                   element.rubrique = await this.getRubriqueBulletinByCode({
-                    code: element.rubrique,
+                    code: element.calculRubriqueKey,
                   });
                 }
               }
@@ -158,7 +160,7 @@ class RubriqueBulletin {
             if (rubrique.sommeRubrique) {
               for (const element of rubrique.sommeRubrique.elements) {
                 element.rubrique = await this.getRubriqueBulletinByCode({
-                  code: element.rubrique,
+                  code: element.calculRubriqueKey,
                 });
               }
             }

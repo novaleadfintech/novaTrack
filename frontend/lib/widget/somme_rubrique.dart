@@ -6,10 +6,13 @@ import '../service/bulletin_rubrique_service.dart';
 
 class SommeRubriqueBuilderWidget extends StatefulWidget {
   final Calcul? sommeRubrique;
+  final String? editingRubriqueKey;
+
   final void Function(Calcul? newCalcul) onChanged;
 
   const SommeRubriqueBuilderWidget({
     super.key,
+    this.editingRubriqueKey,
     required this.onChanged,
     this.sommeRubrique,
   });
@@ -22,13 +25,14 @@ class SommeRubriqueBuilderWidget extends StatefulWidget {
 class _SommeRubriqueBuilderWidgetState
     extends State<SommeRubriqueBuilderWidget> {
   List<ElementCalcul> elements = [];
-@override
+  @override
   void initState() {
     if (widget.sommeRubrique != null) {
       elements.addAll(widget.sommeRubrique!.elements);
     }
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -38,7 +42,8 @@ class _SommeRubriqueBuilderWidgetState
               children: [
                 Expanded(
                   child: RubriqueSelectionWidget(
-                    rubrique: element.rubrique,
+                    editingRubriqueKey: widget.editingRubriqueKey,
+                    rubrique: element.calculRubrique,
                     onChanged: (RubriqueBulletin? newRubrique) {
                       if (newRubrique != null) {
                         setState(() {
@@ -46,7 +51,7 @@ class _SommeRubriqueBuilderWidgetState
                           if (index != -1) {
                             elements[index] = ElementCalcul(
                               type: BaseType.rubrique,
-                              rubrique: newRubrique,
+                              calculRubrique: newRubrique,
                               valeur: null,
                             );
                           }
@@ -72,7 +77,7 @@ class _SommeRubriqueBuilderWidgetState
             setState(() {
               elements.add(ElementCalcul(
                 type: BaseType.rubrique,
-                rubrique: null,
+                calculRubrique: null,
                 valeur: null,
               ));
             });
@@ -100,10 +105,12 @@ class _SommeRubriqueBuilderWidgetState
 class RubriqueSelectionWidget extends StatelessWidget {
   final RubriqueBulletin? rubrique;
   final void Function(RubriqueBulletin?) onChanged;
+  final String? editingRubriqueKey;
 
   const RubriqueSelectionWidget({
     super.key,
     required this.rubrique,
+    this.editingRubriqueKey,
     required this.onChanged,
   });
 
@@ -112,7 +119,9 @@ class RubriqueSelectionWidget extends StatelessWidget {
     return FutureCustomDropDownField<RubriqueBulletin>(
       label: "Rubrique",
       selectedItem: rubrique,
-      fetchItems: fetchRubriqueItems,
+      fetchItems: () {
+        return fetchRubriqueItems(currentRubriqueKey: editingRubriqueKey);
+      },
       showSearchBox: true,
       onChanged: onChanged,
       canClose: false,
@@ -120,7 +129,12 @@ class RubriqueSelectionWidget extends StatelessWidget {
     );
   }
 
-  Future<List<RubriqueBulletin>> fetchRubriqueItems() async {
-    return await BulletinRubriqueService.getBulletinRubriques();
+  Future<List<RubriqueBulletin>> fetchRubriqueItems(
+      {String? currentRubriqueKey}) async {
+    return (await BulletinRubriqueService.getBulletinRubriques())
+        .where((r) =>
+            r.rubriqueRole == RubriqueRole.rubrique &&
+            (currentRubriqueKey == null || r.key != currentRubriqueKey))
+        .toList();
   }
 }
